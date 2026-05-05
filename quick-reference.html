@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GVM Quick Reference</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.5;
+      padding: 1.5rem 1rem 4rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 1.8rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.3rem; color: #111; }
+    h2 { font-size: 1.2rem; font-weight: 400; font-style: italic; margin-top: 2rem; margin-bottom: 0.6rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.2rem; }
+    h3 { font-size: 1rem; font-weight: 600; margin-top: 1.2rem; margin-bottom: 0.3rem; color: #333; }
+    p, li { font-size: 0.92rem; line-height: 1.6; margin-bottom: 0.5rem; }
+    ul { padding-left: 1.2rem; margin-bottom: 0.8rem; }
+    li { margin-bottom: 0.2rem; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    .subtitle { font-size: 0.95rem; font-style: italic; color: #555; margin-bottom: 1.5rem; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.85rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.3rem;
+      border-radius: 2px;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 0.8rem 0 1.2rem;
+      font-size: 0.88rem;
+      line-height: 1.4;
+      width: 100%;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem 0.4rem 0;
+      border-bottom: 2px solid #333;
+      color: #111;
+      font-size: 0.82rem;
+    }
+
+    tbody td {
+      padding: 0.35rem 0.8rem 0.35rem 0;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+
+    .pipeline-flow {
+      font-family: "Menlo", "Consolas", monospace;
+      font-size: 0.82rem;
+      background: #f0f0e8;
+      padding: 0.8rem 1rem;
+      margin: 0.8rem 0 1.2rem;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 0.5rem 0;
+    }
+
+    @media print {
+      body { padding: 0.5rem; font-size: 14px; }
+      h2 { margin-top: 1rem; }
+      .pipeline-flow { font-size: 0.75rem; }
+    }
+
+    @media (max-width: 600px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>GVM Quick Reference</h1>
+  <p class="subtitle">Keep this open while working. All commands, the pipeline flow, key concepts, and output locations.</p>
+
+  <h2>Pipeline Flow</h2>
+
+  <div class="pipeline-flow">
+    /gvm-impact-map &rarr; /gvm-requirements &rarr; /gvm-test-cases &rarr; /gvm-tech-spec &rarr; /gvm-design-review &rarr; /gvm-walking-skeleton &rarr; /gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; /gvm-explore-test &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy
+  </div>
+
+  <h2>All Commands</h2>
+
+  <table>
+    <thead>
+      <tr><th>Command</th><th>What it does</th><th>When to use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>/gvm-status</code></td><td>Shows pipeline state and what&rsquo;s complete</td><td>Any time</td></tr>
+      <tr><td><code>/gvm-impact-map</code></td><td>Maps goals &rarr; actors &rarr; impacts &rarr; deliverables (four linked tables)</td><td>Before requirements on a new project or feature</td></tr>
+      <tr><td><code>/gvm-requirements</code></td><td>Elicits and structures requirements with MoSCoW priorities</td><td>Starting a project or adding features</td></tr>
+      <tr><td><code>/gvm-test-cases</code></td><td>Generates test cases from requirements (includes requirements health report)</td><td>After requirements, before spec</td></tr>
+      <tr><td><code>/gvm-tech-spec</code></td><td>Creates architecture specs, ADRs, and implementation guide</td><td>After test cases</td></tr>
+      <tr><td><code>/gvm-design-review</code></td><td>Validates data models, UI, APIs against requirements</td><td>After spec, before build (optional)</td></tr>
+      <tr><td><code>/gvm-walking-skeleton</code></td><td>Wires a thin end-to-end thread through every integration boundary; produces <code>boundaries.md</code></td><td>After spec, before build</td></tr>
+      <tr><td><code>/gvm-build</code></td><td>Implements code in chunks with TDD, handovers for session resilience</td><td>After spec (and skeleton, if used)</td></tr>
+      <tr><td><code>/gvm-code-review</code></td><td>Expert-grounded code review with scored findings and verdict</td><td>After build or after fixing findings</td></tr>
+      <tr><td><code>/gvm-test</code></td><td>Integration seam audit, acceptance test validation, stub audit</td><td>After code review passes</td></tr>
+      <tr><td><code>/gvm-explore-test</code></td><td>Timeboxed exploratory testing charter; logs defects as <code>explore-NNN</code> session report</td><td>After test, before doc-write</td></tr>
+      <tr><td><code>/gvm-doc-write</code></td><td>Creates or revises any document (README, guides, presentations, whitepapers)</td><td>After test, or any time for standalone docs</td></tr>
+      <tr><td><code>/gvm-doc-review</code></td><td>Scored quality review with expert-grounded criteria</td><td>After doc-write</td></tr>
+      <tr><td><code>/gvm-deploy</code></td><td>Version bump, release notes, changelog, git tag</td><td>When all reviews pass</td></tr>
+      <tr><td><code>/gvm-site-survey</code></td><td>Assesses an existing codebase&rsquo;s health</td><td>Before working on unfamiliar code</td></tr>
+      <tr><td><code>/gvm-analysis</code></td><td>Privacy-preserving exploratory data analysis &mdash; raw rows never enter Claude&rsquo;s context</td><td>Standalone &mdash; data understanding tasks</td></tr>
+      <tr><td><code>/gvm-init</code></td><td>Initialises experts for specialised domains</td><td>Finance, healthcare, regulated industries</td></tr>
+      <tr><td><code>/gvm-experts</code></td><td>Scores, rescores, or manages the expert roster</td><td>Adding or evaluating experts</td></tr>
+    </tbody>
+  </table>
+
+  <div class="two-col">
+    <div>
+      <h2>Key Concepts</h2>
+
+      <h3>Expert Tiers</h3>
+      <ul>
+        <li><strong>Tier 1 &mdash; Process:</strong> Always active. Wiegers (requirements), Copeland (test design), Beck (TDD).</li>
+        <li><strong>Tier 2a &mdash; Architecture:</strong> Activated by domain. Fowler, Kleppmann, Tufte.</li>
+        <li><strong>Tier 2b &mdash; Industry:</strong> Activated by business domain. Finance, healthcare, etc.</li>
+        <li><strong>Tier 3 &mdash; Stack:</strong> Activated after tech choices. Ramalho (Python), Hevery (Angular).</li>
+      </ul>
+
+      <h3>Build Check Tiers</h3>
+      <ul>
+        <li><strong>Tier 1 (permanent):</strong> General practice &mdash; DRY, resource lifecycle, single source of truth. Never retired.</li>
+        <li><strong>Tier 2 (project-specific):</strong> Tied to a library or domain convention. Flagged for retirement after 3 quiet rounds &mdash; you decide.</li>
+      </ul>
+
+      <h3>MVP-1 (Minimum Viable Product first ordering)</h3>
+      <p>Chunk sequence builds a thin end-to-end vertical slice first, then adds slices. Horizontal architecture stays consistent across slices &mdash; the sequence is vertical, the design is not. Enforced by <code>/gvm-tech-spec</code> Phase 5, <code>/gvm-build</code> Hard Gate 9, and <code>/gvm-design-review</code> Panel D Pass 3. Pairs with the walking skeleton.</p>
+      <p>Four exempted shapes: library, refactor, performance-driven, fully-specified. Claim with the literal handover marker <em>MVP-1 exempted: &lt;category&gt; &mdash; rationale: &lt;why&gt;</em>. An override missing a rationale does not count.</p>
+
+      <h3>Dual Review</h3>
+      <p>Automatic from round 3. A second AI reviewer runs with no project history to catch what the first reviewer&rsquo;s familiarity causes it to overlook. Findings reconciled into one report.</p>
+
+      <h3>Review Verdicts</h3>
+      <p>Three tiers; the verdict word changes by skill but the thresholds do not.</p>
+      <ul>
+        <li><strong>Ready:</strong> 0 critical, &le;3 important, no dimension below 6</li>
+        <li><strong>Ready with caveats:</strong> 0 critical, 4&ndash;6 important, no dimension below 5 &mdash; caveats stated explicitly</li>
+        <li><strong>Not ready:</strong> Any critical, or &gt;6 important, or any dimension below 5</li>
+      </ul>
+      <table>
+        <thead>
+          <tr><th>Skill</th><th>Ready</th><th>With caveats</th><th>Not ready</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>/gvm-code-review</code></td><td>Merge</td><td>Merge with caveats</td><td>Do not merge</td></tr>
+          <tr><td><code>/gvm-design-review</code></td><td>Build from this</td><td>Build with caveats</td><td>Do not build</td></tr>
+          <tr><td><code>/gvm-doc-review</code> (whitepapers)</td><td>Publish</td><td>Publish with revisions</td><td>Do not publish</td></tr>
+          <tr><td><code>/gvm-doc-review</code> (user docs)</td><td>Ship</td><td>Ship with caveats</td><td>Do not ship</td></tr>
+          <tr><td><code>/gvm-doc-review</code> (pipeline docs)</td><td>Proceed</td><td>Proceed with caveats</td><td>Revise first</td></tr>
+          <tr><td><code>/gvm-test</code></td><td>Ship-ready</td><td>Demo-ready</td><td>Not shippable</td></tr>
+        </tbody>
+      </table>
+      <p class="subtitle">Demo-ready means demonstrable but NOT user-deployable (registered stubs or known limits).</p>
+    </div>
+    <div>
+      <h2>Output Locations</h2>
+
+      <table>
+        <thead>
+          <tr><th>Phase</th><th>Directory</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Impact map</td><td><code>impact-map.md</code></td></tr>
+          <tr><td>Requirements</td><td><code>requirements/</code></td></tr>
+          <tr><td>Health report</td><td><code>test-cases/</code></td></tr>
+          <tr><td>Test cases</td><td><code>test-cases/</code></td></tr>
+          <tr><td>Tech specs</td><td><code>specs/</code></td></tr>
+          <tr><td>Walking skeleton</td><td><code>boundaries.md</code></td></tr>
+          <tr><td>MVP-1 exemption marker</td><td><code>MVP-1 exempted: &lt;category&gt; &mdash; rationale: &lt;why&gt;</code> in chunk handover</td></tr>
+          <tr><td>Build handovers</td><td><code>build/handovers/</code></td></tr>
+          <tr><td>Explore sessions</td><td><code>test/explore-NNN.{md,html}</code></td></tr>
+          <tr><td>Code review</td><td><code>code-review/</code></td></tr>
+          <tr><td>Design review</td><td><code>design-review/</code></td></tr>
+          <tr><td>Doc review</td><td><code>doc-review/</code></td></tr>
+          <tr><td>Site survey</td><td><code>site-survey/</code></td></tr>
+          <tr><td>Calibration</td><td><code>reviews/calibration.md</code></td></tr>
+          <tr><td>Build checks</td><td><code>reviews/build-checks.md</code></td></tr>
+          <tr><td>Release notes</td><td><code>RELEASE-NOTES.html</code> + <code>.md</code></td></tr>
+          <tr><td>Changelog</td><td><code>CHANGELOG.md</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Expert Grounding: Where It Works</h3>
+      <ul>
+        <li><strong>Design/spec:</strong> Expert patterns visible in architecture decisions</li>
+        <li><strong>Review:</strong> Demonstrably effective &mdash; catches what unguided review misses</li>
+        <li><strong>Construction:</strong> Undemonstrated &mdash; use framework docs, not expert principles</li>
+      </ul>
+    </div>
+  </div>
+
+</body>
+</html>

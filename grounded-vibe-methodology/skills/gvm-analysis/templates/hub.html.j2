@@ -1,0 +1,77 @@
+{#-
+  Hub template skeleton (P6-C04a).
+
+  Structure matches report-generation.md §"Hub structure" (ADR-301).
+  Every section listed in that block appears here as an empty stub with
+  an <h2 id="..."> matching the <section id="...">. Section bodies are
+  populated by P6-C04b (executive summary + comprehension block) and
+  P6-C04c (per-section findings rendering).
+
+  ADR-307b bare-name policy: templates reference bare names (mode,
+  provenance, comprehension_questions, time_series, drivers, comparison)
+  — never findings.<path>. StrictUndefined raises on missing keys.
+
+  shared-rule-24 / AN-31 / TC-AN-31-01: the <p class="gvm-attribution">
+  block is the LAST element child of <main>. Any future section added
+  here must go BEFORE it, not after.
+-#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Analysis Report</title>
+  {% include '_css.html.j2' %}
+  {% include '_css_overrides.html.j2' %}
+</head>
+<body>
+  <nav class="toc" aria-label="Table of contents"></nav>
+  <header>
+    <h1>Analysis Report</h1>
+    <p class="subtitle">Mode: {{ mode }}{% if subtitle_filename %} &middot; {{ subtitle_filename }}{% endif %}</p>
+    <p class="meta">Generated {{ provenance.timestamp }} &middot; seed {{ provenance.seed }}</p>
+  </header>
+  <main>
+    <section id="executive-summary">
+      <h2>Executive summary</h2>
+      {% include '_exec_summary.html.j2' %}
+    </section>
+    <section id="data-quality">
+      <h2>Data quality</h2>
+      {% include '_section_data_quality.html.j2' %}
+    </section>
+    <section id="distributions">
+      <h2>Distributions</h2>
+      {% include '_section_distributions.html.j2' %}
+    </section>
+    <section id="outliers">
+      <h2>Outliers</h2>
+      {% include '_section_outliers.html.j2' %}
+    </section>
+    {% if time_series %}
+    <section id="time-series">
+      <h2>Time series</h2>
+      {% include '_section_time_series.html.j2' %}
+    </section>
+    {% endif %}
+    {% if drivers %}
+    <section id="drivers">
+      <h2>Drivers</h2>
+      {% include '_section_drivers.html.j2' %}
+    </section>
+    {% endif %}
+    {% if comparison %}
+    <section id="comparison">
+      <h2>Comparison</h2>
+      <p>Baseline comparison findings render here (P6-C04c).</p>
+    </section>
+    {% endif %}
+    <section id="methodology-appendix">
+      <h2>Methodology</h2>
+      {% include '_methodology_appendix.html.j2' %}
+    </section>
+    {% include '_provenance.html.j2' %}
+    <p class="gvm-attribution">Developed using the Grounded Vibe Methodology</p>
+  </main>
+  {% include '_interactivity.js.j2' %}
+</body>
+</html>

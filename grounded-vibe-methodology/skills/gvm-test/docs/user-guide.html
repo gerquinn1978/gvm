@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-test &mdash; User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">March 2026</p>
+<h1>/gvm-test</h1>
+<p class="subtitle">
+  Verifies a completed build works as a product &mdash; the acceptance gate between
+  &ldquo;code exists&rdquo; and &ldquo;product works.&rdquo;
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  <code>/gvm-test</code> runs after all build chunks are complete. It is not a test suite &mdash;
+  it verifies that the product works end-to-end as a user would experience it. It catches
+  the integration gaps that per-chunk TDD misses: unresolved seams between chunks, services
+  that fail to start, UI flows that hit placeholders, and requirements that were stubbed
+  rather than implemented.
+</p>
+
+<span class="sidenote">
+  Per-chunk tests verify that each piece works in isolation.
+  <code>/gvm-test</code> verifies that the pieces work together.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="when-to-use">When to Use</h2>
+
+<ul>
+  <li>After all build chunks are complete and <code>/gvm-code-review</code> findings have been addressed.</li>
+  <li>After fixing code review findings, to confirm fixes did not break integration.</li>
+  <li>When you need to verify that the product works end-to-end as a user would experience it.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="steps">What It Does</h2>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Verify Code Review Exists.</strong> In full mode, stop if no code review file exists or if unresolved criticals remain. In light mode, note the absence and proceed.</li>
+  <li><strong>Run Actual Commands.</strong> Every verification step (startup, health checks, smoke tests) must execute real commands &mdash; assumed success is not verification.</li>
+  <li><strong>Write HTML Output.</strong> The test report must produce <code>test/test-{NNN}.html</code>. Verification reports are HTML-only &mdash; findings are carried forward in <code>reviews/calibration.md</code>.</li>
+  <li><strong>Write HTML Before Presenting Results.</strong> The HTML must exist before presenting results.</li>
+</ol>
+
+<p>
+  Eight steps (seven mandatory, one optional), in order:
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Verification steps</caption>
+  <thead>
+    <tr><th>Step</th><th>What it checks</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>1. Prerequisite check</strong></td><td>Verifies all upstream artefacts exist: implementation guide, build handovers, test cases, requirements, code review report, and git repository.</td></tr>
+    <tr><td><strong>2. Integration seam audit</strong></td><td>Greps for NotImplementedError, TODO, &ldquo;deferred to integration&rdquo;. Classifies each as blocking or non-blocking. Blocking seams are fixed before proceeding.</td></tr>
+    <tr><td><strong>3. Startup verification</strong></td><td>Starts infrastructure &mdash; docker compose (or equivalent), database migrations, backend server, frontend dev server. Verifies health endpoints respond before proceeding.</td></tr>
+    <tr><td><strong>4. Acceptance test verification</strong></td><td>Reads <code>test-cases/test-cases.md</code> and verifies every test case against the built code. Classifies each as PASS, FAIL, BLOCKED, or STUB.</td></tr>
+    <tr><td><strong>5. Mutation testing</strong> (optional)</td><td>Offered after acceptance tests pass. Runs mutation testing on critical-path files only (MUST-priority requirements, security-sensitive code). Reports mutation score and flags surviving mutants as test gaps. Uses stack-specific tools from <code>stack-tooling.md</code>.</td></tr>
+    <tr><td><strong>6. Smoke run</strong></td><td>Beyond test cases &mdash; verifies user experience. Starts infrastructure, hits health endpoints, walks through pages and interactive elements.</td></tr>
+    <tr><td><strong>7. Stub vs implemented audit</strong></td><td>Classifies every requirement as IMPLEMENTED, PARTIAL, STUB, or NOT IMPLEMENTED. Mock providers and placeholder data are labelled as stubs.</td></tr>
+    <tr><td><strong>8. Declare complete</strong></td><td>If all checks pass, the build is complete. If stubs remain, the audit table is presented and the user decides what ships.</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  Mutation testing is optional because it can be slow on large codebases.
+  It targets only critical-path code &mdash; MUST-priority requirements and
+  security-sensitive logic &mdash; not the entire codebase.
+</span>
+
+<div class="callout">
+  <div class="callout-label">The user decides what ships</div>
+  <p>If stubs remain, the audit table is presented and the user decides: wire real implementations, or ship with documented limitations. The build is only &ldquo;complete&rdquo; when the user explicitly accepts the current state.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output</h2>
+
+<p>
+  Produces an HTML-only report (per shared rule 13 exception — review/verification reports do not produce paired MD). Findings are carried forward in <code>reviews/calibration.md</code>:
+</p>
+
+<pre><code>test/test-001.html
+test/test-002.html
+...</code></pre>
+
+<p>
+  The report contains up to eight sections: executive summary, integration seam audit,
+  code review results, acceptance test results, mutation testing results (if run),
+  smoke run results, requirement coverage audit, and verdict.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="verdict-vocabulary">Verdict Vocabulary</h2>
+
+<p>
+  Every <code>/gvm-test</code> run ends in exactly one of three verdicts. The
+  taxonomy is a finite state, not a sentence the skill assembles &mdash; the skill emits
+  whichever of the three values the evaluator returns.
+</p>
+
+<table>
+  <thead>
+    <tr><th>Verdict</th><th>Meaning</th><th>Gating criteria</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Ship-ready</strong></td>
+      <td>The build is fit for production. Real chains exercised, no unresolved code-review criticals, no expired stubs, no blocking integration seams, no Critical-severity exploratory defects in non-stub paths.</td>
+      <td>VV-2 criteria all pass (and the OQ-5 manual-gate override has not downgraded the verdict &mdash; see callout below).</td>
+    </tr>
+    <tr>
+      <td><strong>Demo-ready</strong></td>
+      <td>The build is fit to show, but not to release. Stubs may remain (registered, in-date), some integration paths may use sandbox endpoints, or the walking-skeleton CI gate was satisfied manually rather than via real CI confirmation.</td>
+      <td>VV-2 fails on at least one bar; VV-3 criteria all pass.</td>
+    </tr>
+    <tr>
+      <td><strong>Not shippable</strong></td>
+      <td>The build does not yet work as a product. Blocking seams are open, MUST-priority test cases fail, expired stubs are present, or critical code-review findings are unresolved.</td>
+      <td>Any VV-4 criterion triggers a blocking condition; OR VV-2 fails on at least one bar AND VV-3 also fails (fall-through).</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Retired vocabulary</div>
+  <p>The earlier two-tier verdict that used a partial-credit middle option has been retired across the plugin. The three-verdict taxonomy replaces it. A release-gate verifier flags the retired phrase if it reappears anywhere in the plugin tree.</p>
+</div>
+
+<div class="callout">
+  <div class="callout-label">OQ-5 manual-gate override</div>
+  <p>When the walking-skeleton CI gate was satisfied manually (no real CI confirmation), VV-2 may all pass yet the verdict is downgraded to Demo-ready. The skill prompts the practitioner; if the prompt is dismissed (non-interactive run), the default is Demo-ready. The override applies only on the VV-2-pass branch &mdash; once VV-3 or VV-4 are in play, the regular decision table governs.</p>
+</div>
+
+<p>
+  Because the verdict is a fixed label, the skill cannot embed nuance in it.
+  Practitioners who want to communicate "ships with caveats" record the
+  caveats in the report's executive summary or the requirement coverage table &mdash;
+  not by softening the verdict.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline">Pipeline Position</h2>
+
+<div class="pipeline">
+  <span class="label">Greenfield</span>
+  [/gvm-init] &rarr; [/gvm-impact-map] &rarr; /gvm-requirements &rarr; /gvm-test-cases &rarr; /gvm-tech-spec &rarr; [/gvm-design-review] &rarr; [/gvm-walking-skeleton] &rarr; /gvm-build &rarr; /gvm-code-review &rarr; <strong>/gvm-test</strong> &rarr; [/gvm-explore-test] &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy
+  <br><br>
+  Optional phases shown in [brackets].
+</div>
+
+<p>
+  <code>/gvm-test</code> sits after code review. The build produced code,
+  <code>/gvm-code-review</code> reviewed it for quality, and <code>/gvm-test</code>
+  verifies the reviewed code works as a product. Fix code quality issues before
+  investing in integration testing and smoke runs.
+</p>
+
+<p>
+  After <code>/gvm-test</code> completes, run <code>/gvm-doc-write</code> in pipeline
+  docs mode to generate user-facing documentation (README, user guides, API docs) that
+  reflects the verified build. Then run <code>/gvm-doc-review</code> to audit the
+  documentation quality.
+</p>
+
+<span class="sidenote">
+  <code>/gvm-test</code> checks that <code>/gvm-code-review</code> has been run
+  before starting. If no code review report exists, it tells you to run one first.
+  Light mode is offered automatically when the skill detects a small build scope &mdash; the skill asks which mode to use via a question prompt. In light mode, the code-review
+  prerequisite is waived and integration seam audit and stub audit are skipped if the
+  change is localised.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<table>
+  <caption>Common issues and recovery (Nielsen H9)</caption>
+  <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
+  <tbody>
+    <tr><td>Infrastructure fails to start</td><td>Missing dependencies, port conflicts, environment not configured</td><td>Check the README setup instructions. Run the startup command manually to see the error. Fix the environment before re-running <code>/gvm-test</code>.</td></tr>
+    <tr><td>Acceptance tests cannot execute</td><td>Test runner not configured, or test-cases.md references features not yet built</td><td>Check that the test framework is installed (step from <code>/gvm-build</code> P1-C01). For unbuilt features, <code>/gvm-test</code> classifies them as NOT IMPLEMENTED &mdash; this is expected.</td></tr>
+    <tr><td>Code review not found</td><td><code>/gvm-code-review</code> has not been run yet</td><td>Run <code>/gvm-code-review</code> first. <code>/gvm-test</code> requires it as a prerequisite.</td></tr>
+    <tr><td>All tests pass but stubs remain</td><td>Tests are passing against mock/stub implementations</td><td>This is the stub audit&rsquo;s job &mdash; it flags stubs honestly. The user decides whether to ship with stubs or wire real implementations.</td></tr>
+  </tbody>
+</table>
+
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

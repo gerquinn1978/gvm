@@ -1,0 +1,54 @@
+{#-
+  Outliers section partial (P6-C04c).
+
+  Agreement summary counts (high/review/low) followed by a list of flagged
+  rows (agreement_matrix). Every <li> carries an <aside class="sidenote">
+  naming the method via the registry display_name — the main-flow <li>
+  text stays plain-language (TC-NFR-4-02).
+-#}
+{% set summary = outliers.agreement_summary if outliers else {'high':0,'review':0,'low':0} %}
+<p>
+  Flagged rows &mdash; high confidence: {{ summary.high }};
+  for review: {{ summary.review }};
+  low confidence: {{ summary.low }}.
+</p>
+{% if outliers and outliers.agreement_matrix %}
+<ul class="outliers-list">
+  {% for row in outliers.agreement_matrix %}
+  <li>
+    Row {{ row.row_index }}, column <code>{{ row.column }}</code>,
+    value {{ row.value }} &mdash; confidence: {{ row.confidence }}.
+    {% if row.methodology_ref and row.methodology_ref in methodology_by_key %}
+    {% set entry = methodology_by_key[row.methodology_ref] %}
+    <aside class="sidenote">
+      Flagged by {{ entry.display_name }} ({{ entry.parameters }}).
+      Citation: {{ entry.expert_citation }}.
+    </aside>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No outliers flagged.</p>
+{% endif %}
+
+{# P19-C03: outlier scatter charts. Engine assigns identical chart paths
+   to every entry within a (method, column) group; dedupe via a ns-tracked
+   set so each unique chart is emitted once. #}
+{% if outliers and outliers.by_method %}
+  {% set ns = namespace(seen=[]) %}
+  {% for method_key, entries in outliers.by_method.items() %}
+    {% if entries %}
+      {% for entry in entries %}
+        {% set chart_path = entry.get('chart') %}
+        {% if chart_path and chart_path not in ns.seen %}
+          {% set _ = ns.seen.append(chart_path) %}
+<figure class="outlier-chart">
+  <img src="{{ chart_path }}" alt="Outliers in {{ entry.get('column', '') }} ({{ method_key }})">
+  <figcaption>Outliers &mdash; <code>{{ entry.get('column', '') }}</code> ({{ method_key }})</figcaption>
+</figure>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+{% endif %}

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engineering Leader's Guide to GVM</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 260px; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .cmd-block {
+      font-family: "Menlo", "Consolas", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.8rem 1rem;
+      margin: 1rem 0 1.5rem;
+      max-width: 640px;
+      line-height: 1.6;
+    }
+
+    .callout {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .callout-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .callout.warning {
+      background: #fdf0ef;
+      border-left-color: #c0392b;
+    }
+
+    .callout.warning .callout-label {
+      color: #c0392b;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      width: auto;
+      min-width: 480px;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 1rem 0.5rem 0;
+      border-bottom: 2px solid #333;
+      color: #111;
+    }
+
+    tbody td {
+      padding: 0.45rem 1rem 0.45rem 0;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+
+    .practice {
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .practice-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #27ae60;
+      margin-bottom: 0.3rem;
+    }
+
+    details.answer-key {
+      background: #f7f7f0;
+      border-left: 3px solid #7799cc;
+      padding: 0.8rem 1.2rem;
+      margin-top: 0.8rem;
+      max-width: 620px;
+    }
+
+    details.answer-key summary {
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #7799cc;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 0;
+    }
+
+    details.answer-key[open] summary {
+      margin-bottom: 0.6rem;
+    }
+
+    details.answer-key p, details.answer-key li {
+      font-size: 0.92rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .sidenote {
+      float: right;
+      clear: right;
+      width: 220px;
+      margin-right: -260px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #666;
+      padding-left: 1rem;
+      border-left: 2px solid #e0e0e0;
+    }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <p class="date">May 2026</p>
+    <h1>Engineering Leader's Guide to GVM</h1>
+    <p class="subtitle">Adopting the methodology &mdash; what it changes, what it costs, how to roll it out.</p>
+
+    <h2 id="headline">The adoption decision in one paragraph</h2>
+
+    <p>GVM is a methodology, not a tool. Installing the Claude Code plugin takes two minutes; adopting GVM takes a bit of setup, some organisation, and Claude Code &mdash; the only supported environment today, with ports to other AI development frameworks treated as future work. The agent does most of the work &mdash; the team's part is choosing to let the review verdicts shape decisions rather than overriding them when the deadline presses. If your team already treats structured review as a quality gate, GVM gives it grounding and traceability. If they treat reviews as skippable, the methodology makes that visible &mdash; and that visibility is the thing the plugin cannot do for you.</p>
+
+    <p>The plugin is GVM's reference implementation. It structures AI-assisted development as a phased pipeline from requirements through release, activates named expert authorities at each phase, and accumulates a calibration history across review rounds. The pipeline is optional in parts; the review discipline is not. Leaders who install the plugin without establishing the review discipline will get artefacts but not quality gates.</p>
+
+    <div class="callout">
+      <div class="callout-label">The key question</div>
+      <p>Before any other evaluation: is your team currently reading AI-generated code carefully before merging it? If yes, GVM structures and amplifies that practice. If no, the problem isn't tooling &mdash; GVM adoption needs to start with that conversation.</p>
+    </div>
+
+    <h2 id="problem">What problem GVM solves</h2>
+
+    <p>AI code generation produces plausible output. It compiles, the obvious tests pass, and the PR looks fine on a fast read. The failures show up in production: an edge case the model didn't consider, a security assumption that was wrong, an integration boundary that wasn't wired correctly. These failures are not random &mdash; they cluster in predictable defect classes.</p>
+
+    <p>GVM's core mechanism is forcing a structured read. The <code>/gvm-code-review</code> skill dispatches parallel expert panels &mdash; each panel scanning for a specific defect class (contracts and interfaces, logic and completeness, security, naming and spec compliance) &mdash; grounded in specific published works. The review produces scored findings and a verdict. The verdict is either acted on or explicitly deferred; it is never silently bypassed.</p>
+
+    <p>The whitepaper <em>Grounding Produces Measurably Better Output</em> reports 1,080 blind reviews across three AI models and three grounding conditions. Grounded output scores consistently higher under blind review than ungrounded output across all three models. The effect is not subtle. The full experimental design and per-dimension results are in that paper; this document does not restate those findings as if they were proven here.</p>
+
+    <span class="sidenote">The experiment uses 180 AI-generated market risk dashboards. Blind reviewers scored each without knowing its grounding condition. The paper reports dose-response results: more specific grounding produces incrementally better scores.</span>
+
+    <h2 id="what-changes">What changes for the team</h2>
+
+    <h3 id="pipeline-structure">The pipeline structures the work into phases</h3>
+
+    <p>A full GVM project runs through up to 14 phases: impact mapping, requirements, test cases, tech spec, design review, walking skeleton, build, code review, test, exploratory testing, doc write, doc review, and release. Most teams use a subset. The phases are not bureaucracy &mdash; each one produces a traceable artefact that the next phase consumes. Requirements trace to impact-map deliverables. Test cases trace to requirements. Code review findings trace to the expert principles that identified them.</p>
+
+    <p>The structural change most likely to surprise the team: <strong>test cases come before architecture</strong>. If a requirement can't be expressed as a test, the requirement is ambiguous. <code>/gvm-test-cases</code> forces that question before any design work begins. Teams that normally write tests after code find this backwards; that is the point.</p>
+
+    <h3 id="review-discipline">Reviews are scored and the calibration history persists</h3>
+
+    <p>Each code review round produces scored findings and appends to <code>reviews/calibration.md</code>. By round three, the reviewer knows which modules have recurring findings and which have clean histories. Reviews get more precise over time &mdash; not because the AI gets smarter, but because the calibration file gives it project-specific context it would otherwise lack.</p>
+
+    <p>A finding that recurs across rounds is signal, not noise. GVM tracks recurring findings and can promote them to build checks &mdash; gates that run automatically on every subsequent build. This converts a discovered defect pattern into a prevention mechanism.</p>
+
+    <h3 id="triage">Findings are user-triaged, not silently filtered</h3>
+
+    <p>Shared rule 28: the verdict is not recorded until the user has triaged every finding. The practitioner cannot mark a finding "not applicable" without supplying rationale. The leader's job is to audit that this is happening. The calibration file is the audit trail. If you see findings marked N/A with no rationale, the process has been bypassed.</p>
+
+    <h3 id="stopping-rule">The stopping rule prevents polish loops</h3>
+
+    <p>GVM includes a stopping rule: once Critical findings are resolved and Importants are triaged, the build is done. Teams without a stopping rule tend to iterate indefinitely on minor issues &mdash; burning time on polish when the substantive problems are already fixed. The rule makes "good enough to merge" an explicit, auditable decision rather than a judgment call made under deadline pressure.</p>
+
+    <h2 id="costs">What it costs</h2>
+
+    <p>GVM has a real cost in time &mdash; review rounds add work before a passing verdict, and calibration takes a few rounds to become useful. The cost is bounded and predictable, and observed adoption shows it sits in a sensible bracket: hours-not-weeks for the document tooling, one bounded project to prove out the full pipeline. In the long run it saves time: defects caught upstream of production are defects that do not turn into rework, hotfixes, or incidents. The framework's whole proposition is that prevention beats cure &mdash; that catching defects early is cheaper than fixing them in production. If you accept that premise, the upfront cost is part of the deal, not something to optimise away.</p>
+
+    <h3 id="review-time">Review rounds take real time</h3>
+
+    <p>Each <code>/gvm-code-review</code> round dispatches multiple parallel expert panels and waits for findings to be triaged before proceeding. For a substantive change, expect 1&ndash;2 review rounds before a passing verdict. The whitepaper reports 4 review rounds for a public-facing document under the doc-review gate; internal documents typically pass in 1&ndash;2. Code reviews tend to converge faster than document reviews once the calibration file has history.</p>
+
+    <p>This is not a bug. The rounds catch things. The cost of a review round is bounded; the cost of a production regression is not.</p>
+
+    <h3 id="calibration-cost">Practitioners need calibration before scores are trustworthy</h3>
+
+    <p>The first two or three reviews a practitioner runs are not yet decision-grade. The scores reflect the review instrument, not the project's actual quality profile. Calibration training (see <a href="review-calibration-training.html">Review Calibration Training</a>) teaches practitioners how to read scores, when to push back on a finding, and how to distinguish a signal from a rubric artefact.</p>
+
+    <p>Insist on at least three calibrated reviews before treating a score as a basis for go/no-go decisions. This is not optional. A team that skips calibration will have numbers without meaning.</p>
+
+    <h3 id="expert-roster">The expert roster needs maintenance for niche domains</h3>
+
+    <p>GVM ships with a default expert roster for general software development. For specialised domains &mdash; regulated industries, domain-specific languages, emerging frameworks &mdash; the default experts may not cover the relevant failure modes. The <code>/gvm-init</code> skill discovers and scores domain experts automatically, but the output needs a sanity check from someone who knows the domain. That someone is usually you. Budget one session for this if your team works in a niche domain; it compounds across every subsequent review.</p>
+
+    <h2 id="what-to-measure">What to measure</h2>
+
+    <p>Measure things that tell you whether the quality gate is working. Do not measure things that tell you how busy the team is.</p>
+
+    <table>
+      <thead>
+        <tr><th>Metric</th><th>What it tells you</th><th>Action threshold</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Calibrated vs blind score gap</td>
+          <td>How much context the calibration file adds. A wide gap means the project has a specific quality profile the blind instrument misses.</td>
+          <td>Gap &gt; 1.5 points: review the calibration file for staleness or anchor drift.</td>
+        </tr>
+        <tr>
+          <td>Finding count by expert panel</td>
+          <td>Where defects cluster. If security findings are consistently high while logic findings are low, you know where to invest.</td>
+          <td>Any panel averaging &gt; 2 Critical findings per round: schedule a targeted improvement session.</td>
+        </tr>
+        <tr>
+          <td>Review rounds to passing verdict</td>
+          <td>How much rework each change requires. More than 3 rounds consistently suggests upstream problems (requirements or spec quality).</td>
+          <td>Average &gt; 3 rounds: look upstream at test cases and tech spec quality, not at the reviews themselves.</td>
+        </tr>
+        <tr>
+          <td>Rework rate after <code>/gvm-code-review</code></td>
+          <td>Whether review is catching things before merge or just generating work. High rework means the gate is working; very low rework on first-pass may mean the review is being bypassed.</td>
+          <td>Zero rework on three consecutive reviews: audit the calibration file and findings for silent suppression.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Do not measure</strong>: reviewer count, lines of code reviewed, AI tokens spent, number of phases completed. These are activity metrics. GVM's value is not in activity; it is in finding defects before they reach production.</p>
+
+    <h2 id="adoption">Adoption path</h2>
+
+    <p>Three options, in order of how much of the methodology you turn on at once. All three are legitimate; the right one depends on whether you want to see the document tooling in isolation first, prove out the full pipeline on a single project, or layer the pipeline phases in one at a time.</p>
+
+    <h3 id="standalone-first">Option 1 &mdash; Standalone first (recommended starting point)</h3>
+
+    <p>Run <code>/gvm-doc-review</code> and <code>/gvm-doc-write</code> only. No pipeline, no SDLC (software development lifecycle) change. Practitioners typically pick these tools up in their first session &mdash; the document tooling is the lowest-friction part of the methodology, and observed adoption with colleagues has been a matter of hours, not weeks. The team feels the review discipline on documentation &mdash; a bounded, low-stakes context &mdash; before committing to it on code. The six-test gate in the doc-review skill is the same gate that applies to code review: the team learns what "finding triaged" means, what a verdict looks like, and what calibration adds, without changing how they write software.</p>
+
+    <p>Run this on internal documents long enough to observe the pattern: are findings catching real problems (not just style), is triage being applied rather than every finding silently fixed, is the calibration file accumulating useful data. When that becomes ordinary &mdash; for most practitioners after a handful of documents &mdash; the case for extending to code is self-evident. If it never becomes ordinary, that is useful signal too.</p>
+
+    <h3 id="toe-in-water">Option 2 &mdash; Toe-in-water (one team, one project, full pipeline)</h3>
+
+    <p>Pick one team and one project where the cost of getting it wrong is bounded &mdash; a greenfield internal tool, not a customer-facing service. Run the full pipeline: requirements, test cases, tech spec, build, code review, test. Treat the project as a calibration exercise for the methodology, not a production delivery commitment.</p>
+
+    <p>One completed pipeline run &mdash; requirements through deploy &mdash; gives you full signal. The duration depends on the project, not the methodology; what matters is that the pipeline runs end to end at least once before you commit to it more broadly. The risk: if the team is under pressure to deliver, the pipeline becomes the first thing cut. Protect the project scope explicitly, or the signal will be contaminated.</p>
+
+    <h3 id="pipeline-by-phase">Option 3 &mdash; Pipeline by phase</h3>
+
+    <p>Introduce <code>/gvm-requirements</code> and <code>/gvm-test-cases</code> first. Let the team build confidence in the upstream artefacts before touching the build and review phases. Add <code>/gvm-build</code> once the team trusts that requirements and test cases are producing useful outputs; add <code>/gvm-code-review</code> once the builds are complete enough to review.</p>
+
+    <p>This is the most incremental path. Teams that layer phase-by-phase tend to develop sharper opinions about each skill because they see the value of each in isolation before the next one is introduced. The risk: momentum stalls between phases if there is no explicit push to keep moving.</p>
+
+    <h2 id="failure-modes">Failure modes to watch for</h2>
+
+    <p>These are not hypothetical. Each one has a signal in the artefacts if you know where to look.</p>
+
+    <h3 id="silent-suppression">Silent suppression</h3>
+
+    <p>Practitioners mark findings as "not applicable" without supplying rationale. The calibration file is the audit trail. Open <code>reviews/calibration.md</code> and look at the N/A entries. If there is no rationale column, or the rationale entries are blank, the gate is not being enforced. Fix it at the process level, not by asking the team to try harder.</p>
+
+    <h3 id="batched-verdicts">Batched verdicts</h3>
+
+    <p>The verdict is recorded before the user has triaged all findings. This is a shared-rule-28 violation. It typically happens when a practitioner is under time pressure and wants to move to the next phase before completing triage. The calibration training document covers this explicitly; if you see it happening, route the practitioner back to that training rather than accepting the early verdict.</p>
+
+    <h3 id="skipping-calibration">Skipping calibration</h3>
+
+    <p>A team that goes straight to using review scores as decision inputs, without the calibration ramp, will miscalibrate. A score of 7.5 on a first-pass review of a new codebase means something different from a score of 7.5 on round four of a calibrated review. The numbers look the same; the information content is not. Three calibrated reviews before treating scores as decision-grade is a hard minimum, not a guideline.</p>
+
+    <h3 id="small-change-bypass">Bypassing the pipeline for "small" changes</h3>
+
+    <p>The team decides that a small change doesn't need the review gate. Then another small change. Then another. Small changes accumulate, and the gate erodes. Define the threshold up-front and hold it: for example, "any change touching production code paths goes through <code>/gvm-code-review</code>." The threshold can be wherever you want it; what matters is that it is written down and not renegotiated under pressure.</p>
+
+    <div class="callout warning">
+      <div class="callout-label">Watch for this</div>
+      <p>The most common failure mode is not any one of the above in isolation &mdash; it is silent suppression combined with deadline pressure combined with small-change bypass. Each is individually manageable; the combination unwinds the methodology quickly. The calibration file is your early warning system. Check it monthly.</p>
+    </div>
+
+    <h2 id="what-it-is-not">What this is not</h2>
+
+    <p>GVM is not a replacement for human code review. It amplifies it: the structured expert panels surface defect classes that humans miss under time pressure, and the calibration file gives reviewers better context. Human judgment on findings is required; GVM does not remove that judgment, it informs it.</p>
+
+    <p>GVM is not a guarantee of correctness. It raises the floor on AI-generated output. A passing verdict means the review found nothing it couldn't triage, not that no bugs exist. The experiment results in the whitepaper show a consistent quality improvement under grounding; they do not show perfection.</p>
+
+    <p>GVM is not a way to ship faster. The pipeline adds review overhead. What you get in return is fewer production regressions and a documentation byproduct that reflects what was actually built. If the current team is shipping fast with acceptable regression rates, the cost-benefit calculation looks different than for a team that is shipping fast with high rework rates.</p>
+
+    <h2 id="leader-decisions">Three decisions you have to make personally</h2>
+
+    <p>These cannot be delegated to the team. Each one sets a constraint that the team will work within for months.</p>
+
+    <h3 id="decision-triage">The triage call on Critical findings under deadline pressure</h3>
+
+    <p>At some point, a release will have a Critical finding and a deadline. The question is not whether this will happen; it is whether you have a pre-committed answer when it does. Options: fix before release (the default); defer with an explicit ticket and a date; push the deadline. "Defer with rationale" is acceptable. "Ignore because we're busy" is not &mdash; not because of process purity, but because it signals to the team that the gate is optional when things get hard.</p>
+
+    <p>Write down your policy before the first deadline conflict. It is much easier to hold a written policy under pressure than to make the call cold.</p>
+
+    <h3 id="decision-experts">The expert roster for your primary domain</h3>
+
+    <p>The default roster covers general software development adequately. If your team works in finance, healthcare, embedded systems, or any domain with specific regulatory or technical constraints, the default experts will produce reviews that miss domain-specific failure modes. Run <code>/gvm-init</code> for your domain and review the scored output. The skill discovers candidate experts automatically; your job is to verify that the high-scoring experts are actually authoritative in your domain, not just plausible-sounding. One session, done once, compounds across every subsequent review.</p>
+
+    <h3 id="decision-branding">The branding file</h3>
+
+    <p>The plugin's <code>/gvm-doc-write</code> skill reads a branding configuration (logo, accent colour, heading font, team name) when generating documents. If you set this once for the team, every document the team generates shares a consistent visual identity. If you leave it unset, each practitioner either uses the default or sets their own &mdash; and the documents drift. This is a small decision with a disproportionate effect on the readability and professionalism of team output. Set it once at onboarding.</p>
+
+    <h2 id="exercises">Practice exercises</h2>
+
+    <div class="practice">
+      <div class="practice-label">Exercise 1 &mdash; Interpreting a calibration gap</div>
+      <p>Your team's most recent review round shows a calibrated score of 8.2 and a blind score of 7.0 for the same codebase. What does the 1.2-point gap mean? What would you do about it?</p>
+      <details class="answer-key">
+        <summary>Answer key</summary>
+        <p>The gap means the calibration file is adding meaningful context. The blind instrument &mdash; which has no project history &mdash; rates the codebase at 7.0. The calibrated instrument &mdash; which has project-specific anchors, score histories, and resolved-finding records &mdash; rates it at 8.2. The calibration file is doing its job.</p>
+        <p>A gap this size is healthy. It indicates that the project has a specific quality profile the generic rubric would underrate &mdash; likely because previous findings have been resolved and the calibration file reflects that improvement.</p>
+        <p>What to watch for: a gap that widens over time without corresponding fixes being recorded. That would suggest the calibration file is accumulating positive anchors without tracking real regressions &mdash; drift toward optimism. Check that the calibration file has recent entries in both directions: improvements and newly identified recurring findings.</p>
+        <p>What to do: nothing urgent. Continue the current review cadence. Review the calibration file quarterly to check that anchors still reflect the current codebase.</p>
+      </details>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Exercise 2 &mdash; Deadline-pressed release with open findings</div>
+      <p>A release is scheduled for end of week. The code review verdict is "Merge with caveats" &mdash; 1 Critical finding and 3 Important findings remain open. The deadline is real: a customer commitment. Walk through the decision tree.</p>
+      <details class="answer-key">
+        <summary>Answer key</summary>
+        <p><strong>Step 1: Understand the Critical finding.</strong> A Critical finding is not automatically a blocker &mdash; it depends on what it is. Is it a security vulnerability that could be exploited in production? A data-loss path? Or a design issue that has a safe workaround? Read the finding. Do not treat the severity label as a substitute for judgment.</p>
+        <p><strong>Step 2: Apply your pre-committed policy.</strong> If you set a policy before this situation arose (see the decisions section above), apply it. If a Critical finding in a production code path is always a blocker, hold the release. If the policy allows deferral with explicit rationale and a fix date, use that path.</p>
+        <p><strong>Step 3: Triage the Importants.</strong> Each Important finding needs a triage decision: fix now, defer with a ticket, or accept as-is with documented rationale. "We'll get to it" is not a triage decision. The calibration file records these decisions; that is your audit trail if something goes wrong later.</p>
+        <p><strong>Step 4: Record the release decision in the calibration file.</strong> Whether you release or hold, record the decision and the rationale. A future reviewer will need to understand why these findings were open at release time.</p>
+        <p><strong>The wrong answer</strong>: shipping without recording the open findings, or recording them as "not applicable" to clear the verdict. That is silent suppression under deadline pressure, which is the most common way the quality gate fails.</p>
+      </details>
+    </div>
+
+    <h2 id="takeaways">Takeaways</h2>
+
+    <ul>
+      <li><strong>Installing the plugin is not adopting GVM.</strong> The plugin implements the methodology; the team's process is what enforces the quality gate.</li>
+      <li><strong>Start with doc review if you're unsure.</strong> It gives the team review discipline experience at low cost before the pipeline touches production code.</li>
+      <li><strong>Three calibrated reviews before the scores mean anything.</strong> Enforce this as a hard rule, not a guideline.</li>
+      <li><strong>The calibration file is the audit trail.</strong> Check it monthly. If findings are being suppressed without rationale, the gate is failing silently.</li>
+      <li><strong>Write down your Critical-finding policy before the first deadline conflict.</strong> It is much harder to hold a position you haven't pre-committed to.</li>
+    </ul>
+
+    <h2 id="further-reading">Further reading</h2>
+
+    <ul>
+      <li><a href="getting-started.html">Getting Started with GVM</a> &mdash; the practitioner walkthrough; read this to understand what the team experiences day-to-day.</li>
+      <li><a href="review-calibration-training.html">Review Calibration Training</a> &mdash; how the review gate works in detail; useful background before evaluating review scores.</li>
+      <li><a href="../whitepapers/whitepaper-grounded-vibe-methodology.html">The Grounded Vibe Methodology</a> &mdash; the full argument: expert model, pipeline structure, experiment design, and attribution evidence.</li>
+      <li><a href="../whitepapers/whitepaper-experiment-results.html">Grounding Produces Measurably Better Output</a> &mdash; the controlled experiment with 1,080 blind reviews; the source of the empirical claims referenced here.</li>
+      <li><a href="../case-studies/case-study-assay.html">Case study: Assay</a> &mdash; a full end-to-end project run through the GVM pipeline, from requirements to release.</li>
+    </ul>
+
+  </main>
+
+  <script>
+  (function () {
+    const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+    const links = [];
+    headings.forEach(function (h) {
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      toc.appendChild(a);
+      links.push({ el: a, target: h });
+    });
+    function onScroll() {
+      let current = links[0];
+      for (let i = 0; i < links.length; i++) {
+        if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+      }
+      links.forEach(function (l) { l.el.classList.remove('active'); });
+      if (current) {
+        current.el.classList.add('active');
+        const tocEl = document.getElementById('toc');
+        const elTop = current.el.offsetTop - tocEl.offsetTop;
+        const elBot = elTop + current.el.offsetHeight;
+        if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+          tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
+</body>
+</html>

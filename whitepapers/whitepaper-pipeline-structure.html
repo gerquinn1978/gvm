@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Well-Engineered Software Needs an End-to-End Pipeline</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+body { font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif; color: #111; background: #fffff8; line-height: 1.6; padding: 2rem 1rem 6rem; max-width: 1480px; margin: 0 auto; }
+h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+li { margin-bottom: 0.4rem; }
+.subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 0.5rem; }
+.date { font-size: 0.9rem; color: #888; margin-bottom: 2.5rem; }
+.sidenote { float: right; clear: right; width: 200px; margin-right: -240px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: 100%; }
+thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; }
+tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+tbody tr:last-child td { border-bottom: 2px solid #333; }
+caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+.callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; }
+.callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+.callout p { margin-bottom: 0.3rem; }
+hr { border: 0; border-top: 1px solid #ccc; margin: 2rem 0; }
+
+/* ── Floating TOC ── */
+nav.toc {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  width: 220px;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  background: #fffff8;
+  border-right: 2px solid #ddd;
+  padding: 1rem 1rem 1rem 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  z-index: 100;
+}
+
+nav.toc .toc-title {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #999;
+  margin-bottom: 0.6rem;
+}
+
+nav.toc a {
+  color: #555;
+  text-decoration: none;
+  display: block;
+  padding: 0.15rem 0;
+  transition: color 0.15s;
+}
+
+nav.toc a:hover { color: #111; }
+nav.toc a.active { color: #111; font-weight: 600; }
+nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+
+main { margin-left: 260px; }
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  nav.toc {
+    position: static;
+    width: 100%;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+  }
+  main { margin-left: 0; }
+  .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+}
+
+@media print {
+  nav.toc { display: none; }
+  main { margin-left: 0; }
+  .sidenote { float: none; width: 100%; margin: 0.5rem 0; padding: 0.4rem 0 0.4rem 1rem; }
+  h2 { page-break-after: avoid; }
+}
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<h1>Well-Engineered Software Needs an End-to-End Pipeline</h1>
+<p class="subtitle">Structure does work that staffing alone cannot &mdash; the structural decisions and durable artefacts that distinguish the GVM pipeline.</p>
+<p class="author" style="font-size: 0.9rem; color: #666;">Conor Brennan &amp; Gerard Quinn</p>
+<p class="date" style="margin-bottom: 2rem;">April 2026</p>
+<div style="background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1.5rem 0; max-width: 640px; font-size: 0.92rem;">
+  <strong>This paper in context.</strong> This paper argues that the pipeline structure matters independently of expert grounding. For the grounding mechanism and expert model, see <em>The Grounded Vibe Methodology</em>. For the experimental evidence, see <em>Grounding Produces Measurably Better Output</em>. For a full end-to-end build using the pipeline, see the case study <em>Building a Production Tool with GVM</em>.
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="argument-in-brief">The Argument in Brief</h2>
+
+<p>
+  The Grounded Vibe Methodology is named for its citation-based expert activation &mdash; naming Wiegers for requirements, Beizer for testing, Fowler for architecture. That mechanism is described in the companion paper, <em>The Grounded Vibe Methodology</em>. This paper makes a different argument: <strong>the pipeline structure itself solves problems that the current generation of AI development methodologies does not address</strong>, regardless of whether the pipeline is staffed by named experts, generic personas, or no personas at all.
+</p>
+
+<p>
+  Building well-engineered software with AI assistance is not just a question of who or what staffs each phase &mdash; it is a question of what the pipeline itself does between and around the human and AI work. The structural decisions described below cover the gates, audits, the wiring matrix and boundary registry, persistence artefacts, calibration mechanisms, and governance rules that catch failure modes the spec, the tests, and the code cannot catch on their own.
+</p>
+
+<p>
+  None of these decisions requires expert grounding to function. They stand independently as structural commitments, each addressing a specific failure mode.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="the-landscape">The Landscape: What Exists Today</h2>
+
+<p>
+  Three approaches dominate AI-assisted software development in early 2026:
+</p>
+
+<p>
+  <strong>Spec-Driven Development</strong> (Thoughtworks, GitHub Spec Kit, AWS Kiro) places a specification at the centre of the process. Write a spec, generate a plan, break it into tasks, generate code. GitHub&rsquo;s Spec Kit has over 92,000 stars and supports 30+ AI agent platforms (as of May 2026). AWS&rsquo;s Kiro provides an agentic IDE built around spec-driven workflows. The approach works &mdash; teams adopting structured specs consistently report significant velocity improvements. But the lifecycle is linear &mdash; spec &rarr; plan &rarr; tasks &rarr; code &mdash; with no structured mechanism for review, change, or the second pass.
+</p>
+
+<span class="sidenote">
+  SDD tools: GitHub Spec Kit (open source, 30+ agent platforms), AWS Kiro (agentic IDE), Augment Code. The O&rsquo;Reilly guide by Addy Osmani (&ldquo;How to Write a Good Spec for AI Agents&rdquo;) is the closest thing to a methodology document.
+</span>
+
+<p>
+  <strong>BMAD</strong> (Breakthrough Method for Agile AI-Driven Development) introduces role-based agents &mdash; PM, Architect, Developer, UX Designer, Scrum Master &mdash; that collaborate through structured artefacts: PRDs, architecture documents, user stories. It is the most complete open methodology available, with 12+ agent roles, quality gates between phases, ATDD (acceptance test-driven development) workflows, brownfield support for existing codebases, and a course-correction workflow for mid-sprint changes. BMAD recognises context loss as a problem and uses &ldquo;hyper-detailed development stories&rdquo; to manage it.
+</p>
+
+<p>
+  <strong>Vibe coding</strong> (Karpathy, 2025) remains the default for most developers: prompt, generate, iterate, ship. No formal structure. Works for small tasks. Breaks on anything that requires coordination across sessions, files, or concerns.
+</p>
+
+<p>
+  These approaches are strongest on the first pass: write the spec, generate the code, ship. BMAD has begun addressing iteration with its course-correction workflow and brownfield support. But software spends most of its life being changed, not being created. Requirements shift. Specs become stale. Code needs review against evolving standards. The second time through the pipeline &mdash; and the tenth &mdash; is where structural decisions about change management, review calibration, and session resilience matter most.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="test-cases-before-specs">1. Test Cases Before Specs &mdash; Requirements Must Prove They Are Testable</h2>
+
+<p>
+  Most methodologies generate test cases after implementation or, in BMAD&rsquo;s case, before implementation code but after the architecture is designed. GVM generates them earlier &mdash; after requirements and before technical specification:
+</p>
+
+<p style="font-family: 'Menlo', 'Consolas', monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.8rem 1rem; margin: 1rem 0;">
+  impact map &rarr; requirements &rarr; <strong>test cases</strong> &rarr; tech spec &rarr; design review &rarr; walking skeleton &rarr; build &rarr; code review &rarr; test &rarr; exploratory test &rarr; doc write &rarr; doc review &rarr; deploy
+</p>
+
+<span class="sidenote">
+  SDD: spec &rarr; plan &rarr; tasks &rarr; code. Testing happens after code exists. BMAD: PRD &rarr; architecture &rarr; stories &rarr; build, with ATDD generating acceptance tests before implementation. GVM&rsquo;s distinction: test cases are generated before the <em>technical spec</em>, not just before code. This means requirements are validated for testability before any architecture is designed.
+</span>
+
+<p>
+  This is not an arbitrary ordering. Test case generation is a <strong>quality gate on requirements</strong>. Before any architecture is designed, the pipeline forces the question: can every requirement be expressed as a concrete test with given/when/then conditions, boundary values, and expected outcomes? Requirements that cannot be tested are identified and fixed before they propagate downstream.
+</p>
+
+<p>
+  The test-cases phase also produces a health report that identifies untestable, inconsistent, and contradictory requirements. These are resolved or explicitly acknowledged before the pipeline proceeds. By the time the tech spec phase begins, every requirement has been validated through the lens of testability. The spec inherits clean inputs.
+</p>
+
+<p>
+  This matters for AI-assisted development specifically because LLMs are compliant. Ask an LLM to implement a vague requirement and it will produce something &mdash; confidently, fluently, and wrong in ways that are hard to detect. The test-first gate catches vagueness at the cheapest point in the lifecycle: before any code exists.
+</p>
+
+<p>
+  An optional upstream gate moves the question one step further back. <code>/gvm-impact-map</code> (grounded in Adzic&rsquo;s <em>Impact Mapping</em> and Cagan&rsquo;s outcome-first framing) produces four linked tables &mdash; Goals, Actors, Impacts, Deliverables &mdash; before requirements are written. Each requirement must trace to a leaf Deliverable; the IM-4 gate refuses to finalise requirements that don&rsquo;t. The discipline is the same as the test-first gate, applied one level higher: a requirement that has no observable change in the world is caught before it becomes a test case to be written.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="review-as-pipeline-phase">2. Review Is a Pipeline Phase, Not a CI/CD Afterthought</h2>
+
+<p>
+  In most AI development workflows, review means &ldquo;run a linter&rdquo; or &ldquo;have Copilot comment on the PR.&rdquo; The review happens after the code is written, often by the same model that wrote it. There is no structured rubric, no calibration, no mechanism for the review to improve over time.
+</p>
+
+<p>
+  GVM treats review as four distinct pipeline phases, each examining work from a different angle: <strong>document review</strong> (requirements, test cases, specs, and user documentation reviewed for quality and consistency), <strong>design review</strong> (data model, UI/UX, API contracts, and performance validated against requirements before build), <strong>code review</strong> (parallel defect-class panels scanning references, contracts, logic, and naming after build), and <strong>build verification</strong> (integration seams, smoke tests, stub audit, documentation check before release). All four share the same structural discipline:
+</p>
+
+<ul>
+  <li><strong>Analytic rubrics</strong> with per-dimension scoring, not holistic impressions</li>
+  <li><strong>Severity classification</strong> separated from defect finding &mdash; find everything first, classify second</li>
+  <li><strong>Concrete deductions</strong> &mdash; every score states what the rubric requires, what was counted, and what prevents a higher score</li>
+  <li><strong>Go-live criteria</strong> defined before scoring begins, not after</li>
+</ul>
+
+<span class="sidenote">
+  The review methodology draws on Fagan inspection (1976), Cronbach&rsquo;s reliability theory, and Gilb&rsquo;s quantified criteria from <em>Competitive Engineering</em> (2005). These are the mechanics of reliable measurement, applied to AI output evaluation.
+</span>
+
+<p>
+  Code review dispatches parallel defect-class panels as independent subagents, grounded in Perspective-Based Reading research (Laitenberger, Atkinson, Schlich &amp; El Emam, &ldquo;An experimental comparison of reading techniques for defect detection in UML design documents,&rdquo; <em>Journal of Systems and Software</em>, 2000) &mdash; teams with non-overlapping scanning mandates detected 41% more unique defects than checklist-based teams at 58% lower cost per defect (the original study covered UML design-document inspection; the analogy to parallel code-review panels is structural, not a replicated finding). Each panel scans for a specific class of defect (references and dependencies, contracts and interfaces, logic and completeness, naming and specification compliance). Named experts are assigned to the panel whose defect class matches their primary framework. Panels run concurrently, do not see each other&rsquo;s findings, apply a liberal detection threshold (Green &amp; Swets&rsquo;s Signal Detection Theory), and scan in two passes to counter satisfaction-of-search bias (Drew, V&otilde; &amp; Wolfe). The synthesis phase deduplicates, cross-references, uses capture-recapture estimation (Wohlin) to gauge residual defects, and elevates severity when multiple panels flag the same issue independently. This is not one reviewer scanning the code &mdash; it is structured inspection with orthogonal scanning mandates and measurable reliability.
+</p>
+
+<p>
+  Spec-driven and ATDD-style toolchains have begun to incorporate adversarial-review patterns &mdash; parallel scanning with non-overlapping mandates is the documented structural choice for defect detection, and the convergence reflects the same underlying research. Where GVM remains distinctive is in three additions to the panel pattern: capture-recapture estimation that converts &ldquo;should we run another round?&rdquo; into a calculation, calibration data that persists across rounds (<a href="#progressive-calibration">&sect;3</a>), and the user-owned triage rule below.
+</p>
+
+<p>
+  The distinction from current practice is not sophistication; it is rigour. A review that produces &ldquo;looks good, maybe clean up the naming&rdquo; is not a quality gate. A review that says &ldquo;8/10 on security (rubric: 9&ndash;10 requires input validation on all endpoints; 2 of 14 endpoints lack it; the gap is auth/callback and webhook/receive)&rdquo; is.
+</p>
+
+<h3 id="user-owns-triage">2.1 The User Owns Finding Triage</h3>
+
+<p>
+  Review skills can fail in a particular way. After dispatching panels and surfacing findings, the skill is tempted to triage them itself: silently filter borderlines, defer Important findings to a future hardening release, or bundle the verdict with the user&rsquo;s first sight of the finding list. Each move is locally reasonable &mdash; the panel&rsquo;s emit threshold becomes a post-synthesis filter; the skill is &ldquo;saving the user time&rdquo; &mdash; and globally a defect: the user never sees what was hidden, and the calibration record drifts away from what panels actually found.
+</p>
+
+<p>
+  The methodology now treats this as a structural defect class. Shared rule 28 (added after an incident in which a review skill silently deferred two Important findings and filtered ten Minor findings under cover of &ldquo;R2+ strict criterion&rdquo;) makes finding triage user-owned. Every Critical or Important finding is presented to the user before any disposition is recorded. The skill may recommend &ldquo;fix / defer / dismiss&rdquo; per finding but must not decide. Forbidden patterns are spelled out verbatim and pinned by structural tests: the gate cannot be paraphrased away. A &ldquo;fix all&rdquo; authorisation does not extend to new Critical findings discovered during the fix &mdash; those re-enter triage.
+</p>
+
+<span class="sidenote">
+  This is a small rule with a large effect on trust. The review report a practitioner reads is the same one the panels emitted. Anything the skill might have hidden, it cannot hide. The user&rsquo;s authority over disposition is not advisory; it is the gate.
+</span>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="progressive-calibration">3. Reviews Improve Over Time &mdash; Progressive Calibration</h2>
+
+<p>
+  The first review of a project has no project-specific context. It applies general principles to unfamiliar code. The second review should be better &mdash; it knows what scored well, what scored poorly, what the recurring issues are, and what &ldquo;good&rdquo; looks like in <em>this</em> specific codebase.
+</p>
+
+<p>
+  GVM accumulates this knowledge in a calibration file that persists across review rounds:
+</p>
+
+<ul>
+  <li><strong>Score history</strong> &mdash; per-dimension scores across rounds, with trend direction</li>
+  <li><strong>Anchor examples</strong> &mdash; the 2 best and 2 worst concrete examples from this project for each dimension, updated when better examples are found</li>
+  <li><strong>Recurring findings</strong> &mdash; issues flagged in 2+ consecutive rounds, tracked until resolved</li>
+  <li><strong>Dimension benchmarks</strong> &mdash; baseline (round 1), current, and trend per dimension</li>
+</ul>
+
+<p>
+  On round 3 of a project, the reviewer knows: &ldquo;This project&rsquo;s auth module scores 9 on security (good anchor). The search module scored 5 in rounds 1 and 2 (bad anchor, recurring). Input validation has been flagged twice.&rdquo; The review is calibrated to the project, not just to general principles.
+</p>
+
+<p>
+  No other AI development methodology has this. Each SDD cycle starts fresh. Each BMAD sprint starts fresh. There is no institutional memory across iterations. GVM&rsquo;s calibration file is that memory.
+</p>
+
+<h3 id="dual-review">3.1 Calibration Creates Blind Spots &mdash; Dual Review Corrects Them</h3>
+
+<p>
+  Calibration solves one problem and introduces another. A reviewer that knows the project&rsquo;s history is more precise &mdash; it catches recurring issues, tracks regressions, and applies project-specific anchors. But that same history creates expectations. Areas that scored well in prior rounds receive less scrutiny. Resolved findings are trusted without re-verification. The reviewer sees what it has learned to look for and misses what it has not.
+</p>
+
+<p>
+  From round 3 onwards, GVM runs two reviewers in parallel: a <strong>calibrated reviewer</strong> (with full project history) and a <strong>blind reviewer</strong> (with the same criteria and expert references but no calibration data &mdash; no anchors, no resolved findings, no score history). The threshold is round 3 because round 1 establishes the first scoring anchor, round 2 establishes a pattern of expectations, and by round 3 anchoring bias (Tversky &amp; Kahneman, 1974) has had enough history to create systematic blind spots &mdash; the point at which rater drift becomes detectable in assessment research. The blind reviewer sees the document fresh, as if encountering the project for the first time.
+</p>
+
+<span class="sidenote">
+  This applies Wang et al.&rsquo;s self-consistency principle (<em>Self-Consistency Improves Chain of Thought Reasoning in Language Models</em>, ICLR, 2023) at the review level &mdash; two independent assessments with different information sets, then reconciliation that keeps consistent findings and flags divergences. It also addresses Deming&rsquo;s concern about measurement system bias: a calibrated instrument that is never independently checked may drift without detection.
+</span>
+
+<p>
+  A reconciliation step classifies each blind finding: <strong>new</strong> (not in the calibrated report or resolved history &mdash; a genuine blind spot), <strong>confirmed</strong> (found independently by both &mdash; higher confidence), <strong>regression</strong> (matches a resolved finding from a prior round &mdash; was fixed, now back), or <strong>noise</strong> (rediscovered something already caught or correctly excluded). Only new findings and regressions merge into the final report. The practitioner sees one clean report, not two overlapping ones.
+</p>
+
+<p>
+  The dual review metadata &mdash; how many findings came from each source across rounds &mdash; reveals whether calibration is developing systematic biases. If the blind reviewer consistently catches findings the calibrated reviewer misses in a particular dimension, that dimension&rsquo;s calibration may need resetting. The correction mechanism has its own feedback loop.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="change-management">4. Change Management &mdash; The Pipeline Handles the Second Pass</h2>
+
+<p>
+  Software changes. Requirements shift. Stakeholders revise priorities. A tech lead reverses an architecture decision. Every real project goes through this. The question is whether the methodology has a mechanism for it or whether the developer has to improvise.
+</p>
+
+<p>
+  Most AI methodologies are strongest on the first pass. BMAD&rsquo;s course-correction handles mid-sprint changes; SDD tools like OpenSpec support delta-based updates. GVM goes further, with three distinct change modes that cover the full range of how software actually evolves:
+</p>
+
+<ol>
+  <li><strong>Append</strong> &mdash; the requirements phase is still in progress. New requirements are added to the existing document. The ID sequence continues. Low ceremony.</li>
+  <li><strong>New round</strong> &mdash; the pipeline is complete and new scope arrives. New numbered documents (<code>requirements-002.md</code>, <code>test-cases-002.md</code>) with distinct ID prefixes. Previous round&rsquo;s artefacts are immutable. High ceremony.</li>
+  <li><strong>In-place update</strong> &mdash; a decision reversal or priority change within an existing round. The artefact is edited with a changelog entry recording what changed, when, and why. Medium ceremony.</li>
+</ol>
+
+<span class="sidenote">
+  Ceremony is proportional to risk. Appending a requirement during active elicitation is low risk. Starting a new round after the pipeline is complete is high risk &mdash; every downstream artefact may need regeneration.
+</span>
+
+<p>
+  The pipeline detects staleness automatically. If <code>requirements.md</code> has been modified after <code>test-cases.md</code> was generated, the status phase flags it: &ldquo;requirements.md changed RE-3 priority on 2026-03-29 &mdash; test-cases.md and specs may need update.&rdquo; Changelog-aware staleness names the specific IDs that changed, not just the file timestamps.
+</p>
+
+<p>
+  Architecture Decision Records (ADRs) use a supersession protocol. When a decision is reversed, the new ADR records the change and references the old one. The old ADR&rsquo;s status is updated to &ldquo;Superseded by ADR-012&rdquo; but its content is immutable &mdash; it remains as a historical record of what was decided and why.
+</p>
+
+<p>
+  None of this exists in SDD, BMAD, or vibe coding. When requirements change in those methodologies, the developer starts over or improvises. GVM has a protocol.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="session-resilience">5. Session Resilience &mdash; Work Survives Context Exhaustion</h2>
+
+<p>
+  AI coding agents have context windows. When the context fills up, the agent loses track of what it was doing. This is not a theoretical concern &mdash; it is the primary failure mode of any AI-assisted build that takes more than one session.
+</p>
+
+<p>
+  BMAD acknowledges this problem. Its solution is hyper-detailed development stories that carry enough context to restart. GVM takes a different approach: <strong>every build chunk produces two persistence artefacts</strong>.
+</p>
+
+<ul>
+  <li><strong>Pre-build prompt</strong> (<code>build/prompts/P{X}-C{XX}.md</code>) &mdash; everything a fresh agent needs to execute the chunk: spec excerpts, dependency handovers, cross-cutting conventions, deliverables list, TDD instructions.</li>
+  <li><strong>Post-build handover</strong> (<code>build/handovers/P{X}-C{XX}.md</code>) &mdash; what was actually built: files created, tests passing, deviations from spec, surfaced requirements, upstream fixes, lessons learned.</li>
+</ul>
+
+<p>
+  When a new session starts, the build phase reads the handover directory, cross-references against the implementation guide&rsquo;s dependency matrix, and knows exactly which chunks are done, which are in progress, and which are blocked. No context from prior sessions is needed. The handovers <em>are</em> the context.
+</p>
+
+<p>
+  This also enables parallel dispatch. When the dependency matrix shows chunks with no mutual dependencies, they can be built simultaneously in isolated git worktrees, each with its own prompt and handover. The parallelism is safe because each chunk&rsquo;s inputs and outputs are fully specified in its artefacts.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="walking-skeleton">6. Boundaries Before Features &mdash; The Walking Skeleton</h2>
+
+<p>
+  The walking-skeleton pattern is not new &mdash; Alistair Cockburn introduced it in <em>Crystal Clear</em>, and Freeman &amp; Pryce made it the spine of <em>Growing Object-Oriented Software, Guided by Tests</em>. ATDD-style frameworks have converged on similar discipline: build the skeleton, then write the first acceptance test against it, then start the TDD cycle. The pattern addresses a discipline that AI-assisted development still routinely ignores: build features against mocks, discover at integration time that the real boundaries don&rsquo;t behave like the mocks said, and unwind weeks of feature work that was correct against a fiction.
+</p>
+
+<p>
+  GVM&rsquo;s contribution is not the skeleton; it is the registry-backed gate. <code>/gvm-walking-skeleton</code> wires a thin end-to-end execution thread through every external integration boundary &mdash; HTTP APIs, databases, cloud SDKs, file systems, subprocess calls, email &mdash; and produces <code>boundaries.md</code>: a registry that names every boundary, its real-vs-sandbox status, and any divergence between the sandbox and production. Downstream phases gate against this registry mechanically. <code>/gvm-build</code>&rsquo;s WS-5 rule refuses chunks if the skeleton is red in CI &mdash; the rule reasons that you cannot reliably build features on a foundation that doesn&rsquo;t connect. <code>/gvm-test</code>&rsquo;s VV-4(d) audits the sandbox-divergence notes when verifying the build, so a feature that worked in sandbox but failed in production has a recorded reason rather than a mystery. The skeleton is shared ground; the gates that consume its output are the structural addition.
+</p>
+
+<span class="sidenote">
+  The skeleton is not a prototype to be discarded. It is the spine the features attach to. Every feature chunk imports the skeleton&rsquo;s real boundary clients and exercises them through the same path the production code will. The mocks that remain in the test suite are budgeted &mdash; see <a href="#outside-in-build">&sect;7</a> below.
+</span>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="outside-in-build">7. Outside-In Build Discipline &mdash; Tests, Mocks, Fixtures, and the Smoke Gate</h2>
+
+<p>
+  A chunk can ship with passing unit tests and broken end-to-end behaviour. This was the most common failure mode observed across the early production builds &mdash; multiple chunks shipped green at the unit level while their integration into the running product was silently broken. Unit tests verify each layer in isolation; they do not verify the wiring between layers. Tracer-bullet chunks built in early phases looked correct against their own tests but were never imported by the later consumer chunk that was supposed to use them. By the time the verification phase ran, the wiring gap had compounded across multiple phases.
+</p>
+
+<p>
+  Outside-in test ordering is not GVM&rsquo;s contribution. ATDD frameworks have long used the same ordering &mdash; outer loop is a failing acceptance test from the user&rsquo;s perspective, inner loop is the TDD cycle that drives implementation (Adzic, <em>Specification by Example</em>, 2011; the broader BDD lineage from North onward). The structural addition GVM brings is four rules that sit beneath the outer-loop acceptance test, each closing a specific defect class observed when outside-in alone proved insufficient:
+</p>
+
+<p>
+  <strong>TDD-1 (outside-in ordering).</strong> Shared ground with the broader ATDD tradition: the acceptance test is the first deliverable for chunks with a user-facing surface, written before any unit test. The chunk transitions Red &rarr; Green on the acceptance test; both transitions are recorded in the handover. Pure-internal-helper chunks may exempt themselves with a documented rationale; an exemption with no rationale is treated as no exemption (Fagan: silent skips are not skips). Grounded in Freeman &amp; Pryce&rsquo;s outside-in discipline and Beck&rsquo;s TDD cycle from <em>Test-Driven Development: By Example</em> (the Red&rarr;Green&rarr;Refactor slogan is the XP community formulation of Beck&rsquo;s cycle).
+</p>
+
+<p>
+  <strong>TDD-2 (mock budget at the external boundary).</strong> Each test mocks at most one collaborator, and only when that collaborator sits at the network or process edge. Mocking an internal class is a defect: the seam the mock pretends to verify is the seam the test is silently bypassing (Metz, <em>POODR</em> Ch. 9 &mdash; prefer real objects for code you own; the protocol-drift defect class follows from Freeman &amp; Pryce&rsquo;s GOOS critique of internal mocking). The methodology names a defined set of external-boundary categories (HTTP clients, sockets, file systems, subprocess, OS environment and signals, paths, plus database and cloud SDKs) plus a third-party-SDK rule. Severity escalates from Important to Critical when the mock target appears in a project-level <code>.cross-chunk-seams</code> allowlist &mdash; these are the cross-chunk protocols whose drift would break production wiring. The rule is enforced at runtime in Python, TypeScript (vitest, jest, testdouble, sinon), and Go (testify, gomock, and <code>*Mock|*Fake|*Stub|*Spy</code> struct types) by the EBT contract lint that runs in <code>/gvm-code-review</code> Panel B.
+</p>
+
+<p>
+  <strong>TDD-3 (realistic-fixture catalogue).</strong> Synthetic happy-path fixtures encode the engineer&rsquo;s mental model; realistic fixtures expose the gap between the model and the world (Bach &amp; Bolton, <em>Rapid Software Testing</em>). Six known-edge-shape domains are catalogued (data-analysis, web/UI, API, parsing, security validation, concurrency) with starter fixture shapes per domain &mdash; short categorical codes, malformed inputs, percent-encoding edges, identical baseline-vs-actual datasets. <code>/gvm-code-review</code> Panel C emits an Important finding when a chunk in one of the three highest-ROI domains (data-analysis, parsing, security validation) ships with synthetic fixtures only; chunks can claim exemption with a documented rationale.
+</p>
+
+<p>
+  <strong>Hard Gate 8 (chunk-acceptance smoke).</strong> After the chunk&rsquo;s tests pass and the wiring audits run, but before the handover is written, the chunk runs a smoke command that exercises its user-facing surface end-to-end and asserts structural contracts on the output (required HTML elements, required JSON keys, non-empty headlines, no placeholder substrings). Non-zero exit code blocks the handover &mdash; the chunk is incomplete until the smoke is green. Chunks authored before the rule&rsquo;s release date are exempt as carry-over per NFR-1, so existing work continues to ship without retroactive enforcement.
+</p>
+
+<p>
+  Two further audits sit beside the four rules. The <strong>wiring matrix</strong> (a four-column table in the implementation guide: entry point, consumed modules, wiring chunk, demanded by) is the audit trail proving every built module has a path to the running product and a consumer that demanded it. The matrix refuses the implementation-guide write if any cell is empty. <code>/gvm-build</code> Hard Gate 7 mechanically greps every entry point for the modules the matrix says it consumes; the inverse audit catches the dual failure mode (a module built but never written into the matrix). The grounding is Feathers&rsquo; consumer-side seam discipline from <em>Working Effectively with Legacy Code</em>: a producer that no consumer demanded is dead code regardless of how green its tests are.
+</p>
+
+<p>
+  <strong>MVP-1 (Minimum Viable Product first ordering).</strong> Vertical slicing (Cohn, <em>User Stories Applied</em>; Patton, <em>User Story Mapping</em>) applies <em>within</em> chunks: TDD-1 makes the acceptance test the first deliverable. MVP-1 applies <em>across</em> chunks. The first user-facing chunk in the implementation guide must constitute the smallest end-to-end shippable slice, exercising one user-visible behaviour through every layer it touches against the walking skeleton&rsquo;s wired boundaries. A guide whose first user-facing chunk is a layer fragment (data model only, API endpoint with no caller, UI shell with no backing data) is refused at impl-guide write time by <code>/gvm-tech-spec</code> Phase 5 and again at <code>/gvm-build</code> read time by Hard Gate 9. The two gates compose: the impl guide must satisfy both.
+</p>
+
+<p>
+  Four named project shapes claim exemption with the in-guide marker <em>MVP-1 exempted: &lt;category&gt; &mdash; rationale: &lt;why&gt;</em>: <em>library</em> (no user-facing surface), <em>refactor</em> (stable interface, implementation-only), <em>performance-driven</em> (the architectural constraint is the product; the first slice must exercise it), and <em>fully-specified</em> (regulatory rebuild where user feedback adds no information).
+</p>
+
+<p>
+  The defect class addressed is layer-first ordering that defers user-visible feedback to integration time. A build that ships green tests across every layer can still discover at integration that the layers do not compose into the product the user wanted. A non-gated companion paragraph in the skill prose directs practitioners to optimise chunk <em>sequencing</em> for the earliest runnable MVP. Position is not gated because that would force exemption inflation on legitimate infrastructure-first cases (data migration, auth bootstrapping, regulatory setup).
+</p>
+
+<p>
+  <strong>Horizontal architecture, vertical sequence.</strong> MVP-1 governs the delivery sequence; the cross-cutting spec and architecture overview from <code>/gvm-tech-spec</code> govern the patterns every slice is built against; code review enforces both. Slice 5 uses the same data-access conventions, error-handling approach, logging discipline, and naming rules as slice 1 &mdash; conceptual integrity (Brooks, <em>The Mythical Man-Month</em>, 1975). The first slice exercises one user behaviour through the architecture the spec already defined; subsequent slices inherit those patterns rather than reinvent them. A reader who interprets &ldquo;vertical slice first&rdquo; as licence to invent slice-local architecture is misreading the rule. If slice N&rsquo;s data-access pattern diverges from slice 1&rsquo;s, the divergence is a code-review finding regardless of whether each slice individually shipped a green smoke gate.
+</p>
+
+<span class="sidenote">
+  Each rule cites a defect class observed in production: TDD-1 closes unit-test-green / system-broken; TDD-2 closes internal-mock protocol drift; TDD-3 closes synthetic-fixture-only verification (a real defect: a privacy scan tripped on real-world short categorical codes that synthetic fixtures didn&rsquo;t exercise); Hard Gate 8 closes the chunk-completion smoke gap; the wiring matrix closes the tracer-bullet engine boundary; MVP-1 closes layer-first phase ordering that defers user-visible feedback to integration time. Without the defect class, no rule. The audit trail is in <code>methodology-changelog.md</code> &mdash; see <a href="#methodology-audit">&sect;12</a>.
+</span>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="existing-codebases">8. Most AI Methodologies Assume Greenfield &mdash; GVM Routes Existing Codebases</h2>
+
+<p>
+  Most AI development methodologies assume greenfield. You write a spec. You generate code. There is no existing codebase to contend with.
+</p>
+
+<p>
+  Most software work is not greenfield. It is maintenance, extension, migration, and renovation. GVM&rsquo;s site survey phase addresses this directly: before any pipeline work begins on an existing codebase, the AI explores the architecture, identifies patterns and conventions in use, diagnoses the structural state, and recommends where to enter the pipeline.
+</p>
+
+<p>
+  The site survey produces a health assessment across multiple dimensions (architecture, test coverage, documentation, dependency management) and routes the user to the appropriate starting point. A well-structured codebase with missing documentation enters at doc-review. A codebase with no tests enters at test-cases. A codebase that needs new features enters at requirements. The entry point is determined by diagnosis, not assumption.
+</p>
+
+<span class="sidenote">
+  The construction industry equivalent: you survey a site before renovation. You don&rsquo;t start knocking down walls until you know what&rsquo;s load-bearing.
+</span>
+
+<p>
+  This matters because the majority of developers adopting AI tools are working in existing codebases. A methodology that only handles greenfield is a methodology that only handles the minority case.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="comparison">Comparison</h2>
+
+<table>
+  <caption>Structural capabilities across AI development methodologies (March 2026)</caption>
+  <thead>
+    <tr><th>Capability</th><th>Vibe Coding</th><th>SDD / Spec Kit</th><th>BMAD</th><th>GVM Pipeline</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Structured spec before code</td><td>&mdash;</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>Test cases before spec</td><td>&mdash;</td><td>&mdash;</td><td>ATDD (before code, after arch)</td><td>Before spec (earlier gate)</td></tr>
+    <tr><td>Structured review with rubrics</td><td>&mdash;</td><td>Parallel review patterns emerging</td><td>Quality gates between phases</td><td>Analytic rubrics, parallel defect-class panels with capture-recapture</td></tr>
+    <tr><td>Review calibration across rounds</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Yes (calibration.md)</td></tr>
+    <tr><td>Blind review to correct calibration bias</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Automatic from round 3 (dual review + reconciliation)</td></tr>
+    <tr><td>Change management (2nd pass)</td><td>Manual</td><td>Manual</td><td>Course-correction workflow</td><td>Three modes + staleness detection</td></tr>
+    <tr><td>Session resilience</td><td>&mdash;</td><td>&mdash;</td><td>Detailed stories</td><td>Per-chunk prompts + handovers</td></tr>
+    <tr><td>Parallel chunk dispatch</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Dependency-aware worktrees</td></tr>
+    <tr><td>Existing codebase support</td><td>Ad hoc</td><td>&mdash;</td><td>Brownfield workflows</td><td>Site survey + diagnostic routing</td></tr>
+    <tr><td>Document + code review</td><td>&mdash;</td><td>&mdash;</td><td>Document review across PRD/architecture artefacts</td><td>Both as pipeline phases</td></tr>
+    <tr><td>Project intake governance</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Optional Application Brief (Rumelt, Osterwalder) &mdash; structured justification before pipeline work begins</td></tr>
+    <tr><td>Design validation before build</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Four parallel panels: data model, UI/UX, API contracts, performance</td></tr>
+    <tr><td>Construction/review grounding separation</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Framework docs for construction, expert principles for review</td></tr>
+    <tr><td>Review findings feed back to build</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Build check promotion (recurring findings &rarr; construction checks)</td></tr>
+    <tr><td>Release quality gate</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Verdict aggregation, documentation accuracy check, version and tag</td></tr>
+    <tr><td>Impact map upstream of requirements</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Goals &rarr; Actors &rarr; Impacts &rarr; Deliverables (Adzic); IM-4 trace gate refuses untraceable requirements</td></tr>
+    <tr><td>Walking skeleton before features</td><td>&mdash;</td><td>&mdash;</td><td>Walking-skeleton support in ATDD workflow</td><td>Real boundary calls + <code>boundaries.md</code> registry; downstream phases mechanically refuse chunks against a red skeleton</td></tr>
+    <tr><td>Outside-in test ordering</td><td>&mdash;</td><td>ATDD before code</td><td>ATDD outer loop / inner TDD loop</td><td>TDD-1: shared ground with ATDD frameworks; Red&rarr;Green recorded in handover</td></tr>
+    <tr><td>Mock budget at the boundary</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>TDD-2: one mock per test, only at network/process edge; runtime-enforced in Python, TS, Go</td></tr>
+    <tr><td>Realistic-fixture mandate</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>TDD-3: six-domain catalogue; review emits Important when synthetic-only fixtures ship</td></tr>
+    <tr><td>Wiring-matrix audit</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Every built module names its consumer; phase completion mechanically greps the wiring</td></tr>
+    <tr><td>Chunk-acceptance smoke gate</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Hard Gate 8: per-chunk end-to-end smoke + structural contracts before handover</td></tr>
+    <tr><td>MVP-first phase ordering</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>MVP-1: first user-facing chunk must be end-to-end; gated at write and read time</td></tr>
+    <tr><td>Exploratory testing as a phase</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Charter-driven, time-boxed, practitioner-classified severity, feeds the verification verdict</td></tr>
+    <tr><td>User-owned finding triage</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Shared rule 28: panels emit, practitioner decides; forbidden patterns pinned by structural tests</td></tr>
+    <tr><td>Methodology audit trail</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Every behaviour-changing rule cites a defect class + validation method (NFR-3 changelog)</td></tr>
+    <tr><td>Bounded methodology growth</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Diff-budget delta per chunk; cumulative-LOC prompt at 500 lines (NFR-2)</td></tr>
+    <tr><td>Carry-over exemption for new gates</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Distributed self-versioning: pre-release chunks exempt by mtime (NFR-1)</td></tr>
+    <tr><td>Cost-optimised model selection</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Opus for reasoning, Sonnet for guided work, Haiku for HTML rendering (shared rule 22)</td></tr>
+  </tbody>
+</table>
+
+<p>
+  The comparison is not about which methodology is &ldquo;better&rdquo; in aggregate. SDD and BMAD are good at what they do &mdash; BMAD in particular has made significant progress on brownfield support, test-driven workflows, and change management. The comparison is about degree: where GVM&rsquo;s pipeline takes a structural capability further (test-first at the requirements stage, calibrated review that improves across rounds, three distinct change modes with automated staleness detection) and where it addresses problems others have not yet attempted (review calibration, per-chunk session resilience with dependency-aware parallelism, design validation against requirements with explicit API boundary contract and performance checking before any build work begins).
+</p>
+
+<p>
+  The breadth of review coverage is worth noting explicitly. Across the full lifecycle, GVM reviews work from four distinct angles: document quality (requirements, test cases, specs, user documentation), design correctness (data model, UI/UX, API contracts, performance), code quality (references, contracts, logic, naming panels in parallel), and product verification (integration, smoke tests, stub audit). Each uses the same progressive calibration system. Most other methodologies have a single review mechanism &mdash; typically a linter or a PR comment. GVM has four, and they all get better over time.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="the-cost">The Cost</h2>
+
+<p>
+  The pipeline looks expensive at first glance. Phases in sequence, paired artefacts, multi-panel review running in parallel and sometimes across multiple rounds with dual review, structural tests pinning the methodology&rsquo;s own prose, an audit trail for every rule. For a script or a prototype, none of this is warranted &mdash; vibe coding ships a script faster than the pipeline can write the impact map.
+</p>
+
+<p>
+  For a serious or complex system, the calculus inverts. Defects caught in requirements cost less than defects caught in design, which cost less than defects caught in code, which cost less than defects caught in test, which cost less than defects caught in production (Boehm, <em>Software Engineering Economics</em>, 1981). The structural decisions described above push detection toward the cheap end of the curve. Test cases that surface untestable requirements cost less than the rounds of vibe-coded debugging they replace. Walking-skeleton boundary checks cost less than the integration failures they pre-empt. The chunk-acceptance smoke costs less than the post-merge bug hunt it replaces. The pipeline trades small, predictable upfront work for large, unpredictable downstream work.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="construction-review">9. The Pipeline Separates Construction from Review</h2>
+
+<p>
+  The pipeline runs construction and review as distinct phases with their own prompts, their own grounding choices, and their own success criteria. The separation makes the right type of grounding available to the right phase, because <strong>construction and review respond to different types of knowledge.</strong>
+</p>
+
+<p>
+  Expert grounding focuses the AI and raises baseline quality. It does not guarantee a correct build. Grounding raises the baseline; structure catches what the baseline still misses.
+</p>
+
+<span class="sidenote">
+  The PRISM study (Hu, Rostami &amp; Thomason, USC, March 2026) provides a possible mechanism from the research side &mdash; expert personas improve LLM alignment on generative tasks but reduce factual accuracy on knowledge-dependent tasks. The companion paper, <em>The Grounded Vibe Methodology</em>, examines the grounding mechanism in full.
+</span>
+
+<p>
+  Expert works are declarative &mdash; they teach what good code looks like. API documentation is procedural &mdash; it specifies exact method signatures and framework semantics. Construction needs procedural grounding (how to use this specific framework correctly) more than declarative grounding (whether the result meets quality criteria). Review needs the opposite. A methodology that blends writing and reviewing in a single pass cannot apply different grounding to each.
+</p>
+
+<p>
+  A related structural addition: <strong>recurring review findings feed back into construction as build checks.</strong> When the same issue is flagged in three or more consecutive review rounds, it is promoted to a concrete instruction loaded during build prompt generation. The construction phase learns from the review phase&rsquo;s history. This feedback path exists because the pipeline separates the two phases with a structured interface between them: the calibration file (introduced in <a href="#progressive-calibration">&sect;3</a>) accumulates recurring findings, and the build checks file carries them forward into construction prompts. An integrated write-and-review loop has no interface to carry this feedback.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="exploratory-testing">10. Exploratory Testing Has a Phase</h2>
+
+<p>
+  Scripted tests verify what someone thought to write down. Real software fails along paths nobody thought to write down. Exploratory testing is the discipline of looking for those paths &mdash; structured, time-boxed, practitioner-driven, and historically left out of every AI development methodology because its output is not a green check.
+</p>
+
+<p>
+  GVM&rsquo;s <code>/gvm-explore-test</code> phase gives exploratory testing the same structural status as scripted verification. The practitioner writes a YAML charter (mission, tour, scope, duration) and the skill runs the timer. Defects are captured through structured prompts &mdash; severity in the practitioner&rsquo;s words, Given/When/Then in the practitioner&rsquo;s framing, reproduction steps the practitioner verifies. The skill does not auto-classify severity; that is a judgment the practitioner makes about the risk of the defect in their context. The output is a paired session report (<code>test/explore-NNN.md</code> + <code>.html</code>) that <code>/gvm-test</code> reads via VV-4(d) when computing the verification verdict.
+</p>
+
+<p>
+  The structural choice is to treat exploratory testing as a first-class pipeline phase rather than as &ldquo;unstructured QA we should probably do.&rdquo; The charter format is from Bach &amp; Bolton&rsquo;s <em>Rapid Software Testing</em>; the time-box discipline is from session-based test management. What GVM adds is the data flow: the charter feeds the session, the session produces a report, the report flows into the verification verdict, and the verdict gates the release. Exploratory testing without that data flow is advisory; with it, it is enforced.
+</p>
+
+<span class="sidenote">
+  Severity is the practitioner&rsquo;s call. The methodology does not let the skill decide whether a defect is Critical or Minor &mdash; that classification depends on context the practitioner has and the model does not (regulatory exposure, customer impact, the cost of the workaround). The skill records what the practitioner said.
+</span>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="release-quality-gate">11. The Release Is a Quality Gate, Not a Calendar Event</h2>
+
+<p>
+  Most AI development workflows end at &ldquo;the code works.&rdquo; Releasing is a manual step: bump a version, write some notes, push a tag. Whether the documentation matches the build, whether review findings were addressed, whether the tests actually passed &mdash; these are left to the developer to verify.
+</p>
+
+<p>
+  GVM&rsquo;s release phase (<code>/gvm-deploy</code>) is a structured quality gate that aggregates the pipeline&rsquo;s own output before allowing a release. It reads every review verdict produced during the pipeline run. If any review &mdash; code review, document review, design review &mdash; produced a &ldquo;not ready&rdquo; verdict, the release is blocked. Caveats are surfaced for the practitioner&rsquo;s decision. No silent releases.
+</p>
+
+<p>
+  The release phase also checks documentation accuracy against the current build &mdash; not the planned build, not the build from two rounds ago, the current one. If the README describes a feature that was descoped, or if setup instructions reference a dependency that was removed, the release is blocked until the documentation is corrected. Stale documentation is treated as a release defect, not an acceptable gap.
+</p>
+
+<span class="sidenote">
+  This is a structural decision, not a quality preference. The pipeline produces verdicts; the release phase consumes them. The data flow is what prevents the bypass &mdash; a practitioner cannot tag a release without the pipeline having produced the evidence.
+</span>
+
+<p>
+  The skill does not deploy anything. Deployment mechanisms &mdash; CI/CD pipelines, container orchestration, cloud providers &mdash; are organisation-specific and outside the pipeline&rsquo;s scope. The release phase produces a tagged, documented commit with accurate release notes and a changelog. What happens after the tag is pushed is not the methodology&rsquo;s concern.
+</p>
+
+<p>
+  This matters because the final step of a process defines whether the preceding steps were enforced or advisory. If any developer can tag a release without checking verdicts, the review phases are advisory. If the release phase structurally requires verdict data, the review phases are enforced. The release gate closes the loop.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="methodology-audit">12. The Methodology Has an Audit Trail on Itself</h2>
+
+<p>
+  A methodology that adds rules without recording why ends up bloated, ungrounded, or both. Practitioners cannot tell why a particular rule exists, whether it is still earning its keep, or whether the rule was added in response to evidence or in response to a single bad day. After enough rounds of growth, the rules become tradition rather than discipline.
+</p>
+
+<p>
+  GVM treats its own evolution as a defect class to address. Three structural pieces sit alongside each other:
+</p>
+
+<p>
+  <strong>NFR-3 &mdash; the methodology changelog.</strong> Every behaviour-changing rule lives in <code>methodology-changelog.md</code> with a mandatory rule reference, the defect class addressed, and the validation method (typically a structural test that pins the rule&rsquo;s prose so it cannot be paraphrased away). The inclusion heuristic is concrete: &ldquo;if a chunk that was acceptable yesterday would be refused today (or vice versa), it is a changelog entry.&rdquo; Typo and formatting edits do not qualify; behaviour changes do. <code>/gvm-status</code> reads the most recent dated entry and surfaces it in a Methodology section so practitioners see, on every status check, what last changed and why.
+</p>
+
+<p>
+  <strong>NFR-2 &mdash; diff-budget tracking.</strong> Each chunk handover records a <code>Diff budget delta</code> integer. The build summary aggregates per-chunk values into a cumulative running total; when methodology additions cross 500 lines, the user is prompted to consider whether the rule set is bloating. This is surface-and-track, not a refusal gate &mdash; the bound is a conversation, not a wall &mdash; but it makes growth visible at the time it happens rather than discoverable by complaint after the fact.
+</p>
+
+<p>
+  <strong>NFR-1 &mdash; carry-over exemption.</strong> When a new gate is introduced, it applies to chunks authored on or after the gate&rsquo;s release date and exempts everything authored earlier as &ldquo;carry-over.&rdquo; The release date is a literal constant in the relevant SKILL.md; the exemption is an mtime comparison on the chunk&rsquo;s prompt file. This is the rule that lets the methodology evolve without retroactively breaking projects mid-flight. Distributed self-versioning &mdash; each major rule release adds its own <code>_V{MAJOR}_{MINOR}_{PATCH}_RELEASE_DATE</code> constant co-located with the gates that read it &mdash; means there is no central install-version file to fall behind.
+</p>
+
+<p>
+  A fourth structural piece (codified as shared rule 22) sits in the same family: <strong>cost-optimised model selection.</strong> Different pipeline steps need different models. Architectural reasoning, requirements elicitation, and document review need the deep reasoning of the primary model. Code generation, structured extraction, and panel-level finding emission are guided work that runs well on Sonnet. HTML rendering is template-filling that runs well on Haiku. The pipeline picks the right model for each step rather than running everything on the most expensive option. This is structural because it forms part of the contract between the skill and the runtime &mdash; the skill names the model, the runtime obliges &mdash; not a per-invocation guess.
+</p>
+
+<span class="sidenote">
+  The audit trail and the model-selection rule have the same root: the methodology is not a manifesto. It is a working system, and working systems need accountability for their growth, their cost, and their mistakes. The changelog records the why; the diff budget records the cost; the carry-over rule preserves continuity; the model selection records the trade-off. None of these are visible in the pipeline output, but all of them are visible to the practitioner who wants to ask, &ldquo;why is this rule here?&rdquo;
+</span>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="when-overkill">When the Pipeline Is Overkill</h2>
+
+<p>
+  The pipeline has a domain of fit. Inside it &mdash; serious or complex systems with real failure cost &mdash; the discipline pays for itself many times over (see <a href="#the-cost">The Cost</a>). Outside it, the overhead exceeds what the work warrants.
+</p>
+
+<p>
+  A throwaway script doesn&rsquo;t earn an impact map. A 50-line spike to test a hypothesis doesn&rsquo;t need a wiring matrix or a chunk-acceptance smoke. A narrow refactor with no user-facing change doesn&rsquo;t need an outside-in acceptance test. The pipeline would work in all these cases &mdash; nothing about the discipline prevents it from building the application. But the trade it offers &mdash; small, predictable upfront cost against large, unpredictable downstream cost &mdash; only pays off when the downstream cost is actually large. For work where downstream cost is bounded, the trade is the wrong way around.
+</p>
+
+<p>
+  The pipeline executes discipline. It does not choose when to apply itself. The user judges where the line falls between work that warrants the structure and work that doesn&rsquo;t; the pipeline runs whatever discipline that judgment selects. A practitioner who runs the full pipeline on every script wastes effort. A practitioner who skips it on a serious system takes on risk it was designed to reduce. Fit and judgment are upstream of every gate &mdash; structurally, the pipeline cannot correct for them.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="records-for-the-future">Records for the Future</h2>
+
+<p>
+  Where the pipeline runs, it produces software and a structured artefact trail as a side effect: requirements with priorities and rationales, test cases traceable to those requirements, technical specifications with named architecture decisions, calibrated review reports and the calibration history they feed, per-chunk handovers naming what was built and what deviated, exploratory testing session reports, and a methodology changelog explaining why each rule exists.
+</p>
+
+<p>
+  The most concrete use is maintenance and extension. An engineer adding a feature six months later wants to know why the existing data model has the shape it has, why the auth flow takes the path it does, why a particular library was chosen. A pipelined project has those answers in the requirements, the relevant ADR, and the handover that built the affected code. A vibe-coded project answers the same questions by guessing, asking, or reading the code and inferring intent. The pipeline&rsquo;s artefacts reduce the cost of maintenance &mdash; and the longer the gap between original build and maintenance task, the more they pay back.
+</p>
+
+<p>
+  The same trail serves other readers when needed. An auditor reconstructing a trade-off finds it in an ADR with date and alternatives considered. A postmortem after an outage finds the calibration history of what was reviewed and what was missed. A successor maintainer inherits the project&rsquo;s record of its own thinking, not just the code.
+</p>
+
+<p>
+  These artefacts cost less to produce as a pipeline side effect than to reconstruct after the fact. The trail is also the only structural answer to <em>&ldquo;did the discipline actually happen on this project?&rdquo;</em> &mdash; the artefacts are the evidence that the methodology ran.
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="why-structure-matters">Why Structure Matters as Much as Staffing</h2>
+
+<p>
+  GVM&rsquo;s other contribution &mdash; citation-based expert activation &mdash; makes the pipeline produce higher-quality output by staffing each phase with named authorities. That mechanism is real and experimentally supported for evaluative and structural tasks. But it is not what makes the pipeline structurally different. And as <a href="#construction-review">&sect;9</a> describes, the relationship between grounding and pipeline phase is nuanced &mdash; grounding focuses the AI but does not guarantee correctness, and the pipeline&rsquo;s phase separation is what makes it possible to apply the right type of grounding at the right time.
+</p>
+
+<p>
+  Strip out the expert grounding entirely. Replace every named expert with a generic instruction. The pipeline still catches early (impact mapping before requirements, test cases before specs, walking-skeleton boundaries before features), still calibrates across rounds and corrects for its own bias, still separates construction from review so the right type of grounding reaches the right phase, and still gates the release on the pipeline&rsquo;s own verdict data. The body of this paper describes the full set; the point here is that none of it requires named experts to function.
+</p>
+
+<p>
+  Expert grounding makes the output better &mdash; demonstrably for review and design, and with undemonstrated effect for construction. The pipeline structure makes the process reliable and makes the grounding applicable where it works. Both matter. Together they are more than either alone &mdash; but the structure enables the grounding, not the other way around.
+</p>
+
+<div class="callout">
+  <div class="callout-label">The claim</div>
+  <p>The GVM pipeline&rsquo;s structural decisions &mdash; impact mapping before requirements, test-first ordering, calibrated review with user-owned triage, three-mode change management, per-chunk session resilience, the walking skeleton, outside-in build discipline (TDD-1/2/3, the chunk-acceptance smoke gate, the wiring-matrix audit, and MVP-first phase ordering), existing-codebase routing, the separation of construction from review, exploratory testing as a phase, a release quality gate that enforces the pipeline&rsquo;s own verdicts, and an audit trail on the methodology itself &mdash; address failure modes that the spec, the tests, and the code cannot catch on their own. These decisions function independently of expert grounding and represent a distinct contribution alongside it. Well-engineered software needs an end-to-end pipeline.</p>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="deployment">Deployment Topology &mdash; Single User to Organisation</h2>
+
+<p>
+  The pipeline&rsquo;s data model &mdash; artefacts, calibration, build checks, expert activations &mdash; implies a deployment question that the methodology itself does not resolve: where does the data live, and who can see it?
+</p>
+
+<p>
+  Three tiers, each with different sharing boundaries:
+</p>
+
+<table>
+  <caption>Deployment tiers</caption>
+  <thead>
+    <tr><th>Tier</th><th>Scope</th><th>Storage</th><th>Shared Via</th><th>Example Data</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Project</strong></td><td>One codebase, one team</td><td>Files in the repo</td><td>Git</td><td>Calibration scores, build checks, handovers, specs, review reports</td></tr>
+    <tr><td><strong>Organisation</strong></td><td>All projects, all teams</td><td>Central database or shared service</td><td>API / shared filesystem</td><td>Cross-project build check patterns, org-wide expert activation data, validated stack/domain patterns</td></tr>
+    <tr><td><strong>Plugin</strong></td><td>All users of the methodology</td><td>Expert reference files shipped with the plugin</td><td>Plugin updates</td><td>Canonical expert scores, scoring methodology, shared rules</td></tr>
+  </tbody>
+</table>
+
+<p>
+  <strong>For a single developer,</strong> only the project tier matters. Calibration, build checks, and handovers live in the repo. Expert reference files live in the plugin install path. The local home directory (<code>~/.claude/gvm/</code>) holds activation logs and discovered experts. This is the current implementation.
+</p>
+
+<p>
+  <strong>For a team on one project,</strong> the project tier still works. Build checks in <code>reviews/build-checks.md</code> are committed to the repo and shared via git. Every team member&rsquo;s GVM instance reads the same checks. Calibration accumulates across review rounds regardless of who runs the review. No infrastructure change is needed.
+</p>
+
+<p>
+  <strong>For an organisation with multiple teams and projects,</strong> the optional Application Brief becomes more important. AI makes it cheap to start projects &mdash; the barrier drops from months of planning to a weekend with an AI agent. The cost of creating is now lower than the cost of evaluating whether something should exist. The brief inverts this: cheap to write, cheap to review, but gates the expensive downstream pipeline work. Organisations that mandate the brief for all projects get a portfolio-level view of what is being proposed before resources are committed.
+</p>
+
+<p>
+  A second gap also emerges at the org level. Build checks are project-local. A pattern that surfaces in three projects &mdash; &ldquo;async error boundaries missing in React/TypeScript codebases&rdquo; &mdash; is discovered independently by each team, promoted independently in each project, and never shared across projects. The same defect class is found and fixed three times instead of once.
+</p>
+
+<p>
+  The organisation tier addresses this with a central store that aggregates build check patterns across projects. The architecture decisions an org deployer would face:
+</p>
+
+<ul>
+  <li><strong>Promotion threshold:</strong> a pattern becomes org-level when it appears in 5+ projects with matching stack or domain tags. This is deliberately conservative &mdash; org-level patterns are loaded into every matching project&rsquo;s build prompts, consuming context and adding review criteria. Too many patterns degrade the signal-to-noise ratio. Five independent occurrences across different projects and teams is a strong signal that the pattern is systemic, not coincidental.</li>
+  <li><strong>Filtering by relevance:</strong> org-level patterns carry stack tags (React, Python, Django) and domain tags (fintech, healthcare). A project only loads patterns that match its own stack and domain. A financial services team is not forced to apply patterns from a mobile gaming project.</li>
+  <li><strong>Team override:</strong> teams can reject org-level patterns that don&rsquo;t apply to their specific project. The central store records the rejection with rationale &mdash; this feedback improves pattern quality over time.</li>
+  <li><strong>Graduation to plugin:</strong> when a pattern has been validated across enough projects and teams, it becomes a candidate for inclusion in the expert reference files as a permanent key principle. This is a curation decision, not an automatic promotion.</li>
+</ul>
+
+<p>
+  The methodology already defines the data model that the org tier would aggregate: build checks with IDs, root cause patterns, expert attribution, stack/domain tags, promotion criteria, and retirement rules. The deployment question is infrastructure &mdash; a database, an API, access controls &mdash; not methodology. But the methodology&rsquo;s data model was designed to support this aggregation, even though the current implementation does not require it.
+</p>
+
+<span class="sidenote">
+  The three-tier pattern mirrors how other engineering disciplines handle institutional knowledge: project-level lessons learned, organisation-level best practice libraries, and industry-level standards. The difference is that GVM&rsquo;s data model is machine-readable from the start &mdash; build checks are structured artefacts, not prose documents. An org-level aggregator can query, filter, and propagate them programmatically.
+</span>
+
+<hr/>
+
+<h2 id="landscape-sources">Landscape Sources</h2>
+
+<table>
+  <caption>Methodologies and tools referenced</caption>
+  <thead>
+    <tr><th>Methodology / Tool</th><th>Source</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Spec-Driven Development</td><td>Thoughtworks (Medium, 2025); GitHub Spec Kit (open source, 2025); Addy Osmani, &ldquo;How to Write a Good Spec for AI Agents&rdquo; (O&rsquo;Reilly, 2026)</td></tr>
+    <tr><td>AWS Kiro / AI-DLC</td><td>AWS DevOps Blog, &ldquo;AI-Driven Development Life Cycle&rdquo; (2025)</td></tr>
+    <tr><td>BMAD Method</td><td>bmad-code-org/BMAD-METHOD (GitHub, v6, 2026)</td></tr>
+    <tr><td>Vibe coding</td><td>Andrej Karpathy (X/Twitter, February 2025)</td></tr>
+    <tr><td>File-based handoff patterns</td><td>Red Hat Developer, &ldquo;Vibes, specs, skills, and agents: The four pillars of AI coding&rdquo; (March 2026)</td></tr>
+    <tr><td>PRISM (persona effects on LLM tasks)</td><td>Hu, Rostami &amp; Thomason, &ldquo;Expert Personas Improve LLM Alignment but Damage Accuracy: Bootstrapping Intent-Based Persona Routing with PRISM,&rdquo; USC (March 2026)</td></tr>
+  </tbody>
+</table>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="references">References</h2>
+
+<p>
+  Several authors named in the body of this paper are cited cross-cuttingly across the GVM whitepaper set &mdash; their full bibliographic entries live in <em>The Grounded Vibe Methodology</em>, References, and are not duplicated here. These include: Kent Beck, Frederick P. Brooks Jr., Karl Wiegers, Alistair Cockburn, Gojko Adzic, Marty Cagan, Richard Rumelt, Alexander Osterwalder, and James Bach &amp; Michael Bolton. Tools and methodology sources (Spec-Driven Development, Kiro, BMAD, vibe coding, Red Hat&rsquo;s four-pillars piece, and PRISM) are listed in <a href="#landscape-sources">Landscape Sources</a> above. The entries below are works this paper relies on directly that are not already covered in those two places.
+</p>
+
+<h3 id="ref-inspection-review">Inspection and review research</h3>
+
+<ul>
+  <li>Fagan, Michael E. &ldquo;Design and Code Inspections to Reduce Errors in Program Development.&rdquo; <em>IBM Systems Journal</em> 15:3 (1976): 182&ndash;211.</li>
+  <li>Gilb, Tom. <em>Competitive Engineering: A Handbook for Systems Engineering, Requirements Engineering, and Software Engineering Using Planguage.</em> Elsevier Butterworth-Heinemann, 2005.</li>
+  <li>Laitenberger, Oliver, Christian Atkinson, Maud Schlich, and Khaled El Emam. &ldquo;An Experimental Comparison of Reading Techniques for Defect Detection in UML Design Documents.&rdquo; <em>Journal of Systems and Software</em> 53:2 (2000): 183&ndash;204.</li>
+  <li>Wohlin, Claes, and Per Runeson. &ldquo;Defect Content Estimations from Review Data.&rdquo; <em>Proceedings of the 20th International Conference on Software Engineering (ICSE)</em>, IEEE, 1998: 400&ndash;409. (Capture-recapture estimation applied to software inspections.)</li>
+</ul>
+
+<h3 id="ref-software-practice">Software engineering practice</h3>
+
+<ul>
+  <li>Boehm, Barry W. <em>Software Engineering Economics.</em> Prentice Hall, 1981.</li>
+  <li>Cohn, Mike. <em>User Stories Applied: For Agile Software Development.</em> Addison-Wesley, 2004.</li>
+  <li>Feathers, Michael C. <em>Working Effectively with Legacy Code.</em> Prentice Hall, 2004.</li>
+  <li>Freeman, Steve, and Nat Pryce. <em>Growing Object-Oriented Software, Guided by Tests.</em> Addison-Wesley, 2009.</li>
+  <li>Metz, Sandi. <em>Practical Object-Oriented Design in Ruby: An Agile Primer.</em> Addison-Wesley, 2012. (Cited as <em>POODR</em>, Ch. 9.)</li>
+  <li>North, Dan. &ldquo;Introducing BDD.&rdquo; <em>Better Software</em> magazine, March 2006. (Foundational BDD essay; widely reprinted on dannorth.net.)</li>
+  <li>Patton, Jeff. <em>User Story Mapping: Discover the Whole Story, Build the Right Product.</em> O&rsquo;Reilly Media, 2014.</li>
+</ul>
+
+<h3 id="ref-statistics-measurement">Statistics and measurement</h3>
+
+<ul>
+  <li>Cronbach, Lee J. &ldquo;Coefficient Alpha and the Internal Structure of Tests.&rdquo; <em>Psychometrika</em> 16:3 (1951): 297&ndash;334.</li>
+  <li>Deming, W. Edwards. <em>Out of the Crisis.</em> MIT Center for Advanced Engineering Study, 1986. (Source for the measurement-system-bias argument cited in &sect;3.1.)</li>
+  <li>Green, David M., and John A. Swets. <em>Signal Detection Theory and Psychophysics.</em> Wiley, 1966. (Reprinted by Peninsula Publishing, 1988.)</li>
+</ul>
+
+<h3 id="ref-cognitive-psychology">Cognitive psychology</h3>
+
+<ul>
+  <li>Drew, Trafton, Melissa L.-H. V&otilde;, and Jeremy M. Wolfe. &ldquo;The Invisible Gorilla Strikes Again: Sustained Inattentional Blindness in Expert Observers.&rdquo; <em>Psychological Science</em> 24:9 (2013): 1848&ndash;1853. (Cited for satisfaction-of-search bias in &sect;2.)</li>
+  <li>Tversky, Amos, and Daniel Kahneman. &ldquo;Judgment under Uncertainty: Heuristics and Biases.&rdquo; <em>Science</em> 185:4157 (1974): 1124&ndash;1131.</li>
+</ul>
+
+<h3 id="ref-llm-research">LLM research</h3>
+
+<ul>
+  <li>Wang, Xuezhi, Jason Wei, Dale Schuurmans, Quoc Le, Ed H. Chi, Sharan Narang, Aakanksha Chowdhery, and Denny Zhou. &ldquo;Self-Consistency Improves Chain of Thought Reasoning in Language Models.&rdquo; <em>International Conference on Learning Representations (ICLR)</em>, 2023. arXiv:2203.11171.</li>
+</ul>
+
+<p class="gvm-attribution" style="font-size: 0.85rem; color: #888; font-style: italic; margin-top: 3rem;">Developed using the Grounded Vibe Methodology</p>
+
+</main>
+
+<script>
+(function () {
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('h2[id], h3[id]');
+  var links = [];
+
+  headings.forEach(function (h) {
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    var current = links[0];
+    for (var i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) {
+      current.el.classList.add('active');
+      var tocEl = document.getElementById('toc');
+      var elTop = current.el.offsetTop - tocEl.offsetTop;
+      var elBot = elTop + current.el.offsetHeight;
+      if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+        tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+      }
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

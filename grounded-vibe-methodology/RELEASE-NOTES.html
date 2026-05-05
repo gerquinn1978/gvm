@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GVM v2.2.0 Release Notes (cumulative since v1.0.0)</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+body { font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif; color: #111; background: #fffff8; line-height: 1.6; padding: 2rem 1rem 6rem; max-width: 980px; margin: 0 auto; }
+h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+h2 { font-size: 1.4rem; font-weight: 400; font-style: italic; margin: 3rem 0 1rem; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+h3 { font-size: 1.1rem; font-weight: 600; margin: 1.6rem 0 0.6rem; }
+p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.7rem; max-width: 800px; }
+ul { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+.subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; }
+.date { font-size: 0.9rem; color: #595959; }
+code { font-family: "Menlo", "Consolas", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+.tldr { background: #f0faf4; border-left: 3px solid #2c7a2c; padding: 1rem 1.2rem; margin: 1.5rem 0 2rem; max-width: 800px; }
+table { border-collapse: collapse; max-width: 800px; width: 100%; margin: 1rem 0 1.5rem; font-size: 0.92rem; }
+th, td { border: 1px solid #d4d4c8; padding: 0.4rem 0.7rem; text-align: left; vertical-align: top; }
+th { background: #f4f4ec; font-weight: 600; }
+.skill-card { background: #faf8f0; border-left: 3px solid #88712a; padding: 0.9rem 1.1rem; margin: 0.8rem 0; max-width: 800px; }
+.skill-card h3 { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<p class="date">2026-04-30</p>
+<h1>GVM v2.2.0</h1>
+<p class="subtitle">What's changed in the plugin since v1.0.0 — four new skills, methodology hardening, and a finished mock-budget runtime across Python, TypeScript, and Go.</p>
+
+<div class="tldr">
+<p>Cumulative release notes covering v2.0.0 → v2.2.0. If you're upgrading from v1.0.0, this is everything you'll see different. If you're already on a v2.x release, the v2.2.0 delta is at the bottom under <em>v2.2.0 — the point release</em>.</p>
+</div>
+
+<h2>Four new skills</h2>
+
+<p>Four skills exist on the v2.x track that did not exist at v1.0.0. Each one is invoked by its slash command.</p>
+
+<div class="skill-card">
+<h3>/gvm-impact-map</h3>
+<p>A discovery skill that asks the right questions before requirements gathering: <em>what change in the world are we trying to cause, and who needs to do something differently for that change to happen?</em> Produces an <code>impact-map.md</code> with four linked tables — Goals, Actors, Impacts, Deliverables. Downstream <code>/gvm-requirements</code> refuses to finalise any requirement that doesn't trace back to a leaf Deliverable.</p>
+</div>
+
+<div class="skill-card">
+<h3>/gvm-walking-skeleton</h3>
+<p>Wires a thin end-to-end execution thread through every external integration boundary — HTTP APIs, databases, cloud SDKs, file systems, subprocess, email — before feature work begins. Surfaces integration failures at hour 1 instead of month 6. Produces a runnable skeleton plus a <code>boundaries.md</code> registry that downstream skills gate against.</p>
+</div>
+
+<div class="skill-card">
+<h3>/gvm-explore-test</h3>
+<p>Time-boxed exploratory testing against built code. You write a short YAML charter (mission, tour, scope, duration); the skill runs the timer, captures defects through structured prompts, and produces a session report that <code>/gvm-test</code> reads when checking the verdict. Severity is your call — the skill never auto-classifies.</p>
+</div>
+
+<div class="skill-card">
+<h3>/gvm-analysis</h3>
+<p>Privacy-preserving exploratory data analysis. Point it at a CSV, TSV, xlsx, parquet, or JSON file and it produces a real findings report — per-column statistics with bootstrap confidence intervals, outlier detection (IQR + MAD always; IsolationForest + LOF for n &geq; 1000), time-series cadence and gap detection, driver decomposition (Decompose / Validate / Run-everything modes), privacy-safe duplicate summaries, deterministic comprehension questions, and rendered SVG charts. Raw rows never enter Claude's context — Claude orchestrates a Python engine that reads the file and returns aggregates only.</p>
+</div>
+
+<h2>Methodology hardening</h2>
+
+<p>Eight rules came in across the v2.x track that change what a chunk is allowed to do. The rules apply to chunks authored on or after 2026-04-28; older chunks are exempt as "v2.0.x carry-over" so existing work continues to ship.</p>
+
+<ul>
+<li><strong>Outside-in tests come first (TDD-1).</strong> For any chunk that has a user-facing surface, the acceptance test that exercises that surface is the first deliverable in the chunk's TDD plan — written before any unit test. Pure internal helpers are exempt with a documented rationale.</li>
+<li><strong>One mock at the external boundary (TDD-2).</strong> Each test mocks at most one collaborator, and only when that collaborator sits at the network or process edge. Mocking an internal class is a violation. Eight named external-boundary categories are recognised by default; per-project extensions go in <code>.ebt-boundaries</code>. Targets listed in <code>.cross-chunk-seams</code> escalate from Important to Critical.</li>
+<li><strong>Realistic-fixture variants for known-edge domains (TDD-3).</strong> If your chunk touches data analysis, parsing, or security validation, a realistic-fixture variant ships alongside the synthetic happy-path fixture, or the chunk records a documented exemption. Synthetic fixtures encode the engineer's mental model; realistic fixtures expose the gap between the model and the world.</li>
+<li><strong>Wiring matrix gates the implementation guide.</strong> Every implementation guide carries a four-column wiring matrix: entry point, consumed modules, wiring chunk, and the chunk that demanded the producer. Empty cells refuse the impl-guide write; the matrix is the audit trail proving every built module has a path to the running product and a consumer that demanded it.</li>
+<li><strong>Phase-completion wiring audit.</strong> After every phase finishes, the build mechanically greps each entry point for the modules the matrix says it consumes. The inverse audit catches the dual failure mode — a module built but never written into the matrix.</li>
+<li><strong>Chunk-level acceptance smoke gate (Hard Gate 8).</strong> After tests pass and the wiring audit runs, but before the handover is written, the chunk runs a smoke command that exercises its user-facing surface end-to-end. Non-zero exit code blocks the handover.</li>
+<li><strong>You own finding triage (shared rule 28).</strong> Every Critical or Important finding from a review skill is presented to you before any disposition is recorded. The skill may recommend "fix / defer / dismiss" but must not decide. The forbidden patterns are spelled out and structurally tested.</li>
+<li><strong>Diff-budget tracking (NFR-2).</strong> Each chunk records a <code>Diff budget delta</code>; cumulative SKILL.md additions over 500 lines surface a prompt asking whether the methodology is bloating. Surface-and-track, not refusal.</li>
+</ul>
+
+<h2>Cost-optimised model selection</h2>
+
+<p>The pipeline now picks the right model for each step instead of using one model everywhere. Opus handles deep reasoning (architecture, diagnosis, requirements). Sonnet handles guided work (code generation, structured extraction). Haiku handles HTML rendering. Selective loading of expert references means smaller projects don't pay for context they won't use.</p>
+
+<h2>Better review reports</h2>
+
+<ul>
+<li><strong>Defect-class panels.</strong> All review skills now use orthogonal defect-class panels (References, Contracts, Logic, Naming for code; Argument, Factual Accuracy, Prose, Scoring for documents). Each panel scans for one class of defect across every artefact — published research shows this catches 41% more unique defects than expertise-based panels at lower cost per defect.</li>
+<li><strong>Capture-recapture.</strong> After the first round, panels estimate remaining defect population from their overlap counts. Whether to run a second round becomes a calculation, not a guess.</li>
+<li><strong>Two passes per panel.</strong> Each panel makes a systematic scan and then a cross-reference scan, mitigating the well-documented effect where reviewers stop looking after the first defect they find.</li>
+<li><strong>"What Prevents a Higher Score" section.</strong> Every review report now ends with a one-sentence-per-dimension explanation of the gap and whether closing it is worth the cost.</li>
+</ul>
+
+<h2>v2.2.0 — the point release</h2>
+
+<p>v2.2.0 closes the last open known issue from the v2.1.x series: <code>mock-budget</code> detection was Python-only at v2.1.1, with TS and Go declared as forward-compat stubs. v2.2.0 wires both stacks for real.</p>
+
+<ul>
+<li><strong>TypeScript mock-budget.</strong> The detector now recognises the vitest, jest, testdouble, and sinon mock APIs — <code>vi.mock</code>, <code>vi.spyOn</code>, <code>jest.mock</code>, <code>jest.spyOn</code>, <code>td.replace</code>, <code>sinon.stub</code>, <code>sinon.replace</code>. The default external-boundary allowlist treats node:* builtins, major HTTP clients (axios, undici, got, ky, node-fetch), DB drivers (pg, mongodb, redis), and AI/cloud SDKs as the network edge. Internal mocks emit Important; matches in <code>.cross-chunk-seams</code> escalate to Critical. The wrapper-as-SUT exemption applies when the test-file stem equals the mocked target's basename.</li>
+<li><strong>Go mock-budget.</strong> Adapted to Go's idiom: the detector counts distinct test-double instances per <code>func TestXxx(t *testing.T)</code> body. Three orthogonal signals — types ending in <code>Mock|Fake|Stub|Spy</code>, <code>gomock.NewController</code> invocations, and types embedding testify's <code>mock.Mock</code> (recognised by the embedded library type, not by struct name). The default allowlist covers <code>net/http</code>, <code>os</code>, <code>io</code>, <code>database/sql</code>, <code>context</code>, plus AWS / Google / Anthropic / OpenAI / Redis / MongoDB / Postgres SDK package paths.</li>
+<li><strong>Per-project seam allowlists now apply on TS and Go.</strong> Previously the per-stack readers silently dropped the <code>seam_allowlist</code> parameter — they're now wired into the per-stack detector. Two STUBS.md entries close out as a result.</li>
+</ul>
+
+<h2>Experts and patterns grounding the work</h2>
+
+<p>Every rule added across v1.0.0 → v2.2.0 cites both an expert (or named pattern) and the defect class it addresses. The NFR-3 inclusion heuristic enforces this — if a rule has no defect class, it doesn't earn a changelog entry.</p>
+
+<table>
+<thead>
+<tr><th>Domain</th><th>Expert / pattern</th><th>What it grounds</th></tr>
+</thead>
+<tbody>
+<tr><td>Defect-class review panels</td><td>Laitenberger et al. (Perspective-Based Reading, 2000)</td><td>Orthogonal scanning mandates — 41% more defects detected vs. checklist panels.</td></tr>
+<tr><td>Capture-recapture</td><td>Wohlin, Petersson & Aurum (Lincoln-Petersen)</td><td>After-R1 defect-population estimate — should-we-run-R2 becomes a calculation.</td></tr>
+<tr><td>Two-pass scanning</td><td>Drew, Võ & Wolfe (Satisfaction of Search)</td><td>Systematic + cross-reference scan; prevents premature termination after first find.</td></tr>
+<tr><td>R1/R2 thresholds</td><td>Green & Swets (Signal Detection Theory)</td><td>Liberal R1 / strict R2+ criteria.</td></tr>
+<tr><td>Outside-in TDD (TDD-1)</td><td>Freeman & Pryce — <em>GOOS</em></td><td>Acceptance test as first deliverable; consumer demand precedes producer build.</td></tr>
+<tr><td>Red-Green-Refactor</td><td>Beck</td><td>Both transitions recorded in handover.</td></tr>
+<tr><td>Self-review discipline</td><td>Fagan</td><td>Author preparation against inspection criteria.</td></tr>
+<tr><td>Mock budget (TDD-2)</td><td>Sandi Metz — <em>POODR</em> Ch. 9</td><td>Mocks belong at object boundaries; budget = 1 at the network/process edge.</td></tr>
+<tr><td>Protocol drift</td><td>Freeman & Pryce — <em>GOOS</em></td><td>Internal mocks hide the seam they pretend to verify (defect class for Panel B <code>mock-budget</code>).</td></tr>
+<tr><td>Realistic fixtures (TDD-3)</td><td>Bach & Bolton — <em>Rapid Software Testing</em></td><td>Synthetic fixtures encode the engineer's mental model; realistic ones expose the gap.</td></tr>
+<tr><td>Wiring matrix "Demanded by"</td><td>Michael Feathers — <em>Working Effectively with Legacy Code</em></td><td>Consumer-side seam: every producer must name the demanding consumer.</td></tr>
+<tr><td>Conceptual integrity</td><td>Brooks — <em>The Mythical Man-Month</em></td><td>One audit trail per built module; one canonical name per concept.</td></tr>
+<tr><td>Impact mapping</td><td>Adzic — <em>Impact Mapping</em></td><td>Goals → Actors → Impacts → Deliverables.</td></tr>
+<tr><td>Outcome-first framing</td><td>Cagan — <em>Inspired</em></td><td>Goals stated as outcomes, not features.</td></tr>
+<tr><td>Walking skeleton</td><td>Cockburn (skeleton metaphor); Freeman & Pryce (boundaries)</td><td>Wire every external boundary before feature work.</td></tr>
+<tr><td>Architectural views</td><td>Clements et al. — <em>Documenting Software Architectures</em></td><td>Producer/consumer alignment.</td></tr>
+<tr><td>Decision capture</td><td>Keeling — <em>Design It!</em></td><td>Every significant decision carries an ADR.</td></tr>
+<tr><td>Process discipline</td><td>Deming — <em>Out of the Crisis</em></td><td>Variance reduction; review calibration.</td></tr>
+<tr><td>Information hiding</td><td>Parnas</td><td>Module boundary discipline; STUBS.md honesty register.</td></tr>
+<tr><td>Refactoring</td><td>Fowler — <em>Refactoring</em></td><td>Intention-revealing names; no premature abstraction.</td></tr>
+<tr><td>Designing for users</td><td>Norman — <em>The Design of Everyday Things</em></td><td>Affordances; error tolerance in microcopy.</td></tr>
+<tr><td>Writing for the web</td><td>Redish — <em>Letting Go of the Words</em></td><td>Task-oriented user docs; scannable structure.</td></tr>
+<tr><td>Document writing</td><td>Doumont, Minto, Weinberg, Zinsser, Williams, Orwell, King</td><td>All <code>/gvm-doc-write</code> and <code>/gvm-doc-review</code> output.</td></tr>
+</tbody>
+</table>
+
+<h2>Defect classes the rules address</h2>
+
+<p>Every rule was added in response to a concrete defect observed in practice.</p>
+
+<table>
+<thead>
+<tr><th>Defect class</th><th>Source incident</th><th>Rule</th></tr>
+</thead>
+<tbody>
+<tr><td>Unit-test-green / system-broken</td><td>Multiple chunks shipped with passing unit tests but broken end-to-end behaviour</td><td>TDD-1 + Hard Gate 8 (v2.1.0)</td></tr>
+<tr><td>Internal-mock protocol drift</td><td>Multi-mock tests on internal classes silently passing</td><td>TDD-2 + Panel B <code>mock-budget</code> (v2.1.0 Python; v2.2.0 TS/Go)</td></tr>
+<tr><td>Synthetic-fixture-only verification</td><td>Privacy scan tripped on real-world short categorical codes; clean ordinal data produced empty headlines — both shipped to production undetected by happy-path tests</td><td>TDD-3 catalogue + Panel C realistic-fixture mandate (v2.1.0)</td></tr>
+<tr><td>Tracer-bullet engine boundary</td><td>Build phases produced isolated modules with green tests while no consumer chunk imported them</td><td>Wiring matrix + Hard Gates 6/7 (v2.0.0); inverse audit (v2.0.1)</td></tr>
+<tr><td>Built-but-undemanded modules</td><td>Modules existed with passing unit tests but no entry-point consumer</td><td>"Demanded by" column (v2.1.0 GATE-2)</td></tr>
+<tr><td>Unilateral triage by the executor</td><td>Review skill silently deferred Important findings and filtered Minor findings under cover of "R2+ strict criterion"</td><td>Shared rule 28 + Hard Gate 6/7 (v2.1.0)</td></tr>
+<tr><td>TDD-2 runtime-mirror gap</td><td>v2.1.0 prose specified 8 boundary categories; runtime covered 5 — false-greens shipped on <code>socket</code>/<code>subprocess</code>/<code>os</code>/<code>pathlib.Path</code> mocks</td><td><code>_PYTHON_STACK_DEFAULTS</code> extension (v2.1.1)</td></tr>
+<tr><td>Methodology evolution had no audit trail</td><td>Practitioners couldn't tell why a rule existed or whether it still earned its keep</td><td>NFR-3 <code>methodology-changelog.md</code> (v2.1.0)</td></tr>
+<tr><td>Retroactive enforcement of new gates</td><td>Pre-release chunks would fail under v2.1.0 rules</td><td>NFR-1 carry-over (<code>_V2_1_0_RELEASE_DATE</code>, v2.1.0)</td></tr>
+<tr><td>Silent prose drift</td><td>Carry-over rule was prose-only; paraphrase could rot the gate undetected</td><td>Structural tests anchoring on the canonical phrase (v2.1.1)</td></tr>
+<tr><td>Rename without call-site update</td><td>Provenance helper renamed; stale call sites crashed one CLI mode</td><td><code>/gvm-test</code> step 6c parametric flag smoke (v2.0.1)</td></tr>
+<tr><td>Privacy-scan substring false-positives</td><td>Real-world short categorical tokens (M/F, A/B/O) tripped containment check</td><td>Word-boundary regex (v2.0.1)</td></tr>
+</tbody>
+</table>
+
+<h2>Compatibility</h2>
+
+<p>Non-breaking across v1.0.0 → v2.2.0. Existing projects continue to ship under the carry-over exemption (chunks authored before 2026-04-28 are not retroactively gated by the v2.1.0 hardening rules). The TS/Go mock-budget detection makes some test files emit findings that previously emitted nothing — those findings reflect protocol-drift defects the runtime previously couldn't see, not regressions in the test code.</p>
+
+<h2>Known limitations</h2>
+
+<ul>
+<li>TS detection does not handle multi-line <code>vi.mock(</code> declarations where the module string is on a continuation line (text-line heuristic). Full coverage would require an embedded TS parser, which the v2.x track has chosen not to take a dependency on.</li>
+<li>Go test-function body extraction uses brace-depth counting that does not parse strings or comments. A <code>}</code> inside a string literal could misalign function bodies.</li>
+<li>Go conservative recall: a struct used as a fake but named without <code>*Mock|*Fake|*Stub|*Spy</code> and without testify's <code>mock.Mock</code> embed will not be detected. Practitioner workaround: rename or extend <code>.ebt-boundaries</code>.</li>
+</ul>
+
+<h2>How the release was built and verified</h2>
+
+<p>Every release in the v2.x track was driven through the GVM pipeline itself — the plugin dogfoods its own methodology. Each chunk passed strict TDD with outside-in acceptance tests, the chunk-acceptance smoke gate, the wiring-matrix audit, and the converged independent review loop before being committed. Every release passed code review, test verification, and doc review under the three-verdict taxonomy (Ship-ready / Demo-ready / Not shippable). The build artefacts and review reports live outside this repository — what's checked in is the result.</p>
+
+</body>
+</html>

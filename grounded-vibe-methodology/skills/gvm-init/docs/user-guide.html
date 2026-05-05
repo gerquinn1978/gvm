@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-init &mdash; User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">March 2026</p>
+<h1>/gvm-init</h1>
+<p class="subtitle">
+  The entry point for greenfield projects &mdash; calibrates the expert roster
+  across all tiers before any pipeline work begins.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  <code>/gvm-init</code> is the fast entry point for greenfield projects. It asks one
+  question &mdash; your business domain &mdash; then automatically scores experts,
+  initialises the activation log, and writes a calibration report. The entire flow
+  takes under a minute for the common case. Run it once at the start of a greenfield
+  project, before <code>/gvm-requirements</code>.
+</p>
+
+<span class="sidenote">
+  For existing codebases, use <code>/gvm-site-survey</code> instead. It diagnoses
+  the codebase and selects experts based on what it finds.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="application-brief">Application Brief (Optional)</h2>
+
+<p>
+  Before expert calibration, <code>/gvm-init</code> offers to create an Application
+  Brief &mdash; a structured one-page project justification. The brief answers: what
+  problem does this solve, for whom, and is it worth doing?
+</p>
+
+<p>
+  <strong>When to use:</strong> recommended for organisations that gate project starts,
+  end-user computing scenarios where you want approval before resources are committed,
+  or when the project&rsquo;s justification is unclear. Skip it when the project is
+  already approved and the business case is obvious.
+</p>
+
+<p>
+  The brief feeds into downstream skills: the problem statement seeds
+  <code>/gvm-requirements</code>, the architecture direction constrains
+  <code>/gvm-tech-spec</code>, and the constraints become requirements constraints.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="when-to-use">When to Use</h2>
+
+<ul>
+  <li><strong>Specialised domains</strong> (financial services, healthcare, safety-critical, regulated) &mdash; init loads industry domain experts before requirements start, ensuring the elicitation is grounded in the right frameworks from the first question. It may also surface the need to replace default Tier 1 process experts.</li>
+  <li>Re-calibrating experts after significant changes to your project&rsquo;s domain</li>
+  <li>Adding industry domain experts for a new business area</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">When you can skip init</div>
+  <p>For general-purpose software with no specific industry domain, every pipeline skill automatically loads shared rules, discovers missing experts, and scores unscored ones on the fly. You can go straight to <code>/gvm-requirements</code>. Init adds a calibration report and an explicit domain declaration, but no functionality that downstream skills don&rsquo;t already handle.</p>
+</div>
+
+<div class="callout">
+  <div class="callout-label">Pre-check</div>
+  <p>If an existing expert setup is detected (activation log entries, scored experts, custom industry files), init will warn you before overwriting. You can start fresh, alter specific steps, or cancel.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="process">The Init Flow</h2>
+
+<p>
+  Init is fast: one question for the common case, then automatic setup. The flow
+  has three phases.
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Init flow</caption>
+  <thead>
+    <tr><th>Phase</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Pre-check</strong></td>
+      <td>Detects prior initialisation. If found, asks whether to start fresh, alter, or cancel. If no prior setup, proceeds automatically.</td>
+    </tr>
+    <tr>
+      <td><strong>Business domain</strong></td>
+      <td><strong>The one question you answer.</strong> Select your business domain (financial services, healthcare, technology, general-purpose, or other). Init uses this to select industry domain files and, for specialised domains only, may ask a follow-up about adjusting Tier 1 process experts.</td>
+    </tr>
+    <tr>
+      <td><strong>Automatic setup</strong></td>
+      <td>Bootstraps the GVM home directory, initialises the activation log, and writes the calibration report. Expert scoring happens during roster assembly (Step 2). No further interaction required.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Stack and component domains are handled later</div>
+  <p>Technology stack specialists activate during <code>/gvm-tech-spec</code> when the stack is chosen. Component-level domains emerge during <code>/gvm-requirements</code> and are handled by expert discovery at that point. Init does not ask about either &mdash; the information is not available yet.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Load Expert References.</strong> Read <code>architecture-specialists.md</code> and the relevant industry domain file before assessing expert coverage.</li>
+  <li><strong>Score Unscored Experts.</strong> If any loaded experts lack scores, score them automatically &mdash; do not leave experts unscored.</li>
+  <li><strong>Expert Roster Table is Mandatory.</strong> The output must include an Expert Roster Summary table &mdash; downstream skills consume it to assemble their expert panels.</li>
+  <li><strong>HTML Before Approval.</strong> Write the init MD file first, then immediately write the HTML &mdash; both must exist before presenting the init report for user review.</li>
+</ol>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output</h2>
+
+<p>
+  Init produces paired HTML and Markdown files:
+</p>
+
+<pre><code>init/init-001.html    init/init-001.md
+init/init-002.html    init/init-002.md
+...</code></pre>
+
+<p>
+  Each run produces a new numbered pair. The report has six sections:
+</p>
+
+<ol>
+  <li><strong>Executive Summary</strong> &mdash; project name, date, business domain</li>
+  <li><strong>Process Experts (Tier 1)</strong> &mdash; defaults confirmed or replacements created, with rationale</li>
+  <li><strong>Industry Domain (Tier 2b)</strong> &mdash; files selected or created, coverage assessment, any newly discovered experts with scores</li>
+  <li><strong>Expert Roster Summary</strong> &mdash; single table of all active experts: name, work, tier, classification, reference file, status</li>
+  <li><strong>Activation Log</strong> &mdash; confirmation that the log was initialised or already existed</li>
+  <li><strong>Next Steps</strong> &mdash; direction to run <code>/gvm-requirements</code>, with a note that stack specialists and component domains will be configured as they emerge during the pipeline</li>
+</ol>
+
+<span class="sidenote">
+  The MD version is the primary input for downstream skills. The expert roster
+  summary tells <code>/gvm-requirements</code>, <code>/gvm-tech-spec</code>, and
+  other skills which experts are active for this project.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline">Pipeline Position</h2>
+
+<div class="pipeline">
+  <span class="label">GVM v2.0 pipeline</span>
+  [<strong>/gvm-init</strong>] &rarr; [/gvm-impact-map] &rarr; /gvm-requirements &rarr; /gvm-test-cases &rarr; /gvm-tech-spec &rarr; [/gvm-design-review] &rarr; [/gvm-walking-skeleton] &rarr; /gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; [/gvm-explore-test] &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy
+</div>
+
+<p>
+  Init is the precondition for greenfield projects. After completing init, proceed
+  to <code>/gvm-requirements</code> to begin gathering requirements with the
+  calibrated expert panel.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="detail">For More Detail</h2>
+
+<p>
+  For full detail on expert scoring methodology, the Expert Discovery and Persistence Process,
+  classification bands, independent verification, and utilisation feedback, see the
+  <a href="../../gvm-experts/docs/user-guide.html">Expert Management Guide</a>. For the
+  reference file structure and design templates, see the
+  <a href="../../gvm-design-system/docs/user-guide.html">Design System User Guide</a>.
+</p>
+
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

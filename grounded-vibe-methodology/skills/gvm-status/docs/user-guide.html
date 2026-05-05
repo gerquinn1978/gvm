@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-status &mdash; User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">March 2026</p>
+<h1>/gvm-status</h1>
+<p class="subtitle">
+  Shows where you are in the GVM pipeline &mdash; what&rsquo;s done, what&rsquo;s next, and whether anything has gone stale.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  <code>/gvm-status</code> is a read-only diagnostic command. It checks the file system for pipeline artefacts, detects staleness when upstream documents have changed after downstream outputs were generated, and summarises expert activation for the current project. It changes nothing &mdash; no files are created, modified, or deleted.
+</p>
+
+<span class="sidenote">
+  Grounded in Nielsen&rsquo;s &ldquo;visibility of system status&rdquo; heuristic: the system should always keep users informed about what is going on, through appropriate feedback within reasonable time.
+</span>
+
+<p>
+  Run it at any point to orient yourself. It is particularly useful when resuming work after a break, or when you want to confirm that all upstream artefacts are still current before starting the next phase.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="when-to-use">When to Use</h2>
+
+<ul>
+  <li>Resuming a project after a gap &mdash; &ldquo;where was I?&rdquo;</li>
+  <li>Before starting a new pipeline phase &mdash; confirming prerequisites are in place</li>
+  <li>After editing upstream documents &mdash; checking whether downstream artefacts are now stale</li>
+  <li>Reviewing expert engagement &mdash; which experts have been loaded and cited across phases</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="what-it-checks">What It Checks</h2>
+
+<h3 id="artefacts">Pipeline artefacts</h3>
+
+<p>
+  Each pipeline phase produces files in a known directory. Status checks for the existence of these artefacts to determine which phases are complete:
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Artefact detection</caption>
+  <thead>
+    <tr><th>Phase</th><th>Directory</th><th>Complete when</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>/gvm-init</code></td><td><code>init/</code></td><td>At least one <code>init-*.html</code> + <code>init-*.md</code> pair</td></tr>
+    <tr><td><code>/gvm-requirements</code></td><td><code>requirements/</code></td><td><code>requirements.html</code> + <code>requirements.md</code> both exist</td></tr>
+    <tr><td><code>/gvm-test-cases</code></td><td><code>test-cases/</code></td><td><code>test-cases.html</code> + <code>test-cases.md</code> both exist</td></tr>
+    <tr><td><code>/gvm-tech-spec</code></td><td><code>specs/</code></td><td><code>implementation-guide.md</code> exists</td></tr>
+    <tr><td><code>/gvm-design-review</code></td><td><code>design-review/</code></td><td>At least one <code>design-review-*.html</code> exists (HTML-only — review reports per shared rule 13)</td></tr>
+    <tr><td><code>/gvm-build</code></td><td><code>build/</code></td><td>At least one handover file in <code>build/handovers/</code></td></tr>
+    <tr><td><code>/gvm-code-review</code></td><td><code>code-review/</code></td><td>At least one <code>code-review-*.html</code> exists (HTML-only — review reports per shared rule 13)</td></tr>
+    <tr><td><code>/gvm-test</code></td><td><code>test/</code></td><td>At least one <code>test-*.html</code> exists (HTML-only — verification reports per shared rule 13)</td></tr>
+    <tr><td><code>/gvm-site-survey</code></td><td><code>site-survey/</code></td><td>At least one paired <code>site-survey-*.html</code> + <code>site-survey-*.md</code> set exists</td></tr>
+    <tr><td><code>/gvm-impact-map</code> (optional)</td><td><code>impact-map.md</code> (project root)</td><td>File exists</td></tr>
+    <tr><td><code>/gvm-walking-skeleton</code> (optional)</td><td><code>boundaries.md</code> (project root) and <code>walking-skeleton/</code> directory</td><td>Both exist</td></tr>
+    <tr><td><code>/gvm-explore-test</code> (optional)</td><td><code>test/explore-NNN.md</code> and <code>test/explore-NNN.html</code></td><td>At least one paired set exists</td></tr>
+  </tbody>
+</table>
+
+<p>
+  If <code>site-survey/</code> exists, the project entered via <code>/gvm-site-survey</code> instead of <code>/gvm-init</code> &mdash; status reflects this.
+</p>
+
+<p>
+  <code>/gvm-analysis</code> is standalone and not part of pipeline tracking. It does not produce artefacts that status monitors.
+</p>
+
+<h3 id="requirements-rounds">Requirements rounds</h3>
+
+<p>
+  Status scans <code>requirements/</code> for numbered artefacts (<code>requirements.md</code> = round 1, <code>requirements-002.md</code> = round 2, etc.). It reports which round is current and checks whether corresponding downstream artefacts exist for each round &mdash; flagging, for example, when round 2 requirements exist but no matching test cases or specs have been generated.
+</p>
+
+<h3 id="staleness">Staleness detection</h3>
+
+<p>
+  When upstream artefacts are newer than downstream outputs, the downstream work may no longer reflect the current state of the upstream document. Status flags these cases:
+</p>
+
+<ul>
+  <li><code>requirements.md</code> newer than <code>test-cases.md</code> &rarr; test cases may need regeneration</li>
+  <li><code>requirements.md</code> newer than spec files &rarr; specs may need updating</li>
+  <li><code>test-cases.md</code> newer than spec files &rarr; specs may need updating</li>
+  <li>Spec files newer than build handovers &rarr; build may be against outdated specs</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">Staleness is a signal, not a verdict</div>
+  <p>A timestamp difference does not always mean regeneration is needed. A minor edit to a requirements document (fixing a typo, clarifying wording) may not affect downstream artefacts. Status flags the discrepancy; you decide whether to act on it.</p>
+</div>
+
+<h3 id="experts">Expert activation summary</h3>
+
+<p>
+  Status reads the expert activation log (<code>~/.claude/gvm/expert-activations.csv</code>) and filters entries for the current project. The summary shows:
+</p>
+
+<ul>
+  <li>Total experts loaded and cited, grouped by pipeline phase</li>
+  <li>Tier breakdown (Tier 1 process / Tier 2a software domain / Tier 2b industry / discovered)</li>
+  <li>Classification breakdown (Canonical / Established / Recognised / Emerging / Provisional)</li>
+  <li>The five most-cited experts &mdash; the authorities most heavily relied on in your project&rsquo;s output</li>
+</ul>
+
+<span class="sidenote">
+  If no activation log entries exist for this project, status reports that no GVM skills have been run yet and suggests <code>/gvm-init</code> or <code>/gvm-site-survey</code> as entry points.
+</span>
+
+<h3 id="build-progress">Build progress</h3>
+
+<p>
+  When the build phase is active (an implementation guide exists and handover files are being produced), status provides additional detail: how many chunks have been completed, which chunk is current, and what remains.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="example">Example Output</h2>
+
+<pre><code>Project: example-app
+
+Pipeline
+--------
+[done]  /gvm-init         — init/init-001 (2026-03-20)
+[done]  /gvm-requirements — requirements/requirements.md (2026-03-21)
+[done]  /gvm-test-cases   — test-cases/test-cases.md (2026-03-22)
+[done]  /gvm-tech-spec    — 4 domain specs + implementation guide (2026-03-23)
+[done]  /gvm-design-review — design-review/design-review-001 (2026-03-23)
+[&gt;&gt;]    /gvm-build        — 3/8 chunks complete
+[ ]     /gvm-code-review
+
+Build Detail (3/8 chunks)
+-------------------------
+Phase 1
+  [done]    P1-C01  Project setup
+  [done]    P1-C02  Database schema         (depends on: P1-C01)
+  [done]    P1-C03  API framework           (depends on: P1-C01)
+Phase 2
+  [ready]   P2-C01  Auth endpoints          (depends on: P1-C02, P1-C03)
+  [ready]   P2-C02  Search service          (depends on: P1-C02) &larr; parallel with P2-C01
+  [blocked] P2-C03  Search API              (depends on: P2-C01, P2-C02)
+Phase 3
+  [blocked] P3-C01  Frontend shell          (depends on: P2-C01)
+  [blocked] P3-C02  Search UI               (depends on: P2-C03, P3-C01)
+
+Next: P2-C01 and P2-C02 are both ready and can be built in parallel.
+
+Staleness
+---------
+None detected.
+
+Quality gates
+-------------
+doc-review/doc-review-2026-03-22.html — requirements review (2026-03-22)
+
+Experts (this project)
+----------------------
+18 loaded across 4 phases, 11 cited in output
+Tier 1: 6 | Tier 2a: 5 | Tier 2b: 4 | Discovered: 3
+Top cited: Wiegers (5), Bass (3), Kleppmann (3), Cohn (2), Nygard (2)</code></pre>
+
+<p>
+  The output adapts to what actually exists. A freshly initialised project shows only the init phase with the full pipeline ahead. A project with no GVM artefacts shows nothing and points you to an entry command.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="what-to-do">What to Do with the Results</h2>
+
+<table>
+  <caption>Table 2 &mdash; Status signals and recommended actions</caption>
+  <thead>
+    <tr><th>Status shows</th><th>What it means</th><th>Recommended action</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>No GVM artefacts found</td>
+      <td>The pipeline has not started in this directory</td>
+      <td>Run <code>/gvm-requirements</code> (general-purpose) or <code>/gvm-init</code> (specialised domain) to begin</td>
+    </tr>
+    <tr>
+      <td>Pipeline stopped at a phase</td>
+      <td>The next phase has not been run yet</td>
+      <td>Run the next command in the pipeline &mdash; status shows which phase is next</td>
+    </tr>
+    <tr>
+      <td>Staleness detected</td>
+      <td>An upstream document changed after the downstream output was generated</td>
+      <td>If the change was substantive (not just a typo), re-run the downstream skill. It will detect the newer upstream file and offer to regenerate. If the change was cosmetic, no action needed.</td>
+    </tr>
+    <tr>
+      <td>Build in progress (X of Y chunks)</td>
+      <td>Build is partially complete</td>
+      <td>Run <code>/gvm-build</code> to continue from the next unfinished chunk. It reads handover files to determine where to resume.</td>
+    </tr>
+    <tr>
+      <td>Zero experts cited</td>
+      <td>Expert reference files may not be loading</td>
+      <td>Check that <code>~/.claude/skills/gvm-design-system/references/shared-rules.md</code> exists. If missing, reinstall the plugin.</td>
+    </tr>
+    <tr>
+      <td>Low expert cite rate</td>
+      <td>Experts are loaded but not being used in output</td>
+      <td>This may be normal for early phases. If it persists across multiple phases, run <code>/gvm-experts</code> to review utilisation data and check whether the roster matches the project&rsquo;s actual domain.</td>
+    </tr>
+    <tr>
+      <td>Many discovered experts</td>
+      <td>The pipeline found gaps in the default roster and filled them</td>
+      <td>No action needed &mdash; discovery is working as intended. Run <code>/gvm-experts</code> if you want to review the discovered experts&rsquo; scores.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="no-output">No Output Files</h2>
+
+<p>
+  Unlike every other GVM skill, <code>/gvm-status</code> does not produce HTML or Markdown documents. Its output is conversational only &mdash; displayed in the terminal and then gone. It is a diagnostic tool, not a document-producing phase.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline">Pipeline Position</h2>
+
+<div class="pipeline">
+  <span class="label">Available at any point</span>
+  /gvm-status &mdash; usable before, during, or after any pipeline phase
+</div>
+
+<p>
+  Status sits outside the pipeline. It does not have prerequisites, does not produce artefacts consumed by other phases, and does not activate or cite experts. It reads the state that other skills have created and reports on it.
+</p>
+
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

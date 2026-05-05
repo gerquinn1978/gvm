@@ -1,0 +1,55 @@
+{#-
+  Per-driver drillthrough (P6-C05).
+
+  Data shape (ADR-201 drillthroughs[].data for kind=driver):
+    feature, method_results_per_feature (dict method_key → result dict),
+    shap_plot_svg_path, partial_dependence_svg_path.
+-#}
+{% set d = drillthrough.data %}
+<p>Feature: <code>{{ d.feature }}</code>.</p>
+
+{% if d.method_results_per_feature %}
+<section class="drillthrough-methods">
+  <h2>Method results</h2>
+  <dl>
+  {% for method_key, result in d.method_results_per_feature.items() %}
+    <dt>
+      {% if method_key in methodology_by_key %}
+        {{ methodology_by_key[method_key].display_name }}
+      {% else %}
+        {{ method_key }}
+      {% endif %}
+    </dt>
+    <dd>
+      {% for label, value in result.items() %}
+        {{ label }}: {{ value }}{% if not loop.last %}; {% endif %}
+      {% endfor %}
+      {% if method_key in methodology_by_key %}
+      <aside class="sidenote">
+        Parameters: {{ methodology_by_key[method_key].parameters }}.
+        Citation: {{ methodology_by_key[method_key].expert_citation }}.
+      </aside>
+      {% endif %}
+    </dd>
+  {% endfor %}
+  </dl>
+</section>
+{% endif %}
+
+{% if d.shap_plot_svg_path or d.partial_dependence_svg_path %}
+<section class="drillthrough-charts">
+  <h2>Driver charts</h2>
+  {% if d.shap_plot_svg_path %}
+  <figure>
+    <img src="{{ d.shap_plot_svg_path }}" alt="Feature contribution plot for {{ d.feature }}">
+    <figcaption>Feature contribution (SHAP)</figcaption>
+  </figure>
+  {% endif %}
+  {% if d.partial_dependence_svg_path %}
+  <figure>
+    <img src="{{ d.partial_dependence_svg_path }}" alt="Partial dependence for {{ d.feature }}">
+    <figcaption>Partial dependence</figcaption>
+  </figure>
+  {% endif %}
+</section>
+{% endif %}

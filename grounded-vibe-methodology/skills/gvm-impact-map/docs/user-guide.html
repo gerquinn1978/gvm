@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-impact-map &mdash; User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability. */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 240px; }
+
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026</p>
+<h1>/gvm-impact-map</h1>
+<p class="subtitle">
+  Discovery skill &mdash; produces the four-level Goal &rarr; Actor &rarr; Impact &rarr; Deliverable
+  artefact that downstream <code>/gvm-requirements</code> gates against for traceability.
+</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>
+  <code>/gvm-impact-map</code> is the discovery skill that produces an
+  <code>impact-map.md</code> artefact: four flat tables (Goals, Actors, Impacts, Deliverables)
+  linked by parent-ID columns. The artefact becomes the single source of truth for downstream
+  traceability &mdash; <code>/gvm-requirements</code> Phase 5 (the IM-4 gate) refuses to
+  finalise any requirement that does not trace to a leaf Deliverable in this file.
+</p>
+
+<span class="sidenote">
+  Adzic&rsquo;s <em>Impact Mapping</em> is the structural model. Cagan&rsquo;s
+  <em>Inspired</em> shapes the elicitation order: outcomes first, never feature lists.
+</span>
+
+<p>
+  Run <code>/gvm-impact-map</code> after <code>/gvm-init</code> and before
+  <code>/gvm-requirements</code>. The flat-table form is diff-friendly and mechanically
+  validatable &mdash; the validator enforces referential integrity across the four levels and
+  refuses to save the file if any parent-ID is missing.
+</p>
+
+<h2 id="when-to-use">When to Use</h2>
+
+<ul>
+  <li><strong>New product or feature initiatives</strong> &mdash; before requirements are written, when the team needs to align on outcomes (not outputs) and on which actors&rsquo; behaviour must change.</li>
+  <li><strong>Re-scoping a project</strong> &mdash; the impact map exposes whether the candidate deliverables still trace to a measurable goal, or whether they have drifted into output-thinking.</li>
+  <li><strong>Strategic prioritisation</strong> &mdash; the four-level tree makes it visible which deliverables have the strongest line of sight to the business outcome and which are speculative.</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">When to skip</div>
+  <p>If the project is a small bugfix or a clearly bounded technical task with no behavioural-change hypothesis, an impact map is overkill. Go straight to <code>/gvm-requirements</code>. The downstream IM-4 traceability gate is enforced only when an <code>impact-map.md</code> exists; without one, requirements stand on their own.</p>
+</div>
+
+<h2 id="downstream">How <code>/gvm-requirements</code> Consumes This</h2>
+
+<p>
+  The IM-4 traceability gate in <code>/gvm-requirements</code> Phase 5 reads
+  <code>impact-map.md</code> and refuses to finalise any requirement that does not name a
+  leaf Deliverable as its source. ("IM-4" is an internal gate label &mdash; the fourth
+  cross-skill check on the impact map.) This converts "why are we building this?"
+  from a guideline into a structural check &mdash; if the trace cannot be drawn, either the
+  requirement is unsupported or the impact map needs another Deliverable row.
+</p>
+
+<h2 id="experts">Expert Panel</h2>
+
+<table>
+  <caption>Table 1 &mdash; Experts grounding /gvm-impact-map</caption>
+  <thead>
+    <tr><th>Expert</th><th>Work</th><th>Role in this skill</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Gojko Adzic</td><td><em>Impact Mapping</em></td><td>Four-level Goal &rarr; Actor &rarr; Impact &rarr; Deliverable structure. The artefact schema is his model.</td></tr>
+    <tr><td>Marty Cagan</td><td><em>Inspired</em>, <em>Empowered</em></td><td>Outcome-first framing. Goals are measurable user/business outcomes, not feature lists.</td></tr>
+    <tr><td>Richard Rumelt</td><td><em>Good Strategy Bad Strategy</em></td><td>Diagnosis discipline &mdash; forces &ldquo;what is the actual challenge?&rdquo; before listing actions.</td></tr>
+    <tr><td>Frederick Brooks</td><td><em>The Mythical Man-Month</em></td><td>Conceptual integrity &mdash; the four-level structure is enforced consistently across every project.</td></tr>
+    <tr><td>Edward Tufte</td><td><em>The Visual Display of Quantitative Information</em></td><td>HTML rendering: data-rich, low-chrome, paired with the shared Tufte CSS shell.</td></tr>
+  </tbody>
+</table>
+
+<p>
+  Domain and stack specialists are not loaded by this skill &mdash; impact mapping is
+  technology-agnostic. Stack specialists activate downstream in <code>/gvm-tech-spec</code>.
+</p>
+
+<h2 id="process">The Six-Phase Flow</h2>
+
+<table class="no-stripe">
+  <caption>Table 2 &mdash; Phases of the elicitation</caption>
+  <thead>
+    <tr><th>Phase</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>0. Bootstrap</strong> <span class="phase">Pre-flight</span></td><td>Verify <code>~/.claude/gvm/</code> exists; load architecture experts. Refuses to run if <code>/gvm-init</code> has not.</td></tr>
+    <tr><td><strong>1. Discovery</strong></td><td>Elicit one Goal at a time via three AskUserQuestion steps: outcome statement, metric + target, deadline. The Goal row is not drafted until both Metric and Target are non-empty.</td></tr>
+    <tr><td><strong>2. Actors</strong></td><td>For the current Goal, elicit one to five Actors. Above five the skill warns (Adzic recommends &le; 5 per Goal) but accepts.</td></tr>
+    <tr><td><strong>3. Impacts</strong></td><td>For each Actor, elicit one to three behavioural changes with a <code>+</code> / <code>-</code> direction column.</td></tr>
+    <tr><td><strong>4. Deliverables</strong></td><td>For each Impact, elicit one or more deliverables with a <code>type</code> enum (feature / content / process / tool) and an optional risks column.</td></tr>
+    <tr><td><strong>5. Validation</strong></td><td>Foreign-key check, ambiguity scan, schema-version check. Errors are reported per row; the practitioner edits, the validator re-runs.</td></tr>
+    <tr><td><strong>6. Approval</strong></td><td>Write paired <code>impact-map.md</code> and <code>impact-map.html</code>; AskUserQuestion: &ldquo;Approve?&rdquo;</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Outcome-first discipline</div>
+  <p>Cagan: a Goal is a measurable change in user or business behaviour, not a feature. <code>&ldquo;Increase weekly active users by 20% within 6 months&rdquo;</code> is a Goal. <code>&ldquo;Add a notifications panel&rdquo;</code> is a Deliverable looking for a Goal &mdash; the skill will reject it at the ambiguity scan.</p>
+</div>
+
+<h2 id="schema">Artefact Schema</h2>
+
+<p>
+  Four flat tables, each row keyed by an explicit ID, each non-Goal table carrying a
+  parent-ID foreign key. The schema is versioned in YAML frontmatter
+  (<code>schema_version: 1</code>).
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Row shape per level</caption>
+  <thead>
+    <tr><th>Table</th><th>ID prefix</th><th>Required columns</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Goals</td><td><code>G-N</code></td><td><code>Statement</code>, <code>Metric</code>, <code>Target</code>, <code>Deadline</code> (ISO-8601 or empty)</td></tr>
+    <tr><td>Actors</td><td><code>A-N</code></td><td><code>Goal-ID</code>, <code>Name</code>, <code>Description</code></td></tr>
+    <tr><td>Impacts</td><td><code>I-N</code></td><td><code>Actor-ID</code>, <code>Behavioural change</code>, <code>Direction</code> (<code>+</code> / <code>-</code>)</td></tr>
+    <tr><td>Deliverables</td><td><code>D-N</code></td><td><code>Impact-ID</code>, <code>Title</code>, <code>Type</code> (feature/content/process/tool), optional <code>risks</code></td></tr>
+  </tbody>
+</table>
+
+<h2 id="ambiguity">Goal Ambiguity Scan</h2>
+
+<p>
+  An aspirational verb on its own (&ldquo;improve&rdquo;, &ldquo;enhance&rdquo;,
+  &ldquo;optimise&rdquo;, &ldquo;leverage&rdquo;) is not a measurable outcome. The
+  ambiguity scan reads the Goal&rsquo;s combined <code>Statement + Metric + Target</code>
+  text against an extensible denylist; a hit passes only if a numeric quantity sits on the
+  same line. The denylist lives in
+  <code>references/ambiguity-indicators.md</code> and can be extended for project-specific
+  vocabulary.
+</p>
+
+<div class="rule">
+  <p><strong>Loops, not refusals.</strong> An ambiguity hit does not crash the skill &mdash; it presents the offending word(s) and loops back to the outcome-statement question. The Goal row is not saved until the scan returns clean.</p>
+</div>
+
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the impact-map output is invalid.</p>
+<ol>
+  <li><strong>Four-level tree validated before save.</strong> Every Actor&rsquo;s <code>Goal-ID</code> points at a row in Goals; every Impact&rsquo;s <code>Actor-ID</code> points at a row in Actors; every Deliverable&rsquo;s <code>Impact-ID</code> points at a row in Impacts. A foreign-key violation refuses the save.</li>
+  <li><strong>Goal passes ambiguity scan.</strong> The Goal statement is checked against an extensible denylist of aspirational verbs ("improve", "enhance", "leverage"&hellip;). Hits pass only if a numeric quantity sits on the same line.</li>
+  <li><strong>Every level explicit (no implicit parents).</strong> No row may carry a blank parent-ID column. The validator refuses to fabricate parents.</li>
+  <li><strong>Paired MD + HTML before approval.</strong> Both <code>impact-map.md</code> and <code>impact-map.html</code> exist before the approval prompt fires.</li>
+</ol>
+
+<h2 id="output">Output</h2>
+
+<p>
+  Paired files at the project root:
+</p>
+
+<pre><code>impact-map.md
+impact-map.html</code></pre>
+
+<p>
+  The MD version is what the validator reads and what downstream skills consume. The HTML
+  is the presentation copy &mdash; same content, Tufte CSS shell.
+</p>
+
+<h2 id="pipeline">Pipeline Position</h2>
+
+<div class="pipeline">
+  <span class="label">Greenfield</span>
+  /gvm-init &rarr; <strong>/gvm-impact-map</strong> &rarr; /gvm-requirements &rarr; /gvm-test-cases &rarr; /gvm-tech-spec &rarr; /gvm-design-review &rarr; /gvm-walking-skeleton &rarr; /gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; /gvm-explore-test &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy
+</div>
+
+<p>
+  <code>/gvm-impact-map</code> sits between <code>/gvm-init</code> (which calibrates the
+  expert roster) and <code>/gvm-requirements</code> (which gates against the impact map for
+  traceability). The skill is optional &mdash; small projects can skip it &mdash; but when
+  present it raises the floor on outcome thinking across every downstream phase.
+</p>
+
+<h2 id="detail">For More Detail</h2>
+
+<p>
+  For the requirements skill that consumes this artefact, see the
+  <a href="../../gvm-requirements/docs/user-guide.html">Requirements User Guide</a>.
+  For expert scoring, see the
+  <a href="../../gvm-experts/docs/user-guide.html">Expert Management Guide</a>.
+</p>
+
+</main>
+
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

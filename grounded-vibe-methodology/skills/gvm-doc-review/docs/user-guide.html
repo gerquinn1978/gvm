@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-doc-review — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026 (v2.1.0)</p>
+<h1>/gvm-doc-review</h1>
+<p class="subtitle">
+  A cross-cutting quality audit for Claude Code that scores requirements, test cases,
+  specs, and standalone documents against expert criteria, flags issues by severity,
+  and checks consistency across your entire document set.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="whats-new">What&rsquo;s new in v2.1.0</h2>
+<p>v2.1.0 adds one user-visible change to this skill. Identifier prefixes (ADR, &ldquo;shared rule N&rdquo;) decode in <code>methodology-changelog.md</code>.</p>
+<ul>
+  <li><strong>Hard Gate 7 &mdash; user owns finding triage (shared rule 28).</strong> Every Critical or Important finding emitted by panels is presented to you before any disposition is recorded. The skill may recommend &ldquo;fix / defer / dismiss&rdquo; per finding but must not decide. Forbidden patterns: recording emitted findings as &ldquo;filtered under strict criterion&rdquo; or &ldquo;deferred to v{N}.{M}.{P} hardening&rdquo; without your input; presenting a verdict before you have seen the findings. Zero-deferred runs are exempt from the summary-count-with-hidden-deferrals rule.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  The <code>/gvm-doc-review</code> command acts as a quality gate across your project documents.
+  Point it at your project and it automatically detects which documents exist —
+  requirements, test cases, technical specifications, user documentation, presentations,
+  strategy documents, newsletters, and training materials — reviews each
+  one against expert-sourced criteria, and checks that they agree with each other.
+</p>
+
+<p>
+  The output is a scored HTML report with every issue classified as Critical, Important,
+  or Minor, so you know exactly what to fix and in what order.
+</p>
+
+<span class="sidenote">
+  Think of <code>/gvm-doc-review</code> as an automated peer review drawing on the same expert
+  panels used to <em>create</em> each document type. It applies requirements expertise to
+  requirements, test design expertise to test cases, and architecture expertise to specs.
+  The specific experts are loaded from reference files.
+</span>
+
+<p>
+  Unlike the other pipeline commands, <code>/gvm-doc-review</code> is not a single stage — it is
+  <strong>cross-cutting</strong>. You can run it at any point in the pipeline to audit
+  whatever documents exist so far.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+  Run <code>/gvm-doc-review</code> with no arguments. The skill scans your project for documents
+  in standard locations. When multiple document types are detected, a checklist is
+  presented. Pipeline documents (requirements, test cases, specs) are pre-checked;
+  standalone documents are not. You select which types to review:
+</p>
+
+<pre><code>/gvm-doc-review</code></pre>
+
+<p>
+  That's it. The skill auto-detects document types by looking for files at these paths:
+</p>
+
+<table>
+  <caption>Table 1 — Auto-detection patterns</caption>
+  <thead>
+    <tr><th>Document Type</th><th>Detection Path</th><th>Expert Criteria</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Requirements</td><td><code>requirements/requirements.md</code> or <code>.html</code></td><td>Requirements structure, questioning technique, personas, JTBD</td></tr>
+    <tr><td>Test Cases</td><td><code>test-cases/test-cases.md</code> or <code>.html</code></td><td>Test design, boundary analysis, BDD, risk-based testing</td></tr>
+    <tr><td>Specs</td><td><code>specs/*.md</code> or <code>.html</code></td><td>Architectural views, C4, risk-driven depth, ADRs, quality attributes</td></tr>
+    <tr><td>User Documentation</td><td><code>docs/</code> directory</td><td>Clarity, completeness, task orientation, accuracy</td></tr>
+    <tr><td>Presentations</td><td><code>presentations/</code> directory</td><td>Structure, narrative flow, slide economy, audience fit</td></tr>
+    <tr><td>Strategy Documents</td><td><code>strategy/</code> directory</td><td>Problem framing, options analysis, recommendation clarity</td></tr>
+    <tr><td>Newsletters</td><td><code>newsletters/</code> directory</td><td>Reader value, voice, scannability, call to action</td></tr>
+    <tr><td>Training Materials</td><td><code>training/</code> directory</td><td>Learning objectives, scaffolding, retention-oriented structure</td></tr>
+  </tbody>
+</table>
+
+<p>
+  If multiple document types exist, the review automatically includes cross-document
+  consistency checks. You can also pass a specific file path to review a single document.
+</p>
+
+<div class="callout">
+  <div class="callout-label">No setup required</div>
+  <p>The skill loads its own criteria reference and design system. You do not need to configure anything — just run the command and read the report.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Load Review Criteria Before Scoring.</strong> Read both <code>references/review-criteria.md</code> (local scoring rubrics) and <code>review-reference.md</code> (design system assessment methodology) before scoring any document.</li>
+  <li><strong>Multi-Select When Multiple Types Found.</strong> When multiple document types are detected, present a multi-select &mdash; the user decides which types to review.</li>
+  <li><strong>Write HTML Output.</strong> The review must produce <code>doc-review/{document-name}-review-YYYY-MM-DD.html</code>. Review reports are HTML-only &mdash; findings are carried forward in <code>reviews/calibration.md</code>, not in a paired MD file.</li>
+  <li><strong>Update Calibration.</strong> After presenting scores, create or update <code>reviews/calibration.md</code>.</li>
+  <li><strong>Write HTML Before Presenting Findings.</strong> The HTML must exist before presenting the review.</li>
+  <li><strong>Verdict.</strong> Every review includes a verdict using type-specific language. The exact phrasing depends on the document type &mdash; requirements say &lsquo;Proceed&rsquo;, presentations say &lsquo;Present&rsquo;, and so on. All map to one of three states: ready, conditionally ready, or not ready. The verdict appears in a prominent box at the top of the report.</li>
+</ol>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="scoring">Scoring System</h2>
+
+<p>
+  Every document is scored 0 to 10 against ten type-specific criteria (one point each).
+  These individual scores are then combined into an overall project score using fixed
+  weights:
+</p>
+
+<table>
+  <caption>Table 2 — Score weights</caption>
+  <thead>
+    <tr><th>Document Type</th><th>Weight</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Requirements</td><td>30%</td></tr>
+    <tr><td>Test Cases</td><td>25%</td></tr>
+    <tr><td>Specs</td><td>30%</td></tr>
+    <tr><td>Cross-document Consistency</td><td>15%</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  If a document type does not exist yet, its weight is redistributed proportionally
+  across the types that do exist. The review scores what is present, not what is absent —
+  missing documents are flagged as issues instead.
+</span>
+
+<p>
+  The report opens with a score card that shows the overall score and per-document breakdown
+  at a glance:
+</p>
+
+<div class="score-card">
+  <div class="overall-score">7.2 / 10</div>
+  <div class="score-breakdown">
+    <div class="score-item">Requirements: 8/10</div>
+    <div class="score-item">Test Cases: 7/10</div>
+    <div class="score-item">Specs: 6/10</div>
+    <div class="score-item">Consistency: 8/10</div>
+  </div>
+</div>
+
+<h3 id="score-meanings">What the scores mean</h3>
+
+<table>
+  <caption>Table 3 — Score interpretation</caption>
+  <thead>
+    <tr><th>Score</th><th>Meaning</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>9 &ndash; 10</strong></td><td>Publication quality. Could be used as a teaching example.</td></tr>
+    <tr><td><strong>7 &ndash; 8</strong></td><td>Strong. Minor issues that do not affect usability.</td></tr>
+    <tr><td><strong>5 &ndash; 6</strong></td><td>Adequate. Some issues that should be addressed before building.</td></tr>
+    <tr><td><strong>3 &ndash; 4</strong></td><td>Weak. Significant gaps that will cause problems downstream.</td></tr>
+    <tr><td><strong>1 &ndash; 2</strong></td><td>Incomplete. Missing critical content.</td></tr>
+    <tr><td><strong>0</strong></td><td>Document does not exist or is empty.</td></tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="issue-classification">Issue Classification</h2>
+
+<p>
+  Every finding is classified into one of three tiers. The report groups issues by tier
+  so the most urgent problems appear first.
+</p>
+
+<h3 id="critical-issues"><span class="tier critical">CRITICAL</span> Must fix before building</h3>
+
+<p>
+  Critical issues block the pipeline. They represent gaps or contradictions that will
+  cause real problems if carried forward into implementation.
+</p>
+
+<div class="issue critical">
+  <div class="issue-title">MUST requirement RE-4 has no test coverage and no spec coverage</div>
+  <div class="issue-detail">This requirement will be built without any way to verify correctness or any technical design. Add test cases and ensure at least one spec section addresses it.</div>
+  <div class="issue-location">Requirements &rarr; Test Cases, Requirements &rarr; Specs</div>
+</div>
+
+<div class="issue critical">
+  <div class="issue-title">Direct contradiction: specs say SQLite, requirements say PostgreSQL</div>
+  <div class="issue-detail">The data storage spec (spec-data.md &sect;3) specifies SQLite, but RE-12 requires PostgreSQL for concurrent access. Resolve the conflict before building.</div>
+  <div class="issue-location">specs/spec-data.md &sect;3 vs requirements/requirements.md RE-12</div>
+</div>
+
+<h3 id="important-issues"><span class="tier important">IMPORTANT</span> Should fix soon</h3>
+
+<p>
+  Important issues weaken document quality but do not block progress outright.
+  They represent missed coverage, ambiguity, or incomplete reasoning.
+</p>
+
+<div class="issue important">
+  <div class="issue-title">RE-7 uses vague language: "the system should be fast"</div>
+  <div class="issue-detail">This requirement is not testable. Define a specific performance target — e.g., "response time under 200ms for the 95th percentile."</div>
+  <div class="issue-location">requirements/requirements.md RE-7</div>
+</div>
+
+<div class="issue important">
+  <div class="issue-title">No boundary value tests for budget range (RE-3)</div>
+  <div class="issue-detail">RE-3 specifies a budget of $100,000 to $2,000,000. Add tests for the boundaries: $99,999, $100,000, $2,000,000, $2,000,001.</div>
+  <div class="issue-location">test-cases/test-cases.md, RE-3 coverage</div>
+</div>
+
+<h3 id="minor-issues"><span class="tier minor">MINOR</span> Nice to improve</h3>
+
+<p>
+  Minor issues are polish items. They improve clarity, consistency, or professionalism
+  but are safe to defer.
+</p>
+
+<div class="issue minor">
+  <div class="issue-title">Test TC-12 uses mechanism-focused name: "Test RE-5 validation"</div>
+  <div class="issue-detail">Rename to describe the behaviour — e.g., "Budget below minimum shows validation error." Behaviour-focused names are easier to scan in test reports.</div>
+  <div class="issue-location">test-cases/test-cases.md TC-12</div>
+</div>
+
+<div class="issue minor">
+  <div class="issue-title">Inconsistent vocabulary: "report" vs "summary" vs "output"</div>
+  <div class="issue-detail">The requirements use "report," test cases say "summary," and the spec calls it "output." Pick one term and use it consistently.</div>
+  <div class="issue-location">Cross-document vocabulary check</div>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="what-it-checks">What It Checks</h2>
+
+<p>
+  Each document type is evaluated against ten criteria drawn from the same expert
+  sources used to create that document type. Each criterion scores 0, 0.5, or 1.
+</p>
+
+<h3 id="requirements-criteria">Requirements (10 criteria)</h3>
+
+<table>
+  <caption>Table 4 — Requirements scoring criteria</caption>
+  <thead>
+    <tr><th>#</th><th>Criterion</th><th>Source</th><th>What it checks</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><strong>Completeness</strong></td><td>Wiegers Ch. 4</td><td>All domains covered; assumptions, constraints, out-of-scope explicit</td></tr>
+    <tr><td>2</td><td><strong>Correctness</strong></td><td>Wiegers Ch. 4</td><td>Requirements reflect real user needs; JTBD job statement present</td></tr>
+    <tr><td>3</td><td><strong>Feasibility</strong></td><td>Wiegers Ch. 4</td><td>Every requirement can be implemented within stated constraints</td></tr>
+    <tr><td>4</td><td><strong>Necessity</strong></td><td>Wiegers Ch. 4</td><td>Every requirement traces to a user need or business goal</td></tr>
+    <tr><td>5</td><td><strong>Prioritised</strong></td><td>Wiegers Ch. 16</td><td>Every requirement has a MoSCoW priority</td></tr>
+    <tr><td>6</td><td><strong>Unambiguous</strong></td><td>Wiegers Ch. 4</td><td>Each requirement is testable; single interpretation</td></tr>
+    <tr><td>7</td><td><strong>Verifiable</strong></td><td>Wiegers Ch. 4</td><td>Clear acceptance criteria for every requirement</td></tr>
+    <tr><td>8</td><td><strong>Consistent</strong></td><td>Wiegers Ch. 4</td><td>No contradictions between requirements</td></tr>
+    <tr><td>9</td><td><strong>Traceable</strong></td><td>Wiegers Ch. 4</td><td>Unique IDs; requirements index table present</td></tr>
+    <tr><td>10</td><td><strong>Structured</strong></td><td>Wiegers Ch. 1</td><td>Clear domain organisation; easy to navigate and modify</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  The review also applies Gause &amp; Weinberg probes: are assumptions surfaced? Are edge
+  cases addressed? Is "what could go wrong?" covered?
+</span>
+
+<h3 id="test-cases-criteria">Test Cases (10 criteria)</h3>
+
+<table>
+  <caption>Table 5 — Test cases scoring criteria</caption>
+  <thead>
+    <tr><th>#</th><th>Criterion</th><th>Source</th><th>What it checks</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><strong>Requirement coverage</strong></td><td>North/BDD</td><td>Every requirement ID has at least one test</td></tr>
+    <tr><td>2</td><td><strong>Traceability</strong></td><td>North/BDD</td><td>Every test traces to a requirement; no orphan tests</td></tr>
+    <tr><td>3</td><td><strong>Technique selection</strong></td><td>Copeland</td><td>Right technique for each type (BVA for ranges, decision tables for conditionals)</td></tr>
+    <tr><td>4</td><td><strong>Boundary values</strong></td><td>Beizer</td><td>Numeric constraints tested at min, max, on-boundary, off-boundary</td></tr>
+    <tr><td>5</td><td><strong>Negative cases</strong></td><td>Beizer/Kaner</td><td>Invalid inputs, error conditions, empty states tested</td></tr>
+    <tr><td>6</td><td><strong>Consumer realism</strong></td><td>Kaner</td><td>Realistic data, interrupted workflows, first-time user scenarios</td></tr>
+    <tr><td>7</td><td><strong>Priority alignment</strong></td><td>Kaner</td><td>MUST requirements have the most thorough coverage</td></tr>
+    <tr><td>8</td><td><strong>Concrete values</strong></td><td>North/BDD</td><td>Given/When/Then with specific values, not abstract descriptions</td></tr>
+    <tr><td>9</td><td><strong>Behaviour naming</strong></td><td>North/BDD</td><td>Names describe behaviour ("Budget below minimum rejected"), not mechanism</td></tr>
+    <tr><td>10</td><td><strong>Document quality</strong></td><td>&mdash;</td><td>HTML/MD in sync, health report present, traceability matrix complete</td></tr>
+  </tbody>
+</table>
+
+<h3 id="specs-criteria">Specs (10 criteria)</h3>
+
+<table>
+  <caption>Table 6 — Specs scoring criteria</caption>
+  <thead>
+    <tr><th>#</th><th>Criterion</th><th>Source</th><th>What it checks</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><strong>Decomposition</strong></td><td>Clements</td><td>Right number of specs for complexity; clear boundaries</td></tr>
+    <tr><td>2</td><td><strong>Architecture clarity</strong></td><td>Brown/C4</td><td>System understandable at a glance; clear containers and communication</td></tr>
+    <tr><td>3</td><td><strong>Risk-proportional depth</strong></td><td>Fairbanks</td><td>Thorough where risky, light where obvious</td></tr>
+    <tr><td>4</td><td><strong>Decision capture</strong></td><td>Keeling</td><td>Significant decisions in ADR format with context and rationale</td></tr>
+    <tr><td>5</td><td><strong>Quality attributes</strong></td><td>Bass/Clements/Kazman</td><td>Non-functional requirements addressed with scenarios and tactics</td></tr>
+    <tr><td>6</td><td><strong>Conceptual integrity</strong></td><td>Brooks</td><td>Consistent vocabulary, patterns, and mental model across specs</td></tr>
+    <tr><td>7</td><td><strong>Requirement traceability</strong></td><td>Clements</td><td>Every spec section references requirement IDs</td></tr>
+    <tr><td>8</td><td><strong>Implementation guide</strong></td><td>&mdash;</td><td>Build phases, dependencies, chunking, and test co-location defined</td></tr>
+    <tr><td>9</td><td><strong>Expert activation</strong></td><td>&mdash;</td><td>Right domain and stack specialists applied (visible in the spec)</td></tr>
+    <tr><td>10</td><td><strong>Document quality</strong></td><td>&mdash;</td><td>HTML/MD in sync, details toggles work, cross-cutting referenced</td></tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="cross-document">Cross-Document Consistency</h2>
+
+<p>
+  When multiple document types exist, the review checks that they tell a coherent story.
+  This is where many real-world projects break down — each document is fine in isolation,
+  but they contradict or ignore each other.
+</p>
+
+<span class="sidenote">
+  Cross-document consistency is weighted at 15% of the overall score. It has ten criteria
+  of its own, scored like each document type.
+</span>
+
+<h3 id="traceability-checks">Traceability</h3>
+
+<ul>
+  <li><strong>Requirements &rarr; Test Cases:</strong> Every requirement ID has at least one test case. Uncovered requirements are flagged.</li>
+  <li><strong>Requirements &rarr; Specs:</strong> Every requirement ID appears in at least one spec section. Unspecified requirements are flagged.</li>
+  <li><strong>Test Cases &rarr; Specs:</strong> Test cases reference spec sections where relevant. Tests that cannot be implemented from the specs are flagged.</li>
+  <li><strong>Specs &rarr; Requirements:</strong> Every spec section traces to requirement IDs. Spec sections with no requirement basis are flagged as potential scope creep.</li>
+</ul>
+
+<h3 id="vocabulary-and-contradictions">Vocabulary and contradictions</h3>
+
+<ul>
+  <li><strong>Vocabulary consistency:</strong> Are the same concepts named the same way across all documents? Different names for the same thing (e.g., "report" vs "summary") are flagged.</li>
+  <li><strong>Priority consistency:</strong> Do test and spec depth match requirement priority? A MUST requirement with thin test coverage is flagged.</li>
+  <li><strong>No contradictions:</strong> Do the documents agree on system behaviour? A requirement that says one thing while the spec says another is flagged as Critical.</li>
+  <li><strong>Open questions tracked:</strong> Are open questions from requirements resolved as decisions in specs, or explicitly deferred?</li>
+  <li><strong>Acknowledged gaps respected:</strong> If a health-report-decisions file exists, the review ensures those acknowledged decisions are not contradicted.</li>
+</ul>
+
+<table>
+  <caption>Table 7 — Cross-document consistency criteria</caption>
+  <thead>
+    <tr><th>#</th><th>Criterion</th><th>Full (1)</th><th>Partial (0.5)</th><th>Missing (0)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Req &rarr; Test coverage</td><td>100% of IDs covered</td><td>&gt;80%</td><td>&lt;80%</td></tr>
+    <tr><td>2</td><td>Req &rarr; Spec coverage</td><td>100% of IDs in specs</td><td>&gt;80%</td><td>&lt;80%</td></tr>
+    <tr><td>3</td><td>Test &rarr; Req tracing</td><td>100% traced</td><td>&gt;90%</td><td>&lt;90%</td></tr>
+    <tr><td>4</td><td>Spec &rarr; Req tracing</td><td>100% cite requirements</td><td>&gt;80%</td><td>&lt;80%</td></tr>
+    <tr><td>5</td><td>Vocabulary consistency</td><td>Same terms throughout</td><td>Minor deviations</td><td>Different terms for same concepts</td></tr>
+    <tr><td>6</td><td>Priority consistency</td><td>Depth matches priority</td><td>Mostly aligned</td><td>No alignment</td></tr>
+    <tr><td>7</td><td>No contradictions</td><td>Docs agree</td><td>Minor ambiguities</td><td>Direct contradictions</td></tr>
+    <tr><td>8</td><td>Open questions tracked</td><td>All resolved or deferred</td><td>Most tracked</td><td>Questions dropped</td></tr>
+    <tr><td>9</td><td>Acknowledged gaps</td><td>Decisions respected</td><td>Mostly</td><td>Gaps re-introduced</td></tr>
+    <tr><td>10</td><td>Pipeline completeness</td><td>All expected docs exist</td><td>One doc missing</td><td>Multiple docs missing</td></tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output</h2>
+
+<p>
+  The review produces a single HTML report saved to:
+</p>
+
+<pre><code>doc-review/requirements-review-2026-04-03.html</code></pre>
+
+<p>
+  The document name is derived from the reviewed file (e.g., <code>requirements-review-2026-04-03.html</code>
+  for a requirements document).
+  Subsequent reviews of the same document on the same date append <code>-r2</code>, <code>-r3</code>, etc.
+  Reports are HTML-only: no downstream skill parses a Markdown version, and findings are carried forward
+  in <code>reviews/calibration.md</code> rather than in the report itself.
+</p>
+
+<p>
+  The report follows the same Tufte/Few design system used by all pipeline documents.
+  It is structured in this order:
+</p>
+
+<ol>
+  <li><strong>Score card</strong> — overall score and per-document breakdown at the top</li>
+  <li><strong>Critical issues</strong> — everything that blocks the pipeline</li>
+  <li><strong>Important issues</strong> — everything that weakens quality</li>
+  <li><strong>Minor issues</strong> — polish and consistency items</li>
+  <li><strong>Requirements review</strong> — criterion-by-criterion assessment with scores</li>
+  <li><strong>Test cases review</strong> — criterion-by-criterion assessment</li>
+  <li><strong>Specs review</strong> — criterion-by-criterion assessment</li>
+  <li><strong>Cross-document consistency</strong> — traceability matrix and vocabulary check</li>
+</ol>
+
+<span class="sidenote">
+  Each issue in the report is actionable: it cites the specific document, section, and
+  ID where the problem lives, and suggests how to fix it. The review does not just say
+  "this is bad" — it says what to do about it.
+</span>
+
+<div class="callout">
+  <div class="callout-label">Date-stamped reports</div>
+  <p>Each review creates a new date-stamped file. This means you can track quality improvement over time by comparing successive reports.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline">Where This Fits</h2>
+
+<p>
+  <code>/gvm-doc-review</code> is both <strong>cross-cutting</strong> (usable at any point)
+  and has an <strong>explicit pipeline position</strong> after <code>/gvm-doc-write</code>
+  in the documentation phase:
+</p>
+
+<pre><code>Full pipeline:
+[/gvm-init] → [/gvm-impact-map] → /gvm-requirements → /gvm-test-cases → /gvm-tech-spec
+    → [/gvm-design-review] → [/gvm-walking-skeleton] → /gvm-build → /gvm-code-review
+    → /gvm-test → [/gvm-explore-test] → /gvm-doc-write → /gvm-doc-review → /gvm-deploy
+
+Optional phases shown in [brackets].
+
+Cross-cutting — /gvm-doc-review can run after any of these stages:
+/gvm-requirements  →  /gvm-test-cases  →  /gvm-tech-spec  →  /gvm-design-review  →  /gvm-build
+      ↑               ↑               ↑               ↑                ↑
+      └───────────────────────── /gvm-doc-review ──────────────────────┘
+
+Pipeline documentation phase:
+/gvm-test  →  /gvm-doc-write (pipeline docs)  →  <strong>/gvm-doc-review</strong>  →  /gvm-deploy</code></pre>
+
+<p>
+  The review adapts to whatever documents exist at the time you run it:
+</p>
+
+<ul>
+  <li><strong>After <code>/gvm-requirements</code></strong> — reviews requirements only. Scores completeness, quality attributes, and structure.</li>
+  <li><strong>After <code>/gvm-test-cases</code></strong> — reviews requirements and test cases. Adds traceability checks between them.</li>
+  <li><strong>After <code>/gvm-tech-spec</code></strong> — reviews all three document types plus full cross-document consistency.</li>
+  <li><strong>Before <code>/gvm-build</code></strong> — the most valuable checkpoint. Catches problems that would be expensive to fix in code.</li>
+  <li><strong>After <code>/gvm-doc-write</code> (pipeline docs)</strong> — reviews user-facing documentation produced after <code>/gvm-test</code>. This is the final quality gate in the full pipeline.</li>
+</ul>
+
+<span class="sidenote">
+  The review is designed to prevent the most costly pattern in software: discovering
+  requirements gaps during implementation. Fixing a requirement costs minutes at the
+  requirements stage and hours during build.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="process">Review Process</h2>
+
+<p>
+  When you run <code>/gvm-doc-review</code>, the skill follows seven steps:
+</p>
+
+<table>
+  <caption>Table 8 — Review process steps</caption>
+  <thead>
+    <tr><th>Step</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="phase">1</span> Detect</td>
+      <td>Scans standard paths for all document types &mdash; pipeline documents (requirements, test cases, specs) and standalone documents (user docs, presentations, strategy, newsletters, training materials)</td>
+    </tr>
+    <tr>
+      <td><span class="phase">2</span> Load criteria</td>
+      <td>Reads the review-criteria.md reference file (the scoring rubric). For standalone document types, also loads type-specific per-domain files from <code>references/domain/</code> selectively based on the document&rsquo;s subject matter.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">3</span> Review</td>
+      <td>Single calibrated review by default. When <code>reviews/calibration.md</code> contains 2 or more score history rows with different dates, dual review triggers automatically &mdash; a calibrated reviewer and a blind reviewer run in parallel, then findings are reconciled (see <a href="#dual-review">Dual Review</a> below)</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4</span> Cross-document checks</td>
+      <td>Checks traceability, vocabulary, and contradictions across documents</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5</span> Score</td>
+      <td>Rates each document 0&ndash;10 and computes the weighted overall score</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5b</span> Source verification</td>
+      <td>For externally-supplied documents only: if factual accuracy scored below 7, runs the source verification protocol against claims that scored poorly. Checks completeness, accuracy, and hallucination against the original source.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">6</span> Write report</td>
+      <td>Writes the HTML report to <code>doc-review/{document-name}-review-YYYY-MM-DD.html</code>. No paired Markdown file — review reports are not parsed by downstream skills.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">7</span> Update calibration</td>
+      <td>Creates or updates <code>reviews/calibration.md</code> with score history and anchor examples. When this file accumulates 2 or more score history rows with different dates, dual review triggers automatically on the next run. Also checks for findings eligible for promotion to build checks (see below).</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Build check promotion</div>
+  <p>During calibration update, findings that have been flagged in 3 or more consecutive rounds (systemic) or that regressed after being resolved are promoted to <code>reviews/build-checks.md</code>. This file is loaded by <code>/gvm-build</code> during prompt generation, injecting &ldquo;Known Patterns to Avoid&rdquo; directly into chunk prompts. The result is a feedback loop: review findings become build checks, which prevent the same findings from recurring. Tier 1 checks (general practice) are permanent. Tier 2 checks (project-specific) are flagged for retirement after 3 quiet rounds, but you decide whether to retire them.</p>
+</div>
+
+<p>
+  The entire process runs autonomously. The skill will only ask you a question if
+  the review uncovers an ambiguity that genuinely requires your input — otherwise
+  it produces the report and presents a summary.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="dual-review">Dual Review</h2>
+
+<p>
+  When <code>reviews/calibration.md</code> contains 2 or more score history rows with different dates, dual review triggers automatically: a <strong>calibrated reviewer</strong> (with full project history) and a
+  <strong>blind reviewer</strong> (with no calibration data, seeing the document fresh) run in parallel.
+  A reconciliation step merges the results into one report.
+</p>
+
+<p>
+  This corrects for a systematic weakness in progressive calibration: the more
+  the reviewer knows about the project, the more it expects certain patterns and
+  the less it scrutinises areas that scored well previously. The blind reviewer
+  has no such expectations. It catches:
+</p>
+
+<ul>
+  <li>New problem categories that prior rounds did not look for</li>
+  <li>Issues masked by worse adjacent problems that have since been fixed</li>
+  <li>Drift in areas that scored well and stopped getting scrutiny</li>
+  <li>Regressions &mdash; previously-resolved issues that have crept back</li>
+</ul>
+
+<span class="sidenote">
+  The blind reviewer also rediscovers resolved issues and flags things the
+  calibrated reviewer correctly excluded. The reconciliation step filters
+  this noise &mdash; the practitioner sees one clean report, not two.
+</span>
+
+<p>
+  In the final report, findings from the blind review are tagged so you can see
+  where calibration had blind spots. Over time, the dual review metadata
+  (how many findings came from each source) reveals whether calibration is
+  developing systematic biases.
+</p>
+
+<p>
+  This mechanism applies to all three review skills &mdash;
+  <code>/gvm-doc-review</code>, <code>/gvm-code-review</code>, and
+  <code>/gvm-design-review</code> &mdash; via shared rule 16. Any review
+  that uses progressive calibration automatically gets dual review
+  correction once the calibration file has sufficient history.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Blind Review Findings</div>
+  <p>The final report includes a &ldquo;Blind Review Findings&rdquo; section listing issues that only the blind reviewer caught &mdash; the calibrated reviewer&rsquo;s blind spots. No action is needed to trigger dual review; it activates automatically based on the calibration file.</p>
+</div>
+
+<div class="callout">
+  <div class="callout-label">Why not on the first review?</div>
+  <p>Until <code>reviews/calibration.md</code> contains at least 2 score history rows from different dates, the calibration file has insufficient history to meaningfully
+  bias the reviewer. There are no established anchors to create blind spots, and
+  no resolved findings that could mask regressions. The dual review adds cost without
+  corresponding value until that threshold is reached.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="finding-quality-gate">Finding Quality Gate</h2>
+
+<p>
+  Not every observation is a finding. A review system calibrated to keep discovering issues
+  will always find more &mdash; reviewers can generate findings indefinitely by lowering the
+  threshold for what counts. The finding quality gate defines what counts.
+</p>
+
+<p>
+  <strong>A finding is real if a consumer of this document would misunderstand, take wrong
+  action, or lose trust because of it.</strong> A finding is polish if fixing it makes the
+  author feel better but changes nothing for the consumer.
+</p>
+
+<p>Every finding must pass three tests:</p>
+
+<ol>
+  <li><strong>Consumer impact.</strong> State the consequence: &ldquo;A reader would&hellip;&rdquo;
+    If you cannot finish that sentence with a specific outcome (misunderstand the argument,
+    cite a wrong source, implement the wrong thing), the finding is polish. Standalone
+    documents (whitepapers, presentations) use the low-propagation threshold &mdash; the
+    reader is the only consumer. Pipeline documents (requirements, test cases, specs) use
+    a higher threshold because errors propagate downstream.</li>
+  <li><strong>Propagation.</strong> Does the finding cause a problem in another artefact?
+    A wrong requirement ID propagates through test cases, specs, and code. A left-aligned
+    number in a sources table propagates nowhere.</li>
+  <li><strong>Diminishing returns.</strong> Each review round holds new findings to a higher
+    bar. Round 1 catches structural problems. Round 3 should not surface &ldquo;redundant
+    sentence&rdquo; or &ldquo;right-align this column.&rdquo;</li>
+</ol>
+
+<p>
+  <strong>The stop condition:</strong> when all remaining observations fail the consumer
+  impact test, the document is done. A review that produces only polish observations
+  reports &ldquo;No actionable findings&rdquo; &mdash; a clean review is a valid outcome.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="tips">Tips</h2>
+
+<ul>
+  <li><strong>Run early and often.</strong> The review is most valuable when run after each pipeline stage, not just at the end. Problems caught early are cheap to fix.</li>
+  <li><strong>Use it as a gate.</strong> Before moving from <code>/gvm-requirements</code> to <code>/gvm-test-cases</code>, run <code>/gvm-doc-review</code> and resolve any Critical issues. Before moving from <code>/gvm-tech-spec</code> to <code>/gvm-build</code>, run it again.</li>
+  <li><strong>Fix Critical issues first.</strong> The tier system exists for a reason. Ignore Minor issues until all Critical and Important issues are resolved.</li>
+  <li><strong>Track improvement over time.</strong> Each review is date-stamped. Compare reports to confirm that fixes actually landed and scores improved.</li>
+  <li><strong>Don't chase a perfect 10.</strong> A score of 7&ndash;8 across all documents with no Critical issues is a strong, buildable project. Diminishing returns set in above 8.</li>
+  <li><strong>Re-review after edits.</strong> If you fix issues manually (outside of the pipeline commands), run <code>/gvm-doc-review</code> again to confirm the fixes are correct and haven't introduced new problems.</li>
+  <li><strong>Use requirements-health-report-decisions.md.</strong> If a review flags something you have intentionally decided to accept, document that decision in a health-report-decisions file. The review will respect acknowledged decisions on subsequent runs.</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">Best practice</div>
+  <p>Run <code>/gvm-doc-review</code> before every pipeline transition: after <code>/gvm-requirements</code>, after <code>/gvm-test-cases</code>, and after <code>/gvm-tech-spec</code>. Three reviews across a project lifecycle takes minutes and prevents hours of rework.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="light-mode">Light Mode</h2>
+
+<p>
+  For targeted reviews &mdash; when only a single document has changed and prior reviews exist
+  &mdash; the skill offers <strong>light mode</strong>. Light mode skips cross-document consistency
+  checks and focuses solely on the criteria for the changed document.
+</p>
+
+<p>
+  Light mode is appropriate when:
+</p>
+
+<ul>
+  <li>You have made focused edits to one document (e.g., tightened requirements wording) and want to confirm the document-level score without re-running the full consistency audit</li>
+  <li>A prior full review already established baseline cross-document consistency and nothing else has changed</li>
+  <li>You are iterating quickly on a single document and want fast feedback between edits</li>
+</ul>
+
+<p>
+  Light mode is <strong>not</strong> appropriate when:
+</p>
+
+<ul>
+  <li>This is the first review of the project</li>
+  <li>Changes to one document may have introduced inconsistencies with others (e.g., requirement IDs changed, spec sections renamed)</li>
+  <li>You are reviewing before a pipeline transition &mdash; always run a full review at gates</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">How to invoke light mode</div>
+  <p>Pass the specific file path and prior review: <code>/gvm-doc-review requirements/requirements.md</code>. The skill detects that only one file is specified and that prior reviews exist, then offers light mode as an option. You confirm before it skips the consistency phase.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-test-cases — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">March 2026</p>
+<h1>/gvm-test-cases</h1>
+<p class="subtitle">
+  A command for Claude Code that generates structured test cases from a requirements
+  document, acting as a quality gate before technical specification and implementation.
+</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>
+  The <code>/gvm-test-cases</code> command reads the requirements document produced by
+  <code>/gvm-requirements</code> and generates a comprehensive test suite. It first
+  assesses the quality of your requirements (catching issues early), then generates
+  test cases domain by domain using expert-driven techniques.
+</p>
+
+<p>It produces five files:</p>
+
+<ul>
+  <li><strong>requirements-health-report.html</strong> — requirements health report (Tufte/Few design) &mdash; open this to review findings before deciding whether to fix requirements</li>
+  <li><strong>requirements-health-report.md</strong> — health report in markdown</li>
+  <li><strong>requirements-health-report-decisions.md</strong> — persisted decisions on requirements issues</li>
+  <li><strong>test-cases.html</strong> — professionally designed document (Tufte/Few)</li>
+  <li><strong>test-cases.md</strong> — Claude-friendly markdown for downstream commands</li>
+</ul>
+
+<p>All files are saved to your project's <code>test-cases/</code> directory.</p>
+
+<span class="sidenote">
+  This command serves as a quality gate. The health report catches requirement issues
+  that <code>/gvm-requirements</code> might have missed — untestable requirements,
+  inconsistencies, and gaps.
+</span>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>
+  You must have run <code>/gvm-requirements</code> first. The command expects to find
+  <code>requirements/requirements.md</code> in your project directory. If the file
+  doesn't exist, it will tell you to run <code>/gvm-requirements</code>.
+</p>
+
+<h2 id="external-tests">Using Existing Test Cases</h2>
+
+<p>
+  If you have existing test cases from another tool or process, provide them as input alongside your GVM requirements. The skill uses them as seed input &mdash; extracting what maps to GVM test case structure (Given/When/Then, traceability, priorities) and running the normal generation flow to fill gaps and apply expert techniques.
+</p>
+
+<p>
+  Before finalising, an independent verification agent compares the GVM output against your original test document, checking completeness, accuracy, hallucination, and traceability consistency. Discrepancies are presented to you for resolution.
+</p>
+
+<span class="sidenote">
+  External test cases accelerate the process but are not accepted as-is. They go through the same health report, technique selection, and coverage audit as generated tests.
+</span>
+
+<h2 id="health-report">The Health Report</h2>
+
+<p>
+  Before generating any test cases, the skill reads your entire requirements
+  document and produces a health report. This catches:
+</p>
+
+<ul>
+  <li><strong>Untestable requirements</strong> — vague language, missing acceptance criteria, with suggestions to fix</li>
+  <li><strong>Inconsistencies</strong> — requirements that contradict each other</li>
+  <li><strong>Weak requirements</strong> — implementation details, duplicates, overly broad statements</li>
+  <li><strong>Missing coverage</strong> — gaps where you'd expect a requirement but there isn't one</li>
+</ul>
+
+<span class="sidenote">
+  The health report applies risk-based assessment and testability criteria from the
+  skill's reference files. The focus is "can this requirement be verified?" and "what's most
+  likely to fail?"
+</span>
+
+<p>For each issue, you choose:</p>
+
+<ul>
+  <li><strong>Fix first</strong> — go back to <code>/gvm-requirements</code> and update the document</li>
+  <li><strong>Proceed</strong> — issue noted as a caveat, tests generated anyway</li>
+  <li><strong>Acknowledge</strong> — saved permanently so it won't be raised again on future runs</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">Persistent decisions</div>
+  <p>Acknowledged issues are saved to <code>requirements-health-report-decisions.md</code>. On subsequent
+  runs, these issues are skipped unless the underlying requirement has been modified.</p>
+</div>
+
+<h2 id="generation">Test Case Generation</h2>
+
+<h3 id="first-pass">Automatic first pass</h3>
+
+<p>
+  For each domain in your requirements, the skill automatically generates test cases
+  covering the happy path and obvious negative scenarios. It selects the right test
+  design technique based on what each requirement describes:
+</p>
+
+<table>
+  <caption>Table 1 — Technique selection</caption>
+  <thead>
+    <tr><th>Requirement pattern</th><th>Technique applied</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Conditional logic ("if X then Y")</td><td>Decision table testing</td></tr>
+    <tr><td>Workflows, multi-step processes</td><td>State transition testing</td></tr>
+    <tr><td>User actions with expected outcomes</td><td>Use case testing</td></tr>
+    <tr><td>Data inputs with ranges or limits</td><td>Equivalence class + boundary value</td></tr>
+    <tr><td>Multiple interacting parameters</td><td>Pairwise testing</td></tr>
+    <tr><td>Reversible, idempotent, or ordering operations</td><td>Property-based testing [PROPERTY]</td></tr>
+    <tr><td>Calculations with algebraic properties</td><td>Property-based testing [PROPERTY]</td></tr>
+    <tr><td>Accepts user input, renders content, handles files</td><td>Security testing [SECURITY]</td></tr>
+    <tr><td>Exposes API endpoints, manages auth/sessions</td><td>Security testing [SECURITY]</td></tr>
+    <tr><td>Simple declarative ("system must X")</td><td>Single Given/When/Then scenario</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  Technique selection follows a decision framework loaded from the skill's reference
+  files: "this type of requirement calls for this type of test." The specific experts
+  and techniques can be updated by editing the reference files.
+</span>
+
+<div class="callout">
+  <div class="callout-label">Industry domain specialists (Tier 2b)</div>
+  <p>When the application&rsquo;s business domain has an industry domain reference file (e.g., market-risk, credit-risk), those experts are loaded during test generation. They inform domain-specific edge cases, regulatory scenarios, boundary conditions, and failure modes that software testing experts alone cannot surface.</p>
+</div>
+
+<h3 id="deepening">Selective deepening</h3>
+
+<p>
+  After presenting each domain's tests, the skill decides whether to offer
+  deeper analysis. It <strong>auto-skips</strong> for simple, low-priority requirements
+  and <strong>offers deepening</strong> when it detects complexity:
+</p>
+
+<ul>
+  <li>Data inputs with ranges or boundaries</li>
+  <li>Multiple conditions interacting</li>
+  <li>Must or Should priority requirements</li>
+  <li>First pass generated 4+ test cases</li>
+</ul>
+
+<p>
+  When deepening, rigorous boundary value analysis and equivalence partitioning
+  techniques are applied from the skill's expert reference files. Complex scenarios
+  get traditional-format detail (preconditions, steps, expected results, test data)
+  alongside the Given/When/Then format.
+</p>
+
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Load Expert References at Session Start.</strong> Read <code>references/test-design-techniques.md</code> and <code>references/test-case-checklist.md</code> before generating any test cases.</li>
+  <li><strong>Health Report Before Generation.</strong> Run the requirements health check before generating test cases &mdash; do not skip it.</li>
+  <li><strong>Write Paired HTML + MD.</strong> Both <code>test-cases/test-cases.html</code> and <code>test-cases/test-cases.md</code> must be written.</li>
+  <li><strong>Traceability Matrix is Mandatory.</strong> The output must include a traceability matrix mapping every requirement ID to its test case IDs.</li>
+  <li><strong>HTML Before Approval.</strong> Write the MD first, then immediately write the HTML &mdash; both must exist before presenting test cases for user review.</li>
+</ol>
+
+<h2 id="format">Test Case Format</h2>
+
+<p>Every test case uses BDD's Given/When/Then format with requirement traceability:</p>
+
+<pre><code>TC-RE-1-01: Candidate areas match budget constraint
+  Given a user with a maximum purchase price of $500,000
+  And seeking single family homes
+  When the system identifies candidate areas
+  Then 3-5 geographic areas are returned
+  And each area has properties within the budget
+  [Requirement: RE-1] [Priority: MUST]</code></pre>
+
+<p>Complex scenarios add traditional detail beneath the Given/When/Then:</p>
+
+<pre><code>TC-RE-2-03: Property listing price at budget boundary
+
+  Given a user with a maximum purchase price of $500,000
+  When the system searches for properties
+  Then only properties at or below $500,000 are included
+
+  Preconditions:
+    - Candidate area identified (TC-RE-1-01 passes)
+  Steps:
+    1. Set maximum purchase price to $500,000
+    2. Query properties in candidate area
+  Expected Results:
+    - $500,000 property: included
+    - $499,999 property: included
+    - $500,001 property: excluded
+  [Requirement: RE-2] [Priority: MUST]</code></pre>
+
+<span class="sidenote">
+  The BDD format comes from Dan North's Behaviour-Driven Development.
+  Concrete values (not "a valid budget") come from Gojko Adzic's
+  <em>Specification by Example</em>.
+</span>
+
+<p>Requirements with definable invariants also generate property-based test specifications:</p>
+
+<pre><code>TC-RE-3-04: Currency conversion round-trip preserves value [PROPERTY]
+  Property: For all amounts (0.01 to 999999.99) and currency pairs,
+    convert(convert(amount, A, B), B, A) is within 0.01 of amount
+  Counterexample strategy: very small amounts, very large amounts,
+    currencies with extreme exchange rates
+  [Requirement: RE-3] [Priority: MUST]</code></pre>
+
+<span class="sidenote">
+  Property-based tests assert invariants rather than checking specific input/output pairs.
+  The build phase implements these using the stack's property testing library
+  (Hypothesis for Python, fast-check for TypeScript, etc.).
+</span>
+
+<p>Requirements involving user input, APIs, authentication, or file handling generate security test cases:</p>
+
+<pre><code>TC-RE-5-03: Search query resists SQL injection [SECURITY]
+  Attack vector: A03:2021 Injection
+  Given a search form accepting user text
+  When the input contains "'; DROP TABLE users; --"
+  Then the query is parameterised and the input is treated as literal text
+  And no SQL error is returned to the client
+  [Requirement: RE-5] [Priority: MUST]</code></pre>
+
+<span class="sidenote">
+  Security tests are mandatory for Must/Should requirements with web or API exposure.
+  They target OWASP categories where AI-generated code has demonstrated, measurable
+  failure rates &mdash; injection, XSS, path traversal, credential exposure.
+</span>
+
+<h2 id="priorities">Priority Inheritance</h2>
+
+<table>
+  <caption>Table 2 — How test priorities derive from requirement priorities</caption>
+  <thead>
+    <tr><th>Requirement priority</th><th>Happy path test</th><th>Edge case test</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Must</td><td>Must</td><td>Should</td></tr>
+    <tr><td>Should</td><td>Should</td><td>Could</td></tr>
+    <tr><td>Could</td><td>Could</td><td>Won't</td></tr>
+    <tr><td>Won't</td><td>Won't</td><td>Won't</td></tr>
+  </tbody>
+</table>
+
+<p>
+  The skill notes when it deprioritizes a test and why. You can adjust priorities
+  during the review conversation.
+</p>
+
+<h2 id="ebt-1">EBT-1</h2>
+
+<p>
+  Evidence-Based Testing (EBT) is the per-test-case contract enforced during
+  Phase 4. EBT-1 is the example-based emission rule: every <strong>MUST</strong>-priority
+  requirement produces at least one <code>[EXAMPLE]</code>-tagged test in the
+  three-element shape below. EBT-1, the tag taxonomy below, and
+  the Phase 4 contract / collaboration lint together define what a well-formed
+  test case looks like.
+</p>
+
+<pre><code>TC-RE-X-NN: &lt;descriptive name&gt; [EXAMPLE]
+Input: &lt;concrete value&gt;
+Given &lt;precondition&gt;
+When &lt;action with input&gt;
+Then the output MUST contain: &lt;token | phrase | structural element&gt;
+And the output MUST NOT contain: &lt;counterexample&gt;
+[Requirement: RE-X] [Priority: MUST]
+[Trace: G-J → A-K → I-M → D-N → RE-X → TC-RE-X-NN]</code></pre>
+
+<p>
+  The <code>Input:</code>, <code>MUST contain</code>, and <code>MUST NOT contain</code>
+  lines are all mandatory. Phase 4's EBT-1 audit checks each one verbatim and
+  fails the requirement closed if any is absent — the audit is structural, not
+  semantic, so the literal line shapes matter.
+</p>
+
+<table>
+  <caption>Table 3 — Test-case tag taxonomy</caption>
+  <thead>
+    <tr><th>Tag</th><th>When emitted</th><th>What it asserts</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>[EXAMPLE]</code></td>
+      <td>Every MUST requirement (mandatory).</td>
+      <td>One concrete Given/When/Then with the three-element <code>Input</code> / <code>MUST contain</code> / <code>MUST NOT contain</code> shape.</td>
+    </tr>
+    <tr>
+      <td><code>[PROPERTY]</code></td>
+      <td>Conditional — only when the property-detection heuristic returns a non-empty category match (e.g., idempotence, round-trip, ordering).</td>
+      <td>An invariant that holds across the input space. The audit does not fault the absence of <code>[PROPERTY]</code> for non-property requirements.</td>
+    </tr>
+    <tr>
+      <td><code>[CONTRACT]</code></td>
+      <td>Tests that exercise the real production class downward from the DI root, with mocks only at external boundaries.</td>
+      <td>End-to-end behaviour through real internal collaborators. Internal-class mocks are a Metz violation.</td>
+    </tr>
+    <tr>
+      <td><code>[COLLABORATION]</code></td>
+      <td>Tests that verify a caller invokes its collaborator with expected arguments.</td>
+      <td>Interaction-level assertion (mocks and stubs are allowed).</td>
+    </tr>
+    <tr>
+      <td><code>[SECURITY]</code></td>
+      <td>MUST/SHOULD requirements with web or API exposure (user input, API endpoints, auth, file handling).</td>
+      <td>OWASP-aligned attack-surface coverage from the project's security expert templates.</td>
+    </tr>
+  </tbody>
+</table>
+
+<aside class="callout">
+  <strong>Phase 4 contract / collaboration lint.</strong> The lint refuses two
+  structural violations regardless of which test file they appear in:
+  <ul>
+    <li><strong>Rainsberger violation</strong> — patching HTTP transport
+        (<code>requests</code>, <code>httpx</code>, <code>axios</code>, etc.)
+        inside the consumer's test. Replace with a contract test against a
+        real fake server, or retag as <code>[COLLABORATION]</code> if the
+        boundary is genuinely internal.</li>
+    <li><strong>Metz violation</strong> — internal-class mocks inside a
+        <code>[CONTRACT]</code>-tagged test. Replace with the real production
+        class, or extend the project's <code>.ebt-boundaries</code> allowlist
+        if the dependency is legitimately external.</li>
+  </ul>
+</aside>
+
+<aside class="callout">
+  <strong>Trace lines are mandatory.</strong> Every emitted test gets a
+  <code>[Trace: ...]</code> line. When the requirement carries an
+  <code>[impact-deliverable: ...]</code> tag, the trace resolves to
+  <code>G-J → A-K → I-M → D-N → RE-X → TC-RE-X-NN</code>. Otherwise the
+  literal line <code>[Trace: not-yet-traced]</code> is emitted; Phase 4
+  surfaces the count to the practitioner but does not hard-fail
+  transitional projects.
+</aside>
+
+<h2 id="phases">The Five Phases</h2>
+
+<table>
+  <caption>Table 4 — Process phases</caption>
+  <thead>
+    <tr><th>Phase</th><th>What happens</th><th>Your role</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="phase">1</span> Health Report</td>
+      <td>Reads all requirements. Identifies untestable, inconsistent, weak, and missing requirements. Filters previously acknowledged issues.</td>
+      <td>Fix, proceed, or acknowledge each issue.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">2</span> Auto-Generate</td>
+      <td>For each domain: selects techniques, generates happy path + obvious negatives, writes to both files.</td>
+      <td>Review test summaries per domain.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">3</span> Deepening</td>
+      <td>Offers full boundary analysis for complex/high-priority requirements. Auto-skips for simple ones.</td>
+      <td>Accept or skip deepening offers.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4</span> Coverage Audit</td>
+      <td>Builds traceability matrix. Flags uncovered requirements and orphan tests.</td>
+      <td>Confirm coverage is acceptable.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5</span> Finalize</td>
+      <td>Writes traceability matrix, test summary. Final sync check.</td>
+      <td>Approve completed document.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="traceability">Traceability Matrix</h2>
+
+<p>
+  The final document includes a traceability matrix mapping every requirement to its
+  test cases. This tells you at a glance what's covered and what isn't:
+</p>
+
+<pre><code>| Req ID | Requirement Summary          | Test Cases              | Coverage |
+|--------|------------------------------|-------------------------|----------|
+| RE-1   | Identify candidate areas     | TC-RE-1-01, TC-RE-1-02  | Full     |
+| RE-2   | Real property listings       | TC-RE-2-01 to TC-RE-2-05| Full     |
+| ED-4   | Special programmes           | —                       | None     |</code></pre>
+
+<h2 id="lifecycle">Where This Fits</h2>
+
+<div class="pipeline">
+  <span class="label">GVM v2.0 pipeline</span>
+  [/gvm-init] &rarr; [/gvm-impact-map] &rarr; /gvm-requirements &rarr; <strong>/gvm-test-cases</strong> &rarr; /gvm-tech-spec &rarr; [/gvm-design-review] &rarr; [/gvm-walking-skeleton] &rarr; /gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; [/gvm-explore-test] &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy
+</div>
+<p style="font-size:0.9rem; color:#555;">Issues found during test case generation feed back to <code>/gvm-requirements</code> before any code is written.</p>
+
+<p>
+  The health report creates a natural feedback loop. Issues found during test case
+  generation often lead to requirements updates, which strengthen both documents
+  before any code is written.
+</p>
+
+<h2 id="rerunning">Running Again</h2>
+
+<p>
+  What happens when you run <code>/gvm-test-cases</code> again depends on the state of the project:
+</p>
+
+<ul>
+  <li><strong>First run.</strong> No <code>test-cases.md</code> exists. The skill generates the full test suite from scratch, runs the health report, and writes <code>test-cases/test-cases.md</code>.</li>
+  <li><strong>Stale detection.</strong> If <code>requirements.md</code> is newer than <code>test-cases.md</code> (by file timestamp), the skill detects the staleness, re-runs the health report against the updated requirements, and offers to regenerate only the affected domains. Previously acknowledged health report decisions remain valid unless the underlying requirement changed.</li>
+  <li><strong>New requirements round.</strong> If <code>requirements-002.md</code> exists (a second requirements round), the skill creates <code>test-cases-002.md</code>. Test case IDs in the new file use round-prefixed identifiers (e.g., <code>TC-R2-VS-1</code>) to keep the two sets unambiguous across the pipeline.</li>
+</ul>
+
+</main>
+
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

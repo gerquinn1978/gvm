@@ -1,0 +1,314 @@
+<!-- Source: tufte-html-reference.md (sha256: a4fa90f7ee026c6438e6998c809c5f717f9f5d7388c99bc7d9702a2e0295ef38) -->
+<style>
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  color: #111;
+  background: #fffff8;
+  line-height: 1.6;
+  padding: 2rem 1rem 6rem;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+/* ── Typography ── */
+h1 {
+  font-size: 2.4rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+  color: #111;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  font-style: italic;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  color: #111;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.3rem;
+}
+
+h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.6rem;
+  color: #333;
+}
+
+p, li {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 0.8rem;
+  max-width: 640px;
+}
+
+ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+li { margin-bottom: 0.4rem; }
+
+.subtitle {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 2.5rem;
+  max-width: 640px;
+}
+
+.date {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 0.2rem;
+}
+
+/* ── Floating TOC (Left Side) ── */
+nav.toc {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  width: 220px;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  background: #fffff8;
+  border-right: 2px solid #ddd;
+  padding: 1rem 1rem 1rem 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  z-index: 100;
+}
+
+nav.toc .toc-title {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #595959;
+  margin-bottom: 0.6rem;
+}
+
+nav.toc a {
+  color: #555;
+  text-decoration: none;
+  display: block;
+  padding: 0.15rem 0;
+  transition: color 0.15s;
+}
+
+nav.toc a:hover { color: #111; }
+nav.toc a.active { color: #111; font-weight: 600; }
+nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #595959; }
+nav.toc .toc-h3:hover { color: #555; }
+
+/* Offset main content for left TOC */
+main {
+  margin-left: 260px;
+}
+
+/* ── Sidenotes (Right Margin) ── */
+.sidenote {
+  float: right;
+  clear: right;
+  width: 220px;
+  margin-right: -260px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #666;
+  padding-left: 1rem;
+  border-left: 2px solid #e0e0e0;
+}
+
+/* ── Tables (Few's principles) ── */
+table {
+  border-collapse: collapse;
+  margin: 1.5rem 0 2rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  width: auto;
+  min-width: 480px;
+}
+
+thead th {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.5rem 1rem 0.5rem 0;
+  border-bottom: 2px solid #333;
+  color: #111;
+}
+
+tbody td {
+  padding: 0.45rem 1rem 0.45rem 0;
+  border-bottom: 1px solid #e8e8e8;
+  vertical-align: top;
+}
+
+tbody tr:last-child td { border-bottom: 2px solid #333; }
+tbody tr:nth-child(even) { background: #f9f9f4; }
+
+caption {
+  font-style: italic;
+  font-size: 0.88rem;
+  color: #666;
+  text-align: left;
+  margin-bottom: 0.4rem;
+}
+
+/* ── Requirement Blocks ── */
+.req {
+  background: #f7f7f0;
+  border-left: 3px solid #999;
+  padding: 0.8rem 1rem;
+  margin: 1rem 0 1.2rem;
+  max-width: 640px;
+}
+
+.req-id {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+
+.req p { margin-bottom: 0.3rem; }
+
+/* ── Priority Chips (MoSCoW) ── */
+.priority {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.1rem 0.45rem;
+  border-radius: 2px;
+  vertical-align: middle;
+  margin-left: 0.4rem;
+}
+
+.priority.must { background: #111; color: #fff; }
+.priority.should { background: #bbb; color: #fff; }
+.priority.could { background: #e8e8e0; color: #666; }
+.priority.wont { background: #fff; color: #999; border: 1px solid #ccc; }
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  nav.toc {
+    position: static;
+    width: 100%;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+  }
+  main { margin-left: 0; }
+  .sidenote {
+    float: none;
+    width: 100%;
+    margin: 0.8rem 0;
+    padding: 0.6rem 0 0.6rem 1rem;
+  }
+}
+
+/* ── Test Case Components (/gvm-test-cases) ── */
+.test-case {
+  background: #f7f7f0;
+  border-left: 3px solid #669;
+  padding: 0.8rem 1rem;
+  margin: 1rem 0 1.2rem;
+  max-width: 640px;
+}
+
+.tc-id {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+
+.tc-name {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.tc-bdd p {
+  margin-bottom: 0.2rem;
+  padding-left: 1rem;
+}
+
+.tc-trace {
+  font-size: 0.78rem;
+  color: #999;
+  margin-top: 0.4rem;
+  font-style: italic;
+}
+
+.tc-detail {
+  font-size: 0.9rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.tc-detail h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 0.3rem;
+}
+
+.health-issue {
+  background: #fff8f0;
+  border-left: 3px solid #e8a850;
+  padding: 0.8rem 1rem;
+  margin: 1rem 0 1.2rem;
+  max-width: 640px;
+}
+
+.health-issue.acknowledged {
+  opacity: 0.6;
+  border-left-color: #ccc;
+}
+
+/* ── Open Questions ── */
+.open-question {
+  background: #fff8f0;
+  border-left: 3px solid #e8a850;
+  padding: 0.8rem 1rem;
+  margin: 1rem 0 1.2rem;
+  max-width: 640px;
+}
+
+.oq-context {
+  font-size: 0.88rem;
+  color: #888;
+  font-style: italic;
+}
+
+/* ── Inline Code ── */
+code {
+  font-family: "Menlo", "Consolas", "Monaco", monospace;
+  font-size: 0.88rem;
+  background: #f0f0e8;
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+}
+
+/* ── GVM Attribution (per shared rule 24) ── */
+.gvm-attribution {
+  font-size: 0.75rem;
+  color: #595959;
+  font-style: italic;
+  text-align: center;
+  margin-top: 3rem;
+  margin-bottom: 0;
+  max-width: none;
+}
+</style>

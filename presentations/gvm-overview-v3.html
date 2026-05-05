@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grounded Vibe Methodology — Overview</title>
+  <style>
+/* === Reset & Base === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "et-book", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #111;
+  background: #fffff8;
+  overflow: hidden;
+}
+
+/* === Deck Layout === */
+.deck {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.slide {
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 8vh 12vw;
+  background: #fffff8;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.slide.active {
+  display: flex;
+}
+
+.slide-content {
+  max-width: 900px;
+  width: 100%;
+}
+
+/* Diagram slides get wider content area */
+.slide.diagram-slide .slide-content {
+  max-width: 1280px;
+}
+
+/* === Title Slide === */
+.title-slide {
+  text-align: center;
+  flex-direction: column;
+}
+
+.title-slide h1 {
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  color: #111;
+}
+
+.title-slide .subtitle {
+  font-size: 1.4rem;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.title-slide .author {
+  font-size: 1.1rem;
+  color: #777;
+}
+
+/* === Content Slides === */
+.slide h2 {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.3;
+  margin-bottom: 1.5rem;
+  color: #111;
+}
+
+.slide p {
+  font-size: 1.4rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  max-width: 38em;
+}
+
+.slide ul, .slide ol {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.slide li {
+  margin-bottom: 0.5rem;
+}
+
+/* === Image Slides === */
+.image-slide {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.image-slide .overlay {
+  background: rgba(0, 0, 0, 0.55);
+  padding: 2rem 3rem;
+  border-radius: 4px;
+}
+
+.image-slide .overlay h2 {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* === Diagram Slides === */
+.slide .diagram {
+  width: 100%;
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.slide .diagram svg {
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+  stroke: #333;
+  fill: none;
+}
+
+.slide .diagram svg text {
+  fill: #111;
+  stroke: none;
+  font-family: "et-book", "Palatino Linotype", serif;
+  font-size: 26px;
+}
+
+.slide .diagram svg text.label-small { font-size: 20px; fill: #555; }
+.slide .diagram svg text.label-heading { font-size: 32px; font-weight: 600; }
+
+.slide .diagram svg .node {
+  fill: #fffff8;
+  stroke: #333;
+  stroke-width: 1.5;
+}
+
+.slide .diagram svg .node-accent {
+  fill: #f0f0e8;
+  stroke: #333;
+  stroke-width: 2;
+}
+
+.slide .diagram svg .arrow {
+  stroke: #333;
+  stroke-width: 1.5;
+  fill: none;
+  marker-end: url(#arrowhead);
+}
+
+.slide .diagram svg .arrow-accent {
+  stroke: #a00000;
+  stroke-width: 2;
+  fill: none;
+  marker-end: url(#arrowhead-accent);
+}
+
+.slide .diagram svg .accent {
+  stroke: #a00000;
+  fill: #a00000;
+}
+
+/* === Contrast / Turning-Point Slide === */
+.contrast-slide {
+  background: #111;
+  color: #fffff8;
+  text-align: center;
+}
+
+.contrast-slide h2 {
+  color: #fffff8;
+  font-size: 2.6rem;
+  max-width: 900px;
+}
+
+.contrast-slide p {
+  color: #ccc;
+}
+
+/* === Split-Content Slide === */
+.split-slide {
+  padding: 0;
+}
+
+.split-slide .split-image {
+  flex: 0 0 50%;
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
+.split-slide .split-text {
+  flex: 0 0 50%;
+  padding: 8vh 6vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* === Small Multiples Grid === */
+.small-multiples {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.small-multiples figure {
+  text-align: center;
+}
+
+.small-multiples svg {
+  width: 100%;
+  height: auto;
+  stroke: #333;
+  fill: none;
+}
+
+.small-multiples figcaption {
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 0.4rem;
+  font-style: italic;
+}
+
+/* === Data/Table Slides === */
+.slide table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+
+.slide th {
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #111;
+  padding: 0.5rem 1rem 0.5rem 0;
+}
+
+.slide td {
+  padding: 0.4rem 1rem 0.4rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.slide td.num, .slide th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* === Big-text slide === */
+.big-text-slide .slide-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.big-text-slide h2 {
+  font-size: 2.8rem;
+  line-height: 1.3;
+  text-align: center;
+  max-width: 800px;
+}
+
+/* === Callout box === */
+.callout {
+  background: #f7f7f0;
+  border-left: 3px solid #669;
+  padding: 1rem 1.4rem;
+  margin: 1rem 0;
+  max-width: 36em;
+}
+
+/* === Presenter Notes === */
+.notes {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #333;
+  color: #eee;
+  padding: 1.5rem 12vw;
+  font-size: 1rem;
+  line-height: 1.5;
+  max-height: 30vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+body.show-notes .notes {
+  display: block;
+}
+
+body.show-notes .slide {
+  height: 70vh;
+}
+
+/* === Slide Counter === */
+.slide-counter {
+  position: fixed;
+  bottom: 1rem;
+  right: 2rem;
+  font-size: 0.9rem;
+  color: #999;
+  z-index: 50;
+}
+
+/* === Attribution === */
+.gvm-attribution {
+  font-size: 0.7rem;
+  color: #bbb;
+  font-style: italic;
+  text-align: center;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+/* === Print === */
+@media print {
+  body { overflow: visible; }
+  .deck { width: auto; height: auto; position: static; }
+  .slide {
+    display: flex !important;
+    position: static;
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+  .slide-counter, .notes { display: none !important; }
+}
+  </style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 1 — Title -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide title-slide active">
+    <div class="slide-content">
+      <h1>Grounded Vibe Methodology</h1>
+      <p class="subtitle">Citation-based grounding for AI-assisted software development</p>
+      <p class="author">Conor Brennan &amp; Gerard Quinn &mdash; April 2026</p>
+    </div>
+    <aside class="notes">30-minute overview. Mixed audience: practitioners and leadership. Arc: what is → what could be. Start by naming the problem vibe coding creates, then show what grounding does to solve it.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 2 — Agenda -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Thirty minutes covers the problem, the mechanism, the pipeline, and the evidence.</h2>
+      <ul>
+        <li>The ceiling vibe coding hits — and why</li>
+        <li>How naming an expert breaks through it</li>
+        <li>The GVM pipeline: fourteen phases, three tiers of expertise</li>
+        <li>What a controlled experiment shows</li>
+        <li>A real project: Assay built by GVM</li>
+        <li>How to start</li>
+      </ul>
+    </div>
+    <aside class="notes">Road-map slide. Keep it brief — the audience needs a thread, not a summary.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 3 — AI dev is mainstream -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>AI-assisted development is no longer experimental — it is how software gets written.</h2>
+      <p>Vibe coding (Karpathy, 2025) — natural language, conversational flow, low barrier to entry — is real and it works. The question is whether it produces software that holds up.</p>
+    </div>
+    <aside class="notes">Frame the context. "Vibe coding" is Andrej Karpathy's term. Acknowledge what it gets right before naming the problem.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 4 — The ceiling (two failure modes) -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>Vibe coding hits a ceiling — two failure modes that AI is unusually good at producing.</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#333"/>
+            </marker>
+            <marker id="arrowhead-accent" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#a00000"/>
+            </marker>
+          </defs>
+
+          <!-- Centre: The Ceiling -->
+          <rect class="node-accent" x="480" y="200" width="240" height="100" rx="6"/>
+          <text x="600" y="259" text-anchor="middle" class="label-heading">The Ceiling</text>
+
+          <!-- Left: FM1 -->
+          <rect class="node" x="40" y="180" width="360" height="140" rx="6"/>
+          <text x="220" y="234" text-anchor="middle">Failure mode 1</text>
+          <text x="220" y="265" text-anchor="middle" class="label-small">Building the wrong thing</text>
+          <text x="220" y="293" text-anchor="middle" class="label-small">(Brooks: hardest problem)</text>
+
+          <!-- Right: FM2 -->
+          <rect class="node" x="820" y="180" width="360" height="140" rx="6"/>
+          <text x="1000" y="234" text-anchor="middle">Failure mode 2</text>
+          <text x="1000" y="265" text-anchor="middle" class="label-small">Building it incorrectly</text>
+          <text x="1000" y="293" text-anchor="middle" class="label-small">(Beck, Fowler, Freeman &amp; Pryce)</text>
+
+          <!-- Arrows pointing into ceiling -->
+          <line class="arrow" x1="400" y1="250" x2="478" y2="250"/>
+          <line class="arrow" x1="820" y1="250" x2="722" y2="250"/>
+
+          <!-- Bottom annotation -->
+          <text x="600" y="420" text-anchor="middle" class="label-small">Both failures are fluent. Both pass casual inspection. Both ship.</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">Brooks: "The hardest single part of building a software system is deciding precisely what to build." AI agents are compliant — they produce something for any prompt. That compliance is the problem.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 5 — Failure mode 1: building wrong things -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>A bare prompt produces well-tested scaffolding for a product no real user can use.</h2>
+      <p>Tell the AI you are "an expert TypeScript programmer" and it draws on a broad blend of what "expert TypeScript" means across its training — common practice, not the best-defined practice. The output is competent but undifferentiated.</p>
+      <p>Without grounding in user outcomes, the AI builds confidently in the wrong direction.</p>
+    </div>
+    <aside class="notes">The product might be technically sound and pass all tests — and still be useless. This is the failure no automated check catches.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 6 — Failure mode 2: building it wrong -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>AI-generated code contains security vulnerabilities at rates around 40%.</h2>
+      <p style="font-size: 1.2rem; color: #555; margin-bottom: 0.5rem;">Pearce et al. (2022)</p>
+      <p>Ungrounded output is hallucination-prone, sloppy on edge cases, and weak on architectural consistency. The AI builds something fluently — and it looks right until you look carefully.</p>
+    </div>
+    <aside class="notes">The 40% figure is from Pearce et al. (2022) — verified in the whitepaper. The Spracklen et al. (2024) stat on hallucinated package recommendations (21.7%) is also sourced there. Use both if time permits.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 7 — Setup for the pivot -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The AI does not know what "good" looks like — because it has no framework for evaluating quality.</h2>
+      <p>Both failure modes pass casual inspection. You cannot find problems you have no framework to name. The missing ingredient is not more AI — it is the right published standards, activated at the right moment.</p>
+    </div>
+    <aside class="notes">This sets up the contrast slide. The problem is not capability — it is the absence of a framework for quality. That is what GVM provides.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 8 — CONTRAST / PIVOT -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide contrast-slide">
+    <div class="slide-content">
+      <h2>Name the expert who defined what good is.</h2>
+    </div>
+    <aside class="notes">This is the pivot. Everything before is the problem. Everything after is what becomes possible when you ground the AI in named experts and their published works.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 9 — The mechanism: citations as retrieval keys -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>A citation acts as a retrieval key — it activates a specific framework rather than the general blend.</h2>
+      <p>When a prompt names a specific author and a specific work — "Apply Beizer's boundary value analysis from <em>Software Testing Techniques</em>" — the model's attention mechanism activates representations associated with Beizer's specific formulation, not a blend of every testing source.</p>
+      <div class="callout">
+        <p>Without the citation: a three-value test (min, max, middle) from an undifferentiated blend.</p>
+        <p>With the citation: the six-value boundary test with on-point and off-point distinction — Beizer's framework, applied with its full depth.</p>
+      </div>
+    </div>
+    <aside class="notes">The retrieval-key metaphor is the right frame. The mechanism is analogous to how a search engine returns more focused results for "Knuth stable sort" than for "how to sort."</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 10 — Compression: one sentence, thousands of pages -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>One sentence activates a body of work that would take thousands of words to specify explicitly.</h2>
+      <div class="diagram">
+        <!-- viewBox 1400×580: books col needs 260px per box; output col needs 280px; spacing balanced -->
+        <svg viewBox="0 0 1400 580" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#333"/>
+            </marker>
+            <marker id="arrowhead-blue" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#669"/>
+            </marker>
+            <marker id="arrowhead-green" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#27ae60"/>
+            </marker>
+          </defs>
+
+          <!-- Books column: width=300, centre=170, right=320 -->
+          <text x="170" y="40" text-anchor="middle" class="label-small">Expert works</text>
+          <rect class="node" x="20" y="55" width="300" height="60" rx="4"/>
+          <text x="170" y="83" text-anchor="middle" class="label-small">Software Testing Techniques</text>
+          <text x="170" y="106" text-anchor="middle" style="font-size:18px; fill:#888;">Beizer — 550 pp</text>
+
+          <rect class="node" x="20" y="126" width="300" height="60" rx="4"/>
+          <text x="170" y="154" text-anchor="middle" class="label-small">Visual Display of Quant. Info</text>
+          <text x="170" y="177" text-anchor="middle" style="font-size:18px; fill:#888;">Tufte — 197 pp</text>
+
+          <rect class="node" x="20" y="197" width="300" height="60" rx="4"/>
+          <text x="170" y="225" text-anchor="middle" class="label-small">Show Me the Numbers</text>
+          <text x="170" y="248" text-anchor="middle" style="font-size:18px; fill:#888;">Few — 351 pp</text>
+
+          <rect class="node" x="20" y="268" width="300" height="60" rx="4"/>
+          <text x="170" y="296" text-anchor="middle" class="label-small">Just Enough Architecture</text>
+          <text x="170" y="319" text-anchor="middle" style="font-size:18px; fill:#888;">Fairbanks — 376 pp</text>
+
+          <rect class="node" x="20" y="339" width="300" height="60" rx="4"/>
+          <text x="170" y="367" text-anchor="middle" class="label-small">Designing Data-Intensive Apps</text>
+          <text x="170" y="390" text-anchor="middle" style="font-size:18px; fill:#888;">Kleppmann — 614 pp</text>
+
+          <text x="170" y="450" text-anchor="middle" style="font-size:22px; fill:#888; font-weight:600;">~2,400 pages</text>
+
+          <!-- Arrow: absorbed (books right=320, AI box left=400) -->
+          <line x1="322" y1="240" x2="398" y2="240" class="arrow"/>
+          <text x="360" y="225" text-anchor="middle" class="label-small">absorbed</text>
+          <text x="360" y="260" text-anchor="middle" class="label-small">during training</text>
+
+          <!-- AI Model box: width=200, x=400, right=600, centre=500 -->
+          <rect class="node-accent" x="400" y="175" width="200" height="130" rx="6"/>
+          <text x="500" y="232" text-anchor="middle" style="font-size:28px; font-weight:600;">AI Model</text>
+          <text x="500" y="268" text-anchor="middle" class="label-small">knowledge in</text>
+          <text x="500" y="292" text-anchor="middle" class="label-small">parameters</text>
+
+          <!-- Arrow: activated by (AI right=600, citation left=680) -->
+          <line x1="602" y1="240" x2="678" y2="240" stroke="#669" stroke-width="2" marker-end="url(#arrowhead-blue)"/>
+          <text x="640" y="225" text-anchor="middle" style="font-size:20px; fill:#669; font-weight:600;">activated</text>
+          <text x="640" y="260" text-anchor="middle" style="font-size:20px; fill:#669;">by citation</text>
+
+          <!-- Citation box: width=280, x=680, right=960, centre=820 -->
+          <rect x="680" y="155" width="280" height="175" rx="6" stroke="#669" stroke-width="2" fill="#f8f8ff"/>
+          <text x="820" y="195" text-anchor="middle" style="font-size:20px; fill:#669; font-weight:600;">ONE SENTENCE</text>
+          <text x="820" y="228" text-anchor="middle" style="font-size:20px; fill:#333; font-style:italic;">"Apply Tufte and Few's</text>
+          <text x="820" y="258" text-anchor="middle" style="font-size:20px; fill:#333; font-style:italic;">principles when</text>
+          <text x="820" y="288" text-anchor="middle" style="font-size:20px; fill:#333; font-style:italic;">designing this view."</text>
+
+          <!-- Arrow: produces (citation right=960, output left=1040) -->
+          <line x1="962" y1="240" x2="1038" y2="240" stroke="#27ae60" stroke-width="2" marker-end="url(#arrowhead-green)"/>
+          <text x="1000" y="225" text-anchor="middle" style="font-size:20px; fill:#27ae60; font-weight:600;">produces</text>
+
+          <!-- Focused output box: width=320, x=1040, right=1360, padding=40 -->
+          <rect x="1040" y="130" width="320" height="290" rx="6" stroke="#27ae60" stroke-width="2" fill="#f0fff4"/>
+          <text x="1200" y="170" text-anchor="middle" style="font-size:20px; fill:#27ae60; font-weight:600;">FOCUSED OUTPUT</text>
+          <text x="1060" y="208" style="font-size:20px; fill:#555;">&#x2713; Data-ink ratio maximised</text>
+          <text x="1060" y="238" style="font-size:20px; fill:#555;">&#x2713; No chartjunk</text>
+          <text x="1060" y="268" style="font-size:20px; fill:#555;">&#x2713; Small multiples</text>
+          <text x="1060" y="298" style="font-size:20px; fill:#555;">&#x2713; Minimal gridlines</text>
+          <text x="1060" y="328" style="font-size:20px; fill:#555;">&#x2713; Right-aligned numbers</text>
+          <text x="1060" y="358" style="font-size:20px; fill:#555;">&#x2713; Sparklines + more</text>
+          <text x="1060" y="400" style="font-size:20px; fill:#555;">&#x2713; Dozens of techniques</text>
+
+          <!-- Caption -->
+          <text x="700" y="540" text-anchor="middle" class="label-small">~2,400 pages of expert knowledge, activated by a single sentence</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">The compression benefit applies regardless of the practitioner's own expertise. Even experts who know Tufte's work still face a transfer problem: decomposing it into explicit instructions every time. Citation-based activation eliminates that cost.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 11 — Panels of competing experts -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Panels of 3–7 competing experts produce better output than any single expert alone.</h2>
+      <p>Consider the architecture phase. GVM assembles a panel where <strong>Fairbanks</strong> says "spec only the risky parts" and <strong>Brooks</strong> says "maintain conceptual integrity across everything." The tension is productive — it forces a principled balance for each project rather than defaulting to either extreme.</p>
+      <p>The result — a brief spec that connects to the whole — is better than either expert would produce alone. This is not additive; it is a genuine trade-off where competing priorities force a principled compromise.</p>
+    </div>
+    <aside class="notes">The key insight: experts are not interchangeable decorations. Their frameworks genuinely conflict in useful ways. The panel's job is to force the resolution, not to agree with each other.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 12 — Three expert tiers -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>Expertise activates in three tiers — always-on process experts, conditional domain specialists, and stack specialists.</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 1200 540" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#333"/>
+            </marker>
+          </defs>
+
+          <!-- Tier 1 — top root -->
+          <rect class="node-accent" x="420" y="30" width="360" height="90" rx="6"/>
+          <text x="600" y="70" text-anchor="middle" style="font-size:26px; font-weight:600;">Tier 1 — Process Experts</text>
+          <text x="600" y="100" text-anchor="middle" class="label-small">Always active: Wiegers, Beck, Beizer, Clements, Brooks…</text>
+
+          <!-- Lines down -->
+          <line x1="600" y1="120" x2="600" y2="170"/>
+          <line x1="600" y1="170" x2="220" y2="170"/>
+          <line x1="600" y1="170" x2="980" y2="170"/>
+          <line x1="220" y1="170" x2="220" y2="210"/>
+          <line x1="600" y1="170" x2="600" y2="210"/>
+          <line x1="980" y1="170" x2="980" y2="210"/>
+
+          <!-- Tier 2a -->
+          <rect class="node" x="40" y="210" width="360" height="110" rx="6"/>
+          <text x="220" y="250" text-anchor="middle">Tier 2a — Software Domain</text>
+          <text x="220" y="278" text-anchor="middle" class="label-small">Conditional: Cooper, Kleppmann,</text>
+          <text x="220" y="302" text-anchor="middle" class="label-small">Nygard, Tufte &amp; Few, Newman…</text>
+
+          <!-- Tier 2b -->
+          <rect class="node" x="420" y="210" width="360" height="110" rx="6"/>
+          <text x="600" y="250" text-anchor="middle">Tier 2b — Business Domain</text>
+          <text x="600" y="278" text-anchor="middle" class="label-small">Conditional: Hull, Jorion (finance);</text>
+          <text x="600" y="302" text-anchor="middle" class="label-small">per-application curation</text>
+
+          <!-- Tier 3 -->
+          <rect class="node" x="800" y="210" width="360" height="110" rx="6"/>
+          <text x="980" y="250" text-anchor="middle">Tier 3 — Stack Specialists</text>
+          <text x="980" y="278" text-anchor="middle" class="label-small">Activate after tech choice is made</text>
+          <text x="980" y="302" text-anchor="middle" class="label-small">Ramalho · Abramov · Winand…</text>
+
+          <!-- Bottom note -->
+          <text x="600" y="400" text-anchor="middle" class="label-small">Conditional activation: specialists load only when their domain appears. Activation is announced transparently.</text>
+          <text x="600" y="430" text-anchor="middle" class="label-small">Tier 2b compounds value across projects: the same domain file deepens with each use.</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">Not every expert is needed for every task. Conditional activation keeps context focused and avoids loading expertise the project doesn't need. The key property of Tier 2b: it gets more valuable the longer you use GVM in a domain.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 13 — Pipeline overview -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>A phased pipeline activates the right experts at each stage — from impact map to release.</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 1200 440" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#333"/>
+            </marker>
+          </defs>
+
+          <!-- Phase group labels -->
+          <text x="130" y="30" text-anchor="middle" style="font-size:22px; fill:#669; font-weight:600;">DISCOVERY</text>
+          <text x="490" y="30" text-anchor="middle" style="font-size:22px; fill:#555; font-weight:600;">CONSTRUCTION</text>
+          <text x="830" y="30" text-anchor="middle" style="font-size:22px; fill:#333; font-weight:600;">VERIFICATION</text>
+          <text x="1110" y="30" text-anchor="middle" style="font-size:22px; fill:#888; font-weight:600;">RELEASE</text>
+
+          <!-- Discovery phases -->
+          <rect class="node" x="20" y="55" width="220" height="70" rx="6"/>
+          <text x="130" y="88" text-anchor="middle" class="label-small">/gvm-impact-map</text>
+          <text x="130" y="112" text-anchor="middle" style="font-size:18px; fill:#888;">goal → deliverable</text>
+
+          <line class="arrow" x1="240" y1="90" x2="270" y2="90"/>
+
+          <rect class="node" x="270" y="55" width="220" height="70" rx="6"/>
+          <text x="380" y="88" text-anchor="middle" class="label-small">/gvm-requirements</text>
+          <text x="380" y="112" text-anchor="middle" style="font-size:18px; fill:#888;">Wiegers, Patton…</text>
+
+          <line class="arrow" x1="490" y1="90" x2="520" y2="90"/>
+
+          <rect class="node" x="520" y="55" width="220" height="70" rx="6"/>
+          <text x="630" y="88" text-anchor="middle" class="label-small">/gvm-test-cases</text>
+          <text x="630" y="112" text-anchor="middle" style="font-size:18px; fill:#888;">Beizer, North, Kaner</text>
+
+          <!-- Construction phases -->
+          <line class="arrow" x1="740" y1="90" x2="770" y2="90"/>
+
+          <rect class="node" x="770" y="55" width="220" height="70" rx="6"/>
+          <text x="880" y="88" text-anchor="middle" class="label-small">/gvm-tech-spec</text>
+          <text x="880" y="112" text-anchor="middle" style="font-size:18px; fill:#888;">Clements, Brown…</text>
+
+          <line class="arrow" x1="990" y1="90" x2="1020" y2="90"/>
+
+          <rect class="node" x="1020" y="55" width="160" height="70" rx="6"/>
+          <text x="1100" y="88" text-anchor="middle" class="label-small">/gvm-build</text>
+          <text x="1100" y="112" text-anchor="middle" style="font-size:18px; fill:#888;">Tier 3 stack</text>
+
+          <!-- Second row -->
+          <!-- Verification -->
+          <rect class="node" x="20" y="210" width="220" height="70" rx="6"/>
+          <text x="130" y="243" text-anchor="middle" class="label-small">/gvm-code-review</text>
+          <text x="130" y="267" text-anchor="middle" style="font-size:18px; fill:#888;">4 parallel panels</text>
+
+          <line class="arrow" x1="240" y1="245" x2="270" y2="245"/>
+
+          <rect class="node" x="270" y="210" width="220" height="70" rx="6"/>
+          <text x="380" y="243" text-anchor="middle" class="label-small">/gvm-test</text>
+          <text x="380" y="267" text-anchor="middle" style="font-size:18px; fill:#888;">Kaner, Nygard…</text>
+
+          <line class="arrow" x1="490" y1="245" x2="520" y2="245"/>
+
+          <rect class="node" x="520" y="210" width="220" height="70" rx="6"/>
+          <text x="630" y="243" text-anchor="middle" class="label-small">/gvm-explore-test</text>
+          <text x="630" y="267" text-anchor="middle" style="font-size:18px; fill:#888;">Bach &amp; Bolton…</text>
+
+          <!-- Release -->
+          <line class="arrow" x1="740" y1="245" x2="770" y2="245"/>
+
+          <rect class="node" x="770" y="210" width="220" height="70" rx="6"/>
+          <text x="880" y="243" text-anchor="middle" class="label-small">/gvm-doc-write</text>
+          <text x="880" y="267" text-anchor="middle" style="font-size:18px; fill:#888;">Doumont, Zinsser…</text>
+
+          <line class="arrow" x1="990" y1="245" x2="1020" y2="245"/>
+
+          <rect class="node" x="1020" y="210" width="160" height="70" rx="6"/>
+          <text x="1100" y="243" text-anchor="middle" class="label-small">/gvm-deploy</text>
+          <text x="1100" y="267" text-anchor="middle" style="font-size:18px; fill:#888;">release gate</text>
+
+          <!-- Connect rows with a bend -->
+          <line x1="1100" y1="125" x2="1100" y2="165"/>
+          <line x1="1100" y1="165" x2="130" y2="165"/>
+          <line class="arrow" x1="130" y1="165" x2="130" y2="208"/>
+
+          <!-- Feedback arrows note -->
+          <text x="600" y="360" text-anchor="middle" class="label-small">Feedback flows upstream: each phase can surface issues that trigger revisions in prior phases.</text>
+          <text x="600" y="388" text-anchor="middle" class="label-small">Entry is flexible: greenfield starts at /gvm-impact-map; existing codebases use /gvm-site-survey.</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">The pipeline is not a waterfall. Feedback arrows go upstream. Test-case generation reveals untestable requirements; specification writing reveals missing tests. That feedback is the methodology working as designed.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 14 — Discovery: deciding what to build -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Discovery phases decide what is worth building — before a line of architecture exists.</h2>
+      <p><strong>/gvm-impact-map</strong> produces a four-level goal → actor → impact → deliverable tree (Adzic). No requirement may proceed unless it traces to a leaf deliverable.</p>
+      <p><strong>/gvm-requirements</strong> elicits, structures, and prioritises through Wiegers, Gause &amp; Weinberg, Patton, Cooper, and Christensen/Moesta — five experts whose frameworks force completeness and testability.</p>
+      <p><strong>/gvm-test-cases</strong> is a quality gate on requirements, not a downstream activity: before any architecture is designed, every requirement must be expressible as a concrete test.</p>
+    </div>
+    <aside class="notes">The test-cases-before-spec ordering is the discipline. It forces requirement vagueness to surface before any code is written — cheapest point to fix it. AI agents are compliant: ask one to implement a vague requirement and it will produce something confidently, fluently, and wrong.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 15 — Test cases are a quality gate -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Test cases come before the technical spec — requirements must prove they are testable.</h2>
+      <p>The test-cases phase produces a health report that identifies untestable, inconsistent, and contradictory requirements. These are resolved or explicitly acknowledged before the pipeline proceeds.</p>
+      <p>By the time the tech spec begins, every requirement has been validated through testability. The spec inherits clean inputs — not vague aspirations.</p>
+    </div>
+    <aside class="notes">This matters specifically for AI-assisted development because LLMs are compliant — they will implement a vague requirement with full confidence. The test-first gate catches vagueness at zero cost, before any code exists.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 16 — Construction: MVP-1 ordering -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>MVP-1: the first build chunk must touch every external boundary — integration risk cannot accumulate silently.</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 1200 440" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#333"/>
+            </marker>
+            <marker id="arrowhead-accent" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#a00000"/>
+            </marker>
+          </defs>
+
+          <!-- WITHOUT MVP-1 (horizontal layers — bad) -->
+          <text x="280" y="36" text-anchor="middle" style="font-size:24px; fill:#a00000; font-weight:600;">Without MVP-1 (horizontal layers)</text>
+
+          <rect class="node" x="40" y="55" width="480" height="60" rx="4"/>
+          <text x="280" y="91" text-anchor="middle" class="label-small">Database layer — builds fine in isolation</text>
+
+          <line class="arrow" x1="280" y1="115" x2="280" y2="140"/>
+
+          <rect class="node" x="40" y="140" width="480" height="60" rx="4"/>
+          <text x="280" y="176" text-anchor="middle" class="label-small">Service layer — builds fine in isolation</text>
+
+          <line class="arrow" x1="280" y1="200" x2="280" y2="225"/>
+
+          <rect class="node" x="40" y="225" width="480" height="60" rx="4"/>
+          <text x="280" y="261" text-anchor="middle" class="label-small">API layer — builds fine in isolation</text>
+
+          <text x="280" y="340" text-anchor="middle" style="font-size:22px; fill:#a00000;">Integration risk accumulates silently.</text>
+          <text x="280" y="370" text-anchor="middle" style="font-size:22px; fill:#a00000;">System first runs end-to-end on the final day.</text>
+
+          <!-- Divider -->
+          <line x1="600" y1="40" x2="600" y2="420" stroke="#ccc" stroke-dasharray="8,6"/>
+
+          <!-- WITH MVP-1 (vertical slice — good) -->
+          <text x="900" y="36" text-anchor="middle" style="font-size:24px; fill:#27ae60; font-weight:600;">With MVP-1 (vertical slice first)</text>
+
+          <!-- Thin vertical slice cutting across all layers -->
+          <rect class="node" x="640" y="55" width="520" height="60" rx="4"/>
+          <text x="900" y="91" text-anchor="middle" class="label-small">Database layer</text>
+
+          <rect class="node" x="640" y="135" width="520" height="60" rx="4"/>
+          <text x="900" y="171" text-anchor="middle" class="label-small">Service layer</text>
+
+          <rect class="node" x="640" y="215" width="520" height="60" rx="4"/>
+          <text x="900" y="251" text-anchor="middle" class="label-small">API layer</text>
+
+          <!-- Vertical slice highlight -->
+          <rect x="840" y="48" width="120" height="234" rx="4" fill="#27ae60" fill-opacity="0.18" stroke="#27ae60" stroke-width="2"/>
+          <text x="900" y="298" text-anchor="middle" style="font-size:20px; fill:#27ae60; font-weight:600;">Slice 1: thin vertical</text>
+          <text x="900" y="322" text-anchor="middle" style="font-size:20px; fill:#27ae60;">touches every boundary</text>
+
+          <text x="900" y="370" text-anchor="middle" style="font-size:22px; fill:#27ae60;">Each subsequent chunk adds behaviour</text>
+          <text x="900" y="398" text-anchor="middle" style="font-size:22px; fill:#27ae60;">through boundaries already exercised.</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">Reinertsen: cost rises as the gap between "component complete" and "system integrated" widens. MVP-1 closes that gap on day one. The walking skeleton (/gvm-walking-skeleton) is the optional mechanical enabler: it registers every boundary before chunk planning begins.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 17 — Four concurrent review panels -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>A single reviewer misses what multiple non-overlapping panels catch — four reviews run in the wall-clock time of one.</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#333"/>
+            </marker>
+          </defs>
+
+          <!-- Code under review -->
+          <rect class="node-accent" x="460" y="30" width="280" height="80" rx="6"/>
+          <text x="600" y="65" text-anchor="middle" style="font-size:26px; font-weight:600;">Code chunk</text>
+          <text x="600" y="95" text-anchor="middle" class="label-small">dispatched to 4 panels</text>
+
+          <!-- Four arrows out -->
+          <line class="arrow" x1="504" y1="110" x2="160" y2="220"/>
+          <line class="arrow" x1="546" y1="110" x2="400" y2="220"/>
+          <line class="arrow" x1="654" y1="110" x2="800" y2="220"/>
+          <line class="arrow" x1="696" y1="110" x2="1040" y2="220"/>
+
+          <!-- Panel 1 -->
+          <rect class="node" x="20" y="220" width="280" height="130" rx="6"/>
+          <text x="160" y="260" text-anchor="middle" style="font-size:24px; font-weight:600;">References</text>
+          <text x="160" y="288" text-anchor="middle" class="label-small">Dependencies, imports,</text>
+          <text x="160" y="312" text-anchor="middle" class="label-small">package use</text>
+
+          <!-- Panel 2 -->
+          <rect class="node" x="320" y="220" width="280" height="130" rx="6"/>
+          <text x="460" y="260" text-anchor="middle" style="font-size:24px; font-weight:600;">Contracts</text>
+          <text x="460" y="288" text-anchor="middle" class="label-small">Interfaces, API surface,</text>
+          <text x="460" y="312" text-anchor="middle" class="label-small">type correctness</text>
+
+          <!-- Panel 3 -->
+          <rect class="node" x="620" y="220" width="280" height="130" rx="6"/>
+          <text x="760" y="260" text-anchor="middle" style="font-size:24px; font-weight:600;">Logic</text>
+          <text x="760" y="288" text-anchor="middle" class="label-small">Completeness, edge cases,</text>
+          <text x="760" y="312" text-anchor="middle" class="label-small">error handling</text>
+
+          <!-- Panel 4 -->
+          <rect class="node" x="920" y="220" width="260" height="130" rx="6"/>
+          <text x="1050" y="260" text-anchor="middle" style="font-size:24px; font-weight:600;">Naming</text>
+          <text x="1050" y="288" text-anchor="middle" class="label-small">Spec compliance,</text>
+          <text x="1050" y="312" text-anchor="middle" class="label-small">clarity, conventions</text>
+
+          <!-- Note -->
+          <text x="600" y="420" text-anchor="middle" class="label-small">Laitenberger et al. (2000): non-overlapping scan mandates detected 41% more unique defects at 58% lower cost per defect.</text>
+          <text x="600" y="450" text-anchor="middle" class="label-small">Satisfaction-of-search bias (Cain et al., 2013): finding one defect reduces likelihood of finding others nearby.</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">The panels run as concurrent subagents. Each panel applies a liberal detection threshold on the first pass — maximise recall, filter false positives in synthesis. The diagnosing expert's framework defines what "right" looks like for the fix, not just what's wrong.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 18 — Progressive calibration -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Without memory, every review starts from zero — progressive calibration fixes this.</h2>
+      <p>By round 3, the reviewer knows: "The auth module scores 9 on security. The search module scored 5 in rounds 1 and 2. Input validation has been flagged twice." Reviews converge toward the project's actual quality profile.</p>
+      <p>When a finding recurs across three or more consecutive rounds, it is promoted to a <strong>build check</strong> — a concrete instruction loaded into subsequent build prompts. The system learns from its own review history.</p>
+    </div>
+    <aside class="notes">Fagan: inspection processes should improve from inspection data. Deming: common-cause variation requires a process change, not just an output fix. Build checks are the methodology's memory of past defects.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 19 — Release gate -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The release gate makes review verdicts structural — not advisory.</h2>
+      <p>The release phase aggregates every review verdict — code review, document review, design review — and blocks the release if any produced a "not ready" verdict.</p>
+      <div class="callout">
+        <p><strong>Ship-ready</strong> — all reviews cleared, no open critical findings, documentation accurate.</p>
+        <p><strong>Demo-ready</strong> — MUST requirements met, stubs acceptable if non-surface-facing.</p>
+        <p><strong>Not shippable</strong> — open critical findings, or stubs that surface to the user.</p>
+      </div>
+      <p>A pipeline that produces verdicts but does not enforce them is a pipeline whose reviews are optional in practice.</p>
+    </div>
+    <aside class="notes">This is the structural difference between a quality system and a quality aspiration. The release verdict also checks documentation accuracy — if the README describes features that were descoped, the tag is blocked until the documentation matches reality.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 20 — The experiment intro -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide contrast-slide">
+    <div class="slide-content">
+      <h2>The evidence: grounding produces measurably better output.</h2>
+    </div>
+    <aside class="notes">Second pivot point — from methodology to evidence. The experiment is the load-bearing claim.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 21 — Experiment design -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>180 dashboards, 1,080 blind reviews, three model families, two independent review instruments.</h2>
+      <table>
+        <thead>
+          <tr><th>Condition</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Group 1 — Ungrounded</td><td>Core task only, no expert citations</td></tr>
+          <tr><td>Group 2 — Design-grounded</td><td>Tufte and Few principles cited</td></tr>
+          <tr><td>Group 3 — Fully grounded</td><td>Design + domain experts (Jorion, Hull) + writing experts (Doumont, Zinsser)</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 1.2rem;">Each of 60 dashboards per model reviewed by 3 independent reviewers per instrument, with no reviewer seeing more than one dashboard. Reproduced across Claude Opus 4.6, GPT-5.4, and Gemini 3.1 Pro.</p>
+    </div>
+    <aside class="notes">Experiment A used 8 dimensions derived from ungrounded AI consensus. Experiment B used 11 dimensions derived from the cited experts' published principles, confirmed by a human before use. The instruments are the key — same dashboards, different evaluation frameworks.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 22 — The ranking reversal (diagram) -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>The group ranking reversed between experiments — the improvements were real but invisible without the framework to see them.</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Experiment A (ungrounded review) -->
+          <text x="300" y="38" text-anchor="middle" style="font-size:26px; font-weight:600;">Experiment A</text>
+          <text x="300" y="68" text-anchor="middle" class="label-small">Ungrounded review dimensions</text>
+
+          <!-- Rank lines for Exp A -->
+          <!-- Labels: G1, G2, G3 on left -->
+          <text x="60" y="160" text-anchor="end" class="label-small">G1</text>
+          <text x="60" y="280" text-anchor="end" class="label-small">G2</text>
+          <text x="60" y="360" text-anchor="end" class="label-small">G3</text>
+
+          <!-- Scattered / no clear order lines -->
+          <line x1="70" y1="158" x2="520" y2="200" stroke="#555" stroke-width="2"/>
+          <line x1="70" y1="278" x2="520" y2="168" stroke="#555" stroke-width="2"/>
+          <line x1="70" y1="358" x2="520" y2="320" stroke="#555" stroke-width="2"/>
+
+          <!-- Right labels Exp A -->
+          <text x="536" y="205" class="label-small" fill="#555">mixed</text>
+          <text x="536" y="173" class="label-small" fill="#555">mixed</text>
+          <text x="536" y="325" class="label-small" fill="#555">mixed</text>
+
+          <!-- Annotation -->
+          <text x="300" y="430" text-anchor="middle" style="font-size:22px; fill:#a00000;">No dose-response ordering detectable.</text>
+          <text x="300" y="460" text-anchor="middle" style="font-size:22px; fill:#a00000;">G2 at or below G1 in all three models.</text>
+
+          <!-- Divider -->
+          <line x1="620" y1="40" x2="620" y2="490" stroke="#ccc" stroke-dasharray="8,6"/>
+
+          <!-- Experiment B (expert-grounded review) -->
+          <text x="910" y="38" text-anchor="middle" style="font-size:26px; font-weight:600;">Experiment B</text>
+          <text x="910" y="68" text-anchor="middle" class="label-small">Expert-grounded review dimensions</text>
+
+          <!-- Labels on left side of Exp B -->
+          <text x="660" y="340" text-anchor="end" class="label-small">G1</text>
+          <text x="660" y="240" text-anchor="end" class="label-small">G2</text>
+          <text x="660" y="140" text-anchor="end" class="label-small">G3</text>
+
+          <!-- Ordered slope lines: G1 low → G2 mid → G3 high — converge on right -->
+          <line x1="670" y1="338" x2="1140" y2="340" stroke="#333" stroke-width="2.5"/>
+          <line x1="670" y1="238" x2="1140" y2="220" stroke="#555" stroke-width="2.5"/>
+          <line x1="670" y1="138" x2="1140" y2="120" stroke="#27ae60" stroke-width="2.5"/>
+
+          <!-- Right labels Exp B -->
+          <text x="1152" y="345" class="label-small">G1 (low)</text>
+          <text x="1152" y="225" class="label-small">G2</text>
+          <text x="1152" y="125" class="label-small" fill="#27ae60">G3 (high)</text>
+
+          <!-- p-value annotation -->
+          <text x="910" y="430" text-anchor="middle" style="font-size:22px; fill:#27ae60; font-weight:600;">G1 &lt; G2 &lt; G3 in all three model families.</text>
+          <text x="910" y="460" text-anchor="middle" style="font-size:22px; fill:#27ae60;">p &lt; 0.001 for all pairwise comparisons.</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">This is the core finding. The ranking reversal is not a model artifact — it reproduced identically across Claude, GPT, and Gemini. Ungrounded reviewers could not see the quality improvement. Expert-grounded reviewers could. Same dashboards, same reviewers, different evaluation framework.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 23 — Effect sizes -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The improvements were not marginal — effect sizes were exceptional.</h2>
+      <table>
+        <thead>
+          <tr><th>Dimension</th><th class="num">Cohen's d</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Chartjunk absence</td><td class="num">3.67</td></tr>
+          <tr><td>Data-ink ratio</td><td class="num">3.87</td></tr>
+          <tr><td>Chart type appropriateness</td><td class="num">2.27</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 1.2rem; color: #555; font-size: 1.2rem;">Cohen's d = 0.8 is conventionally "large." Values above 2 are exceptional. These improvements existed in the dashboards — they were just invisible to reviewers without the expert framework to name them.</p>
+    </div>
+    <aside class="notes">Effect sizes above 2 are very rare in behavioural research. The effect was there all along — the reviewers just didn't have the framework to see it. This demonstrates both the quality effect of grounding and the measurement problem: ungrounded evaluation cannot detect grounded quality.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 24 — The measurement problem -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Ungrounded evaluation cannot detect grounded quality — you need the framework to see the improvement.</h2>
+      <p>Experiment A reviewers could not distinguish Group 2's Tufte/Few-aligned design from Group 1's ungrounded output. The improvements were real — confirmed by expert reviewers under the grounded instrument — but invisible without the framework to evaluate them.</p>
+      <p>This is the core claim made concrete: the experts' published works <em>are</em> the definition of good. Only reviewers who know those standards can see the convergence.</p>
+    </div>
+    <aside class="notes">The implication for teams: if you are evaluating AI-generated output without expert frameworks, you will not see quality differences that exist. The evaluation instrument matters as much as the generation method.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 25 — Experimental limits (honesty slide) -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The experiment establishes the quality effect on one task type — wider claims are supported but not proven by it.</h2>
+      <ul>
+        <li>Same-model evaluation: reviewers were models from the same family. Cross-model replication is open work.</li>
+        <li>Task type: market risk dashboards. Generalisation requires replication across domains.</li>
+        <li>Discovery axis (impact mapping, exploratory testing effectiveness) requires separate experimental validation.</li>
+        <li>Head-to-head comparison against Role Prompting, SDD, BMAD, or RAG has not been run.</li>
+      </ul>
+    </div>
+    <aside class="notes">The whitepaper is explicit about these limits. Present them directly — they are a sign of intellectual honesty, not weakness. The experimental claim is narrow and solid; the wider claims are the paper's informed working position.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 26 — Assay: the case study intro -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide contrast-slide">
+    <div class="slide-content">
+      <h2>A real project: Assay was built by GVM, then used to run the experiment that validated GVM.</h2>
+    </div>
+    <aside class="notes">The meta-structure here matters: the tool that validates the methodology was itself built by the methodology. If GVM produces sloppy software, the experiment it ran would be invalid. The case study and the experiment corroborate each other.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 27 — Assay numbers -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Assay shipped in 35 hours: 38 requirements, 207 tests passing, site survey score 5.0/5.</h2>
+      <table>
+        <thead>
+          <tr><th>Metric</th><th class="num">Value</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Requirements implemented</td><td class="num">38 (all MUST met)</td></tr>
+          <tr><td>Unit + integration tests</td><td class="num">207 passing, 0 failures</td></tr>
+          <tr><td>Acceptance test cases</td><td class="num">97 passing, 0 failures</td></tr>
+          <tr><td>Code review rounds</td><td class="num">7</td></tr>
+          <tr><td>Critical findings fixed</td><td class="num">10 (0 remaining)</td></tr>
+          <tr><td>Architecture decisions recorded</td><td class="num">9 (ADR-001–ADR-009)</td></tr>
+          <tr><td>Site survey score</td><td class="num">5.0/5 all dimensions</td></tr>
+          <tr><td>Elapsed time</td><td class="num">~35 hours</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <aside class="notes">The site survey — an independent assessment of codebase health across coherence, currency, testability, modularity, documentation, and dependency health — scored 5.0 in every dimension. The assessment noted "one consistent pattern throughout." That consistency is not an accident of the code — it is a consequence of the methodology.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 28 — What Assay taught us -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Building Assay with GVM taught three things the methodology had not anticipated.</h2>
+      <ul>
+        <li><strong>Review findings do not converge linearly.</strong> Round 5 findings spiked from 19 to 30 because the streaming implementation introduced new code paths. This is the process working, not failing.</li>
+        <li><strong>The build improved its own architecture.</strong> Duplicate dispatch logic was flagged as a recurring finding, promoted to build check BC-002, and extracted into a shared Dispatcher class — 150 lines eliminated. The review system drove the architectural improvement; upfront design had not.</li>
+        <li><strong>Mocked tests pass with hallucinated code.</strong> The Anthropic streaming hallucination passed all unit tests because the mock accepted whatever call signature it received. Mocked tests verify logic, not integration.</li>
+      </ul>
+    </div>
+    <aside class="notes">These are honest findings from the case study — not cherry-picked success stories. The build-check mechanism, the review-to-construction feedback loop, and the mock-vs-real distinction are all methodology decisions that Assay stress-tested.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 29 — Attribution: the bigger question -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The experts whose frameworks power this output see no compensation — GVM makes that visible for the first time.</h2>
+      <p>AI models already contain the full body of work from the experts GVM names. Practitioners who previously bought books, attended workshops, and studied frameworks now have that knowledge through AI — often without any awareness of its provenance.</p>
+      <p>Every expert activation through GVM is logged: <em>loaded</em> (read into context) and <em>cited</em> (named as the source of a decision). The log is the technical precondition for any compensation scheme.</p>
+    </div>
+    <aside class="notes">Longpre et al. (2024) audited 1,800+ training datasets and found licence metadata absent or under-specified for over 70% of audited datasets. GVM makes attribution visible — necessary for compensation, though not sufficient. The remaining steps are tractable engineering once the log exists.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 30 — How to start: one citation -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>You can start with one citation — the full pipeline is not required.</h2>
+      <p>"Apply Kleppmann's cache-aside pattern with TTLs calibrated to data volatility" is a single sentence that activates a body of work whether or not you are running the full GVM pipeline.</p>
+      <p>The methodology scales down as well as up. For throwaway scripts and rapid prototypes, the pipeline structure may exceed its benefit. For production systems, regulated industries, and software people depend on, the setup cost is justified when the alternative is shipping code grounded in an undifferentiated blend of training data.</p>
+    </div>
+    <aside class="notes">The entry point is wherever the practitioner is. A single citation is better than none. The full pipeline is for when quality matters enough to warrant the overhead — and once established, the per-project cost drops sharply.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 31 — Adoption: the full pipeline -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>The full pipeline is low-ceremony to start — and gets cheaper with each project in the same domain.</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 1200 460" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#333"/>
+            </marker>
+          </defs>
+
+          <!-- Setup cost bar -->
+          <text x="600" y="40" text-anchor="middle" style="font-size:26px; font-weight:600;">Effort over time</text>
+
+          <!-- Y axis -->
+          <line x1="80" y1="70" x2="80" y2="380" stroke="#333" stroke-width="1.5"/>
+          <text x="60" y="380" text-anchor="end" class="label-small">Low</text>
+          <text x="60" y="220" text-anchor="end" class="label-small">Med</text>
+          <text x="60" y="90" text-anchor="end" class="label-small">High</text>
+          <text x="40" y="225" text-anchor="middle" style="font-size:20px; fill:#555; font-weight:600;" transform="rotate(-90 40 225)">Effort per project</text>
+
+          <!-- X axis -->
+          <line x1="80" y1="380" x2="1160" y2="380" stroke="#333" stroke-width="1.5"/>
+          <text x="200" y="410" text-anchor="middle" class="label-small">Project 1</text>
+          <text x="490" y="410" text-anchor="middle" class="label-small">Project 2</text>
+          <text x="760" y="410" text-anchor="middle" class="label-small">Project 3</text>
+          <text x="1020" y="410" text-anchor="middle" class="label-small">Project N</text>
+
+          <!-- GVM line: starts high, drops quickly, plateaus low -->
+          <polyline points="80,140 200,150 490,230 760,290 1020,320 1160,330"
+            stroke="#669" stroke-width="3" fill="none"/>
+          <text x="1170" y="334" class="label-small" fill="#669">GVM</text>
+
+          <!-- Vibe line: flat at medium-high -->
+          <polyline points="80,230 1160,240"
+            stroke="#a00000" stroke-width="2" fill="none" stroke-dasharray="8,5"/>
+          <text x="1170" y="244" class="label-small" fill="#a00000">Vibe only</text>
+
+          <!-- Annotations -->
+          <text x="200" y="120" text-anchor="middle" class="label-small" fill="#669">Initial</text>
+          <text x="200" y="143" text-anchor="middle" class="label-small" fill="#669">setup</text>
+
+          <text x="760" y="270" text-anchor="middle" class="label-small" fill="#669">Expert roster</text>
+          <text x="760" y="293" text-anchor="middle" class="label-small" fill="#669">compounds</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">The setup cost is front-loaded: curating reference files, assembling expert panels, establishing the pipeline structure. But once established, the per-project cost drops because the same reference files, pipeline structure, and core expert panels serve every subsequent project in that domain.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 32 — Tool-agnostic -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>GVM is a methodology, not a product — the components travel as structured text, not as tooling.</h2>
+      <p>The reference implementation uses Claude Code, but the methodology is portable: expert panels, curated reference files, phased pipelines, and conditional activation are patterns implementable in any AI development environment that supports contextual instructions.</p>
+      <div class="callout">
+        <p><strong>Directly portable:</strong> expert reference files (Markdown), pipeline-phase definitions, scoring rubrics, build-check format.</p>
+        <p><strong>Requires per-tool adaptation:</strong> conditional activation mechanism, parallel panel dispatch, calibration file location.</p>
+      </div>
+    </div>
+    <aside class="notes">Portability follows from the foundation: text files containing curated expert knowledge, with citations that activate knowledge already present in any sufficiently capable LLM. The tool provides the loading mechanism; the text provides the grounding.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 33 — How to start in practice -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Getting started takes one command — the methodology discovers experts automatically for general software domains.</h2>
+      <div class="callout">
+        <p style="font-family: 'Menlo', 'Consolas', monospace; font-size: 1.1rem; margin-bottom: 0.8rem;">claude plugin add grounded_vibe_methodology/grounded-vibe-methodology</p>
+        <p style="font-family: 'Menlo', 'Consolas', monospace; font-size: 1.1rem; margin-bottom: 0.8rem;">/gvm-status</p>
+        <p style="font-family: 'Menlo', 'Consolas', monospace; font-size: 1.1rem;">/gvm-requirements</p>
+      </div>
+      <p>For specialised domains (financial services, healthcare, regulated industries), run <code>/gvm-init</code> first to load industry experts before requirements begin.</p>
+    </div>
+    <aside class="notes">The plugin installs the full skill set. /gvm-status confirms the installation and shows which phases are available. /gvm-requirements is the entry point for most greenfield projects. /gvm-site-survey is the entry point for existing codebases.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 34 — Closing: the discipline that vibe coding lacks -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Keep the vibes — but ground them in the published canon.</h2>
+      <p>The published authorities in requirements, testing, architecture, security, and domain modelling are present in every capable LLM. They are already there. GVM activates them through citation, applies them through structured phases, and evaluates output against their frameworks — not against an undifferentiated blend of "reasonable practice."</p>
+      <p>The name is a deliberate riff on vibe coding. What it offers is what vibe coding alone cannot: the right experts, at the right phase, with the right framework for evaluating whether what was built is actually good.</p>
+    </div>
+    <aside class="notes">The closing sentence is Duarte's "new bliss" — not a utopian promise but a specific, achievable transformation. The audience is the hero: they already have the AI capability; GVM is what makes it produce principled, evaluable output.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 35 — End / References -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide title-slide">
+    <div class="slide-content">
+      <h1 style="font-size: 2.2rem;">Grounded Vibe Methodology</h1>
+      <p class="subtitle" style="margin-top: 1rem;">whitepaper · case study · reference implementation</p>
+      <p class="author" style="margin-top: 1.5rem; font-size: 1rem;">
+        Conor Brennan &amp; Gerard Quinn &mdash; April 2026
+      </p>
+      <p style="margin-top: 2rem; font-size: 1.1rem; color: #555; max-width: 680px;">
+        Primary source: <em>The Grounded Vibe Methodology — Citation-Based Knowledge Activation for AI-Assisted Software Development</em> (Brennan &amp; Quinn, 2026)
+      </p>
+      <p style="font-size: 1rem; color: #777; margin-top: 0.5rem;">
+        Companion papers: <em>Grounding Produces Measurably Better Output</em> · <em>Why Citation-Based Activation Works</em> · <em>Building a Production Tool with GVM</em>
+      </p>
+      <p class="gvm-attribution" style="margin-top: 2rem;">Developed using the Grounded Vibe Methodology</p>
+    </div>
+    <aside class="notes">Leave time for questions. The whitepaper contains full experimental data, per-dimension scores, effect sizes, and all source citations.</aside>
+  </section>
+
+</div><!-- end .deck -->
+
+<div class="slide-counter">
+  <span class="current-slide">1</span> / <span class="total-slides">35</span>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const currentEl = document.querySelector('.current-slide');
+  const totalEl = document.querySelector('.total-slides');
+  let current = 0;
+
+  if (totalEl) totalEl.textContent = slides.length;
+
+  function show(n) {
+    slides.forEach(s => s.classList.remove('active'));
+    current = Math.max(0, Math.min(n, slides.length - 1));
+    slides[current].classList.add('active');
+    if (currentEl) currentEl.textContent = current + 1;
+  }
+
+  show(0);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      show(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      show(current - 1);
+    } else if (e.key === 'n' || e.key === 'N') {
+      document.body.classList.toggle('show-notes');
+    } else if (e.key === 'Home') {
+      show(0);
+    } else if (e.key === 'End') {
+      show(slides.length - 1);
+    }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+  document.addEventListener('touchend', function(e) {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 50) {
+      diff < 0 ? show(current + 1) : show(current - 1);
+    }
+  });
+})();
+</script>
+</body>
+</html>

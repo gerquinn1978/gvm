@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-tech-spec — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">March 2026</p>
+<h1>/gvm-tech-spec</h1>
+<p class="subtitle">
+  A command for Claude Code that turns requirements and test cases into a suite
+  of focused technical specifications, guided by named experts and calibrated
+  to the project&rsquo;s risk profile.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  The <code>/gvm-tech-spec</code> command acts as a software architect. It reads the output
+  of <code>/gvm-requirements</code> and <code>/gvm-test-cases</code>, assesses project complexity,
+  then generates a suite of focused specification documents through structured conversation
+  with user approval at every stage.
+</p>
+
+<p>
+  Unlike a monolithic spec, <code>/gvm-tech-spec</code> adapts the number and depth of documents
+  to your project. A simple app might produce 3 specs; a complex agentic system might produce
+  8&ndash;10. Each document covers a distinct architectural concern.
+</p>
+
+<p>
+  For every spec it produces two files, always kept in sync:
+</p>
+
+<ul>
+  <li><strong>*.html</strong> &mdash; a professionally designed document with collapsible ADR blocks and layered reading via <code>&lt;details&gt;</code> toggles</li>
+  <li><strong>*.md</strong> &mdash; a Claude-friendly markdown version (flat, everything visible) that serves as the primary input for <code>/gvm-build</code></li>
+</ul>
+
+<p>
+  All files are saved to your project's <code>specs/</code> directory.
+</p>
+
+<span class="sidenote">
+  The skill captures <em>what</em> the system's architecture is and <em>why</em> each decision was made. It does not contain implementation code &mdash; that belongs to <code>/gvm-build</code>.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>
+  <code>/gvm-tech-spec</code> requires two input documents from earlier pipeline stages:
+</p>
+
+<ul>
+  <li><code>requirements/requirements.md</code> &mdash; produced by <code>/gvm-requirements</code></li>
+  <li><code>test-cases/test-cases.md</code> &mdash; produced by <code>/gvm-test-cases</code></li>
+</ul>
+
+<p>
+  If either file is missing, the skill will tell you which upstream command to run first.
+</p>
+
+<h3 id="external-spec">Using an existing spec or architecture document</h3>
+
+<p>
+  If you have an existing technical specification, architecture document, or design document from another tool or process, provide it as input. The skill uses it as a seed &mdash; extracting architecture decisions, component structures, technology choices, and integration patterns that map to GVM spec structure.
+</p>
+
+<p>
+  The external spec accelerates the assessment and informs architecture decisions, but the full expert-guided flow still runs. Before finalising, an independent verification agent compares the GVM output against your original document, checking completeness, accuracy, hallucination, and consistency. Discrepancies are presented to you for resolution.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Pipeline order</div>
+  <p>Always run the commands in sequence: <code>/gvm-requirements</code> then <code>/gvm-test-cases</code> then <code>/gvm-tech-spec</code>. Each command builds on the output of the previous one.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="phases">The Six Phases</h2>
+
+<p>
+  The skill proceeds through six phases, each with a user approval gate. You confirm
+  or request revisions before the skill moves on.
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Process phases</caption>
+  <thead>
+    <tr><th>Phase</th><th>What happens</th><th>Your role</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="phase">1</span> Assessment</td>
+      <td>Reads requirements and test cases in full. Identifies Architecturally Significant Requirements (ASRs), assesses complexity, and proposes a spec decomposition &mdash; which specs to write and why.</td>
+      <td>Approve or adjust the proposed spec list.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">2</span> Cross-Cutting Spec</td>
+      <td>Always written first. Presents 2&ndash;3 tech stack options with trade-offs (ADR format). After your choice, covers project structure, authentication, error handling, data model overview, API and development conventions. Activates Tier 3 stack specialists.</td>
+      <td>Choose the tech stack. Approve the cross-cutting spec.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">3</span> Domain Specs</td>
+      <td>Writes one domain spec at a time. Activates Tier 2a domain specialists as needed. Each spec covers purpose, ASRs, design decisions (ADRs), component design, integration points, error handling, and testing strategy.</td>
+      <td>Review and approve each domain spec before the next one begins.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4</span> Architecture Overview</td>
+      <td>Synthesises all domain specs into a high-level overview using C4 diagrams. Applies Brooks' conceptual integrity lens &mdash; does the system cohere as if designed by one mind? Flags inconsistencies.</td>
+      <td>Review the overview. Flag anything that doesn't cohere.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5</span> Implementation Guide</td>
+      <td>Decomposes the build into phases and chunks (P1-C01, P1-C02, etc.). Maps the dependency network, identifies parallelism opportunities, and defines context-loading rules for <code>/gvm-build</code>. The final phase must include an integration wiring chunk or product startup verification.</td>
+      <td>Approve build ordering and chunk boundaries.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">6</span> Coverage Audit</td>
+      <td>Traces every requirement ID to at least one spec section, and every spec section back to at least one requirement. Flags gaps in both directions &mdash; uncovered requirements and spec sections that don't trace to requirements. When specs derive from an external document, a Phase 6b source verification runs automatically: the skill checks that the spec faithfully represents the source and flags any discrepancies.</td>
+      <td>Resolve any coverage gaps.</td>
+    </tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  The architecture overview (Phase 4) is written <em>after</em> the domain specs because it synthesises from them. It does not duplicate their content &mdash; it summarises key decisions and checks for cross-domain consistency.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Load All Three Expert Tiers.</strong> Tier 1 (architecture) at session start, Tier 2a (domain) before writing any domain spec, Tier 3 (stack) after the tech stack decision &mdash; do not write spec content without loading the relevant tier first.</li>
+  <li><strong>Write Paired HTML + MD for Every Spec.</strong> Every spec file must exist in both formats before moving to the next phase &mdash; the MD version is what <code>/gvm-build</code> consumes.</li>
+  <li><strong>Implementation Guide is Mandatory.</strong> <code>specs/implementation-guide.md</code> must be written as the final spec &mdash; <code>/gvm-build</code> cannot proceed without it.</li>
+  <li><strong>User Approval Per Spec.</strong> Each spec must be presented to the user for approval before writing the next one.</li>
+  <li><strong>HTML Before Approval.</strong> For every spec file, write the MD first, then immediately write the HTML &mdash; present for approval only after both files exist.</li>
+  <li><strong>Wiring matrix mandatory.</strong> The implementation guide must contain a &ldquo;Wiring matrix&rdquo; section (entry point &rarr; consumed modules &rarr; wiring chunk). The skill refuses to write the implementation guide if any module-building chunk has no consumer chunk. Required for the downstream <code>/gvm-build</code> Hard Gates 6 and 7.</li>
+</ol>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="assessment">Phase 1: Assessment</h2>
+
+<p>
+  The skill reads both input documents in full and performs three analyses:
+</p>
+
+<h3 id="asr-identification">Identifying ASRs</h3>
+
+<p>
+  Architecturally Significant Requirements (Keeling) are requirements that force design
+  decisions. Examples:
+</p>
+
+<ul>
+  <li>A "15-minute time budget" forces asynchronous processing</li>
+  <li>"Real-time progress" favours WebSocket or Server-Sent Events</li>
+  <li>"User accounts with roles" forces an authentication architecture</li>
+  <li>Quality attribute implications &mdash; performance, security, resilience</li>
+</ul>
+
+<h3 id="complexity-assessment">Complexity assessment</h3>
+
+<p>
+  The skill evaluates how many distinct implementation boundaries exist, what C4 containers
+  the system would have, and where risk is concentrated &mdash; novel, complex, or uncertain
+  areas get deeper treatment (Fairbanks).
+</p>
+
+<h3 id="decomposition-proposal">Decomposition proposal</h3>
+
+<p>
+  Based on the assessment, the skill proposes a list of specs to write. For a simple
+  project this might be just a cross-cutting spec and one domain spec. For a complex
+  system it could be 6&ndash;8 domain specs plus the cross-cutting, overview, and
+  implementation guide.
+</p>
+
+<div class="callout">
+  <div class="callout-label">You control the scope</div>
+  <p>The proposed decomposition is a starting point. You can merge specs that feel too granular, split ones that feel too broad, or remove domains you don't need specified.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="adaptive-decomposition">Adaptive Decomposition</h2>
+
+<p>
+  The skill follows George Fairbanks' risk-driven architecture principle: invest
+  specification effort where risk is highest, and keep things light where patterns
+  are well-understood.
+</p>
+
+<table>
+  <caption>Table 2 &mdash; Decomposition scales with risk</caption>
+  <thead>
+    <tr><th>Risk level</th><th>Typical specs</th><th>Depth</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Low (CRUD, well-understood patterns)</td><td>1&ndash;2</td><td>Light &mdash; pattern names and variations only</td></tr>
+    <tr><td>Medium (multi-component, some novelty)</td><td>3&ndash;4</td><td>Moderate &mdash; ADRs for key decisions, component sketches</td></tr>
+    <tr><td>High (distributed, novel domain, many integrations)</td><td>5&ndash;8</td><td>Thorough &mdash; full component design, sequence diagrams, error handling</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  Fairbanks' <em>Just Enough Software Architecture</em> argues against both under-specification (cowboy coding) and over-specification (Big Design Up Front). The sweet spot is risk-driven: thorough where it matters, light where it doesn't.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="expert-model">Three-Tier Expert Model</h2>
+
+<p>
+  The skill draws on a structured panel of experts organised into three tiers.
+  Tier 1 is always active. Tiers 2 and 3 activate conditionally, and the skill
+  announces each activation so you know which perspectives are guiding the current spec.
+</p>
+
+<h3 id="tier-1">Tier 1 &mdash; Architecture Panel (Always Active)</h3>
+
+<p>
+  The architecture panel is loaded from the <code>architecture-specialists.md</code>
+  reference file. The experts govern the overall process, decomposition, and cross-cutting
+  decisions. The panel can be updated by editing the reference file.
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Tier 1 roles (loaded from architecture-specialists.md)</caption>
+  <thead>
+    <tr><th>Role</th><th>Contribution to the skill</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Architectural views</td><td>Determines which specs and views are needed based on requirements complexity and stakeholder concerns</td></tr>
+    <tr><td>C4 modelling</td><td>Structures the architecture overview; defines container boundaries using the C4 zoom-level framework</td></tr>
+    <tr><td>Risk-driven architecture</td><td>Calibrates spec depth per domain &mdash; thorough where risky, light where well-understood</td></tr>
+    <tr><td>Decision capture (ADRs)</td><td>ADR-style decision capture within each spec; identifies Architecturally Significant Requirements (ASRs)</td></tr>
+    <tr><td>Quality attributes</td><td>Quality attribute scenarios for non-functional requirements; architectural tactics for performance, security, availability</td></tr>
+    <tr><td>Conceptual integrity</td><td>Does the full system cohere as if designed by one mind? Applied in Phase 4.</td></tr>
+    <tr><td>Pragmatic patterns</td><td>Keeps specs lightweight and maintainable; refactoring guidance; anti-bloat lens</td></tr>
+  </tbody>
+</table>
+
+<h3 id="tier-2">Tier 2a &mdash; Domain Specialists (Conditional)</h3>
+
+<p>
+  Domain specialists are loaded selectively from per-domain files in <code>references/domain/</code> based on the project&rsquo;s needs.
+  They activate when writing specific domain specs. The skill announces each activation
+  and the reason &mdash; e.g., "Activating the data modelling specialist for the data model spec."
+</p>
+
+<table>
+  <caption>Table 4 &mdash; Tier 2a domain specialist roles (loaded selectively from references/domain/)</caption>
+  <thead>
+    <tr><th>Domain</th><th>Activation signal</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>UX / interaction design</td><td>Frontend spec, user interaction flows, form design, navigation</td></tr>
+    <tr><td>Information design</td><td>Data-heavy UI, dashboards, reports, data visualisation, brochure output</td></tr>
+    <tr><td>Typography / layout systems</td><td>Designed output, layout systems, typography, visual hierarchy</td></tr>
+    <tr><td>Integration / messaging</td><td>Service integration, message passing, orchestration vs choreography, agent communication</td></tr>
+    <tr><td>Data modelling</td><td>Data model, storage engines, caching, consistency models, data flow</td></tr>
+    <tr><td>Resilience / operations</td><td>Resilience, operational concerns, circuit breakers, timeouts, graceful degradation</td></tr>
+    <tr><td>Service architecture</td><td>Service boundaries, API design, when NOT to use microservices</td></tr>
+    <tr><td>Refactoring / patterns</td><td>Code smells, refactoring sequences, design pattern application</td></tr>
+    <tr><td>Legacy code</td><td>Working with legacy systems, seam identification, characterisation tests</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  You don't bring the database specialist to the UX review. Conditional activation models how real expert teams work &mdash; and keeps the context window focused on relevant expertise.
+</span>
+
+<h3 id="tier-3">Tier 3 &mdash; Stack Specialists (Post-Decision)</h3>
+
+<p>
+  Tier 3 is loaded selectively from per-stack files in <code>references/stack/</code> and activates
+  in Phase 2 after you choose the tech stack. The roster is organised by technology
+  area &mdash; React specialists, Python specialists, database specialists, and so on.
+  Only specialists relevant to the chosen stack are loaded.
+</p>
+
+<p>
+  The roster is intentionally extensible. New stacks and specialists can be added
+  by editing the reference file.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="adr-format">Architecture Decision Records</h2>
+
+<p>
+  Every significant design choice is captured as an Architecture Decision Record
+  (ADR), following Michael Keeling's format from <em>Design It!</em>. ADRs appear
+  throughout the specs as collapsible blocks in the HTML version.
+</p>
+
+<p>
+  Each ADR contains four sections:
+</p>
+
+<ul>
+  <li><strong>Context</strong> &mdash; the forces at play and the requirements driving the decision</li>
+  <li><strong>Options Considered</strong> &mdash; 2&ndash;3 viable approaches with trade-offs</li>
+  <li><strong>Decision</strong> &mdash; the chosen option and the reasoning</li>
+  <li><strong>Consequences</strong> &mdash; what follows from the decision, including any new constraints</li>
+</ul>
+
+<pre><code>ADR-001: Use WebSocket for real-time progress updates
+Status: Accepted
+
+Context:
+  PL-9 requires real-time progress view.
+  PL-14 requires agent transparency.
+
+Options Considered:
+  1. Polling — simple but latency and load trade-off
+  2. Server-Sent Events (SSE) — unidirectional, simpler
+  3. WebSocket — bidirectional, supports user interjection
+
+Decision:
+  WebSocket. Bidirectional communication required for
+  PL-15 (agent questions) and PL-16 (user interjection).
+
+Consequences:
+  Need WebSocket server infrastructure. Connection
+  management for long-running sessions (~20 min).</code></pre>
+
+<span class="sidenote">
+  ADR format follows Keeling (<em>Design It!</em>, Ch. 13) and Nygard's original lightweight format. The key insight: capture <em>why</em>, not just <em>what</em>. Six months later, the ADR tells you what alternatives were considered and why they were rejected.
+</span>
+
+<div class="callout">
+  <div class="callout-label">When ADRs are written</div>
+  <p>Technology choices, architectural patterns, data model decisions, integration approaches, security decisions. The tech stack decision in Phase 2 is always the first ADR. Frontend specs include additional ADRs for UI component library, styling, form management, and other tooling.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output Documents</h2>
+
+<p>
+  The number and names of output files vary per project. The skill always produces
+  these three fixed documents, plus a variable number of domain specs:
+</p>
+
+<table>
+  <caption>Table 5 &mdash; Output documents</caption>
+  <thead>
+    <tr><th>Document</th><th>Written in</th><th>Contents</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>cross-cutting.html/.md</code></td>
+      <td><span class="phase">2</span> Phase 2</td>
+      <td>Tech stack (with ADR), project structure, authentication, error handling, data model overview, API conventions, development conventions</td>
+    </tr>
+    <tr>
+      <td><code>{domain-name}.html/.md</code></td>
+      <td><span class="phase">3</span> Phase 3</td>
+      <td>Purpose, ASRs, design decisions (ADRs), component design, integration points, error handling, testing strategy</td>
+    </tr>
+    <tr>
+      <td><code>architecture-overview.html/.md</code></td>
+      <td><span class="phase">4</span> Phase 4</td>
+      <td>C4 system context and container diagrams, key ADR summary, quality attributes, domain spec index, conceptual integrity review</td>
+    </tr>
+    <tr>
+      <td><code>implementation-guide.html/.md</code></td>
+      <td><span class="phase">5</span> Phase 5</td>
+      <td>Dependency network (matrix + ASCII diagram), build phases with P-C chunk IDs, context-loading rules, parallelism flags, test co-location</td>
+    </tr>
+  </tbody>
+</table>
+
+<pre><code>specs/
+  architecture-overview.html + .md
+  cross-cutting.html + .md
+  implementation-guide.html + .md
+  {domain-1}.html + .md
+  {domain-2}.html + .md
+  ...</code></pre>
+
+<span class="sidenote">
+  HTML files use <code>&lt;details&gt;</code> toggles for layered reading &mdash; summaries visible by default, full detail expandable. Markdown files are flat because Claude needs everything visible when reading them during <code>/gvm-build</code>.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="domain-spec-structure">Domain Spec Structure</h2>
+
+<p>
+  Each domain spec follows a consistent internal structure:
+</p>
+
+<table>
+  <caption>Table 6 &mdash; Domain spec sections</caption>
+  <thead>
+    <tr><th>#</th><th>Section</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Purpose</td><td>What this spec covers, which requirements it addresses</td></tr>
+    <tr><td>2</td><td>Architecturally Significant Requirements</td><td>ASRs relevant to this domain</td></tr>
+    <tr><td>3</td><td>Design Decisions</td><td>ADR blocks: context, options, chosen, rationale</td></tr>
+    <tr><td>4</td><td>Component Design</td><td>Data models, component hierarchy, data flow</td></tr>
+    <tr><td>5</td><td>API Boundary Contracts</td><td>Explicit request/response shapes with concrete JSON examples for every endpoint or event crossing a service boundary; the contract that parallel chunks synchronise on</td></tr>
+    <tr><td>6</td><td>Integration Points</td><td>How this domain connects to others</td></tr>
+    <tr><td>7</td><td>Error Handling &amp; Edge Cases</td><td>Domain-specific failure modes</td></tr>
+    <tr><td>8</td><td>Testing Strategy</td><td>Links to relevant TC-IDs from test-cases.md</td></tr>
+  </tbody>
+</table>
+
+<h3 id="frontend-specs">Frontend and UI specs</h3>
+
+<p>
+  When a domain spec covers a frontend or client-side application, it must also include
+  ADRs for tooling decisions. The goal: a developer reading the spec should know exactly
+  which packages to install and which patterns to follow for every UI concern.
+</p>
+
+<ul>
+  <li><strong>UI component library</strong> &mdash; headless (Radix, Headless UI) vs opinionated (MUI, Chakra) vs copy-paste (shadcn/ui)</li>
+  <li><strong>Styling approach</strong> &mdash; utility-first (Tailwind), CSS Modules, CSS-in-JS</li>
+  <li><strong>Form management</strong> &mdash; library (React Hook Form, Formik) with schema validation (Zod, Yup)</li>
+  <li><strong>Notification/toast system</strong> &mdash; established library (Sonner, react-hot-toast) vs custom</li>
+  <li><strong>Icons</strong> &mdash; consistent icon set matching the UI library</li>
+  <li><strong>Design patterns</strong> &mdash; multi-step forms, optimistic UI, skeleton loading, confirmation dialogs</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">No wheel reinvention</div>
+  <p>Frontend tooling decisions are architectural decisions. They are captured in the spec as ADRs, not deferred to the build phase. Every library choice is made here so that <code>/gvm-build</code> can proceed without ambiguity.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="implementation-guide">The Implementation Guide</h2>
+
+<p>
+  The implementation guide (Phase 5) bridges <code>/gvm-tech-spec</code> and <code>/gvm-build</code>.
+  It decomposes the entire build into phases and chunks using a structured ID system.
+</p>
+
+<h3 id="chunk-ids">Phase-Chunk ID system</h3>
+
+<p>
+  Every unit of work gets a unique ID: <code>P{phase}-C{chunk}</code>. For example,
+  <code>P1-C01</code> is Phase 1, Chunk 1. These IDs provide unambiguous references
+  across the implementation guide, <code>/gvm-build</code> sessions, and parallel agent dispatching.
+</p>
+
+<h3 id="phase-collision">Phase numbering &mdash; collision detection</h3>
+
+<p>
+  Before assigning phase numbers, <code>/gvm-tech-spec</code> scans <code>build/handovers/</code>
+  and any prior <code>specs/*implementation-guide*.md</code> for in-use <code>P{N}</code> numbers.
+  The new guide starts at <code>max(in_use) + 1</code>. This prevents collisions in
+  <code>build/handovers/</code> and <code>build/prompts/</code> when a project produces
+  multiple implementation guides over its lifetime &mdash; for example, an improvement guide
+  written after the original build completed. Cross-skill phase references
+  (e.g., "<code>/gvm-requirements</code> Phase 5") are <em>not</em> shifted &mdash; they refer
+  to other skills' fixed phase numbers, not this guide's build phases.
+</p>
+
+<h3 id="dependency-network">Dependency network</h3>
+
+<p>
+  The guide maps dependencies between chunks as a network (not a hierarchy),
+  represented in three complementary formats:
+</p>
+
+<ul>
+  <li><strong>Dependency matrix</strong> &mdash; a table showing what each chunk depends on, enables, and can run in parallel with</li>
+  <li><strong>Two-track ASCII diagram</strong> &mdash; backend and frontend tracks side-by-side with cross-links</li>
+  <li><strong>Critical path</strong> &mdash; the longest sequential chain that determines minimum build time</li>
+</ul>
+
+<h3 id="test-colocation">Test co-location</h3>
+
+<p>
+  Every chunk includes its tests. There are no separate "write tests" chunks. Unit tests
+  are created alongside the code they test &mdash; never as a separate phase.
+</p>
+
+<h3 id="parallelism">Parallel work</h3>
+
+<p>
+  Chunks that share no mutable state can run in parallel. The guide marks these
+  explicitly. The best parallelism opportunities are typically domain agents
+  (same structure, different data sources) and independent frontend features.
+</p>
+
+<span class="sidenote">
+  Chunks are sized for a single Claude context window. Each chunk should be implementable by loading: the implementation guide + the cross-cutting spec + one domain spec section. This keeps <code>/gvm-build</code> sessions focused.
+</span>
+
+<h3 id="chunk-sizing">Chunk sizing principles</h3>
+
+<p>
+  Chunk boundaries follow the INVEST criteria (Cohn): each chunk should be Independent, Negotiable, Valuable, Estimable, Small, and Testable. A chunk that cannot be evaluated on all six axes is a candidate for splitting or merging.
+</p>
+
+<p>
+  Chunks cut vertically through all layers — data, service, API, and UI — for a single feature or capability. Slicing horizontally (all data models first, then all services) produces chunks that deliver no testable value until the final layer is built. Vertical slices keep every chunk shippable.
+</p>
+
+<p>
+  <strong>MVP-first ordering (MVP-1, where MVP = Minimum Viable Product).</strong> The first user-facing chunk in the implementation guide must constitute the smallest end-to-end shippable slice — exercising one user-visible behaviour through every layer it touches against the walking skeleton's wired boundaries. Subsequent chunks add slices, not layers. A guide whose first user-facing chunk is a layer fragment ("data model only", "API endpoint with no caller", "UI shell with no backing data") is refused at impl-guide write time and again at <code>/gvm-build</code> read time (Hard Gate 9). The pattern this prevents: Phase 1 is "all auth and data model", Phase 2 is "all services", Phase 3 is the first user-visible behaviour — vertical slicing within chunks but layer-first thinking across the sequence. The walking skeleton handles boundary wiring; everything after should compound user-visible value, not infrastructure depth.
+</p>
+
+<p>
+  Four named project shapes claim exemption with the literal in-guide form <em>MVP-1 exempted: &lt;category&gt; — rationale: &lt;why&gt;</em>: <strong>library</strong> (no user-facing surface — SDK or daemon consumed by other systems), <strong>refactor</strong> (stable interface, implementation-only change), <strong>performance-driven</strong> (the architectural constraint is the product; first slice must exercise it rather than a token user-visible behaviour), and <strong>fully-specified</strong> (regulatory/compliance rebuild where user feedback adds no information). An exemption with no rationale is treated as no exemption (Fagan: silent skips are not skips).
+</p>
+
+<p>
+  The refusal rule gates the <em>shape</em> of the first user-facing chunk. A non-gated companion paragraph in the skill prose directs practitioners to optimise chunk <em>sequencing</em> for the earliest runnable MVP — position is not gated because that would force exemption inflation on legitimate infrastructure-first cases (significant data migration, auth bootstrapping, regulatory setup). The judgment call is which infrastructure is genuinely required by the MVP versus speculative scaffolding for later phases.
+</p>
+
+<p>
+  <strong>Horizontal architecture, vertical sequence.</strong> MVP-1 governs the delivery <em>sequence</em>; the cross-cutting spec (Phase 2) and the architecture overview (Phase 4) govern the <em>patterns</em> every slice is built against. Slice 5 uses the same data-access conventions, error-handling approach, logging discipline, and naming rules as slice 1 — Brooks's conceptual integrity. The first slice exercises one user behaviour through the architecture the spec already defined; subsequent slices inherit those patterns rather than reinvent them. The walking skeleton establishes the boundary contracts; the cross-cutting spec establishes everything between the boundaries. MVP-1 does not change either — it changes the order in which user-visible value reaches the practitioner. A reader who interprets "vertical slice first" as licence to invent slice-local architecture is misreading the rule: if slice N's data-access pattern diverges from slice 1's, the divergence is a code-review finding regardless of whether each slice individually shipped a green smoke gate.
+</p>
+
+<p>
+  When a requirement varies by data type (e.g., different asset classes, different message formats), split by data variation rather than by operation. Each variation becomes its own chunk, sharing a single code path. Kleppmann's data-intensive application principles apply: model the variation in data first; the operations follow.
+</p>
+
+<p>
+  Parallel chunks must share nothing at runtime — no shared files, no shared mutable state. Interface contracts (agreed request/response shapes) serve as the synchronisation point between parallel chunks; they are defined before parallel work begins and held to until integration.
+</p>
+
+<p>
+  When a chunk involves significant uncertainty (novel algorithm, unfamiliar library, unclear performance characteristics), designate it a <strong>spike chunk</strong>. A spike has a time-box and a defined question to answer, not a deliverable to ship. The spike's output is a decision, which feeds a follow-on implementation chunk.
+</p>
+
+<p>
+  The final phase must always include an <strong>integration closure chunk</strong>: wiring all deferred seams, verifying the assembled system starts cleanly, and confirming that end-to-end smoke tests pass. Integration problems caught here are far cheaper than those discovered after hand-off.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="diagrams">Diagrams</h2>
+
+<p>
+  The skill uses diagrams wherever they are the established communication tool in software
+  engineering. Diagrams are not optional decoration &mdash; they are a primary means of
+  conveying structure that prose alone cannot efficiently communicate.
+</p>
+
+<table>
+  <caption>Table 7 &mdash; Diagram types used in specs</caption>
+  <thead>
+    <tr><th>Diagram type</th><th>When used</th><th>Standard</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Entity Relationship</td><td>Data model specs &mdash; tables, relationships, cardinality</td><td>Crow's foot notation</td></tr>
+    <tr><td>Sequence Diagram</td><td>Request/response flows, agent orchestration, WebSocket messages</td><td>UML sequence</td></tr>
+    <tr><td>State Machine</td><td>Run lifecycle, domain status transitions, auth flows</td><td>UML state machine</td></tr>
+    <tr><td>Container Diagram</td><td>Architecture overview &mdash; major components and communication</td><td>C4 Level 2 (Brown)</td></tr>
+    <tr><td>Component Diagram</td><td>Within a domain spec &mdash; internal structure of a container</td><td>C4 Level 3 (Brown)</td></tr>
+    <tr><td>Flowchart</td><td>Decision logic, search mode detection, constraint evaluation</td><td>Standard flowchart</td></tr>
+  </tbody>
+</table>
+
+<p>
+  HTML files contain inline SVG diagrams following the spec colour palette. Markdown files
+  describe the same relationships in structured text (ASCII tables or bullet hierarchies)
+  that Claude can parse during <code>/gvm-build</code>.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="stale-detection">Stale Detection</h2>
+
+<p>
+  If specs already exist when you run <code>/gvm-tech-spec</code>, the skill compares
+  file timestamps. If requirements are newer than the existing specs, it will:
+</p>
+
+<ul>
+  <li>Notify you that requirements have changed since specs were last generated</li>
+  <li>Identify which specs are impacted by the changed requirements (by matching requirement IDs)</li>
+  <li>Offer selective regeneration (only affected specs) or full regeneration</li>
+  <li>Preserve specs for unchanged domains</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="context-management">Context &amp; Session Management</h2>
+
+<p>
+  Spec generation is a long-running task. The skill proactively manages context
+  to maintain output quality throughout the process:
+</p>
+
+<ul>
+  <li><strong>After every 3 domain specs</strong>, the skill recommends <code>/compact</code> to free context</li>
+  <li><strong>Progress is saved</strong> to a handoff memory file after every spec completion &mdash; cheap insurance against context loss</li>
+  <li><strong>Sessions can be resumed</strong> &mdash; the skill reads the handoff file and skips completed phases</li>
+  <li><strong>Context loading is selective</strong> &mdash; each phase loads only what it needs, not the full document set</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">Long projects</div>
+  <p>For complex projects with many domain specs, you may run <code>/gvm-tech-spec</code> across multiple sessions. The handoff memory ensures no work is lost and the skill picks up exactly where it left off.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="lifecycle">Where This Fits</h2>
+
+<p>
+  <code>/gvm-tech-spec</code> is the third step in the skill pipeline. It consumes
+  requirements and test cases, and produces specs that drive implementation:
+</p>
+
+<pre><code>[/gvm-init] &rarr; [/gvm-impact-map] &rarr; /gvm-requirements &rarr; /gvm-test-cases &rarr; /gvm-tech-spec
+  &rarr; [/gvm-design-review] &rarr; [/gvm-walking-skeleton] &rarr; /gvm-build &rarr; /gvm-code-review
+  &rarr; /gvm-test &rarr; [/gvm-explore-test] &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy
+
+Optional phases shown in [ ].</code></pre>
+
+<p>
+  The requirements document captures <em>what</em> the system must do. The test cases
+  define <em>how success is measured</em>. The tech spec captures <em>how the system
+  is designed</em> and <em>why</em> each architectural decision was made. The build
+  command <em>implements</em> it.
+</p>
+
+<p>
+  Specification writing often reveals missing requirements or untested scenarios.
+  When this happens, update the upstream documents before continuing. The feedback
+  loop is the methodology working as designed.
+</p>
+
+<span class="sidenote">
+  The coverage audit in Phase 6 may reveal requirement gaps. When it does, update <code>requirements.md</code> and <code>test-cases.md</code> before finalising specs. This upstream feedback is expected and valuable.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="tips">Tips</h2>
+
+<ul>
+  <li><strong>Engage with tech stack decisions.</strong> Phase 2 presents 2&ndash;3 viable options with trade-offs. This is the most consequential decision in the process &mdash; take your time.</li>
+  <li><strong>Challenge the ADRs.</strong> If a technology decision doesn't feel right, say so. The skill will reconsider with your input and update the record.</li>
+  <li><strong>Trust the decomposition but question it.</strong> The proposed spec list is based on complexity analysis, but you know your project best. Merge or split specs as needed.</li>
+  <li><strong>Push back on over-specification.</strong> If a domain feels over-detailed for a well-understood pattern, say so. The skill respects Fairbanks' "just enough" principle.</li>
+  <li><strong>Open the HTML files as you go.</strong> The specs use collapsible sections and Tufte-style design. Seeing the formatted output helps you evaluate completeness.</li>
+  <li><strong>Watch for expert activations.</strong> The skill announces when Tier 2a or Tier 3 specialists activate. This transparency helps you understand which perspectives are shaping each spec.</li>
+  <li><strong>Review the implementation guide carefully.</strong> This is what <code>/gvm-build</code> will follow. The chunk ordering and dependencies determine the build sequence.</li>
+  <li><strong>Don't skip the coverage audit.</strong> Phase 6 catches requirements that slipped through and spec sections that don't trace to any requirement.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="key-rules">Key Rules</h2>
+
+<p>
+  The skill follows these principles consistently:
+</p>
+
+<ol>
+  <li><strong>Requirements drive decomposition</strong> &mdash; spec structure emerges from requirements complexity, not a fixed template</li>
+  <li><strong>Cross-cutting first, always</strong> &mdash; every domain spec references it; it must exist before domains are written</li>
+  <li><strong>One domain spec at a time</strong> &mdash; keeps context focused; user approves each before the next</li>
+  <li><strong>ADR-style decisions</strong> &mdash; every significant choice captures context, options, and rationale</li>
+  <li><strong>Depth proportional to risk</strong> &mdash; thorough for novel/risky, light for well-understood</li>
+  <li><strong>Every write touches both files</strong> &mdash; HTML and Markdown always in sync</li>
+  <li><strong>Specs reference requirements by ID</strong> &mdash; full traceability; coverage audit catches gaps</li>
+  <li><strong>Specs reference test cases</strong> &mdash; testing strategy links to relevant TC-IDs</li>
+  <li><strong>No implementation code</strong> &mdash; specs describe <em>what</em> and <em>why</em>, not exact code</li>
+  <li><strong>Announce expert activations</strong> &mdash; transparent about which specialists guide each spec</li>
+  <li><strong>Diagrams wherever established</strong> &mdash; ERDs, sequence diagrams, state machines, C4 containers. Not optional.</li>
+  <li><strong>Frontend specs include library ADRs</strong> &mdash; a developer should know which packages to install</li>
+  <li><strong>Mandatory API boundary contracts</strong> &mdash; every endpoint crossing a boundary (backend&rarr;frontend, service&rarr;service) must specify the exact response shape with a concrete JSON example. Prose descriptions of &ldquo;returns user data&rdquo; are not sufficient. Both sides of every boundary build from the same literal contract.</li>
+</ol>
+
+<!-- ───────────────────────────────────────── -->
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

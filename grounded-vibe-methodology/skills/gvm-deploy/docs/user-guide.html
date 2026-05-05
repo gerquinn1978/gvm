@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-deploy — User Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body { font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif; color: #111; background: #fffff8; line-height: 1.6; padding: 2rem 1rem 6rem; max-width: 1480px; margin: 0 auto; }
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { background: #f0f0e8; padding: 1rem; margin: 1rem 0; overflow-x: auto; max-width: 640px; }
+    pre code { background: none; padding: 0; }
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 260px; }
+    .sidenote { float: right; clear: right; width: 220px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026</p>
+<h1>/gvm-deploy</h1>
+<p class="subtitle">Release preparation &mdash; version bump, release notes, documentation check, changelog, and git tag.</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="what-it-does">What It Does</h2>
+
+<p>
+  Prepares a release from your current pipeline state. It aggregates review verdicts,
+  checks that your documentation matches what was actually built, increments the version,
+  generates release notes, updates the changelog, and tags the commit.
+</p>
+
+<p>
+  It does <strong>not</strong> deploy anything. Deployment mechanisms &mdash; CI/CD pipelines,
+  cloud providers, container orchestration &mdash; are organisation-specific and outside
+  the pipeline's scope. This skill produces a release-ready tagged commit.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline-position">Pipeline Position</h2>
+
+<p>
+  <code>/gvm-deploy</code> is the final pipeline phase:
+</p>
+
+<pre><code>/gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; [/gvm-explore-test] &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy</code></pre>
+
+<p>
+  It runs after the build is verified, reviewed, tested, and documented. <code>/gvm-explore-test</code> is optional; run it between structured testing and documentation when charter-driven exploratory sessions are needed. <code>/gvm-doc-review</code> runs after documentation is written and before the final release gate.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="when-to-use">When to Use</h2>
+
+<p>
+  Run <code>/gvm-deploy</code> when the build is verified (Ship-ready or Demo-ready), code-reviewed, and documented. The skill aggregates verdicts, checks documentation accuracy against the build, bumps the version, generates release notes, and creates a git tag. It does NOT perform deployment &mdash; that is organisation-specific.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Quality Gate Check.</strong> If any review verdict is &ldquo;not ready&rdquo; (Do not merge, Do not build, Revise first, Do not publish), the release is blocked.</li>
+  <li><strong>Documentation Accuracy Check.</strong> README.md and user-facing documentation must match the current build. Stale documentation blocks the tag.</li>
+  <li><strong>Version and Tag.</strong> Every release must produce a git tag.</li>
+</ol>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="how-to-use">How to Use</h2>
+
+<pre><code>/gvm-deploy</code></pre>
+
+<p>That&rsquo;s it. The skill reads your pipeline artefacts and walks through 6 steps:</p>
+
+<table>
+  <thead>
+    <tr><th>Step</th><th>What happens</th><th>Your input</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1. Gather context</td><td>Reads review verdicts, requirements, and current version tags</td><td>None</td></tr>
+    <tr><td>2. Quality gate</td><td>Aggregates verdicts; blocks if any review says &ldquo;not ready&rdquo;</td><td>Confirm if caveats exist</td></tr>
+    <tr><td>3. Documentation check</td><td>Verifies README and user docs match the build</td><td>Fix, acknowledge, or abort</td></tr>
+    <tr><td>4. Version</td><td>Proposes a semver bump based on what changed</td><td>Confirm or override</td></tr>
+    <tr><td>5. Release notes</td><td>Generates release notes and updates CHANGELOG.md</td><td>None</td></tr>
+    <tr><td>6. Tag</td><td>Commits release files and creates an annotated git tag</td><td>None</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  The skill never pushes to the remote. After the tag is created, push when you are ready:
+  <code>git push && git push --tags</code>
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="quality-gate">The Quality Gate</h2>
+
+<p>
+  The skill reads the most recent verdict from each review type (code, doc, design).
+  Verdicts come from the review reports in <code>code-review/</code>,
+  <code>doc-review/</code>, and <code>design-review/</code>.
+</p>
+
+<table>
+  <thead>
+    <tr><th>Situation</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>All reviews &ldquo;ready&rdquo;</td><td>Proceed to release</td></tr>
+    <tr><td>Any review &ldquo;ready with caveats&rdquo;</td><td>Caveats presented &mdash; you decide whether to proceed</td></tr>
+    <tr><td>Any review &ldquo;not ready&rdquo;</td><td>Release blocked. Fix the issue and re-run the review first.</td></tr>
+    <tr><td>No reviews exist</td><td>Warning. You can proceed but the release has no quality evidence.</td></tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="documentation-check">Documentation Accuracy Check</h2>
+
+<p>
+  This is not a full <code>/gvm-doc-review</code>. It is a targeted accuracy check:
+  does the documentation describe what was actually built?
+</p>
+
+<ul>
+  <li><strong>README.md</strong> &mdash; features match implemented requirements, setup instructions are current, configuration options are accurate.</li>
+  <li><strong>User docs</strong> (if they exist in <code>docs/</code>) &mdash; navigation paths match the UI, API endpoints match the routes, no references to descoped features.</li>
+</ul>
+
+<p>
+  If inaccuracies are found, you choose: fix now (the skill applies the fixes), acknowledge
+  and proceed, or abort the release.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="versioning">Versioning</h2>
+
+<p>
+  The skill proposes a <a href="https://semver.org">semver</a> version based on what changed:
+</p>
+
+<ul>
+  <li><strong>Major</strong> &mdash; breaking changes or new MUST-priority requirements that change public interfaces</li>
+  <li><strong>Minor</strong> &mdash; new features (new requirements implemented)</li>
+  <li><strong>Patch</strong> &mdash; bug fixes, review finding fixes, documentation updates only</li>
+</ul>
+
+<p>
+  You always have final say on the version number. The first release defaults to <code>v0.1.0</code>.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output</h2>
+
+<p>The skill produces:</p>
+
+<ul>
+  <li><code>RELEASE-NOTES.html</code> &mdash; user-facing release notes (Tufte/Few design, overwritten each release). Describes what changed in terms users care about: new capabilities, improved workflows. No requirement IDs or review scores.</li>
+  <li><code>RELEASE-NOTES.md</code> &mdash; developer-facing release notes (overwritten each release). Includes requirement IDs, review scores, and implementation details.</li>
+  <li><code>CHANGELOG.md</code> &mdash; cumulative changelog (appended each release, follows Keep a Changelog format)</li>
+  <li>An annotated git tag (<code>v{VERSION}</code>)</li>
+  <li>Documentation fixes (if any were applied in Step 3)</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="extending">Extending for Your Environment</h2>
+
+<p>
+  The skill produces a tagged commit with accurate documentation. Your CI/CD pipeline can take it from there. A common pattern: configure your CI to trigger on version tags (<code>v*</code>). When <code>/gvm-deploy</code> creates the tag and you push it, your pipeline runs automatically &mdash; build, test, deploy to staging, promote to production, whatever your organisation requires.
+</p>
+
+<p>
+  The skill is also extensible. If your release process needs additional checks (security scan results, compliance sign-off, performance benchmarks), add them as review skills or build checks. The release gate reads all review verdicts &mdash; any new review type that produces a verdict is automatically enforced.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="not-in-scope">What It Does NOT Do</h2>
+
+<ul>
+  <li>Deploy to any environment</li>
+  <li>Trigger CI/CD pipelines</li>
+  <li>Generate runbooks or operational procedures</li>
+  <li>Manage environments (staging, production, feature flags)</li>
+  <li>Create GitHub/GitLab release objects</li>
+  <li>Roll back releases</li>
+  <li>Push to the remote repository</li>
+</ul>
+
+<p>
+  These are all organisation-specific concerns. The skill draws a clear line:
+  it prepares the release artefacts, you handle the deployment.
+</p>
+
+</main>
+
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) {
+      current.el.classList.add('active');
+      const tocEl = document.getElementById('toc');
+      const elTop = current.el.offsetTop - tocEl.offsetTop;
+      const elBot = elTop + current.el.offsetHeight;
+      if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+        tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+      }
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

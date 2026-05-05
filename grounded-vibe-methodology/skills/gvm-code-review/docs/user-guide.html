@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-code-review — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026 (v2.2.0)</p>
+<h1>/gvm-code-review</h1>
+<p class="subtitle">
+  Expert-grounded implementation code review that dispatches parallel specialist panels
+  as subagents, each reviewing through a different lens from the project&rsquo;s declared experts.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="whats-new-v220">What&rsquo;s new in v2.2.0</h2>
+<p>v2.2.0 closes the last v2.1.x issue: TS and Go projects now get <code>mock-budget</code> detection from Panel B, matching Python. Each language carries its own external-boundary allowlist (a per-language list of imports treated as "the network edge", so mocking them does not count against the budget):</p>
+<ul>
+  <li><strong>TypeScript.</strong> The detector recognises the vitest, jest, testdouble, and sinon mock APIs &mdash; specifically <code>vi.mock</code>, <code>vi.spyOn</code>, <code>jest.mock</code>, <code>jest.spyOn</code>, <code>td.replace</code>, <code>sinon.stub</code>, and <code>sinon.replace</code>. The <code>_TS_STACK_DEFAULTS</code> allowlist treats the following as external boundaries: node:* builtins, major HTTP clients (axios, undici, got, ky, node-fetch), DB drivers (pg, mongodb, redis), and AI/cloud SDKs.</li>
+  <li><strong>Go.</strong> The detector counts distinct test-double instances per <code>func TestXxx(t *testing.T)</code> body using three signals: types ending in <code>Mock|Fake|Stub|Spy</code>, <code>gomock.NewController</code> invocations, and types embedding testify&rsquo;s <code>mock.Mock</code> (recognised by the embedded library type, not by struct name). The <code>_GO_STACK_DEFAULTS</code> allowlist treats <code>net/http</code>, <code>os</code>, <code>io</code>, <code>database/sql</code>, <code>context</code>, plus AWS/Google/Anthropic/OpenAI/Redis/MongoDB/Postgres SDK package paths as external boundaries.</li>
+  <li><strong>Per-project extension.</strong> Each language allowlist is extensible via the project-level <code>.ebt-boundaries</code> file at the repo root &mdash; one pattern per line. Internal mocks emit Important; matches in <code>.cross-chunk-seams</code> escalate to Critical (same severity rule as Python).</li>
+  <li><strong>Two STUBS.md retirements.</strong> Per-project seam allowlists now actually apply on TS and Go &mdash; the <code>_lint_typescript.seam_allowlist</code> and <code>_lint_go.seam_allowlist</code> parameters previously read but had no effect. STUBS.md retires both entries.</li>
+</ul>
+<p>See <code>methodology-changelog.md</code> &sect; v2.2.0 for the audit trail (ADR-TG-01..03, ADR-MH-02 wrapper-as-SUT parity).</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="whats-new">What&rsquo;s new in v2.1.0</h2>
+<p>The methodology-hardening release adds three user-visible review behaviours. See <code>methodology-changelog.md</code> for full rationale. Identifier prefixes (REVIEW, TDD, ADR, &ldquo;shared rule N&rdquo;) decode in the changelog.</p>
+<ul>
+  <li><strong>Hard Gate 6 &mdash; user owns finding triage (shared rule 28).</strong> Every Critical or Important finding emitted by panels is presented to you before any disposition is recorded. The skill may recommend &ldquo;fix / defer / dismiss&rdquo; per finding but must not decide. Forbidden patterns: recording emitted findings as &ldquo;filtered under strict criterion&rdquo; or &ldquo;deferred to v{N}.{M}.{P} hardening&rdquo; without your input; presenting a verdict before you have seen the findings (the canonical example is &ldquo;Verdict: Merge with caveats&rdquo;). A &ldquo;fix all&rdquo; authorisation does not extend to new Critical findings discovered during the fix &mdash; those re-enter triage. Zero-deferred runs are exempt from the summary-count-with-hidden-deferrals rule.</li>
+  <li><strong>Panel B &mdash; EBT contract / collaboration lint (REVIEW-1).</strong> When the changed file set includes test files, Panel B runs the EBT contract lint against every test (regardless of <code>[CONTRACT]</code> or <code>[COLLABORATION]</code> tag &mdash; tags name the test&rsquo;s intent: a <code>[CONTRACT]</code> test exercises real production classes from the DI root downward; <code>[COLLABORATION]</code> verifies a caller invokes its collaborator with expected arguments). Three violation kinds:
+    <ul>
+      <li><strong>Rainsberger pattern</strong> &mdash; HTTP transport (<code>requests</code>, <code>httpx</code>, <code>axios</code>) patched in the consumer&rsquo;s test instead of using a real fake server.</li>
+      <li><strong>Metz pattern</strong> &mdash; an internal Python class mocked inside a <code>[CONTRACT]</code>-tagged test, which silently bypasses the seam the test claims to verify.</li>
+      <li><strong>Mock-budget violation</strong> &mdash; more than one mock in a test, or a mock target that is internal rather than at the external boundary (TDD-2 mandates one mock at the network/process edge). v2.1.0 ships Python-only enforcement; severity escalates from Important to Critical when the target appears in the project&rsquo;s opt-in <code>.cross-chunk-seams</code> file. (Extended to TypeScript and Go in v2.2.0 &mdash; see &ldquo;What&rsquo;s new in v2.2.0&rdquo; above.)</li>
+    </ul>
+  </li>
+  <li><strong>Panel C &mdash; realistic-fixture mandate (REVIEW-2 / TDD-3).</strong> When a chunk&rsquo;s diff touches data-analysis, parsing, or security validation, and its tests cover only synthetic happy-path fixtures, Panel C emits an Important finding naming the missing variant. Practitioners can override with <code>realistic-fixture-not-applicable: &lt;rationale&gt;</code> in the chunk handover.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  The <code>/gvm-code-review</code> command reviews implementation code by dispatching
+  parallel expert subagents. Each subagent reviews through a specific lens &mdash;
+  architecture, domain, or stack &mdash; grounded in the named specialists from the
+  project&rsquo;s tech specs. Multiple agents run simultaneously: four expert reviews
+  in the wall-clock time of one.
+</p>
+
+<span class="sidenote">
+  This skill reviews <strong>code</strong>, not documents. For reviewing requirements,
+  test cases, and specs, use <code>/gvm-doc-review</code>.
+</span>
+
+<p>
+  The key differentiator is that reviews are grounded in the same experts who
+  guided the specification and build phases, loaded from the project's reference files.
+  An AI grounded in specific React expertise catches different issues than one applying
+  generic &ldquo;React best practices.&rdquo;
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="when-to-use">When to Use</h2>
+
+<ul>
+  <li>After each build phase completes, to catch issues before they compound in later phases.</li>
+  <li>After fixing code review findings from a prior round, to confirm the fixes are clean.</li>
+  <li>Before running <code>/gvm-test</code>, to ensure code quality before investing in integration testing.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+  <code>/gvm-code-review</code> accepts several input modes:
+</p>
+
+<pre><code>/gvm-code-review                    # Auto-detect from latest build phase
+/gvm-code-review abc123..def456     # Review a git range
+/gvm-code-review P5                 # Review all of build phase 5
+/gvm-code-review P5-C03             # Review a specific chunk
+/gvm-code-review src/api/           # Review a directory</code></pre>
+
+<p>
+  If invoked without arguments after a <code>/gvm-build</code> phase completes, the skill
+  auto-detects the phase from <code>build/handovers/</code> and reviews it.
+</p>
+
+<div class="callout">
+  <div class="callout-label">No setup required</div>
+  <p>The skill reads expert definitions from the tech-spec reference files and project-specific design principles from your specs. You do not need to configure panels manually.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="expert-panels">Expert Panels</h2>
+
+<p>
+  Expert definitions are loaded from reference files at runtime, not hardcoded.
+  The skill selects which panels to activate based on what changed. Experts can be
+  updated, swapped, or extended by editing the reference files.
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Expert panel sources</caption>
+  <thead>
+    <tr><th>Reference file</th><th>Tier</th><th>When Active</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>architecture-specialists.md</code></td><td>Tier 1</td><td>Always</td></tr>
+    <tr><td>Per-domain files from <code>references/domain/</code></td><td>Tier 2a</td><td>Loaded selectively based on the domain of changed code</td></tr>
+    <tr><td>Per-stack files from <code>references/stack/</code></td><td>Tier 3</td><td>Loaded selectively based on the language/framework of changed files</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  The project&rsquo;s own <code>specs/</code> directory declares which experts were activated
+  during specification. The code review uses the same experts, ensuring consistency
+  from spec through implementation.
+</span>
+
+<p>
+  Each panel is dispatched as a parallel subagent. Panel prompts explicitly state
+  &ldquo;do NOT comment on [other panels&rsquo; concerns]&rdquo; to prevent overlap and keep
+  each review focused on its area of expertise.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Expert discovery (Rule 10)</div>
+  <p>If the code under review uses technologies or patterns not covered by any existing reference file expert, the skill identifies authoritative experts with published works and documents them with citations. This ensures coverage even for niche or emerging technologies.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="panel-e">Panel E</h2>
+
+<p>
+  Panel E &mdash; Stub Detection &mdash; runs alongside panels A&ndash;D
+  whenever the project has adopted honesty-triad (i.e. <code>.gvm-track2-adopted</code>
+  is present at the project root). It is dispatched as the same kind of
+  parallel subagent as the other panels, but its scanning mandate is mechanical
+  rather than principle-driven: every flagged finding maps to a documented
+  registry entry, an expiry date, or a namespace boundary.
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Panel E violation types</caption>
+  <thead>
+    <tr><th>Violation type</th><th>What Panel E flags</th><th>How to resolve</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>unregistered</code></td>
+      <td>Stub-shaped function or constant body present in code, with no matching entry in <code>STUBS.md</code>.</td>
+      <td>Either replace the placeholder with a real implementation, or register it in <code>STUBS.md</code> with reason, real-provider plan, owner, and ISO-8601 expiry.</td>
+    </tr>
+    <tr>
+      <td><code>expired</code></td>
+      <td><code>STUBS.md</code> entry exists, but today&rsquo;s date is past the entry&rsquo;s <code>expiry</code> field.</td>
+      <td>Implement the real provider before the next review, or amend the expiry with a fresh rationale that the team has signed off on.</td>
+    </tr>
+    <tr>
+      <td><code>namespace_violation</code></td>
+      <td>Stub body lives outside a <code>stubs/</code> directory (HS-5). Production code must not house stub bodies inline.</td>
+      <td>Move the stub into the <code>stubs/</code> namespace and import it from there.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  SD-5 applies to <em>any</em> of the three violation types &mdash; not only
+  <code>expired</code>. Whenever a Panel E finding (regardless of type)
+  recurs across consecutive review rounds, severity is promoted (see
+  the <code>.stub-allowlist</code> callout below for the round-by-round rule).
+</p>
+
+<p>
+  The Panel E prompt is assembled mechanically, embedding <code>STUBS.md</code>
+  verbatim, the project&rsquo;s <code>.stub-allowlist</code> verbatim, and the
+  language-specific section of <code>stub-detection.md</code>. Drift between the
+  heuristic file and Panel E&rsquo;s behaviour is structurally prevented &mdash;
+  the panel only matches against the embedded text, never against principles.
+</p>
+
+<div class="callout">
+  <div class="callout-label">The <code>.stub-allowlist</code></div>
+  <p>Intentional matches that look like stubs but aren&rsquo;t (test fixtures, contract tests, examples) belong in <code>.stub-allowlist</code>. These are suppressed during synthesis. SD-5 promotes severity for any stub that recurs across consecutive review rounds &mdash; round 2 raises the finding to Critical, and round 3 emits a build-check promotion so the same stub cannot quietly survive another cycle.</p>
+</div>
+
+<h3 id="panel-e-migration-prompt">First-run migration prompt</h3>
+
+<p>
+  On the first run against a legacy calibration file (no <code>schema_version</code>
+  frontmatter), <code>/gvm-code-review</code> detects the unmigrated calibration
+  and prompts the practitioner to run
+  <code>python -m gvm_migrate_calibration reviews/calibration.md</code> before
+  the panel run begins. The migration stamps a machine-readable
+  <code>schema_version: 0</code> frontmatter marker so future versions can
+  reason about the file format. Existing rows, evidence, and narrative are
+  preserved verbatim &mdash; only frontmatter is added. The hook lives in
+  <code>SKILL.md</code> and dispatches before any panel work.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Why a prompt rather than a silent migration</div>
+  <p>The migration touches <code>reviews/calibration.md</code> &mdash; a file the team has been adding to over multiple review rounds. The prompt makes the schema upgrade visible rather than rewriting the file under the practitioner&rsquo;s feet. The migration is idempotent: running it again on an already-migrated file is a no-op.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="process">Review Process</h2>
+
+<table>
+  <caption>Table 2 &mdash; Review process steps</caption>
+  <thead>
+    <tr><th>Step</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="phase">1</span> Resolve scope</td>
+      <td>Determine git range, list changed files, categorise by type and domain</td>
+    </tr>
+    <tr>
+      <td><span class="phase">2</span> Select panels</td>
+      <td>Read project specs to determine declared experts, select panels based on what changed</td>
+    </tr>
+    <tr>
+      <td><span class="phase">3</span> Load context</td>
+      <td>Read expert sections from reference files, relevant spec excerpts, ADRs, and conventions</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4</span> Dispatch</td>
+      <td>Launch one subagent per panel &mdash; all in parallel. Each gets expert identities, filtered file list, and spec context.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5</span> Synthesise</td>
+      <td>Collect findings, deduplicate, identify cross-panel themes, elevate severity for issues flagged by multiple panels</td>
+    </tr>
+    <tr>
+      <td><span class="phase">6</span> Present</td>
+      <td>Consolidated review with summary table, cross-cutting themes, and findings by severity</td>
+    </tr>
+    <tr>
+      <td><span class="phase">7</span> Next steps</td>
+      <td>Offer: fix critical issues, fix all issues, create fix plan, or continue to next build phase</td>
+    </tr>
+    <tr>
+      <td><span class="phase">8</span> Update calibration</td>
+      <td>Creates or updates <code>reviews/calibration.md</code> with score history, per-dimension benchmarks, and anchor examples from this project. This accumulated data enables the dual review feature from round 3 onward. Also checks for findings eligible for promotion to build checks (see below).</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Build check promotion</div>
+  <p>During calibration update, findings that have been flagged in 3 or more consecutive rounds (systemic) or that regressed after being resolved are promoted to <code>reviews/build-checks.md</code>. This file is loaded by <code>/gvm-build</code> during prompt generation, injecting &ldquo;Known Patterns to Avoid&rdquo; directly into chunk prompts. The result is a feedback loop: review findings become build checks, which prevent the same findings from recurring. Tier 1 checks (general practice) are permanent. Tier 2 checks (project-specific) are flagged for retirement after 3 quiet rounds, but you decide whether to retire them.</p>
+</div>
+
+<div class="callout">
+  <div class="callout-label">Parallel is the point</div>
+  <p>Panels run as concurrent subagents dispatched in a single message. This is the core value: multiple expert reviews in the time of one. A 4-panel review takes the same wall-clock time as a single review.</p>
+</div>
+
+<div class="callout">
+  <div class="callout-label">Finding quality gate</div>
+  <p>Every finding must pass the consumer impact test: &ldquo;A developer would [concrete outcome].&rdquo; If you cannot finish that sentence with a specific consequence &mdash; a bug, a security boundary violation, wrong data &mdash; the finding is polish. Code findings use a stricter threshold than document findings because errors in code reach end users. Each review round holds new findings to a higher bar: Round 1 catches structural problems; Round 3+ requires a concrete consumer consequence. See <code>review-reference.md</code> for the full quality gate.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Dispatch Panels in Parallel.</strong> All panels must be dispatched as concurrent subagents in a single message &mdash; sequential review defeats the purpose.</li>
+  <li><strong>Load Expert References Before Dispatch.</strong> Read the relevant expert sections from the reference files before writing dispatch prompts &mdash; each prompt must include loaded expert excerpts, not generic descriptions.</li>
+  <li><strong>Write HTML Output.</strong> The review must produce <code>code-review/code-review-{NNN}.html</code>. Review reports are HTML-only &mdash; findings are carried forward in <code>reviews/calibration.md</code>, not in a paired MD file.</li>
+  <li><strong>Update Calibration.</strong> After presenting findings, create or update <code>reviews/calibration.md</code>.</li>
+  <li><strong>Verdict.</strong> Every review includes a verdict: <em>Merge</em> (ready), <em>Merge with caveats</em> (conditionally ready), or <em>Do not merge</em> (not ready). The verdict appears in a prominent box at the top of the report.</li>
+</ol>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="what-it-checks">What It Checks</h2>
+
+<p>
+  Each panel reviews through its expert lens. The combined coverage spans:
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Review categories</caption>
+  <thead>
+    <tr><th>Category</th><th>What it looks for</th><th>Typical panel</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Security</strong></td><td>Injection, XSS, auth bypass, secrets in code, insecure defaults</td><td>Architecture + Stack</td></tr>
+    <tr><td><strong>Spec adherence</strong></td><td>Does the code match what the spec says? ADR decisions respected?</td><td>Architecture + Domain</td></tr>
+    <tr><td><strong>Type safety</strong></td><td>Missing types, unsafe casts, <code>any</code> usage, schema validation gaps</td><td>Stack</td></tr>
+    <tr><td><strong>Error handling</strong></td><td>Swallowed errors, missing error boundaries, unhandled promise rejections</td><td>Stack + Architecture</td></tr>
+    <tr><td><strong>Test coverage</strong></td><td>Missing tests for critical paths, test quality, assertion strength</td><td>Stack</td></tr>
+    <tr><td><strong>Accessibility</strong></td><td>Missing ARIA, keyboard navigation, screen reader support</td><td>Domain (frontend)</td></tr>
+    <tr><td><strong>Performance</strong></td><td>N+1 queries, missing indexes, unnecessary re-renders, memory leaks</td><td>Stack + Domain</td></tr>
+    <tr><td><strong>Design patterns</strong></td><td>Anti-patterns, wrong abstraction level, coupling violations</td><td>Architecture</td></tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="severity">Issue Classification</h2>
+
+<p>
+  Findings use four severity levels. Issues flagged independently by two or more
+  panels are automatically elevated one level.
+</p>
+
+<h3 id="critical"><span class="tier critical">CRITICAL</span> Must fix</h3>
+
+<div class="issue critical">
+  <div class="issue-title">SQL injection via unsanitised user input in search endpoint</div>
+  <div class="issue-detail">The <code>query</code> parameter is interpolated directly into the SQL string. Use parameterised queries.</div>
+  <div class="issue-location">src/api/search.ts:42 &mdash; Contracts panel (Nygard: resilience contract)</div>
+</div>
+
+<h3 id="important"><span class="tier important">IMPORTANT</span> Should fix</h3>
+
+<div class="issue important">
+  <div class="issue-title">Missing error boundary around agent status component</div>
+  <div class="issue-detail">If the WebSocket connection drops, the entire page crashes. Wrap in an error boundary with a graceful fallback.</div>
+  <div class="issue-location">src/components/AgentStatus.tsx:15 &mdash; Logic panel (Cooper: error path completeness)</div>
+</div>
+
+<h3 id="minor"><span class="tier minor">MINOR</span> Nice to fix</h3>
+
+<div class="issue minor">
+  <div class="issue-title">Inconsistent naming: <code>getData</code> vs <code>fetchResults</code></div>
+  <div class="issue-detail">The codebase uses both patterns for API calls. Standardise on one convention per the cross-cutting spec.</div>
+  <div class="issue-location">src/api/*.ts &mdash; Naming panel (Brooks: conceptual integrity)</div>
+</div>
+
+<h3 id="suggestion"><span class="tier suggestion">SUGGESTION</span> Consider</h3>
+
+<div class="issue suggestion">
+  <div class="issue-title">Cache-aside pattern would reduce API calls for school ratings</div>
+  <div class="issue-detail">School ratings change annually. A cache with a 24-hour TTL would eliminate redundant API calls per Kleppmann&rsquo;s data volatility framework.</div>
+  <div class="issue-location">src/agents/education.ts:89 &mdash; Contracts panel (Kleppmann: data contract)</div>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output</h2>
+
+<p>
+  The consolidated review is written to an HTML-only file (per shared rule 13 exception — review reports do not produce paired MD). Findings are carried forward in <code>reviews/calibration.md</code>:
+</p>
+
+<pre><code>code-review/code-review-001.html
+code-review/code-review-002.html
+...</code></pre>
+
+<p>
+  Each run produces a new numbered HTML report. The document contains:
+</p>
+
+<ol>
+  <li><strong>Summary table</strong> &mdash; panels run, findings count per severity</li>
+  <li><strong>Cross-cutting themes</strong> &mdash; issues that span multiple panels</li>
+  <li><strong>Critical findings</strong> &mdash; with structured detail (see below)</li>
+  <li><strong>Important findings</strong></li>
+  <li><strong>Minor + suggestions</strong> &mdash; grouped for efficiency</li>
+  <li><strong>Per-panel detail</strong> &mdash; full findings from each expert panel</li>
+</ol>
+
+<h3 id="finding-format">Finding format</h3>
+
+<p>
+  Every finding follows a structured format designed to be both readable and parseable
+  by <code>/gvm-build</code> for fix work:
+</p>
+
+<table>
+  <caption>Table 4 &mdash; Finding fields</caption>
+  <thead>
+    <tr><th>Field</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Expert</strong></td><td>Which expert&rsquo;s framework identified the issue</td></tr>
+    <tr><td><strong>Severity</strong></td><td>Critical / Important / Minor / Suggestion</td></tr>
+    <tr><td><strong>File:Line</strong></td><td>Exact file path and line number</td></tr>
+    <tr><td><strong>Issue</strong></td><td>What is wrong, in one sentence</td></tr>
+    <tr><td><strong>Spec Reference</strong></td><td>Which ADR, spec section, or convention is violated (if applicable)</td></tr>
+    <tr><td><strong>Fix</strong></td><td>Concrete fix description &mdash; what to change, not just &ldquo;improve this&rdquo;</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  The MD version is the primary input for fix work. <code>/gvm-build</code> reads the Expert
+  field to ground fixes in the same framework that identified the issue (shared rule 3:
+  experts who find should fix).
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline">Where This Fits</h2>
+
+<pre><code>[/gvm-init] → [/gvm-impact-map] → /gvm-requirements → /gvm-test-cases → /gvm-tech-spec
+  → [/gvm-design-review] → [/gvm-walking-skeleton] → /gvm-build → /gvm-code-review
+  → /gvm-test → [/gvm-explore-test] → /gvm-doc-write → /gvm-doc-review → /gvm-deploy
+                                                              ↑
+                                                        you are here
+
+Optional phases shown in [ ].</code></pre>
+
+<p>
+  <code>/gvm-code-review</code> sits after <code>/gvm-build</code> in the pipeline. It is
+  most valuable when run after each build phase completes, before moving to the next phase.
+</p>
+
+<p>
+  For the final build phase, the skill offers a full-codebase review rather than
+  just the latest phase &mdash; catching cross-phase integration issues that
+  per-phase reviews miss.
+</p>
+
+<div class="callout">
+  <div class="callout-label">No self-review</div>
+  <p>Subagents get fresh context, preventing confirmation bias from the build session. The code is reviewed by agents that did not write it.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="dual-review">Dual Review</h2>
+
+<p>
+  From round 3 onwards, code review automatically runs a second set of panels
+  in parallel &mdash; <strong>blind panels</strong> with the same experts and criteria
+  but no calibration data (no anchors, no resolved findings, no score history).
+  Round 3 is the threshold because round 1 establishes the first scoring anchor,
+  round 2 establishes expectations, and by round 3 anchoring bias (Tversky &amp;
+  Kahneman, 1974) has had enough history to create systematic blind spots &mdash;
+  the point at which rater drift becomes detectable in assessment research.
+  A reconciliation step merges only genuinely new findings and regressions into
+  the final report. This corrects for calibration blind spots: areas that scored
+  well stop getting scrutiny, and resolved issues are trusted without re-verification.
+</p>
+
+<p>
+  This is the same mechanism used by <code>/gvm-doc-review</code> and
+  <code>/gvm-design-review</code> &mdash; all three review skills share it via
+  shared rule 16.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="tips">Tips</h2>
+
+<ul>
+  <li><strong>Review after each build phase, not just at the end.</strong> Issues caught in phase 2 are cheaper to fix than issues caught after phase 5.</li>
+  <li><strong>Fix critical issues before continuing.</strong> Critical findings represent security vulnerabilities or spec violations that compound if carried forward.</li>
+  <li><strong>Cross-panel themes are the most important findings.</strong> If two independent expert panels flag the same issue, it is almost certainly real.</li>
+  <li><strong>The spec is the standard.</strong> The review checks code against the project&rsquo;s own specs and ADRs, not generic best practices. If the spec says SQLite, the review does not penalise you for not using PostgreSQL.</li>
+  <li><strong>Use &ldquo;Fix critical issues now&rdquo;</strong> when offered. The skill can fix issues immediately while the review context is fresh.</li>
+  <li><strong>Don&rsquo;t ignore suggestions.</strong> Suggestions are not mandatory, but they often represent the named expert&rsquo;s specific framework applied to your code &mdash; the kind of insight that makes GVM valuable.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<table>
+  <caption>Common issues and recovery (Nielsen H9)</caption>
+  <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
+  <tbody>
+    <tr><td>No specs directory found</td><td>Tech spec phase not run yet</td><td>Run <code>/gvm-tech-spec</code> first</td></tr>
+    <tr><td>No git history</td><td>Repository not initialised or no commits</td><td>Run <code>git init</code> and make at least one commit</td></tr>
+    <tr><td>Subagent returns no findings</td><td>Panel scope too narrow or files filtered out</td><td>Widen the scope (use directory mode instead of git range) or check that the changed files match the panel&rsquo;s expertise</td></tr>
+    <tr><td>Review takes too long</td><td>Too many files in scope</td><td>Review per build phase rather than the entire codebase at once</td></tr>
+    <tr><td>Findings reference wrong file/line</td><td>Code changed after scope was resolved</td><td>Commit your changes before running the review so the git range is stable</td></tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

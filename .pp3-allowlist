@@ -1,0 +1,16 @@
+# PP-3 grep allowlist — files where "Pass with gaps" is a legitimate
+# historical reference (v0 → v1 migration mapping, per ADR-604).
+# Substring match against `path:line:content` lines emitted by grep -n.
+# Lines starting with `#` and blank lines are ignored.
+_calibration_parser.py
+test_calibration_parser.py
+.hypothesis/constants/
+_verify_pp3.sh
+test_verify_pp3.py
+_vv6_retrofit.py
+test_vv6_retrofit.py
+gvm-test/SKILL.md
+# PP-5 user-guide test asserts retired phrase is gone — uses the literal as test input.
+gvm-test/scripts/test_user_guide_pp5.py
+# Plugin release notes — historical v0→v1 vocabulary mapping per ADR-604.
+gvm-design-system/RELEASES.md

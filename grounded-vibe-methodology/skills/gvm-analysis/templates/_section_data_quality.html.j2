@@ -1,0 +1,51 @@
+{#-
+  Data-quality section partial (P6-C04c).
+
+  One row per column: name, dtype, completeness, missingness label. A
+  classified column renders its basis string inside <aside class="sidenote">
+  so the main-flow stays plain-language (TC-NFR-4-02).
+-#}
+{% if columns %}
+<table class="data-quality-table">
+  <thead>
+    <tr>
+      <th scope="col">Column</th>
+      <th scope="col">Type</th>
+      <th scope="col">Rows</th>
+      <th scope="col">Completeness</th>
+      <th scope="col">Missingness</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for col in columns %}
+    <tr>
+      <td><code>{{ col.name }}</code></td>
+      <td>{{ col.dtype }}</td>
+      <td>{{ col.n_non_null }} of {{ col.n_total }}</td>
+      <td>{{ col.completeness_pct | round(1) }}%</td>
+      <td>
+        {% if col.missingness_classification %}
+          {% set label = col.missingness_classification.label %}
+          {% if label == 'MCAR' %}
+            Likely random
+          {% elif label == 'MAR' %}
+            Partially related to other columns
+          {% elif label == 'possibly MNAR' %}
+            Possibly systematic
+          {% else %}
+            Indeterminate
+          {% endif %}
+          <aside class="sidenote">
+            Classification: {{ label }}. Basis: {{ col.missingness_classification.basis }} (confidence: {{ col.missingness_classification.confidence }}).
+          </aside>
+        {% else %}
+          &mdash;
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No columns to report.</p>
+{% endif %}

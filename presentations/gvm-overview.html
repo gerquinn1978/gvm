@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grounded Vibe Methodology — Overview</title>
+  <style>
+/* === Reset & Base === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "et-book", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #111;
+  background: #fffff8;
+  overflow: hidden;
+}
+
+/* === Deck Layout === */
+.deck {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.slide {
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 8vh 12vw;
+  background: #fffff8;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.slide.active {
+  display: flex;
+}
+
+.slide-content {
+  max-width: 900px;
+  width: 100%;
+}
+
+/* === Title Slide === */
+.title-slide {
+  text-align: center;
+  flex-direction: column;
+}
+
+.title-slide h1 {
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  color: #111;
+}
+
+.title-slide .subtitle {
+  font-size: 1.4rem;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.title-slide .author {
+  font-size: 1.1rem;
+  color: #777;
+}
+
+/* === Content Slides === */
+.slide h2 {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.3;
+  margin-bottom: 1.5rem;
+  color: #111;
+}
+
+.slide p {
+  font-size: 1.4rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  max-width: 38em;
+}
+
+.slide ul, .slide ol {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.slide li {
+  margin-bottom: 0.5rem;
+}
+
+/* === Section Header Slides === */
+.section-slide {
+  background: #f7f7f0;
+}
+
+.section-slide h2 {
+  font-size: 2.4rem;
+  color: #333;
+  border-left: 4px solid #aaa;
+  padding-left: 1.2rem;
+}
+
+.section-slide .section-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #999;
+  margin-bottom: 1rem;
+}
+
+/* === Contrast Slides === */
+.contrast-slide {
+  background: #111;
+}
+
+.contrast-slide h2 {
+  color: #fffff8;
+  font-size: 2.4rem;
+}
+
+.contrast-slide p {
+  color: #ccc;
+}
+
+/* === Data / Table Slides === */
+.slide table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+
+.slide th {
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #111;
+  padding: 0.5rem 1rem 0.5rem 0;
+}
+
+.slide td {
+  padding: 0.4rem 1rem 0.4rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.slide td.num, .slide th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: "SF Mono", "Consolas", monospace;
+  font-size: 1rem;
+}
+
+.slide .highlight-row td {
+  font-weight: 600;
+  background: #f0f0e4;
+}
+
+/* === Two-column layout === */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.two-col-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #999;
+  margin-bottom: 0.4rem;
+}
+
+.col-before {
+  border-left: 3px solid #c0392b;
+  padding-left: 1rem;
+}
+
+.col-after {
+  border-left: 3px solid #27ae60;
+  padding-left: 1rem;
+}
+
+/* === Emphasis blocks === */
+.big-number {
+  font-size: 5rem;
+  font-weight: 400;
+  color: #111;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.big-label {
+  font-size: 1.2rem;
+  color: #555;
+  font-style: italic;
+}
+
+.callout-bar {
+  border-left: 4px solid #669;
+  padding-left: 1.2rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: #444;
+  font-size: 1.3rem;
+}
+
+/* === Pipeline visual === */
+.pipeline-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.pipeline-box {
+  background: #f7f7f0;
+  border: 1px solid #ccc;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.95rem;
+  font-family: "SF Mono", "Consolas", monospace;
+  color: #333;
+  white-space: nowrap;
+}
+
+.pipeline-box.discovery { border-color: #7799cc; background: #eef2f9; }
+.pipeline-box.construction { border-color: #888; background: #f7f7f0; }
+.pipeline-box.verification { border-color: #27ae60; background: #f0f9f4; }
+.pipeline-box.release { border-color: #b07030; background: #fdf8f0; }
+
+.pipeline-arrow {
+  font-size: 1rem;
+  color: #aaa;
+  padding: 0 0.2rem;
+}
+
+/* === Three-tier diagram === */
+.tier-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.tier-bar {
+  padding: 0.6rem 1.2rem;
+  font-size: 1.1rem;
+}
+
+.tier-bar.t1 { background: #e8d8c8; border-left: 4px solid #a07040; }
+.tier-bar.t2 { background: #d8e4f0; border-left: 4px solid #5577aa; }
+.tier-bar.t3 { background: #e4f0e0; border-left: 4px solid #4a9060; }
+
+.tier-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  display: block;
+  margin-bottom: 0.15rem;
+}
+
+/* === Presenter Notes === */
+.notes {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #333;
+  color: #eee;
+  padding: 1.5rem 12vw;
+  font-size: 1rem;
+  line-height: 1.5;
+  max-height: 30vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+body.show-notes .notes {
+  display: block;
+}
+
+body.show-notes .slide {
+  height: 70vh;
+}
+
+/* === Slide Counter === */
+.slide-counter {
+  position: fixed;
+  bottom: 1rem;
+  right: 2rem;
+  font-size: 0.9rem;
+  color: #999;
+  z-index: 50;
+}
+
+/* === GVM Attribution === */
+.gvm-attribution {
+  font-size: 0.7rem;
+  color: #bbb;
+  font-style: italic;
+  text-align: center;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+/* === Print === */
+@media print {
+  body { overflow: visible; }
+  .deck { width: auto; height: auto; position: static; }
+  .slide {
+    display: flex !important;
+    position: static;
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+  .slide-counter, .notes { display: none !important; }
+}
+  </style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 1 — Title                                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide title-slide active">
+    <div class="slide-content">
+      <h1>Grounded Vibe Methodology</h1>
+      <p class="subtitle">Named experts. Phased pipeline. Measurably better output.</p>
+      <p class="author">May 2026 &nbsp;·&nbsp; 30 minutes</p>
+    </div>
+    <aside class="notes">Welcome. 30 minutes. Practitioners and leaders in the room — I'll flag when content is directed at one group specifically. By the end: practitioners know where to start; leaders know what adoption costs and what it returns.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 2 — The problem: vibe coding has a ceiling       -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Vibe coding produces plausible output — not necessarily correct output.</h2>
+      <p>Ask an AI to build something with no further guidance. It compiles. The obvious tests pass. The PR looks fine on a fast read.</p>
+      <p>The failures show up in production: an edge case the model didn't consider, a security assumption that was wrong, an integration boundary that wasn't wired correctly.</p>
+      <p>These failures are not random. They cluster in predictable defect classes.</p>
+    </div>
+    <aside class="notes">This is the inciting incident. The audience already knows this at some level. The question is whether they know it well enough to act on it.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 3 — Two specific failure modes                   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>AI codegen hits two failure modes that casual inspection cannot catch.</h2>
+      <div class="two-col">
+        <div>
+          <p class="two-col-label">Failure mode 1</p>
+          <p>Building the wrong thing confidently. AI agents are compliant — they produce something for any prompt. Without grounding in what is worth building, they fluently build products no real user can use.</p>
+        </div>
+        <div>
+          <p class="two-col-label">Failure mode 2</p>
+          <p>Building the right thing sloppily. Without grounding in what good looks like for architecture, testing, or security, the model draws from an undifferentiated blend of all the code it was trained on.</p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">Brooks named failure mode 1: "the hardest single part of building a software system is deciding precisely what to build." Beck, Fowler, and the testing canon address failure mode 2. GVM addresses both.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 4 — What "good" actually means in practice       -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Telling the AI it's "an expert engineer" isn't the same as telling it which expert to follow.</h2>
+      <div class="two-col">
+        <div class="col-before">
+          <p class="two-col-label">Ungrounded</p>
+          <p>"Implement caching for the data layer."</p>
+          <p style="font-size: 1.1rem; color: #666;">Produces a reasonable implementation. No framework for reasoning about consistency vs. staleness, or how long different data types should live in cache.</p>
+        </div>
+        <div class="col-after">
+          <p class="two-col-label">Grounded</p>
+          <p>"Implement caching per Kleppmann's cache-aside pattern with TTLs calibrated to data volatility."</p>
+          <p style="font-size: 1.1rem; color: #666;">Activates Kleppmann's framework. TTLs differ by data type. Invalidation handles eventual consistency. Cache strategy matches the read/write ratio.</p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">Same prompting effort. Noticeably deeper output. The citation is the difference — it acts as a retrieval key into the model's training data, activating a focused framework rather than a blend.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 5 — The turning point: introduce GVM             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide contrast-slide">
+    <div class="slide-content">
+      <h2>The Grounded Vibe Methodology names the experts and builds the discipline around them.</h2>
+      <p style="color: #ccc;">Keep what works about vibe coding — natural language, conversational flow, low barrier to entry. Anchor every phase to named experts and their published works.</p>
+      <p style="color: #ccc;">Citations act as retrieval keys: one sentence activates an expert's entire body of work, already encoded in the model's training data.</p>
+    </div>
+    <aside class="notes">The turning point in the Duarte sparkline. We've established "what is." Now we move to "what could be." GVM is the answer to both failure modes.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 6 — Citation compression diagram (conceptual)    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>One sentence compresses thousands of pages of published expert knowledge.</h2>
+      <p style="font-style: italic; color: #444; font-size: 1.3rem;">"Apply Tufte and Few's principles when designing this dashboard."</p>
+      <p>This single sentence activates: data-ink ratio maximisation, chartjunk elimination, chart type selection, small multiples, sparklines, table design, right-aligned numbers, semantic colour use — drawn from hundreds of pages across multiple books.</p>
+      <p style="font-size: 1.1rem; color: #666;">The expert wrote the book. The model trained on it. You activate it with a citation.</p>
+    </div>
+    <aside class="notes">This is the core mechanism. GVM codifies this into reference files — structured, phase-keyed extracts that maximise the activation effect. The practitioner doesn't need to know all of Tufte; the reference file holds the relevant principles.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 7 — Three-tier expert model                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>GVM organises experts into three tiers that activate at different scopes.</h2>
+      <div class="tier-stack">
+        <div class="tier-bar t1">
+          <span class="tier-label">Tier 1 — Process experts (always active)</span>
+          Requirements: Wiegers, Gause &amp; Weinberg, Patton &nbsp;·&nbsp; Testing: Copeland, Beizer, North &nbsp;·&nbsp; Architecture: Clements, Fairbanks, Brooks
+        </div>
+        <div class="tier-bar t2">
+          <span class="tier-label">Tier 2 — Domain specialists (conditional on signal)</span>
+          2a Software: Kleppmann (data), Tufte &amp; Few (dashboards), Cooper &amp; Krug (UX), Nygard (resilience) &nbsp;·&nbsp; 2b Industry: Hull &amp; Jorion (market risk), Altman (credit), domain-specific authorities
+        </div>
+        <div class="tier-bar t3">
+          <span class="tier-label">Tier 3 — Stack specialists (after technology choice)</span>
+          Python: Ramalho, Percival &nbsp;·&nbsp; TypeScript: Vanderkam, Abramov &nbsp;·&nbsp; SQL: Winand, Ben-Gan &nbsp;·&nbsp; Infra: Majors, Hightower
+        </div>
+      </div>
+    </div>
+    <aside class="notes">The three tiers answer "which experts when." Tier 1 is always present for process. Tier 2 activates based on what the work involves. Tier 3 activates after the tech stack is chosen. Conditional activation keeps context focused — not every expert is loaded for every task.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 8 — Competing panels produce better output       -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Panels of competing experts force principled trade-offs that single experts cannot.</h2>
+      <p>Architecture panel example: Fairbanks says "spec only the risky parts." Brooks says "maintain conceptual integrity everywhere." The tension forces a principled compromise — a brief spec (Fairbanks wins on depth) that cross-references system conventions (Brooks wins on consistency).</p>
+      <p>The result is better than either expert would produce alone. This is not additive — it is a genuine trade-off where competing priorities produce a reasoned resolution.</p>
+    </div>
+    <aside class="notes">GVM assembles panels of 3-7 experts per discipline. The expert panel for a given phase is in the reference files and is shown transparently to the practitioner — they can see who is active and why.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 9 — The 14-phase pipeline overview               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The pipeline activates the right experts at each of fourteen phases.</h2>
+      <div class="pipeline-row">
+        <span class="pipeline-box discovery">/gvm-impact-map</span><span class="pipeline-arrow">→</span>
+        <span class="pipeline-box discovery">/gvm-requirements</span><span class="pipeline-arrow">→</span>
+        <span class="pipeline-box discovery">/gvm-test-cases</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="pipeline-box construction">/gvm-tech-spec</span><span class="pipeline-arrow">→</span>
+        <span class="pipeline-box construction">/gvm-design-review</span><span class="pipeline-arrow">→</span>
+        <span class="pipeline-box construction">/gvm-walking-skeleton</span><span class="pipeline-arrow">→</span>
+        <span class="pipeline-box construction">/gvm-build</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="pipeline-box verification">/gvm-code-review</span><span class="pipeline-arrow">→</span>
+        <span class="pipeline-box verification">/gvm-test</span><span class="pipeline-arrow">→</span>
+        <span class="pipeline-box verification">/gvm-explore-test</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="pipeline-box release">/gvm-doc-write</span><span class="pipeline-arrow">→</span>
+        <span class="pipeline-box release">/gvm-doc-review</span><span class="pipeline-arrow">→</span>
+        <span class="pipeline-box release">/gvm-deploy</span>
+      </div>
+      <p style="font-size: 1rem; color: #777; margin-top: 0.5rem;">Discovery → Construction → Verification → Release. Feedback arrows allow upstream revision at every stage.</p>
+    </div>
+    <aside class="notes">The four groups match the two failure modes plus quality assurance and delivery. Discovery answers "what is worth building." Construction builds it correctly. Verification confirms both. Release gates against both verdicts.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 10 — Test cases before architecture              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Test cases come before architecture — if a requirement can't be tested, it's ambiguous.</h2>
+      <p><code>/gvm-test-cases</code> runs after requirements and before the tech spec. Generating test cases forces every requirement to be expressed as a concrete, observable outcome. Ambiguous requirements fail this gate — and it is cheaper to fix them now than after the spec is written.</p>
+      <p>Teams that normally write tests after code find this backwards. That is the point.</p>
+    </div>
+    <aside class="notes">This is the single structural change most likely to surprise practitioners. Ground it in Copeland and Beizer — they established this as best practice. BDD format (North) makes the tests readable by non-technical stakeholders, which also helps the leaders in the room.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 11 — Review gates with calibration history       -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Review findings are scored and the calibration history persists across rounds.</h2>
+      <p>Each <code>/gvm-code-review</code> round dispatches parallel expert panels — each scanning a specific defect class: contracts and interfaces, logic and completeness, security, naming and spec compliance.</p>
+      <p>Findings are scored. The verdict is recorded in <code>reviews/calibration.md</code>. By round three, the reviewer knows which modules have recurring findings and which have clean histories. Reviews get more precise over time — not because the AI gets smarter, but because the calibration file gives it project-specific context it would otherwise lack.</p>
+    </div>
+    <aside class="notes">The calibration file is the audit trail. It's how the methodology improves across a project. It's also what the leader checks to verify the gate is being enforced — not bypassed.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 12 — No silent bypass rule                       -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Every finding is triaged by the practitioner — nothing is silently filtered or deferred.</h2>
+      <p>GVM's shared rule 28: every Critical and Important finding is presented to the practitioner before any disposition decision. Options: fix now, defer with documented rationale, dismiss as false positive with reasoning.</p>
+      <p>The verdict is not recorded until all findings are triaged. The calibration file is the audit trail. If findings are marked N/A without rationale, the gate is failing silently.</p>
+    </div>
+    <aside class="notes">This is process discipline, not tooling. The plugin enforces the workflow; the team enforces the discipline. Leaders: this is what you check in the calibration file.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 13 — Recurring findings become build checks      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Defect patterns that recur across review rounds are promoted to automated build checks.</h2>
+      <p>A finding that surfaces three consecutive times in review rounds signals a systemic pattern, not a one-off oversight. GVM promotes recurring findings to build checks — concrete instructions that run automatically on every subsequent build.</p>
+      <p>This converts a discovered defect pattern into a prevention mechanism. The methodology improves with use, not just with expert loading.</p>
+    </div>
+    <aside class="notes">Deming: fix the process, not the output repeatedly. Fagan's inspection research showed that checklists should evolve from prior findings. GVM implements this mechanically.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 14 — Section break: the evidence                 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide section-slide">
+    <div class="slide-content">
+      <p class="section-label">What the data shows</p>
+      <h2>Grounding produces measurably better output — and ungrounded evaluation cannot see the difference.</h2>
+    </div>
+    <aside class="notes">Transition to the evidence section. This is where we ground the "what could be" in empirical results rather than assertion.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 15 — Experiment design (honest about scope)      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The experiment: 180 dashboards, 1,080 blind reviews, three AI model families.</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Grounding condition</th>
+            <th>What was included</th>
+            <th class="num">Dashboards</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Group 1 — ungrounded</td>
+            <td>Task prompt only</td>
+            <td class="num">60 (20 per model)</td>
+          </tr>
+          <tr>
+            <td>Group 2 — design-grounded</td>
+            <td>Task + Tufte &amp; Few principles</td>
+            <td class="num">60</td>
+          </tr>
+          <tr>
+            <td>Group 3 — fully grounded</td>
+            <td>Task + design + domain + writing experts</td>
+            <td class="num">60</td>
+          </tr>
+          <tr class="highlight-row">
+            <td colspan="2">Total blind reviews (2 review conditions × 3 reviewers × 180)</td>
+            <td class="num">1,080</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size: 1rem; color: #666;">Replicated across Claude Opus 4.6, Gemini 3.1 Pro, and GPT-5.4. Dashboards shuffled and stripped of grounding identifiers before review. (Source: Brennan &amp; Quinn, <em>Grounding Produces Measurably Better Output</em>, April 2026.)</p>
+    </div>
+    <aside class="notes">Be honest about scope: one task type (market risk dashboards), one project. No control group in the traditional sense. The honest claim is dose-response replication across three model families — not generalisability across all task types.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 16 — The ranking reversal finding                -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Expert review flips the group ranking in all three models — ungrounded review cannot see the quality.</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Ungrounded review ranking</th>
+            <th>Expert review ranking</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Claude Opus 4.6</td>
+            <td>G2 &lt; G1 &lt; G3</td>
+            <td class="highlight-row">G1 &lt; G2 &lt; G3 ✓</td>
+          </tr>
+          <tr>
+            <td>Gemini 3.1 Pro</td>
+            <td>G2 &lt; G3 &lt; G1</td>
+            <td class="highlight-row">G1 &lt; G2 &lt; G3 ✓</td>
+          </tr>
+          <tr>
+            <td>GPT-5.4</td>
+            <td>G2 &lt; G1 &lt; G3</td>
+            <td class="highlight-row">G1 &lt; G2 &lt; G3 ✓</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Under expert review: G1 &lt; G2 &lt; G3 in all three models (p &lt; 0.001). The dose-response hypothesis holds. Under ungrounded review: two models show design grounding appearing to make things <em>worse</em>. (Source: Brennan &amp; Quinn, 2026.)</p>
+    </div>
+    <aside class="notes">The central finding: the quality is in the dashboards. The ability to see it is in the reviewer. You need expert grounding on both sides — production and evaluation.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 17 — The Doumont effect                          -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Message-driven structure — Doumont's principle — produces the largest single effect in all three models.</h2>
+      <div class="two-col">
+        <div class="col-before">
+          <p class="two-col-label">Ungrounded / design-only (G1, G2)</p>
+          <p>Panel titles are category labels:</p>
+          <p style="font-style: italic;">"VaR Utilisation" &nbsp;·&nbsp; "Stress Testing"</p>
+          <p style="font-size: 1.1rem; color: #666;">Score: 4.9–5.7 out of 10</p>
+        </div>
+        <div class="col-after">
+          <p class="two-col-label">Fully grounded (G3)</p>
+          <p>Panel titles convey analytical conclusions:</p>
+          <p style="font-style: italic;">"Two desks are near breach" &nbsp;·&nbsp; "2008-style spread widening remains the worst-case scenario"</p>
+          <p style="font-size: 1.1rem; color: #666;">Score: 8.95–9.90 out of 10</p>
+        </div>
+      </div>
+      <p style="font-size: 1rem; color: #666;">Effect size (G1 vs G3): d = −10.70 (Claude), −7.44 (Gemini), −16.19 (GPT-5.4). (Source: Brennan &amp; Quinn, 2026.)</p>
+    </div>
+    <aside class="notes">This is the Doumont effect — structure by message, not by topic. Neither G1 nor G2 received Doumont's guidance. The improvement is specific to the grounding content, not a general benefit of longer prompts.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 18 — Honest caveats                              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>What the evidence does and does not show.</h2>
+      <ul>
+        <li><strong>It shows:</strong> dose-response grounding effect replicated across three independent model families (p &lt; 0.001)</li>
+        <li><strong>It shows:</strong> ungrounded review cannot detect grounded quality improvements</li>
+        <li><strong>It does not show:</strong> generalisation across all task types — one domain (market risk dashboards), one team</li>
+        <li><strong>It does not show:</strong> cross-model replication under grounded review — same-model evaluation only</li>
+        <li><strong>Open work:</strong> cross-model replication, different task domains, longer-term outcome metrics</li>
+      </ul>
+    </div>
+    <aside class="notes">Orwell's rule: never say more than you know to be true. The experiment is real and the results are significant, but the scope is limited. Honest about what the evidence claims.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 19 — Section break: for practitioners            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide section-slide">
+    <div class="slide-content">
+      <p class="section-label">For practitioners</p>
+      <h2>How to start using GVM on your next project.</h2>
+    </div>
+    <aside class="notes">Directing content at practitioners specifically. Leaders: this section tells you what the team will experience day-to-day.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 20 — Where to start (practitioner)               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Start with <code>/gvm-doc-review</code> on an internal document — not with the full build pipeline.</h2>
+      <p>Run the doc-review gate on a status report, a technical design, or a strategy document. The review discipline you learn there — expert panels, scored findings, triage decisions — is identical to what <code>/gvm-code-review</code> applies to code.</p>
+      <p>Four to six weeks of doc reviews teaches the methodology without touching production code paths. If the findings are catching real problems, the case for extending to code is self-evident.</p>
+    </div>
+    <aside class="notes">Recommended starting point from the Engineering Leader's Guide. Low-stakes context, bounded scope, immediate feedback on whether the gate produces signal.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 21 — The calibration ramp                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The first three review rounds build calibration — treat scores as decision-grade only after that.</h2>
+      <p>A score of 7.5 on a first-pass review means something different from 7.5 on round four of a calibrated review. The calibration file accumulates project-specific anchors, resolved-finding records, and recurring pattern history. The numbers look the same; the information content is not.</p>
+      <p>Three calibrated reviews before treating any score as a go/no-go input. This is a hard minimum, not a guideline.</p>
+    </div>
+    <aside class="notes">Calibration is one of the things practitioners most commonly skip. The calibration training document covers this in detail. Route them there before they use review scores for release decisions.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 22 — What the pipeline produces (practitioner)   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Every phase produces a traceable artefact that the next phase consumes.</h2>
+      <table>
+        <thead>
+          <tr><th>Phase</th><th>Artefact</th><th>Consumed by</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>/gvm-requirements</td><td>requirements.md with MECE structure</td><td>test-cases, tech-spec</td></tr>
+          <tr><td>/gvm-test-cases</td><td>acceptance tests in BDD format</td><td>build (verification criteria)</td></tr>
+          <tr><td>/gvm-tech-spec</td><td>Spec docs + ADRs</td><td>build, design-review</td></tr>
+          <tr><td>/gvm-code-review</td><td>Scored findings + verdict</td><td>calibration.md, deploy gate</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size: 1rem; color: #666;">The pipeline is not bureaucracy — it is traceability. Every decision is auditable, and every finding traces to the expert principle that identified it.</p>
+    </div>
+    <aside class="notes">Practitioners often ask "why so many artefacts." The answer is that each artefact is an input to the next phase, not just documentation of what happened. The requirements feed test-cases which feed build which feeds code-review which feeds deploy.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 23 — Section break: for leaders                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide section-slide">
+    <div class="slide-content">
+      <p class="section-label">For engineering leaders</p>
+      <h2>What adopting GVM means for your team — and what it costs.</h2>
+    </div>
+    <aside class="notes">Directing content at leaders specifically. Practitioners: this section tells you how leadership will think about what you're doing.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 24 — Installing is not adopting                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Installing the plugin takes two minutes. Adopting GVM takes weeks — and they are not the same thing.</h2>
+      <p>GVM makes structured review a quality gate the team enforces on every meaningful change, not a step they skip when the deadline presses. If your team is already doing that, GVM gives it structure and traceability. If they aren't, GVM requires a process change — and that's the thing the plugin cannot do for you.</p>
+      <div class="callout-bar">The key question: is your team currently reading AI-generated code carefully before merging it? If yes, GVM structures and amplifies that practice. If no, the problem isn't tooling.</div>
+    </div>
+    <aside class="notes">From the Engineering Leader's Guide. This is the most important thing for leaders to understand. The plugin is the reference implementation; the team's process is what enforces the quality gate.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 25 — What it costs (honest)                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>GVM costs time — the right question is whether the time is worth it.</h2>
+      <table>
+        <thead>
+          <tr><th>Cost</th><th>Typical scope</th><th>Return</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Review rounds per substantive change</td><td>1–2 rounds to passing verdict; 4 rounds for public-facing documents (Brennan &amp; Quinn whitepaper)</td><td>Findings that catch things before production</td></tr>
+          <tr><td>Calibration ramp</td><td>3 reviews before scores are decision-grade</td><td>Review scores with real information content</td></tr>
+          <tr><td>Expert roster for niche domains</td><td>One session at project start</td><td>Compounds across every subsequent review</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size: 1rem; color: #666;">The cost of a review round is bounded. The cost of a production regression is not.</p>
+    </div>
+    <aside class="notes">Do not let anyone tell you GVM is free. The right question is cost vs. regression rate. For teams shipping fast with acceptable regression rates, the calculation looks different than for teams with high rework rates.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 26 — What to measure (leader)                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Measure things that tell you whether the quality gate is working — not how busy the team is.</h2>
+      <table>
+        <thead>
+          <tr><th>Metric</th><th>Action threshold</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Calibrated vs blind score gap</td><td>Gap &gt; 1.5 points: check calibration file for staleness</td></tr>
+          <tr><td>Finding count by expert panel</td><td>Any panel averaging &gt; 2 Critical findings per round: schedule targeted improvement</td></tr>
+          <tr><td>Review rounds to passing verdict</td><td>Average &gt; 3 rounds: look upstream at test cases and spec quality, not at reviews</td></tr>
+          <tr><td>Zero rework on 3 consecutive reviews</td><td>Audit the calibration file — this may indicate silent suppression</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size: 1rem; color: #666; margin-top: 0.5rem;"><strong>Do not measure:</strong> reviewer count, AI tokens spent, number of phases completed. These are activity metrics.</p>
+    </div>
+    <aside class="notes">The calibration file is the audit trail. Check it monthly. If you can't find evidence that findings are being triaged with rationale, the gate is failing silently.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 27 — Three adoption paths                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Three adoption paths — all legitimate, depending on your risk tolerance.</h2>
+      <ul>
+        <li><strong>Option 1 — Standalone first (recommended).</strong> Run <code>/gvm-doc-review</code> only. Team learns the review discipline on documents before committing to it on code. Four to six weeks on internal documents. If findings are catching real problems, the case extends itself.</li>
+        <li><strong>Option 2 — Toe in water.</strong> One team, one greenfield project, full pipeline. Six to ten weeks. Protect the project scope explicitly — deadline pressure will make the pipeline the first thing cut.</li>
+        <li><strong>Option 3 — Pipeline by phase.</strong> Requirements and test cases first. Add build and code review once the team trusts the upstream artefacts. Slowest but stickiest — teams that adopt phase-by-phase own the methodology more deeply.</li>
+      </ul>
+    </div>
+    <aside class="notes">The Engineering Leader's Guide has detailed guidance for each path, including exercises and failure modes to watch for. Direct leaders there after this session.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 28 — Three decisions leaders must make personally -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Three decisions that cannot be delegated to the team.</h2>
+      <ul>
+        <li><strong>The triage call on Critical findings under deadline pressure.</strong> Write down your policy before the first deadline conflict. What happens when a release has a Critical finding and a real deadline? "Defer with rationale" is acceptable. Decide now, not under pressure.</li>
+        <li><strong>The expert roster for your primary domain.</strong> The default roster covers general software development. If your team works in a specialised domain, run <code>/gvm-init</code> and verify the discovered experts are genuinely authoritative in your domain.</li>
+        <li><strong>The branding configuration.</strong> One session at onboarding. If you leave it unset, document quality drifts across the team.</li>
+      </ul>
+    </div>
+    <aside class="notes">These are leadership decisions because they set constraints the team works within for months. They cannot be delegated. The first one — the deadline-pressure policy — is the most important.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 29 — The Assay case study in brief               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Assay: a production tool built with GVM and used to run the experiment that validated GVM.</h2>
+      <p>Assay is the tool that generated, stripped, and reviewed the 180 dashboards in the controlled experiment. It was built using the GVM pipeline — requirements, test cases, tech spec, build, code review, test, doc review, release.</p>
+      <p>The methodology was used to build the tool that produced the evidence for the methodology. The case study documents the artefacts, review rounds, and deviations at each phase.</p>
+      <p style="font-size: 1rem; color: #666; font-style: italic;">Full case study: <em>Building a Production Tool with GVM</em>, available at case-studies/case-study-assay.html</p>
+    </div>
+    <aside class="notes">This is not circular — it is dogfooding. The methodology was applied to a real project with real constraints and a real deadline. The case study is transparent about where the methodology helped and where it was costly.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 30 — Failure modes to watch                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Silent suppression combined with deadline pressure is how the methodology fails in practice.</h2>
+      <ul>
+        <li><strong>Silent suppression:</strong> findings marked N/A without rationale. Check the calibration file's N/A entries. No rationale column = gate not enforced.</li>
+        <li><strong>Small-change bypass:</strong> "this change is too small to need review." Define the threshold up-front and hold it.</li>
+        <li><strong>Skipping calibration:</strong> using review scores as decision inputs before three calibrated rounds. The numbers look real; the information content isn't yet.</li>
+      </ul>
+      <p>Each failure mode is individually manageable. The combination — all three together under deadline pressure — unwinds the methodology quickly. The calibration file is the early warning system.</p>
+    </div>
+    <aside class="notes">These are documented failure modes from real deployments. Leaders: watch the calibration file monthly. Practitioners: if you're marking things N/A under pressure without rationale, flag it rather than proceed.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 31 — Call to action: practitioners               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Three things practitioners can do this week.</h2>
+      <ol>
+        <li><strong>Run <code>/gvm-doc-review</code> on one internal document.</strong> See what the expert panels surface. Triage the findings. Get a feel for what a scored verdict looks like before you apply the gate to code.</li>
+        <li><strong>Read <em>Getting Started with GVM</em></strong> (<code>training/getting-started.html</code>). The 14-phase pipeline is documented with what each phase produces and what the next phase expects.</li>
+        <li><strong>Identify your first real project candidate.</strong> Greenfield, bounded scope, meaningful enough that quality matters. Not a throwaway script.</li>
+      </ol>
+    </div>
+    <aside class="notes">Specific, actionable, immediately executable. Not "explore GVM" — "run doc-review on one document this week." The specificity is Zinsser's clutter principle applied to calls to action.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 32 — Call to action: leaders                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Three things leaders should decide before the team starts.</h2>
+      <ol>
+        <li><strong>Write down your Critical-finding policy.</strong> What happens when a release has a Critical finding and a real deadline? Decide before the first conflict, not during it.</li>
+        <li><strong>Choose your adoption path</strong> (standalone-first, toe-in-water, or pipeline-by-phase). Protect the scope for whichever you choose — deadline pressure will undo the experiment if you don't.</li>
+        <li><strong>Run <code>/gvm-init</code> for your primary domain</strong> if your team works in specialised territory. One session. Compounds across every subsequent review.</li>
+      </ol>
+    </div>
+    <aside class="notes">Matching the practitioners' call to action with one for leaders. Same specificity. Each item is executable without this session's slides in front of them.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 33 — Summary: what GVM is in two sentences       -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>GVM in two sentences.</h2>
+      <div class="callout-bar">
+        <p>GVM is a phased development methodology that anchors every phase to named experts and their published works — activating focused bodies of knowledge from the model's training data through citation rather than persona description.</p>
+        <p>The pipeline addresses both failure modes of AI codegen: deciding what is worth building (discovery phases grounded in Adzic, Cagan, Wiegers) and building it correctly (construction and verification phases grounded in Beck, Fowler, Fagan, and the testing and architecture canon).</p>
+      </div>
+    </div>
+    <aside class="notes">Minto's pyramid principle: end with the headline restated, now supported by the evidence the audience just received. The summary lands differently after 30 minutes than at the start.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 34 — Further reading                             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Go deeper in the area most relevant to you.</h2>
+      <table>
+        <thead>
+          <tr><th>Document</th><th>Audience</th><th>What it covers</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><em>Getting Started with GVM</em></td><td>Practitioners</td><td>Install, first project, 14-phase pipeline detail</td></tr>
+          <tr><td><em>Engineering Leader's Guide</em></td><td>Leaders</td><td>Adoption decision, costs, metrics, failure modes, exercises</td></tr>
+          <tr><td><em>The Grounded Vibe Methodology</em> (whitepaper)</td><td>Both</td><td>Full argument: mechanism, expert model, pipeline, experiment</td></tr>
+          <tr><td><em>Grounding Produces Measurably Better Output</em></td><td>Sceptics</td><td>Experiment design, dimension-level results, honest caveats</td></tr>
+          <tr><td><em>Building a Production Tool with GVM</em> (case study)</td><td>Both</td><td>End-to-end project: artefacts, review rounds, deviations</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <aside class="notes">The reading list is segmented by audience — practitioners go to getting-started.html, leaders go to engineering-leaders-guide.html. The whitepaper is for anyone who wants the full argument. The experiment paper is for anyone who wants to push back on the evidence.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SLIDE 35 — Q&A                                         -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="slide title-slide">
+    <div class="slide-content">
+      <h1>Questions</h1>
+      <p class="subtitle">30 minutes · slides at training/gvm-overview.html</p>
+      <p class="gvm-attribution">Developed using the Grounded Vibe Methodology</p>
+    </div>
+    <aside class="notes">Hold for questions. Anticipated challenges: "The experiment is one domain" (true — acknowledge it, point to the replication across three model families as the mitigating evidence); "The cost is too high" (ask what their current regression rate is). Practitioners most likely to ask about specific phases. Leaders most likely to ask about team change management.</aside>
+  </section>
+
+</div><!-- end .deck -->
+
+<div class="slide-counter">
+  <span class="current-slide">1</span> / <span class="total-slides">35</span>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const currentEl = document.querySelector('.current-slide');
+  const totalEl = document.querySelector('.total-slides');
+  let current = 0;
+
+  if (totalEl) totalEl.textContent = slides.length;
+
+  function show(n) {
+    slides.forEach(s => s.classList.remove('active'));
+    current = Math.max(0, Math.min(n, slides.length - 1));
+    slides[current].classList.add('active');
+    if (currentEl) currentEl.textContent = current + 1;
+  }
+
+  show(0);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      show(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      show(current - 1);
+    } else if (e.key === 'n' || e.key === 'N') {
+      document.body.classList.toggle('show-notes');
+    } else if (e.key === 'Home') {
+      show(0);
+    } else if (e.key === 'End') {
+      show(slides.length - 1);
+    }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+  document.addEventListener('touchend', function(e) {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 50) {
+      diff < 0 ? show(current + 1) : show(current - 1);
+    }
+  });
+})();
+</script>
+</body>
+</html>

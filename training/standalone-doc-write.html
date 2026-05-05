@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standalone /gvm-doc-write</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 260px; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .callout {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .callout-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .callout.key-finding {
+      background: #fdf0ef;
+      border-left: 3px solid #a00000;
+    }
+
+    .callout.key-finding .callout-label {
+      color: #a00000;
+    }
+
+    .practice {
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .practice-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #27ae60;
+      margin-bottom: 0.3rem;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .comparison-box {
+      background: #f7f7f0;
+      padding: 0.8rem 1rem;
+      border-top: 2px solid #999;
+    }
+
+    .comparison-box.grounded {
+      border-top-color: #27ae60;
+    }
+
+    .comparison-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.4rem;
+    }
+
+    .comparison-box.grounded .comparison-label {
+      color: #27ae60;
+    }
+
+    .comparison-box p {
+      font-size: 0.92rem;
+      margin-bottom: 0.3rem;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      width: auto;
+      min-width: 480px;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 1rem 0.5rem 0;
+      border-bottom: 2px solid #333;
+      color: #111;
+    }
+
+    tbody td {
+      padding: 0.45rem 1rem 0.45rem 0;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+
+    .sidenote {
+      float: right;
+      clear: right;
+      width: 220px;
+      margin-right: -260px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #666;
+      padding-left: 1rem;
+      border-left: 2px solid #e0e0e0;
+    }
+
+    details { max-width: 640px; margin: 1rem 0; }
+    summary {
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #555;
+      padding: 0.5rem 0.8rem;
+      background: #f0f0e8;
+      border-radius: 2px;
+      list-style: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::before { content: "▶ "; font-size: 0.75rem; }
+    details[open] summary::before { content: "▼ "; }
+    details[open] summary { background: #e8e8e0; }
+    .answer-key {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 0.8rem 1.2rem;
+      margin-top: 0.5rem;
+      font-size: 0.92rem;
+    }
+    .answer-key p, .answer-key li { max-width: 100%; font-size: 0.92rem; }
+
+    .step-block {
+      background: #f7f7f0;
+      border-left: 3px solid #666;
+      padding: 0.8rem 1.2rem;
+      margin: 0.6rem 0;
+      max-width: 640px;
+    }
+    .step-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #666;
+      margin-bottom: 0.25rem;
+    }
+    .step-block p { font-size: 0.92rem; margin-bottom: 0.4rem; max-width: 100%; }
+    .step-block p:last-child { margin-bottom: 0; }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .comparison { grid-template-columns: 1fr; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <p class="date">May 2026</p>
+    <h1>Standalone /gvm-doc-write</h1>
+    <p class="subtitle">Producing presentations, strategy, newsletters, training, and prose grounded in named experts &mdash; outside the pipeline.</p>
+
+    <!-- SECTION 1: What standalone mode is -->
+    <h2 id="what-standalone-is">What standalone mode is</h2>
+
+    <p><code>/gvm-doc-write</code> has two modes. <strong>Pipeline docs mode</strong> sits after <code>/gvm-test</code> and produces README, CHANGELOG, and user guides grounded in build artefacts. <strong>Standalone mode</strong> has no pipeline position. You can invoke it when you have no requirements file, no spec, no codebase &mdash; just a document you need to write and a reason to write it well.</p>
+
+    <p>You might be writing a strategy memo before a board meeting. A quarterly newsletter. A conference talk. A training module for a new joiner. A whitepaper you intend to publish. None of these involve software. All of them benefit from expert-grounded structure, argument, and prose.</p>
+
+    <p>What standalone mode gives you that "just write me a document" does not: a named expert panel is selected before writing starts, the structure is proposed and approved before content begins, and a self-review pass checks the draft against the same panel before output reaches disk. The experts are not decorative. They govern the shape of the document and the quality of the prose.</p>
+
+    <div class="callout key-finding">
+      <div class="callout-label">The key distinction</div>
+      <p>Pipeline docs mode produces documentation <em>about</em> software. Standalone mode produces any prose document that needs to be good &mdash; whether or not software is involved at all. The expert mechanism is the same. The document type determines which experts load.</p>
+    </div>
+
+    <!-- SECTION 2: Five typed categories -->
+    <h2 id="five-typed-categories">The five typed categories</h2>
+
+    <p>Five common document formats get structured guidance: the skill loads type-specific domain experts on top of the writing baseline. The table below shows what each type loads.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Domain experts loaded</th>
+          <th>Structure principle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Presentations</strong></td>
+          <td><code>document-structure.md</code> + <code>presentation-design.md</code> + <code>data-presentation.md</code></td>
+          <td>One idea per slide; headlines as sentences</td>
+        </tr>
+        <tr>
+          <td><strong>Strategy</strong></td>
+          <td><code>document-structure.md</code> + <code>strategy.md</code></td>
+          <td>Kernel: diagnosis &rarr; guiding policy &rarr; coherent actions</td>
+        </tr>
+        <tr>
+          <td><strong>Newsletters</strong></td>
+          <td><code>document-structure.md</code> + <code>newsletter.md</code> + writing reference</td>
+          <td>Utility &times; inspiration &times; empathy; one reader, one message</td>
+        </tr>
+        <tr>
+          <td><strong>Training materials</strong></td>
+          <td><code>document-structure.md</code> + <code>training.md</code></td>
+          <td>Identify the gap; segment into learner-paced units</td>
+        </tr>
+        <tr>
+          <td><strong>Status reports</strong></td>
+          <td><code>document-structure.md</code> + writing reference</td>
+          <td>Lead with the headline; situation-complication-resolution</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>All five types also load <code>writing-reference.md</code> (Doumont, Zinsser, Orwell, Williams) for prose quality, and the appropriate Tufte HTML template for visual design. Presentations use <code>tufte-slide-template.md</code> (self-contained, replaces the standard HTML reference). All other types use <code>tufte-html-reference.md</code>.</p>
+
+    <p>Model selection follows the cognitive demand of the task. Strategy documents and whitepapers use the primary model (deep diagnosis and argument construction need genuine reasoning). Presentations, newsletters, training, and status reports use Sonnet (structure is expert-guided; execution is more mechanical). HTML generation always dispatches a Haiku subagent immediately after the matching section is written.</p>
+
+    <!-- SECTION 3: The "any prose" branch -->
+    <h2 id="any-prose">The &ldquo;any prose&rdquo; branch</h2>
+
+    <p>The five typed categories provide structured templates for common formats. But <code>/gvm-doc-write</code> handles any prose document that needs expert-grounded quality. Whitepapers, origin stories, blog posts, board memos, conference papers &mdash; all of these get the same expert loading, structure approval, and self-review pass. There is no rigid template, but the process is identical.</p>
+
+    <p>When you invoke the skill with "write a whitepaper on X," the skill detects no matching typed category, treats it as an "Other" document type, and proceeds through the same Create mode steps: gather context, load writing experts plus any domain experts relevant to the subject matter, propose structure, ask about an MD version, write, self-review, offer to run <code>/gvm-doc-review</code>.</p>
+
+    <p>Whitepapers and origin stories use the primary model (argument construction and narrative structure need judgement). Blog posts and internal memos may use Sonnet if the structure is relatively constrained &mdash; but this is model-selection guidance, not a ceiling on quality.</p>
+
+    <div class="callout">
+      <div class="callout-label">What &ldquo;any prose&rdquo; means in practice</div>
+      <p>A board memo on entering a new market loads Rumelt's kernel structure from <code>strategy.md</code> even though you didn't say "strategy document." A conference paper on a technical topic loads appropriate domain experts alongside the writing experts. An origin story for a methodology loads McKee's narrative arc from <code>writing-reference.md</code>. The typed categories are entry points, not hard walls. Content drives expert loading.</p>
+    </div>
+
+    <!-- SECTION 4: Walkthrough — strategy document -->
+    <h2 id="walkthrough-strategy">Walkthrough: writing a strategy document</h2>
+
+    <p>You are preparing a strategy document for your team: whether to build an in-house data platform or continue using a third-party vendor. Here is what the Create mode process looks like step by step.</p>
+
+    <h3 id="step-invoke">Step 1 &mdash; Invoke and choose Create</h3>
+
+    <div class="step-block">
+      <div class="step-label">You type</div>
+      <p><code>/gvm-doc-write</code></p>
+    </div>
+
+    <p>The skill detects no existing document in context, so it enters Create mode. It asks: <em>"What type of document?"</em> You select Strategy document.</p>
+
+    <h3 id="step-context">Step 2 &mdash; Answer the audience, purpose, and scope questions</h3>
+
+    <p>The skill asks three questions before touching structure. These are not formalities &mdash; the answers govern every subsequent decision.</p>
+
+    <div class="step-block">
+      <div class="step-label">Skill asks</div>
+      <p>"Who is the audience for this document? What do they already know, and what do they need to decide?"</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-label">You answer</div>
+      <p>"The CTO and two senior engineers. They understand the current vendor's limitations. They need to decide whether to approve a six-month build project."</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-label">Skill asks</div>
+      <p>"What should the reader do or know after reading this? And what is the scope &mdash; high-level argument, or detailed cost-benefit analysis?"</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-label">You answer</div>
+      <p>"Approve or reject the build option. High-level argument with cost estimates &mdash; not a technical spec."</p>
+    </div>
+
+    <p>Minto's principle: the reader's existing knowledge and the decision they face determine structure. Because the audience already knows the problem, the document opens with the recommendation, not background. An audience new to the topic would need the evidence first.</p>
+
+    <h3 id="step-panel">Step 3 &mdash; Approve the expert panel (Hard Gate 4)</h3>
+
+    <p>Before writing a word of content, the skill reads back the proposed expert panel. This is Hard Gate 4 &mdash; you must see and approve the panel. Do not skip this step.</p>
+
+    <div class="step-block">
+      <div class="step-label">Skill presents</div>
+      <p>"For a strategy document, I will load the following experts: <strong>Richard Rumelt</strong> (<em>Good Strategy Bad Strategy</em>, <em>The Crux</em>) for kernel structure, diagnosis, and bad-strategy detection; <strong>Roger Martin</strong> (<em>Playing to Win</em>) for the five cascading choices if we operationalise the strategy; <strong>Jean-Luc Doumont</strong> (<em>Trees, Maps, and Theorems</em>) for structure-by-message and answering &lsquo;so what?&rsquo; at every level; <strong>William Zinsser</strong> (<em>On Writing Well</em>) for economy of prose; <strong>Barbara Minto</strong> (<em>The Pyramid Principle</em>) for deductive structure suited to your senior audience. Shall I proceed with this panel?"</p>
+    </div>
+
+    <p>Read the panel. If you are writing about a subject with no coverage in the roster &mdash; say, a document about AI safety governance &mdash; you may see "No authoritative specialist identified for [domain]" and the skill will propose discovered experts for your approval. Approve, request changes, or let the skill proceed.</p>
+
+    <h3 id="step-structure">Step 4 &mdash; Approve the structure</h3>
+
+    <div class="step-block">
+      <div class="step-label">Skill proposes</div>
+      <p>"Proposed structure: (1) Recommendation &mdash; one sentence. (2) Diagnosis &mdash; what is the critical challenge with the current vendor? (3) Guiding policy &mdash; the approach we are choosing and why. (4) Coherent actions &mdash; four steps that implement the policy, each reinforcing the others. (5) Cost and timeline. (6) Risks and how the guiding policy addresses them. Does this structure work, or would you like to adjust it?"</p>
+    </div>
+
+    <p>The kernel structure (diagnosis &rarr; guiding policy &rarr; coherent actions) is Rumelt's. If any element is missing from your strategy document, <code>/gvm-doc-review</code> will flag it as Critical. Approve or request changes before the skill writes.</p>
+
+    <h3 id="step-md">Step 5 &mdash; Decide on the MD pair</h3>
+
+    <p>For strategy documents (and all non-presentation types), the skill asks whether you want a Markdown version alongside the HTML. The default is <strong>No</strong>. Say Yes only if you plan to edit the MD directly, use it in another tool, or share it as plain text. If in doubt, say No &mdash; the HTML is the document.</p>
+
+    <span class="sidenote">Presentations are HTML-only. No MD pair is produced and the question is not asked. The slide format has no meaningful plain-text representation.</span>
+
+    <h3 id="step-write">Step 6 &mdash; Self-review pass; write to disk</h3>
+
+    <p>The skill writes the document section by section, applying expert principles throughout. Before anything reaches disk, it runs a self-review pass against the loaded panel: checking structure, prose quality, and factual claims. Any claim it cannot verify from the provided context is flagged to you rather than asserted. After the review pass is clean, it writes the HTML (and MD if you said Yes).</p>
+
+    <p>Output location: <code>strategy/{filename}.html</code>. If a file with that name already exists, the skill increments to avoid overwriting.</p>
+
+    <h3 id="step-offer-review">Step 7 &mdash; Offer to run <code>/gvm-doc-review</code></h3>
+
+    <p>At the end of Create mode, the skill offers: review and revise specific sections, create another document, run <code>/gvm-doc-review</code>, or done. For a strategy document you intend to present to the CTO, run the review.</p>
+
+    <!-- SECTION 5: Walkthrough — revise after review -->
+    <h2 id="walkthrough-revise">Walkthrough: revising after <code>/gvm-doc-review</code></h2>
+
+    <p>The review has run. You have a findings file at <code>doc-review/strategy-build-vs-vendor-review-2026-05-02.html</code>. Two Important findings. Here is what Revise mode looks like.</p>
+
+    <h3 id="revise-load-findings">Step 1 &mdash; Load the findings</h3>
+
+    <div class="step-block">
+      <div class="step-label">You type</div>
+      <p>"Fix the findings in the strategy document review."</p>
+    </div>
+
+    <p>The skill detects an existing document referenced with issues to fix. It enters Revise mode. It reads the document in full, then reads the review findings file and extracts each finding with its severity and the expert who raised it.</p>
+
+    <h3 id="revise-experts-who-find">Step 2 &mdash; Load the experts who found the issues</h3>
+
+    <p>Shared rule 3: experts who find should fix. The expert that identified the problem defines what "right" looks like &mdash; not a generic writing improvement pass.</p>
+
+    <p>Say the first finding reads: <em>"[Rumelt] The guiding policy is a goal disguised as an approach. 'Become the leading data platform' states an aspiration, not a method for dealing with the challenge."</em> The skill loads Rumelt's framework to guide the fix: a guiding policy must be an actual approach to the challenge, not a goal. The fix replaces the aspiration with a genuine approach.</p>
+
+    <p>The second finding: <em>"[Zinsser] Section 4 contains three consecutive sentences built around nominalisations: 'the establishment of', 'the implementation of', 'the achievement of'. Each can be cut to a verb."</em> The skill loads Zinsser and Williams to guide the rewrite of those sentences.</p>
+
+    <h3 id="revise-edit-not-rewrite">Step 3 &mdash; Edit, not rewrite</h3>
+
+    <p>This is the distinction that matters most in Revise mode. The skill changes what the findings require. It does not restructure sections that are not broken, add new content the findings did not request, or "improve" prose the panel did not flag.</p>
+
+    <p>King's principle: kill your darlings &mdash; but only your darlings. The darlings the review panel flagged are candidates for cutting. The rest of the document is not.</p>
+
+    <p>After each fix, the skill notes what changed and which expert framework guided it. You see the reasoning, not just the edit.</p>
+
+    <h3 id="revise-self-review">Step 4 &mdash; Self-review; offer re-review</h3>
+
+    <p>After all findings are addressed, the skill re-reads the changed sections against the panel's principles. It checks that fixes did not introduce new problems (Zinsser: rewriting is writing &mdash; every edit is a new opportunity to create clutter). It verifies the document still coheres after the changes.</p>
+
+    <p>It then offers: continue with remaining findings (if any), run <code>/gvm-doc-review</code> on the updated document to verify the fixes, or done. For Important findings, running the review again is the right call.</p>
+
+    <div class="callout key-finding">
+      <div class="callout-label">Termination rule</div>
+      <p>Once every finding from the step 2 list has been addressed, the "continue with remaining findings" option is removed. Revise mode does not loop back to re-assess the full document after all findings are resolved. That is the review skill's job.</p>
+    </div>
+
+    <!-- SECTION 6: Expert discovery -->
+    <h2 id="expert-discovery">Expert discovery for uncovered domains</h2>
+
+    <p>The loaded roster covers writing, document structure, strategy, presentations, newsletters, and training. It does not cover everything. When your document touches a domain with no matching expert, the skill flags it: <em>"No authoritative specialist identified for [domain]. Would you like me to find one?"</em></p>
+
+    <p>Say you are writing a whitepaper on cognitive biases in investment decisions. The writing experts and document structure experts load as normal. But cognitive psychology and behavioural economics have no entries in the existing roster. The skill surfaces the gap and, with your approval, runs the expert discovery process.</p>
+
+    <p>Discovery works as follows: the skill identifies candidates with published, peer-recognised work in the gap area (Kahneman and Tversky for cognitive biases; Thaler and Sunstein for behavioural economics in decision-making). It scores each candidate using the standard scoring methodology and presents the proposed classifications with evidence. Approved experts are persisted to the appropriate reference file and become available to all future skills &mdash; not just this document. The discovered expert is also recorded in <code>~/.claude/gvm/discovered-experts.jsonl</code>.</p>
+
+    <p>Once approved, the discovered experts shape the document exactly as roster experts do: they are cited in the panel read-back, their principles govern the draft, and they appear in the self-review pass.</p>
+
+    <!-- SECTION 7: The six-test gate -->
+    <h2 id="six-test-gate">The six-test gate at review time</h2>
+
+    <p>When <code>/gvm-doc-review</code> runs on a standalone document (any type outside the pipeline), findings earn Critical or Important status only if they pass at least one of six tests. Findings that pass none are recorded as Minor <code>[POLISH]</code> and do not block publication.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Test</th>
+          <th>What it catches</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Integrity</strong></td>
+          <td>A verifiable claim is wrong, partially wrong, or unsupported. Misquoted source, wrong year, fabricated statistic.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Misdirection (load-bearing)</strong></td>
+          <td>A reader could come away with the wrong understanding of the thesis, a central argument, or a key result.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Reproducibility</strong></td>
+          <td>A researcher attempting to replicate an empirical claim lacks information they need. Applies to methodology and empirical papers.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Honesty of scope</strong></td>
+          <td>The document claims more than its evidence supports, or fails to flag a significant limitation where the unqualified claim would mislead.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Audience hospitality</strong></td>
+          <td>The document assumes reader knowledge inconsistent with the stated audience. Unflagged jargon, undefined acronyms, implicit specialist knowledge.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>Cut-damage protection</strong></td>
+          <td>A recommended cut would damage orientation, evidence, scope limits, or honesty disclaimers. Guards against over-trimming.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Understanding this gate shapes how you use Revise mode. When a review finding is Critical or Important, it passed at least one of these tests &mdash; the finding has real reader impact. When a finding is Minor <code>[POLISH]</code>, it is a prose preference, not a credibility risk. Address Critical and Important findings first. Polish findings are optional.</p>
+
+    <p>See also: <a href="triage-workshop.html">the triage workshop</a> for practice working through findings of mixed severity.</p>
+
+    <!-- SECTION 8: Pre-Publication Integrity Pass -->
+    <h2 id="integrity-pass">Pre-Publication Integrity Pass</h2>
+
+    <p>The Integrity Pass is a separate, opt-in pass run after a regular terminal round. It exists for one purpose: catch credibility-killers that survived earlier panels.</p>
+
+    <p>When to invoke it:</p>
+    <ul>
+      <li><strong>Public-facing documents</strong> (whitepaper with your name on it, methodology document, published blog post): invoke when the regular review reaches ≥9.3.</li>
+      <li><strong>Standard internal documents</strong> (strategy memo, training module): the regular terminal round at ≥9.0 is sufficient. The Integrity Pass is not required.</li>
+    </ul>
+
+    <p>What the Integrity Pass scans for, and nothing else:</p>
+    <ol>
+      <li><strong>Direct-quotation verification.</strong> Every quotation in the document is verified against its cited source via independent lookup. Misquotes are surfaced.</li>
+      <li><strong>Statistic verification.</strong> Every specific number is checked against its cited source. Numbers that do not match, or are untraceable to a source, are surfaced.</li>
+      <li><strong>Full citation audit.</strong> Every body-named author appears in References; every References entry has body citations; no duplicates.</li>
+      <li><strong>Title/topic match.</strong> For every external paper cited, the cited title is verified against what the source is actually about.</li>
+      <li><strong>Edition and date precision.</strong> For every cited book, the stated edition is verified to contain the cited content.</li>
+    </ol>
+
+    <p>The pass produces a single-page report listing only Integrity findings. A document that passes with zero findings is credibility-killer-free against those specific checks. Invoke it with: <em>"Run the integrity pass on this whitepaper."</em></p>
+
+    <div class="callout">
+      <div class="callout-label">What the Integrity Pass catches that panels miss</div>
+      <p>Standard review panels work at the argument level: is the structure sound, is the audience right, does the evidence support the claim? The Integrity Pass works at the source level: is this quote accurate to the letter, does this statistic match its source, does this citation point to the right paper? These are different failure modes. Panels catch the argument. The Integrity Pass catches the detail.</p>
+    </div>
+
+    <!-- SECTION 9: Practice exercises -->
+    <h2 id="practice">Practice exercises</h2>
+
+    <div class="practice">
+      <div class="practice-label">Exercise 1 &mdash; Pick the right document type</div>
+      <p>You need to communicate the following to your team. For each, identify the document type <code>/gvm-doc-write</code> should create.</p>
+      <ol>
+        <li>You want to explain why the team is changing its approach to machine learning infrastructure, and get buy-in for the change.</li>
+        <li>You are giving a 20-minute talk at an internal conference on lessons learned from the last year.</li>
+        <li>You need to show the VP of Engineering where the project stands this week: what is done, what is at risk, what decisions are needed.</li>
+        <li>You are onboarding new team members and want them to understand how to use the deployment pipeline correctly.</li>
+      </ol>
+      <details>
+        <summary>Answer key</summary>
+        <div class="answer-key">
+          <ol>
+            <li><strong>Strategy document.</strong> "Why we are changing approach and what the new approach is" maps directly to Rumelt's kernel: diagnosis (what's broken with the current approach), guiding policy (the new approach), coherent actions (what changes). A strategy document is also the right format for getting buy-in from a senior audience, because it leads with the recommendation.</li>
+            <li><strong>Presentation.</strong> A 20-minute live talk is a presentation. The skill will ask for approximate slide count and delivery context (live). At 1&ndash;2 slides per minute for a live talk, expect 20&ndash;40 slides.</li>
+            <li><strong>Status report.</strong> Weekly project status is a status report: lead with the headline, situation-complication-resolution, traffic-light signals, risks and decisions needed, next steps with owners and dates.</li>
+            <li><strong>Training material.</strong> Onboarding people to use a process correctly is a training problem. The skill will identify the gap type (knowledge gap &mdash; they don't know how the pipeline works) and structure the material as concept &rarr; example &rarr; practice &rarr; assessment.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Exercise 2 &mdash; Match the finding to the fixing expert</div>
+      <p>You receive a review finding for each document below. Identify which expert's framework should guide the fix.</p>
+      <ol>
+        <li><em>"The guiding policy section states 'we will be more agile and customer-focused.' This is a goal, not an approach. It does not tell the reader how the team will deal with the diagnosed challenge."</em></li>
+        <li><em>"Section 3 opens with three consecutive passive constructions: 'it has been decided', 'the project was initiated', 'a review will be undertaken'. Subjects are buried."</em></li>
+        <li><em>"Slide 7 carries three distinct messages. Each deserves its own slide."</em></li>
+        <li><em>"The training module presents six concepts before any practice activity. Learners need to do something with new knowledge before the next concept loads."</em></li>
+      </ol>
+      <details>
+        <summary>Answer key</summary>
+        <div class="answer-key">
+          <ol>
+            <li><strong>Rumelt</strong> (<em>Good Strategy Bad Strategy</em>). The finding is a bad-strategy detection &mdash; goals masquerading as guiding policy. Rumelt's kernel defines what a guiding policy is: an approach to dealing with the diagnosed challenge, not an aspiration. His framework tells you what the fix must deliver.</li>
+            <li><strong>Joseph Williams</strong> (<em>Style: Lessons in Clarity and Grace</em>). Passive constructions that bury subjects are Williams's core concern. The fix: identify who is doing the action, move the actor to subject position, rewrite with a verb. Zinsser or Orwell both notice this pattern too, but Williams provides the most precise sentence-level framework for fixing it.</li>
+            <li><strong>Cliff Atkinson / presentation design experts</strong> (<em>Beyond Bullet Points</em>). One idea per slide is the non-negotiable presentation principle. The finding names a structural violation. The fix splits the slide. Any presentation design expert in the panel would govern this fix.</li>
+            <li><strong>Clark &amp; Mayer</strong> (<em>e-Learning and the Science of Instruction</em>). The segmenting principle: break complex material into learner-paced segments and include practice before introducing new concepts. The fix restructures the module so practice follows each concept rather than queuing after all six.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Exercise 3 &mdash; Branding vs. design system</div>
+      <p>For each of the following, say whether it is controlled by <code>branding/branding.md</code> or by the design system (<code>tufte-html-reference.md</code>). Then say what happens if no branding file exists.</p>
+      <ol>
+        <li>The background colour of the title slide in a presentation.</li>
+        <li>The line-height and measure of body text.</li>
+        <li>The heading font family.</li>
+        <li>The data-ink ratio principle applied to a chart in the strategy document.</li>
+        <li>The accent colour used on links and emphasis borders.</li>
+      </ol>
+      <details>
+        <summary>Answer key</summary>
+        <div class="answer-key">
+          <ol>
+            <li><strong>Branding</strong> controls header and title-slide background colour. If no branding file exists, the design system default applies (typically a neutral or off-white background).</li>
+            <li><strong>Design system</strong>. Body typography &mdash; line-height, measure, spacing &mdash; is governed by Tufte/Few principles in <code>tufte-html-reference.md</code>. The branding file cannot override it.</li>
+            <li><strong>Branding</strong> controls the heading font family. The body font stays <code>et-book</code> or system serif regardless of the branding file.</li>
+            <li><strong>Design system</strong>. Data-ink ratio is a Tufte principle. Branding controls identity elements only; it does not govern how charts are designed or what visualisation principles apply.</li>
+            <li><strong>Branding</strong> controls the accent colour for links and emphasis. If no branding file exists, the design system default accent colour applies.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+    <!-- SECTION 10: Common mistakes -->
+    <h2 id="common-mistakes">Common mistakes</h2>
+
+    <h3 id="mistake-skip-panel">Skipping the expert panel approval</h3>
+
+    <p>Hard Gate 4 requires you to see and approve the expert panel before the skill writes. If you skip past the panel read-back, you lose the opportunity to catch a mismatch between the experts loaded and the document's actual needs. A whitepaper on machine learning inference might load general writing experts when it also needs performance engineering experts &mdash; but you only know that if you read the panel.</p>
+
+    <p>Skipping the panel does not speed up the document. It moves quality risk from a 30-second read to a full review round.</p>
+
+    <h3 id="mistake-revise-as-rewrite">Treating Revise as Rewrite</h3>
+
+    <p>Revise mode is targeted. It addresses the findings. It does not restructure what the findings did not flag, and it does not improve prose the panel accepted. When you say "fix the strategy document," the skill should change the guiding policy section and the three passive-voice sentences &mdash; and nothing else.</p>
+
+    <p>If you want a full rewrite, invoke Create mode on the existing content. But ask yourself first: did the review find structural problems, or prose problems? Structural problems (missing kernel element, wrong audience, no argument) warrant a rethink. Prose problems (three passive sentences, two nominalisations) are surgical fixes. Reach for the scalpel, not the sledgehammer.</p>
+
+    <h3 id="mistake-pipeline-checkboxes">Checking pipeline-doc boxes for a non-pipeline document</h3>
+
+    <p>When the skill asks which documents to create, pipeline docs mode presents a checklist: README, CHANGELOG, user guide, API docs. These are only relevant in pipeline docs mode &mdash; invoked after <code>/gvm-test</code> with build artefacts present. If you invoke <code>/gvm-doc-write</code> standalone to write a strategy memo and somehow end up at the pipeline checklist, you have triggered the wrong mode. Exit and reinvoke standalone.</p>
+
+    <p>The signal: pipeline docs mode asks what <em>build artefacts</em> exist. Standalone Create mode asks what <em>type of document</em> you want to write. If the first question is about artefacts, you are in pipeline mode.</p>
+
+    <h3 id="mistake-md-pair">Requesting an MD pair when you do not need it</h3>
+
+    <p>The default answer to "Would you like a Markdown version?" is No, and the default is correct for most standalone documents. Say Yes only if you have a concrete use for the MD: editing it in a plain-text tool, feeding it to another system, or sharing it where HTML does not render. An MD file that nobody reads is maintenance overhead &mdash; if you revise the HTML, you have to keep the MD in sync. When in doubt, HTML only.</p>
+
+    <!-- SECTION 11: Takeaways -->
+    <h2 id="takeaways">Takeaways</h2>
+
+    <ul>
+      <li><strong>Standalone mode has no pipeline position.</strong> You can invoke it any time, for any prose document, whether or not software is involved.</li>
+      <li><strong>The five typed categories load expert panels automatically.</strong> Presentations, strategy, newsletters, training, and status reports each load the domain experts appropriate to the format. Any other prose document also gets expert loading &mdash; experts are selected from content, not just document type.</li>
+      <li><strong>Hard Gate 4 is the value point you must not skip.</strong> The expert panel read-back is where you confirm the skill has loaded the right experts for your subject. Read it. Adjust if needed.</li>
+      <li><strong>Structure before prose.</strong> The skill proposes and gets approval on structure before writing content. The structure determines quality more than word choice does.</li>
+      <li><strong>Revise mode is surgical.</strong> Load the experts who found the issues. Fix what the findings require. Preserve what works. Do not rewrite what the panel accepted.</li>
+      <li><strong>Expert discovery fills gaps.</strong> If your topic has no matching expert, the skill surfaces it and discovers one. Approved experts persist for all future work.</li>
+      <li><strong>The six-test gate tells you what matters.</strong> Critical and Important findings at review time passed at least one of six reader-impact tests. Minor findings did not. Triage accordingly.</li>
+      <li><strong>The Integrity Pass is for public-facing work.</strong> Invoke it after a terminal round at ≥9.3. It catches misquotes, wrong statistics, and citation errors that argument-level review misses.</li>
+    </ul>
+
+    <p class="gvm-attribution">Developed using the Grounded Vibe Methodology</p>
+  </main>
+
+  <script>
+  (function () {
+    const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+    const links = [];
+    headings.forEach(function (h) {
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      toc.appendChild(a);
+      links.push({ el: a, target: h });
+    });
+    function onScroll() {
+      let current = links[0];
+      for (let i = 0; i < links.length; i++) {
+        if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+      }
+      links.forEach(function (l) { l.el.classList.remove('active'); });
+      if (current) {
+        current.el.classList.add('active');
+        const tocEl = document.getElementById('toc');
+        const elTop = current.el.offsetTop - tocEl.offsetTop;
+        const elBot = elTop + current.el.offsetHeight;
+        if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+          tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
+</body>
+</html>

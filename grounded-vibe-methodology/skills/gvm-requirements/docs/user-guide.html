@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-requirements — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">March 2026</p>
+<h1>/gvm-requirements</h1>
+<p class="subtitle">
+  A command for Claude Code that turns rough project ideas into structured,
+  complete requirements documents through expert-driven conversation.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  The <code>/gvm-requirements</code> command acts as a requirements analyst. You describe
+  what you want to build — a paragraph, a few bullet points, or just a vague idea — and
+  it drives a structured conversation to produce a complete requirements document.
+</p>
+
+<p>
+  It produces two files, always kept in sync:
+</p>
+
+<ul>
+  <li><strong>requirements.html</strong> — a professionally designed document following Tufte and Few design principles</li>
+  <li><strong>requirements.md</strong> — a Claude-friendly markdown version for use by downstream commands</li>
+</ul>
+
+<p>
+  Both files are saved to your project's <code>requirements/</code> directory.
+</p>
+
+<span class="sidenote">
+  The skill is implementation-agnostic. It captures <em>what</em> the system must do, not how to build it. Architecture and decomposition belong to downstream commands like <code>/gvm-tech-spec</code>.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="getting-started">Getting Started</h2>
+
+<h3 id="with-brief">Starting from an Application Brief</h3>
+
+<p>
+  If <code>/gvm-init</code> produced an Application Brief (<code>init/brief-*.md</code>), the skill
+  auto-detects it and uses it as seed input. It then asks if you have any additional documents
+  to include &mdash; meeting notes, competitor analysis, existing requirements from other tools.
+  All seeds are loaded together for richer elicitation.
+</p>
+
+<h3 id="with-seed">Starting with an idea</h3>
+
+<p>
+  The most common way to use the command: type <code>/gvm-requirements</code> and provide
+  your rough description in the same message or when prompted.
+</p>
+
+<pre><code>/gvm-requirements
+
+I want to build a tool that helps people compare neighbourhoods
+when they're thinking about moving. It should look at schools,
+commute times, and housing prices, and produce a report they
+can share with their partner.</code></pre>
+
+<p>
+  The skill will analyse your input, identify what's clear, what's ambiguous,
+  and what's missing, then begin asking questions to fill the gaps.
+</p>
+
+<h3 id="without-seed">Starting from scratch</h3>
+
+<p>
+  If you don't have a description yet, just run <code>/gvm-requirements</code> with no input.
+  The skill will start with broad discovery questions:
+</p>
+
+<ul>
+  <li>"What problem are you trying to solve?"</li>
+  <li>"Who is this for?"</li>
+  <li>"What would a highly successful solution look like?"</li>
+</ul>
+
+<span class="sidenote">
+  These are "context-free questions" from Gause &amp; Weinberg's <em>Exploring Requirements</em> — designed to work regardless of domain and surface the most important information first.
+</span>
+
+<h3 id="with-document">Starting with an existing document</h3>
+
+<p>
+  If you already have requirements from another tool or process &mdash; a Word document, Confluence page, Jira export, spreadsheet, or plain text &mdash; provide it as input. The skill treats the entire document as a rich seed: it extracts what maps to GVM structure, flags what needs clarification, and identifies gaps.
+</p>
+
+<p>
+  The external document accelerates the process but is not accepted as-is. It goes through the same expert-driven elicitation flow, and before finalising, an independent verification agent compares the GVM output against your original document. The agent checks four things:
+</p>
+
+<ul>
+  <li><strong>Completeness</strong> &mdash; nothing from the source was dropped</li>
+  <li><strong>Accuracy</strong> &mdash; the meaning of each requirement was preserved</li>
+  <li><strong>Hallucination</strong> &mdash; nothing was invented that wasn&rsquo;t in the source or discussed during elicitation</li>
+  <li><strong>Priority alignment</strong> &mdash; MoSCoW priorities match the source where applicable</li>
+</ul>
+
+<p>
+  Any discrepancies are presented to you for resolution before the document is finalised.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="conversation">The Conversation</h2>
+
+<p>
+  The skill asks <strong>one question at a time</strong>. It prefers multiple-choice
+  when the options are known, and open-ended questions when exploring new territory.
+  You don't need to give perfect answers — the skill will circle back if something
+  needs clarification.
+</p>
+
+<h3 id="expert-lenses">Expert lenses</h3>
+
+<p>
+  Behind the scenes, the skill draws on techniques from requirements experts
+  defined in its reference files. The expert panel is loaded from reference files
+  at runtime, not hardcoded into the skill. This means experts can be updated,
+  swapped, or extended without changing the skill itself.
+</p>
+
+<table>
+  <caption>Table 1 — Expert roles (loaded from reference files)</caption>
+  <thead>
+    <tr><th>Role</th><th>What they contribute</th><th>Activation</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Requirements structure</td><td>Classification, MoSCoW prioritisation, document organisation</td><td>Always</td></tr>
+    <tr><td>Questioning technique</td><td>Ambiguity detection, context-free questions, assumption surfacing</td><td>Always</td></tr>
+    <tr><td>User journey mapping</td><td>Workflow discovery, story mapping, activity hierarchies</td><td>Always</td></tr>
+    <tr><td>Goal-directed design</td><td>Persona creation, goal-directed requirements</td><td>Always</td></tr>
+    <tr><td>Jobs-to-be-Done</td><td>Job framing, emotional and social dimensions</td><td>Always</td></tr>
+    <tr><td>Non-functional requirements</td><td>Compliance, security, performance, data retention</td><td>Conditional</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  The skill will tell you when it activates a conditional expert lens and why — e.g., "You mentioned user accounts, so I'm going to ask about authentication and data privacy."
+</span>
+
+<h3 id="adaptive-depth">Adaptive depth</h3>
+
+<p>
+  Not every project needs the same level of rigour. The skill starts with core
+  concerns (purpose, user, functional requirements, priorities) and escalates
+  when it detects signals that warrant deeper probing:
+</p>
+
+<ul>
+  <li>User accounts or roles → authentication, authorisation, privacy</li>
+  <li>Payments or pricing → financial constraints, regulatory, error recovery</li>
+  <li>Third-party APIs → integration requirements, failure handling</li>
+  <li>Personal or sensitive data → compliance, data retention, security</li>
+  <li>Multiple platforms → platform-specific constraints, responsive design</li>
+</ul>
+
+<p>
+  If the skill asks about something that isn't relevant, just say so. It will
+  note your answer in the Assumptions section and move on.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="incremental-writing">Incremental Writing</h2>
+
+<p>
+  After each major domain is explored, the skill writes that section to both files
+  and asks you to confirm it. This means:
+</p>
+
+<ul>
+  <li>You can see progress as you go — open the HTML file at any time</li>
+  <li>Misunderstandings are caught early, not at the end</li>
+  <li>The context window stays manageable (no massive document generation at the end)</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">How revision works</div>
+  <p>If a section needs changes, the skill edits just that section — it doesn't rewrite the whole document. If you want to revisit an earlier section later, just say so.</p>
+</div>
+
+<p>
+  Cross-cutting items — assumptions, open questions, and out-of-scope decisions — are
+  logged to the document as they surface during conversation, not batched up for later.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="phases">Process Phases</h2>
+
+<table>
+  <caption>Table 2 — Process phases</caption>
+  <thead>
+    <tr><th>Phase</th><th>What happens</th><th>Your role</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="phase">1</span> Seed / Discovery</td>
+      <td>Analyses your input (or starts with broad questions if no input). Establishes the job statement and target user persona.</td>
+      <td>Provide your rough idea, or answer discovery questions.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">2</span> Elicitation</td>
+      <td>Explores each domain through one-at-a-time questions. Branches from what's known into what's unknown.</td>
+      <td>Answer questions. Say "not relevant" if a topic doesn't apply.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">3</span> Incremental Writing</td>
+      <td>Writes each completed section to both files. Presents a summary for your confirmation.</td>
+      <td>Review and confirm, or request changes.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4</span> Safety Net Audit</td>
+      <td>Runs through a completeness checklist derived from all active experts. Probes any relevant gaps.</td>
+      <td>Answer any final questions. Confirm N/A items.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4b</span> Source Verification</td>
+      <td>For requirements derived from an external document only. An independent agent compares the GVM output against the original, checking completeness, accuracy, hallucination, and priority alignment. Discrepancies are presented for resolution.</td>
+      <td>Resolve any verification discrepancies.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5</span> Finalise</td>
+      <td>Confirms priorities, generates the requirements index, writes the executive summary, and does a final sync check. Also asks for the application name — you can provide one, request AI-generated suggestions based on the requirements content, or skip. The chosen name becomes the document and project title used by downstream commands.</td>
+      <td>Review and approve the completed document.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Load Shared Rules and Expert References at Session Start.</strong> Read <code>shared-rules.md</code> and <code>references/elicitation-techniques.md</code> before starting elicitation.</li>
+  <li><strong>Write Paired HTML + MD.</strong> Every requirements section must be written to both <code>requirements/requirements.html</code> and <code>requirements/requirements.md</code>.</li>
+  <li><strong>One Question at a Time in Free-Text Conversation.</strong> Do not dump a list of 10 questions &mdash; ask one question per message in open-ended exploration.</li>
+  <li><strong>User Approval Per Domain.</strong> Each domain section must be presented for confirmation before moving to the next domain.</li>
+  <li><strong>HTML Before Approval.</strong> Write the MD content first, then immediately write the HTML &mdash; both must be current before presenting the section for user approval.</li>
+</ol>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="im-4">IM-4: Finalisation Gates</h2>
+
+<p>
+  <strong>Phase 5</strong> (Finalise) runs two structural finalisation gates before the
+  requirements document is locked. Both gates loop until clean — they will not let
+  Phase 5 advance while errors remain.
+</p>
+
+<p>The two gates are IM-4 (Impact Map traceability) and RA-3 (Risk Assessment completeness).</p>
+
+<table>
+  <caption>Table 3 — Phase 5 finalisation gates</caption>
+  <thead>
+    <tr><th>Gate</th><th>Source</th><th>What it checks</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>IM-4</strong></td>
+      <td><code>impact-map.md</code></td>
+      <td>Every <code>Must</code>, <code>Should</code>, and <code>Could</code> requirement traces to at least one Impact Map ID (Impact / Actor / Deliverable). Only <code>Won't</code> requirements are skipped.</td>
+    </tr>
+    <tr>
+      <td><strong>RA-3</strong></td>
+      <td><code>risks/risk-assessment.md</code></td>
+      <td>Each of the four risk sections (Value, Usability, Feasibility, Viability) is either properly populated or uses the rigid <code>*accepted-unknown*</code> four-line form: <code>Rationale:</code>, <code>Validator:</code>, and <code>Review date:</code> with a date that is today or later.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Both gates apply uniformly: IM-4 to every Must/Should/Could requirement, RA-3 to every
+  one of the four risk sections. There is no per-section escape hatch other than
+  the explicit <code>*accepted-unknown*</code> form for RA-3 or downgrading the
+  requirement to <code>Won't</code> for IM-4.
+</p>
+
+<aside class="callout">
+  <strong>When IM-4 fires:</strong> for each untraceable Must/Should/Could requirement,
+  the skill presents three options — add a trace to an existing Impact Map ID,
+  downgrade the requirement to <code>Won't</code> (out of scope this round), or
+  edit <code>impact-map.md</code> to introduce a new Impact / Actor / Deliverable
+  (typically by re-running <code>/gvm-impact-map</code>). The loop only exits when
+  every Must/Should/Could has a trace.
+</aside>
+
+<aside class="callout">
+  <strong>When RA-3 fires:</strong> the validator returns errors keyed by section
+  name and rule code (<code>RA-1</code>..<code>RA-4</code>). For each error the
+  practitioner either populates the section properly or converts it to the
+  <code>*accepted-unknown*</code> four-line form. The loop exits when the validator
+  returns no errors.
+</aside>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="running-again">Running Again</h2>
+
+<p>
+  What happens when you run <code>/gvm-requirements</code> a second time depends on where the
+  pipeline is and what you want to do.
+</p>
+
+<h3 id="append-mode">Pipeline still in progress — append mode</h3>
+
+<p>
+  If the pipeline is still in progress (test cases or specs not yet complete), the skill
+  appends new domains to the existing document rather than replacing it. Existing
+  requirement IDs are preserved; new requirements are added after them.
+</p>
+
+<h3 id="new-round">Pipeline complete — new scope</h3>
+
+<p>
+  If the pipeline is complete and you want to add new scope, the skill creates
+  <code>requirements-002.md</code>. Requirements in the second document use round-prefixed IDs
+  (e.g., <code>R2-VS-1</code>) to distinguish them from the original set.
+</p>
+
+<h3 id="in-place-update">Updating existing requirements in-place</h3>
+
+<p>
+  If you want to revise existing requirements rather than append new ones, the skill
+  edits them directly. Removed requirements are marked with <code>[REMOVED]</code> rather than
+  deleted, so downstream documents can identify what changed. After in-place updates,
+  run <code>/gvm-status</code> to see which downstream artefacts are now stale.
+</p>
+
+<p>
+  Phase 5 (Finalise) runs after any in-place update to confirm priorities and regenerate
+  the requirements index.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output Documents</h2>
+
+<h3 id="html-output">HTML document</h3>
+
+<p>
+  The HTML version is a professionally designed document following Edward Tufte's
+  and Stephen Few's information design principles:
+</p>
+
+<ul>
+  <li>Floating table of contents on the left</li>
+  <li>Sidenote annotations on the right — caveats, cross-references, sources</li>
+  <li>Requirement blocks with unique IDs and MoSCoW priority chips</li>
+  <li>Comparison tables with minimal gridlines and subtle zebra striping</li>
+  <li>Responsive layout that reflows on narrow screens</li>
+</ul>
+
+<h3 id="md-output">Markdown document</h3>
+
+<p>
+  The markdown version mirrors the HTML exactly — same sections, same order,
+  same requirement IDs. It's designed for consumption by downstream Claude commands:
+</p>
+
+<ul>
+  <li><code>/gvm-test-cases</code> — generates test cases from the requirements</li>
+  <li><code>/gvm-tech-spec</code> — decomposes requirements into technical specifications</li>
+  <li><code>/gvm-build</code> — implements the project</li>
+</ul>
+
+<span class="sidenote">
+  The markdown file uses blockquotes for sidenotes and bold brackets for priorities — e.g., <code><strong>[MUST]</strong></code>. This keeps it readable in any markdown renderer while preserving all the information from the HTML version.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="document-structure">Document Structure</h2>
+
+<p>
+  Both documents follow this section order. Sections are omitted if they have no content — the skill doesn't pad empty sections.
+</p>
+
+<table>
+  <caption>Table 4 — Document sections</caption>
+  <thead>
+    <tr><th>#</th><th>Section</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Expert Panel</td><td>Table of experts active during creation: expert, work, role in this document</td></tr>
+    <tr><td>2</td><td>Purpose &amp; Vision</td><td>The job statement — why this exists</td></tr>
+    <tr><td>3</td><td>Target User</td><td>Lightweight persona based on goal-directed design</td></tr>
+    <tr><td>4</td><td>User Journeys</td><td>Key workflows and flows</td></tr>
+    <tr><td>5</td><td>Functional Domains</td><td>Grouped requirements with IDs and priorities</td></tr>
+    <tr><td>6</td><td>Non-Functional Requirements</td><td>When complexity warrants it</td></tr>
+    <tr><td>7</td><td>User Scenarios</td><td>Representative profiles and usage patterns</td></tr>
+    <tr><td>8</td><td>Assumptions</td><td>Confirmed assumed-true statements</td></tr>
+    <tr><td>9</td><td>Constraints</td><td>Budget, technology, timeline, regulatory</td></tr>
+    <tr><td>10</td><td>Out of Scope</td><td>Explicitly excluded items</td></tr>
+    <tr><td>11</td><td>Open Questions</td><td>Unresolved items for downstream commands</td></tr>
+    <tr><td>12</td><td>Requirements Index</td><td>Summary table of all requirements</td></tr>
+    <tr><td>13</td><td>Priority Model</td><td>MoSCoW definitions (Must, Should, Could, Won't)</td></tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="priorities">Priority Model</h2>
+
+<p>
+  Every requirement gets a MoSCoW priority, confirmed with you before finalisation:
+</p>
+
+<table>
+  <caption>Table 5 — MoSCoW priority levels</caption>
+  <thead>
+    <tr><th>Level</th><th>Meaning</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Must</strong></td><td>Non-negotiable. The product fails its purpose without this.</td></tr>
+    <tr><td><strong>Should</strong></td><td>Expected by users. Omit only with clear justification.</td></tr>
+    <tr><td><strong>Could</strong></td><td>Desirable enhancement. Include if effort is low.</td></tr>
+    <tr><td><strong>Won't</strong></td><td>Explicitly deferred to a future version. Not forgotten — tracked for later.</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  MoSCoW prioritisation as applied in Wiegers' <em>Software Requirements</em>, Chapter 16. Originally developed by Dai Clegg for DSDM. The priorities directly inform how <code>/gvm-tech-spec</code> decomposes the work — Must-haves are built first.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="lifecycle">Where This Fits</h2>
+
+<p>
+  <code>/gvm-requirements</code> is the first step in a skill chain. Each command
+  produces an artifact that feeds the next:
+</p>
+
+<div class="pipeline">
+  <span class="label">GVM v2.0 pipeline</span>
+  [/gvm-init] &rarr; [/gvm-impact-map] &rarr; <strong>/gvm-requirements</strong> &rarr; /gvm-test-cases &rarr; /gvm-tech-spec &rarr; [/gvm-design-review] &rarr; [/gvm-walking-skeleton] &rarr; /gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; [/gvm-explore-test] &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy
+</div>
+
+<p>
+  The requirements document is <strong>complete but implementation-agnostic</strong>.
+  It captures what the system must do and how success is measured, but makes no
+  decisions about architecture, technology, or task decomposition. Those decisions
+  belong to downstream commands.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Feedback loop</div>
+  <p>The <code>/gvm-test-cases</code> command may surface ambiguities in the requirements. When this happens, update the requirements document before proceeding to <code>/gvm-tech-spec</code>.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="tips">Tips</h2>
+
+<ul>
+  <li><strong>Be honest about uncertainty.</strong> "I'm not sure yet" is a valid answer. The skill will log it as an open question rather than forcing a premature decision.</li>
+  <li><strong>Push back on questions.</strong> If something feels irrelevant, say so. The skill respects de-escalation and records your reasoning.</li>
+  <li><strong>Open the HTML as you go.</strong> The document is valid at every step. Seeing the formatted output can help you think about what's missing.</li>
+  <li><strong>Revisit earlier sections.</strong> Just say "let's go back to the user journeys section" — the skill will edit in place rather than rewriting.</li>
+  <li><strong>Don't worry about format.</strong> Focus on answering questions. The skill handles structure, IDs, priorities, and formatting.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

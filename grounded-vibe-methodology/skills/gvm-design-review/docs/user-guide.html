@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-design-review — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue.suggestion { border-left-color: #27ae60; background: #f0f7f0; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+
+    /* ── Score card ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    .tier.critical { background: #c0392b; }
+    .tier.important { background: #e67e22; }
+    .tier.minor { background: #7f8c8d; }
+    .tier.suggestion { background: #27ae60; }
+
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+
+    /* ── Coverage matrix ── */
+    .coverage-matrix table { min-width: 600px; }
+    .coverage { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; }
+    .coverage.covered { background: #27ae60; color: #fff; }
+    .coverage.partial { background: #e67e22; color: #fff; }
+    .coverage.missing { background: #c0392b; color: #fff; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026 (v2.1.0)</p>
+<h1>/gvm-design-review</h1>
+<p class="subtitle">
+  Expert-grounded pre-build design validation &mdash; parallel expert panels check whether
+  your design correctly covers every requirement before a line of code is written.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="whats-new">What&rsquo;s new in v2.1.0</h2>
+<p>v2.1.0 adds one user-visible change to this skill. Identifier prefixes (ADR, &ldquo;shared rule N&rdquo;) decode in <code>methodology-changelog.md</code>.</p>
+<ul>
+  <li><strong>Hard Gate 6 &mdash; user owns finding triage (shared rule 28).</strong> Every Critical or Important finding emitted by panels is presented to you before any disposition is recorded. The skill may recommend &ldquo;fix / defer / dismiss&rdquo; per finding but must not decide. Forbidden patterns: recording emitted findings as &ldquo;filtered under strict criterion&rdquo; or &ldquo;deferred to v{N}.{M}.{P} hardening&rdquo; without your input; presenting a verdict before you have seen the findings. Zero-deferred runs are exempt from the summary-count-with-hidden-deferrals rule.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  The <code>/gvm-design-review</code> command answers one question: does the design
+  actually implement the requirements? It does this by running parallel expert panels
+  &mdash; one per design domain &mdash; each checking coverage and best practice
+  through its specific lens.
+</p>
+
+<span class="sidenote">
+  This skill reviews <strong>design correctness</strong>, not document quality and not
+  implementation quality. For document quality, use <code>/gvm-doc-review</code>.
+  For implementation quality, use <code>/gvm-code-review</code>.
+</span>
+
+<p>
+  The review produces a requirements coverage matrix: every requirement ID mapped to
+  a design coverage status (Covered / Partial / Missing). This is the central output.
+  Per-panel findings, cross-domain themes, and &mdash; for full reviews &mdash;
+  0&ndash;10 domain scores sit beneath it.
+</p>
+
+<p>
+  The skill works in two modes. For new projects it reads from the <code>specs/</code>
+  directory produced by <code>/gvm-tech-spec</code>. For existing codebases it can be
+  triggered by <code>/gvm-site-survey</code>, in which case it reads code artefacts
+  directly: schema files for data models, component trees for UI structure, route
+  definitions for API contracts.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="when-to-use">When to Use</h2>
+
+<p>
+  The primary trigger is completing <code>/gvm-tech-spec</code>: you have requirements,
+  you have specs, and you want to verify the specs cover everything before you start
+  building. A design gap caught here costs minutes; the same gap caught mid-build
+  costs hours.
+</p>
+
+<ul>
+  <li><strong>After <code>/gvm-tech-spec</code>, before <code>/gvm-build</code></strong> &mdash; the primary use. Validate that the spec designs are complete and coherent before committing to implementation.</li>
+  <li><strong>After <code>/gvm-site-survey</code></strong> &mdash; for existing codebases. The site survey identifies design concerns; this skill investigates them with a full expert review.</li>
+  <li><strong>After updating specs</strong> &mdash; if requirements change after an initial design review, re-run to check that the spec updates are consistent.</li>
+  <li><strong>Before a major refactor</strong> &mdash; use the site survey path to establish a requirements-coverage baseline before touching the code.</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">The cheapest quality gate</div>
+  <p>Fixing a data model gap in specs takes minutes. Fixing the same gap after the schema is live and populated takes migration scripts, downtime, and re-testing. Run the design review before build, not after.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+  Run without arguments to auto-detect all design domains from your <code>specs/</code>
+  directory:
+</p>
+
+<pre><code>/gvm-design-review</code></pre>
+
+<p>
+  The skill detects which domains are present in your specs, asks which ones you want
+  to review, and asks for depth. You can also be specific:
+</p>
+
+<pre><code>/gvm-design-review data model          # Review data model only
+/gvm-design-review UI                  # Review UI/UX design only
+/gvm-design-review API contracts       # Review API contracts only</code></pre>
+
+<h3 id="prerequisites">Prerequisites</h3>
+
+<table>
+  <caption>Table 1 &mdash; What must exist before running</caption>
+  <thead>
+    <tr><th>Required</th><th>Path</th><th>Why</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Requirements</strong></td><td><code>requirements/requirements.md</code></td><td>The standard the design is validated against. Without requirements, there is nothing to validate against &mdash; run <code>/gvm-requirements</code> first.</td></tr>
+    <tr><td><strong>At least one spec</strong></td><td><code>specs/*.md</code></td><td>The design to review. Run <code>/gvm-tech-spec</code> first. Exception: site survey path reads code artefacts directly.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Site survey path</div>
+  <p>When invoked after <code>/gvm-site-survey</code>, specs are not required. The skill reads schema files, component trees, and route definitions from the codebase instead. Pass the site survey report path and the skill handles the rest.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="domain-selection">Domain Selection</h2>
+
+<p>
+  After scanning your specs, the skill presents the detected design domains and asks
+  which ones to review. You are not forced to review all four &mdash; a backend-only
+  project skips UI/UX; a static site with no external integrations skips API contracts.
+</p>
+
+<table>
+  <caption>Table 2 &mdash; Design domains and detection signals</caption>
+  <thead>
+    <tr><th>Domain</th><th>Activates when specs contain</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Data Model</strong></td><td>ERDs, schema definitions, entity descriptions, database design sections, migration files</td></tr>
+    <tr><td><strong>UI/UX and User Docs</strong></td><td>Wireframes, screen layouts, component hierarchies, user flow diagrams, frontend design sections</td></tr>
+    <tr><td><strong>API / Integration Contracts</strong></td><td>API endpoint definitions, service contracts, integration patterns, multi-service architecture</td></tr>
+    <tr><td><strong>Performance</strong></td><td>Activates when specs contain performance requirements, or when the design involves database queries, API calls, or data-heavy UI screens. Reviews query patterns, caching strategy, pagination, and load handling.</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  If a domain is not detected, its panel does not run. The skill never invents work.
+  If your project has no frontend, no UI/UX panel is dispatched regardless of depth mode.
+</span>
+
+<p>
+  If you invoke the skill with a specific domain argument, the selection step is skipped.
+  If invoked from <code>/gvm-site-survey</code>, the referred domain is pre-selected and
+  defaults to full review; other domains default to quick scan.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="depth-modes">Depth Modes</h2>
+
+<p>
+  After domain selection, the skill asks for depth. Both modes use expert panels.
+  The difference is scope, not whether experts participate.
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Quick scan vs full review</caption>
+  <thead>
+    <tr><th></th><th>Quick scan</th><th>Full review</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Requirements coverage matrix</strong></td><td>Yes</td><td>Yes</td></tr>
+    <tr><td><strong>Expert-informed gap identification</strong></td><td>Yes</td><td>Yes</td></tr>
+    <tr><td><strong>Deep best-practice audit</strong></td><td>No</td><td>Yes</td></tr>
+    <tr><td><strong>Domain scores (0&ndash;10)</strong></td><td>No</td><td>Yes</td></tr>
+    <tr><td><strong>Cross-domain themes</strong></td><td>No</td><td>Yes</td></tr>
+    <tr><td><strong>API boundary contract audit</strong></td><td>No</td><td>Yes</td></tr>
+    <tr><td><strong>Best for</strong></td><td>Sanity check before build</td><td>Pre-build quality gate or post-survey deep dive</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Quick scan is not a lightweight review</div>
+  <p>Quick scan still dispatches expert panels and still checks every requirement against the design. It is "quick" because it does not produce scored deep-dives. If you have time, run a full review &mdash; the coverage matrix is identical either way, but the full review surfaces issues the quick scan would not catch.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Dispatch Panels in Parallel.</strong> All activated panels must be dispatched as concurrent subagents in a single message &mdash; do not review panels sequentially.</li>
+  <li><strong>Load Expert References Before Dispatch.</strong> Read <code>architecture-specialists.md</code> and the relevant per-domain files from <code>references/domain/</code> before writing dispatch prompts &mdash; each prompt must include loaded expert excerpts, not generic descriptions.</li>
+  <li><strong>Write HTML Output.</strong> The review must produce <code>design-review/design-review-{NNN}.html</code>. Review reports are HTML-only &mdash; findings are carried forward in <code>reviews/calibration.md</code>, not in a paired MD file.</li>
+  <li><strong>Update Calibration.</strong> After presenting findings, create or update <code>reviews/calibration.md</code>.</li>
+  <li><strong>Verdict.</strong> Every review includes a verdict: <em>Build from this</em> (ready), <em>Build with caveats</em> (conditionally ready), or <em>Do not build</em> (not ready). The verdict appears in a prominent box at the top of the report.</li>
+</ol>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="expert-panels">Expert Panels</h2>
+
+<p>
+  Expert definitions are loaded from the GVM design system reference files at runtime.
+  The skill reads <code>specs/cross-cutting.md</code> to determine which experts were
+  declared for this project, then activates the panels that match.
+</p>
+
+<table>
+  <caption>Table 4 &mdash; Expert panel sources</caption>
+  <thead>
+    <tr><th>Reference file</th><th>Tier</th><th>When active</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>architecture-specialists.md</code></td><td>Tier 1</td><td>Always</td></tr>
+    <tr><td>Per-domain files from <code>references/domain/</code></td><td>Tier 2a</td><td>Loaded selectively based on which design domains are present: data modelling, UX/interaction, integration, user documentation</td></tr>
+    <tr><td>Per-stack files from <code>references/stack/</code></td><td>Tier 3</td><td>Loaded selectively based on the technology stack declared in the specs</td></tr>
+    <tr><td><code>writing-reference.md</code></td><td>&mdash;</td><td>Loaded by the UI/UX panel for user documentation assessment</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  The same experts who guided the specification phase review the design. Consistency
+  from spec through design review through build is intentional: the experts who find
+  gaps should also guide the fixes (shared rule 3).
+</span>
+
+<p>
+  Each defect-class panel is dispatched as a parallel subagent. All panels run simultaneously:
+  a four-panel full review takes the same wall-clock time as a single-panel review.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="panels">The Four Defect-Class Panels</h2>
+
+<p>
+  Panels are partitioned by defect class, not by domain. Each panel's H3 below describes the
+  defect class it scans for. The tables under each panel illustrate concrete domain-specific
+  concerns the panel may surface during a review &mdash; data-model checks under Coverage,
+  UI/UX checks under Contracts, API/integration checks under Structural Soundness, performance
+  checks under Implementability. The tables are domain checklists the panel <em>applies</em>;
+  they are not the panel's definition. The defect-class mandate is the contract.
+</p>
+
+<h3 id="panel-requirements-coverage">Panel A &mdash; Requirements Coverage</h3>
+
+<p>
+  Checks whether every requirement is traceable to a design element.
+  Missing coverage is a Critical finding &mdash; requirements that have no
+  corresponding design artefact will become missing features at build time.
+</p>
+
+<table>
+  <caption>Table 5 &mdash; Data model checks</caption>
+  <thead>
+    <tr><th>Check</th><th>What it looks for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Entity coverage</strong></td><td>Every noun/concept in requirements that implies persistent data has a table or entity. Missing entities are Critical findings.</td></tr>
+    <tr><td><strong>Relationship correctness</strong></td><td>Cardinalities (1:1, 1:many, many:many) match requirement language. "A user can have multiple addresses" must be 1:many, not a JSON blob.</td></tr>
+    <tr><td><strong>Attribute completeness</strong></td><td>Every data field implied by requirements has a column. "Track when the order was placed, shipped, and delivered" needs three timestamps.</td></tr>
+    <tr><td><strong>Normalisation</strong></td><td>Schema is normalised appropriately for the access patterns. Over-normalisation slows reads; under-normalisation creates update anomalies.</td></tr>
+    <tr><td><strong>Index strategy</strong></td><td>Query patterns implied by requirements have supporting indexes. "Search by location" implies a spatial index; "sort by most recent" implies a timestamp index.</td></tr>
+    <tr><td><strong>Data lifecycle</strong></td><td>Requirements implying retention, archival, or deletion have corresponding schema support: soft deletes, archive tables, or TTL.</td></tr>
+  </tbody>
+</table>
+
+<h3 id="panel-interface-contracts">Panel B &mdash; Interface Contracts</h3>
+
+<p>
+  Checks whether API contracts, data schemas, and component interfaces are internally
+  consistent and aligned across boundaries. Contract mismatches &mdash; backend response
+  shape vs frontend expectation, schema type vs API type &mdash; are bugs that survive to runtime.
+</p>
+
+<table>
+  <caption>Table 6 &mdash; UI/UX checks</caption>
+  <thead>
+    <tr><th>Check</th><th>What it looks for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Journey coverage</strong></td><td>Every user journey in requirements has a corresponding screen flow. Journeys with no UI representation are Critical findings.</td></tr>
+    <tr><td><strong>Interaction completeness</strong></td><td>Every action the user needs (create, edit, delete, search, filter, sort) has a UI affordance. Missing affordances are missing requirements implementations.</td></tr>
+    <tr><td><strong>Navigation depth</strong></td><td>Common tasks take fewer clicks than rare tasks. The panel counts clicks for the top five user journeys and flags any common journey exceeding three clicks.</td></tr>
+    <tr><td><strong>Consistency</strong></td><td>Same action, same gesture, same location across all screens. A "save" button that moves between screens is flagged.</td></tr>
+    <tr><td><strong>Error states</strong></td><td>Every input has a defined error state. Every destructive action has a confirmation. Every long-running operation has a progress indicator.</td></tr>
+    <tr><td><strong>Data display quality</strong></td><td>Chart types match the data. Data-ink ratio is high. Numbers are right-aligned in tables. No decorative elements that carry no information.</td></tr>
+    <tr><td><strong>Accessibility</strong></td><td>Keyboard navigation path defined. Colour contrast meets WCAG AA (4.5:1 for text). Focus management for modals. Screen reader labels for interactive elements.</td></tr>
+    <tr><td><strong>User documentation</strong></td><td>Help content is task-oriented, not feature-oriented. Microcopy is specific and actionable. Error messages tell the user what went wrong and what to do (&ldquo;Email address is required&rdquo; not &ldquo;Validation error&rdquo;).</td></tr>
+  </tbody>
+</table>
+
+<h3 id="panel-structural-soundness">Panel C &mdash; Structural Soundness</h3>
+
+<p>
+  Checks whether the design is structurally sound &mdash; normalisation, layering,
+  separation of concerns, and performance characteristics. Structural defects
+  create systemic problems that are expensive to fix after build.
+</p>
+
+<table>
+  <caption>Table 7 &mdash; API/integration checks</caption>
+  <thead>
+    <tr><th>Check</th><th>What it looks for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Endpoint coverage</strong></td><td>Every operation implied by requirements has a corresponding API endpoint. Missing endpoints are Critical findings.</td></tr>
+    <tr><td><strong>Contract alignment</strong></td><td>Backend response shape matches what the frontend spec consumes. Field names, types, nesting, and optional/required markers must agree exactly.</td></tr>
+    <tr><td><strong>Error contract</strong></td><td>Every endpoint has defined error responses with a consistent shape. The frontend knows what a 400, 404, and 500 look like from this API.</td></tr>
+    <tr><td><strong>Pagination</strong></td><td>List endpoints that could return unbounded results have a pagination contract. Unbounded list responses are a design defect.</td></tr>
+    <tr><td><strong>Auth/authorisation</strong></td><td>Role-based access requirements are reflected in the endpoint design. The contract includes the auth mechanism and which roles are required where.</td></tr>
+    <tr><td><strong>Idempotency</strong></td><td>Create and update operations that could be retried (network failures, double-clicks) are designed to be idempotent, not accidentally so.</td></tr>
+  </tbody>
+</table>
+
+<h3 id="panel-implementability">Panel D &mdash; Implementability</h3>
+
+<p>
+  Checks whether the design can actually be built as specified &mdash; ambiguous
+  requirements, contradictory constraints, missing edge cases, and feasibility
+  gaps. Implementability defects surface during build as blocked work and rework.
+</p>
+
+<table>
+  <caption>Table 8 &mdash; Performance checks</caption>
+  <thead>
+    <tr><th>Check</th><th>What it looks for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>N+1 query patterns</strong></td><td>Screens or endpoints displaying lists with related data should not require one query per item. 50 orders with line items should not mean 51 queries.</td></tr>
+    <tr><td><strong>Unbounded queries</strong></td><td>Any query that returns all rows without a LIMIT or pagination. &ldquo;Show all transactions&rdquo; with no ceiling is a performance time bomb.</td></tr>
+    <tr><td><strong>Missing indexes</strong></td><td>Query patterns implied by requirements (search by name, filter by date, sort by status) have appropriate indexes in the schema design.</td></tr>
+    <tr><td><strong>Caching strategy</strong></td><td>Frequently-read, infrequently-written data has a caching approach. Missing cache strategy for hot-path data (sessions, frequently accessed records) is an Important finding.</td></tr>
+    <tr><td><strong>Response payload size</strong></td><td>API endpoints serving the frontend return appropriately scoped responses. An endpoint returning 50 fields when the frontend needs 3 is a concern.</td></tr>
+    <tr><td><strong>Sync vs async</strong></td><td>Potentially slow operations (file processing, email, report generation, third-party APIs) are designed as asynchronous with status polling or notification.</td></tr>
+    <tr><td><strong>Frontend performance</strong></td><td>Data-heavy screens have pagination or virtualisation. Data loads on demand, not all upfront. Bundle size is reasonable for the library choices.</td></tr>
+  </tbody>
+</table>
+
+<p>
+  Panel D also runs a third pass &mdash; <strong>MVP-1 (Minimum Viable Product first
+  ordering)</strong> compliance &mdash; that checks whether the design admits a thin
+  end-to-end vertical slice delivering user-visible value as the first chunk, or whether it
+  forces a horizontal build order (all data layer first, then services, then UI) that defers
+  user-visible behaviour to the final phase. Designs that structurally prevent MVP-1 are
+  flagged so they can be reshaped before <code>/gvm-tech-spec</code> Phase 5 refuses to
+  sequence them. Exemption is permitted for the four named project shapes (<code>library</code>,
+  <code>refactor</code>, <code>performance-driven</code>, <code>fully-specified</code>).
+  Horizontal architectural consistency across slices is required and is NOT a violation; the
+  rule is about the build <em>sequence</em>, not the design <em>shape</em>.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="process">Review Process</h2>
+
+<table>
+  <caption>Table 9 &mdash; Review process steps</caption>
+  <thead>
+    <tr><th>Step</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="phase">1</span> Detect domains</td>
+      <td>Reads <code>specs/*.md</code> and identifies which design domains are present. If invoked from <code>/gvm-site-survey</code>, reads code artefacts instead.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">2</span> Select domains</td>
+      <td>Presents detected domains as a checklist. User confirms which to review. Skipped if a specific domain was passed as an argument or if invoked from site survey.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">3</span> Select depth</td>
+      <td>User chooses quick scan or full review. Site survey referrals default to full review on the referred domain, quick scan on others.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4</span> Load context</td>
+      <td>Reads requirements, test cases (if present), relevant spec sections, calibration data (if present), and expert excerpts from the GVM design system reference files.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5</span> Dispatch panels</td>
+      <td>Launches one subagent per selected domain, all in parallel. Each subagent receives its expert identities, requirements, spec sections, domain-specific checklist, and depth mode.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">6</span> Synthesise</td>
+      <td>Collects findings from all panels. Deduplicates cross-panel findings. Cross-references: a data model gap that also causes an API contract gap is elevated in severity.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">7</span> Write report</td>
+      <td>Outputs HTML to <code>design-review/design-review-NNN.html</code> (review reports are HTML-only). Scans for existing files and increments &mdash; never overwrites.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">8</span> Present consolidated review</td>
+      <td>Presents the requirements coverage matrix, per-panel findings with severity, cross-panel themes, API boundary contract audit, and domain scores (full review only).</td>
+    </tr>
+    <tr>
+      <td><span class="phase">9</span> Offer next steps</td>
+      <td>Offers: fix design gaps in specs, proceed to build, run <code>/gvm-doc-review</code> on updated specs, or re-run site survey.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">10</span> Update calibration</td>
+      <td>Creates or updates <code>reviews/calibration.md</code> with score history, dimension benchmarks, anchor examples, recurring findings, and build check promotion. Mandatory after every review regardless of which next step the user selects.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Build check promotion</div>
+  <p>During calibration update, findings that have been flagged in 3 or more consecutive rounds (systemic) or that regressed after being resolved are promoted to <code>reviews/build-checks.md</code>. This file is loaded by <code>/gvm-build</code> during prompt generation, injecting &ldquo;Known Patterns to Avoid&rdquo; directly into chunk prompts. The result is a feedback loop: review findings become build checks, which prevent the same findings from recurring. Tier 1 checks (general practice) are permanent. Tier 2 checks (project-specific) are flagged for retirement after 3 quiet rounds, but you decide whether to retire them.</p>
+</div>
+
+<div class="callout">
+  <div class="callout-label">Parallel is the point</div>
+  <p>All defect-class panels run as concurrent subagents dispatched in a single message. A four-panel full review takes the same wall-clock time as a single-panel review.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="site-survey-integration">Site Survey Integration</h2>
+
+<p>
+  When <code>/gvm-site-survey</code> identifies design concerns in an existing codebase,
+  it can recommend <code>/gvm-design-review</code> with specific focus areas. This is
+  the second entry point alongside the post-spec path.
+</p>
+
+<p>
+  When invoked with a site survey referral:
+</p>
+
+<ul>
+  <li>The skill reads the site survey report for the specific concerns the survey identified.</li>
+  <li>It defaults to full review on the referred domain and quick scan on others.</li>
+  <li>For codebases without formal specs, it reads code artefacts directly: schema files, component trees, route definitions.</li>
+  <li>Findings are explicitly linked to the survey: &ldquo;The site survey flagged X. This review confirms/contradicts the concern.&rdquo;</li>
+</ul>
+
+<span class="sidenote">
+  The site survey path does not require <code>specs/</code> to exist. The design review
+  adapts its source material to what is available.
+</span>
+
+<div class="callout">
+  <div class="callout-label">Existing codebases without specs</div>
+  <p>The design review is not only for greenfield projects. If you have a codebase without formal specs, run <code>/gvm-site-survey</code> first. The survey will identify which design domains have concerns, and the design review will investigate them against whatever requirements documentation you have.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="severity">Severity Levels</h2>
+
+<p>
+  Every finding is classified into one of four levels. The standard for classification
+  is the requirements &mdash; not abstract best practice. A design that violates an
+  expert principle but correctly implements the requirements is at most a Suggestion,
+  not Critical.
+</p>
+
+<h3 id="critical"><span class="tier critical">CRITICAL</span> Must fix before building</h3>
+
+<p>
+  A requirement has no design representation at all. You cannot build it from this design.
+</p>
+
+<div class="issue critical">
+  <div class="issue-title">RE-8 (order history) has no schema entity</div>
+  <div class="issue-detail">The requirements specify that users can view past orders with status, date, and line items. The schema has no orders table, no order_items table, and no order_status type. This requirement cannot be built from the current data model.</div>
+  <div class="issue-location">Data Model panel &rarr; specs/spec-data.md &mdash; covers RE-8</div>
+</div>
+
+<div class="issue critical">
+  <div class="issue-title">Backend <code>GET /users/{id}</code> returns <code>full_name</code>; frontend expects <code>firstName</code> + <code>lastName</code></div>
+  <div class="issue-detail">The backend spec defines a single <code>full_name</code> string field. The frontend spec destructures <code>firstName</code> and <code>lastName</code> separately. This is a runtime integration failure. Agree on a contract before building both sides.</div>
+  <div class="issue-location">API panel &rarr; specs/spec-api.md &sect;4 vs specs/spec-frontend.md &sect;7</div>
+</div>
+
+<div class="callout">
+  <div class="callout-label">Finding quality gate</div>
+  <p>Every finding must pass the consumer impact test: &ldquo;A developer implementing this design would [concrete outcome].&rdquo; Design findings propagate to implementation &mdash; a wrong schema is harder to fix after code is built on it &mdash; so the threshold is strict. But defence-in-depth findings are theoretical when the defended-against scenario is already prevented by a stronger mechanism. State the precondition for failure: if it starts with &ldquo;if a developer&hellip;&rdquo; it is real; if &ldquo;if an attacker gains write access to internal files&hellip;&rdquo; it is theoretical.</p>
+</div>
+
+<h3 id="important"><span class="tier important">IMPORTANT</span> Should fix before building</h3>
+
+<p>
+  The design partially covers a requirement but with gaps. Buildable, but the result
+  will be incomplete.
+</p>
+
+<div class="issue important">
+  <div class="issue-title">Search by location (RE-14) has no spatial index in schema</div>
+  <div class="issue-detail">The requirements specify location-based search. The schema has <code>latitude</code> and <code>longitude</code> columns but no spatial index or PostGIS extension. Queries will be full table scans. Add a spatial index or use a geography column type.</div>
+  <div class="issue-location">Data Model panel &rarr; specs/spec-data.md &sect;Locations table</div>
+</div>
+
+<h3 id="minor"><span class="tier minor">MINOR</span> Covers requirement but violates best practice</h3>
+
+<p>
+  The design covers the requirement but an expert's framework identifies a better
+  approach. Functional but suboptimal.
+</p>
+
+<div class="issue minor">
+  <div class="issue-title">Pagination contract uses page/pageSize; cursor-based preferred for ordered lists</div>
+  <div class="issue-detail">The requirements do not specify a pagination strategy. The current design uses offset pagination, which produces incorrect results if rows are inserted between page requests. Cursor-based pagination eliminates this class of bug. This is a design preference, not a requirements violation.</div>
+  <div class="issue-location">API panel &rarr; specs/spec-api.md &sect;Listings endpoint</div>
+</div>
+
+<h3 id="suggestion"><span class="tier suggestion">SUGGESTION</span> Alternative to consider</h3>
+
+<p>
+  An approach that would improve the design, not a gap.
+</p>
+
+<div class="issue suggestion">
+  <div class="issue-title">Soft deletes on <code>users</code> table would simplify audit log queries</div>
+  <div class="issue-detail">The requirements include an audit trail (RE-19). Adding a <code>deleted_at</code> timestamp rather than hard-deleting users would let audit queries join directly to the users table without needing an archive table. The requirements do not require this approach &mdash; it is an efficiency suggestion.</div>
+  <div class="issue-location">Data Model panel &rarr; specs/spec-data.md &sect;Users table</div>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output</h2>
+
+<p>
+  Each review produces a new numbered HTML report. Review reports are HTML-only (per shared rule 13 exception) — no paired Markdown is produced. Findings are carried forward in <code>reviews/calibration.md</code>, not a paired MD file. Existing files are never overwritten:
+</p>
+
+<pre><code>design-review/design-review-001.html
+design-review/design-review-002.html
+...</code></pre>
+
+<p>
+  The HTML report follows the same Tufte/Few design system used across all GVM pipeline
+  documents. Structure:
+</p>
+
+<ol>
+  <li><strong>Executive summary</strong> &mdash; domains reviewed, overall coverage assessment, critical gaps at a glance</li>
+  <li><strong>Requirements coverage matrix</strong> &mdash; every requirement ID mapped to its design coverage status</li>
+  <li><strong>Data Model findings</strong> (if reviewed) &mdash; entity coverage, relationship correctness, normalisation assessment</li>
+  <li><strong>UI/UX findings</strong> (if reviewed) &mdash; journey coverage, navigation audit, accessibility, user documentation</li>
+  <li><strong>API Contract findings</strong> (if reviewed) &mdash; endpoint coverage, contract alignment, error contract</li>
+  <li><strong>Cross-domain themes</strong> (full review) &mdash; issues that span multiple panels, with elevated severity</li>
+  <li><strong>API boundary contract audit</strong> (full review) &mdash; explicit comparison of backend response shapes vs frontend expectations</li>
+  <li><strong>Domain scores</strong> (full review) &mdash; 0&ndash;10 per domain with rubric anchors and concrete deductions</li>
+</ol>
+
+<h3 id="coverage-matrix">The requirements coverage matrix</h3>
+
+<p>
+  The coverage matrix is mandatory in every review. It appears immediately after the
+  executive summary and gives the user the fastest possible answer to &ldquo;what is missing?&rdquo;
+</p>
+
+<div class="coverage-matrix">
+<table>
+  <caption>Example requirements coverage matrix (excerpt)</caption>
+  <thead>
+    <tr><th>Req ID</th><th>Requirement summary</th><th>Data Model</th><th>UI/UX</th><th>API</th><th>Overall</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>RE-1</td><td>User registration</td><td><span class="coverage covered">Covered</span></td><td><span class="coverage covered">Covered</span></td><td><span class="coverage covered">Covered</span></td><td><span class="coverage covered">Covered</span></td></tr>
+    <tr><td>RE-8</td><td>Order history</td><td><span class="coverage missing">Missing</span></td><td><span class="coverage partial">Partial</span></td><td><span class="coverage missing">Missing</span></td><td><span class="coverage missing">Missing</span></td></tr>
+    <tr><td>RE-14</td><td>Location search</td><td><span class="coverage partial">Partial</span></td><td><span class="coverage covered">Covered</span></td><td><span class="coverage covered">Covered</span></td><td><span class="coverage partial">Partial</span></td></tr>
+    <tr><td>RE-19</td><td>Audit trail</td><td><span class="coverage covered">Covered</span></td><td><span class="coverage covered">Covered</span></td><td><span class="coverage partial">Partial</span></td><td><span class="coverage partial">Partial</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3 id="scores">Domain scores (full review)</h3>
+
+<p>
+  Each domain receives a 0&ndash;10 score with rubric anchors and itemised deductions.
+  Use these to calibrate improvement over successive reviews:
+</p>
+
+<div class="score-card">
+  <div class="overall-score">6.8 / 10</div>
+  <div class="score-breakdown">
+    <div class="score-item">Data Model: 6/10</div>
+    <div class="score-item">UI/UX: 8/10</div>
+    <div class="score-item">API Contracts: 5/10</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline">Where This Fits</h2>
+
+<p>
+  The design review sits between spec and build. It has one standard position in the
+  pipeline and one triggered entry point from site survey:
+</p>
+
+<pre><code>[/gvm-init] → [/gvm-impact-map] → /gvm-requirements → /gvm-test-cases → /gvm-tech-spec
+  → [/gvm-design-review] → [/gvm-walking-skeleton] → /gvm-build → /gvm-code-review
+  → /gvm-test → [/gvm-explore-test] → /gvm-doc-write → /gvm-doc-review → /gvm-deploy
+         ↑
+   you are here
+
+/gvm-site-survey → /gvm-design-review        (existing codebases)
+
+Optional phases shown in [ ].</code></pre>
+
+<p>
+  After the design review, the expected next step is either fixing design gaps in the
+  specs (then optionally re-running <code>/gvm-doc-review</code> on the updated specs)
+  or proceeding to build with acknowledged gaps recorded.
+</p>
+
+<span class="sidenote">
+  <code>/gvm-doc-review</code> checks document quality &mdash; are the specs well-written,
+  traceable, and internally consistent?<br><br>
+  <code>/gvm-design-review</code> checks design correctness &mdash; do the specs actually
+  cover all the requirements?<br><br>
+  They are complementary, not redundant. Run both before build.
+</span>
+
+<div class="callout">
+  <div class="callout-label">Relationship to /gvm-doc-review</div>
+  <p>Both skills review specs, but from different angles. <code>/gvm-doc-review</code> asks: &ldquo;is this spec document high quality?&rdquo; <code>/gvm-design-review</code> asks: &ldquo;does this design cover every requirement?&rdquo; A spec can score 9/10 on document quality while missing three requirements. Run both.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="dual-review">Dual Review</h2>
+
+<p>
+  From round 3 onwards, design review automatically runs a second set of panels
+  in parallel &mdash; <strong>blind panels</strong> with the same experts, requirements,
+  and criteria but no calibration data. Round 3 is the threshold because round 1
+  establishes the first scoring anchor, round 2 establishes expectations, and by
+  round 3 anchoring bias (Tversky &amp; Kahneman, 1974) has had enough history to
+  create systematic blind spots. A reconciliation step merges only genuinely
+  new findings and regressions into the final report. This corrects for calibration
+  blind spots that develop as the reviewer builds expectations from project history.
+</p>
+
+<p>
+  This is the same mechanism used by <code>/gvm-doc-review</code> and
+  <code>/gvm-code-review</code> &mdash; all three review skills share it via
+  shared rule 16.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Blind Review Findings</div>
+  <p>The final report includes a &ldquo;Blind Review Findings&rdquo; section listing issues that only the blind panel caught &mdash; the calibration reviewer&rsquo;s blind spots. No action is needed to trigger dual review; it activates automatically once the calibration file has sufficient history (2+ score rows from different dates).</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="tips">Tips</h2>
+
+<ul>
+  <li><strong>API contract alignment is the most critical check.</strong> Backend/frontend contract mismatches are the bugs most likely to survive to production. They are invisible until runtime and expensive to fix after both sides are built. The design review catches them in specs.</li>
+  <li><strong>Fix Critical findings before writing code.</strong> A Missing entry in the coverage matrix means the current design cannot produce the feature. There is no point building until the design gap is resolved.</li>
+  <li><strong>Cross-domain themes matter more than per-domain findings.</strong> When multiple panels flag the same issue independently, it is almost certainly real. Elevated findings in the synthesis section should be resolved first.</li>
+  <li><strong>Quick scan is enough for a sanity check.</strong> If you completed <code>/gvm-tech-spec</code> and want a fast coverage check before starting build, quick scan answers the essential question: is everything represented in the design?</li>
+  <li><strong>Use full review as a formal quality gate.</strong> For projects where a design defect would be costly &mdash; schema migrations on live data, third-party API integrations &mdash; full review with scores is the appropriate standard before committing to build.</li>
+  <li><strong>The requirements are the standard.</strong> If an expert flags a design choice that violates best practice but the requirements do not require the better approach, it is a Suggestion, not Critical. You are not obliged to build the most elegant possible solution.</li>
+  <li><strong>Re-run after updating specs.</strong> If design review findings lead to spec changes, re-run to confirm the updates are consistent and did not introduce new gaps.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<table>
+  <caption>Common issues and recovery</caption>
+  <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Requirements file not found</td>
+      <td><code>requirements/requirements.md</code> does not exist</td>
+      <td>Run <code>/gvm-requirements</code> first. The design review has nothing to validate against without requirements.</td>
+    </tr>
+    <tr>
+      <td>No design domains detected</td>
+      <td>Specs exist but contain no design content (schema, UI, or API sections)</td>
+      <td>Check that your specs use the expected section keywords. Alternatively, specify the domain directly: <code>/gvm-design-review data model</code>.</td>
+    </tr>
+    <tr>
+      <td>No specs directory found</td>
+      <td><code>/gvm-tech-spec</code> has not been run, and not invoked from site survey</td>
+      <td>Run <code>/gvm-tech-spec</code> first, or use the site survey path if working with an existing codebase.</td>
+    </tr>
+    <tr>
+      <td>Coverage matrix is mostly &ldquo;Partial&rdquo;</td>
+      <td>Specs exist but design sections do not explicitly reference requirement IDs</td>
+      <td>Add requirement ID references to spec sections. The panel can only confirm coverage when the traceability is explicit.</td>
+    </tr>
+    <tr>
+      <td>API panel finds no contracts to review</td>
+      <td>Specs describe an API but without formal endpoint definitions</td>
+      <td>Add a structured endpoint section to your spec with method, path, request shape, response shape, and error codes. The skill cannot audit contracts it cannot read.</td>
+    </tr>
+    <tr>
+      <td>Site survey path finds no schema</td>
+      <td>Codebase uses an ORM or code-first approach with no explicit schema files</td>
+      <td>Point the skill at the model/entity class files instead. The skill reads code artefacts, not just SQL schema files.</td>
+    </tr>
+    <tr>
+      <td>Full review takes too long</td>
+      <td>Large spec set with many domains</td>
+      <td>Use specific domain selection to run one panel at a time, or run quick scan first to identify the highest-priority domain for a full review.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

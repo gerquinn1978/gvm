@@ -1,0 +1,32 @@
+*-review-findings*.html
+.DS_Store
+reviews/
+code-review/
+doc-review/
+design-review/
+working/
+
+# Project build artefacts produced by GVM pipeline runs — not part of the plugin/skill code.
+build/
+requirements/
+specs/
+test-cases/
+test/
+risks/
+impact-map/
+walking-skeleton/
+exploratory-tests/
+STUBS.md
+__pycache__/
+
+# Local tooling caches and per-user editor state.
+.hypothesis/
+.pytest_cache/
+.ruff_cache/
+.claude/
+
+# Coverage tooling output (regenerated per run).
+.coverage
+coverage.json
+coverage.xml
+htmlcov/

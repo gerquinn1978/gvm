@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grounding Produces Measurably Better Output — A Controlled Experiment</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 260px; }
+
+    .sidenote { float: right; clear: right; width: 220px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: "SF Mono", "Consolas", "Liberation Mono", Menlo, monospace; font-size: 0.85rem; }
+
+    .sig { font-weight: 600; }
+    .sig-yes { color: #111; }
+    .sig-no { color: #999; }
+    .effect-large { background: #e8d8c8; }
+    .effect-medium { background: #f0ead8; }
+    .winner { font-weight: 600; }
+
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1.5rem 0; max-width: 640px; }
+    .callout p { margin-bottom: 0.3rem; }
+    .callout p:last-child { margin-bottom: 0; }
+
+    .chart-container { margin: 1.5rem 0 2rem; max-width: 900px; }
+    .chart-container figcaption { font-style: italic; font-size: 0.88rem; color: #666; margin-bottom: 0.6rem; max-width: 640px; }
+    .chart-container svg { display: block; }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <h1>Grounding Produces Measurably Better Output</h1>
+    <p class="subtitle">A controlled experiment across three model families: 180 dashboards, 1,080 blind reviews, dose-response results replicated in Claude, GPT, and Gemini.</p>
+    <p class="author" style="font-size: 0.9rem; color: #666;">Conor Brennan &amp; Gerard Quinn</p>
+    <p class="date" style="margin-bottom: 2rem;">April 2026</p>
+
+    <div style="background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1.5rem 0; max-width: 640px; font-size: 0.92rem;">
+      <strong>This paper in context.</strong> This is the experimental evidence paper. The experiment was run using Assay, a tool built with the methodology itself &mdash; see the case study <em>Building a Production Tool with GVM</em>. For the methodology the experiment validates, see <em>The Grounded Vibe Methodology</em>. For why the mechanism works at the architecture level, see <em>Why Citation-Based Activation Works</em>. For the pipeline structure, see <em>Well-Engineered Software Needs an End-to-End Pipeline</em>.
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="summary">The finding in one paragraph</h2>
+
+    <p>One hundred and eighty market risk dashboards were generated across three AI model families &mdash; Anthropic Claude Opus 4.6, Google Gemini 3.1 Pro, and OpenAI GPT-5.4 &mdash; each under three grounding conditions: no expert grounding, design-only grounding (Tufte and Few), and full grounding (design plus domain plus writing experts). Each model's 60 dashboards were reviewed twice by its own reviewers: once using criteria derived from ungrounded consensus, once using criteria derived from named experts' published principles. Under ungrounded review, no model produces the predicted dose-response ordering. Under expert-grounded review, all three models produce the same result: G1&nbsp;&lt;&nbsp;G2&nbsp;&lt;&nbsp;G3, with large effect sizes and high statistical significance. The ranking reversal between review conditions replicates identically across three independent model families. The grounding effect is not a property of any single model's training &mdash; it is a general property of how large language models respond to citation-based expert grounding.</p>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="design">Same prompts, three model families, 1,080 reviews</h2>
+
+    <p>The experiment tests a simple hypothesis: AI output improves progressively when the prompt includes citations to named experts with specific, published principles. Three levels of grounding define the independent variable:</p>
+
+    <ul>
+      <li><strong>Group 1</strong> (20 dashboards per model) &mdash; ungrounded. The task prompt only.</li>
+      <li><strong>Group 2</strong> (20 dashboards per model) &mdash; design-grounded. Task plus Edward Tufte (<em>The Visual Display of Quantitative Information</em>) and Stephen Few (<em>Show Me the Numbers</em>, <em>Information Dashboard Design</em>) with specific principles: maximise data-ink ratio, eliminate chartjunk, use bullet graphs and sparklines, alert by exception.</li>
+      <li><strong>Group 3</strong> (20 dashboards per model) &mdash; fully grounded. Design experts plus Philippe Jorion (<em>Value at Risk</em>) and John Hull (<em>Options, Futures, and Other Derivatives</em>) for domain, plus Jean-Luc Doumont (<em>Trees, Maps, and Theorems</em>) and William Zinsser (<em>On Writing Well</em>) for structure and labelling.</li>
+    </ul>
+
+    <span class="sidenote">The task: create a single-page HTML market risk dashboard displaying portfolio summary, VaR at two confidence levels, Expected Shortfall, Greeks, stress test results, backtesting, and concentration data. Identical requirements for all groups and all models. The only variable is the grounding paragraph prepended to the prompt.</span>
+
+    <p>Each model generated 60 dashboards (20 per group). Dashboards were shuffled into random order, stripped of group identifiers, and reviewed blind. Each dashboard received 3 independent reviews under each of two conditions:</p>
+
+    <table>
+      <caption>Table 1. Experimental structure. Each cell is an independent model run.</caption>
+      <thead>
+        <tr><th>Model</th><th>Provider</th><th class="num">Dashboards</th><th class="num">Exp A reviews</th><th class="num">Exp B reviews</th><th class="num">Total reviews</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Claude Opus 4.6</td><td>Anthropic</td><td class="num">60</td><td class="num">180</td><td class="num">180</td><td class="num">360</td></tr>
+        <tr><td>Gemini 3.1 Pro Preview</td><td>Google</td><td class="num">60</td><td class="num">180</td><td class="num">180</td><td class="num">360</td></tr>
+        <tr><td>GPT-5.4</td><td>OpenAI</td><td class="num">60</td><td class="num">180</td><td class="num">180</td><td class="num">360</td></tr>
+        <tr style="border-top: 2px solid #333;"><td><strong>Total</strong></td><td></td><td class="num"><strong>180</strong></td><td class="num"><strong>540</strong></td><td class="num"><strong>540</strong></td><td class="num"><strong>1,080</strong></td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Experiment A</strong> (ungrounded review) used 8 scoring dimensions derived empirically: five ungrounded agents independently proposed dimensions for evaluating a static market risk dashboard, and only those cited by 4 or more were adopted. The criteria contain no reference to any design methodology or named expert.</p>
+
+    <p><strong>Experiment B</strong> (expert-grounded review) used 11 dimensions derived directly from the cited experts' published principles &mdash; Tufte for data-ink ratio and chartjunk, Few for chart type and alert design, Jorion for VaR presentation, Hull for Greeks, Doumont for message-driven structure, Zinsser for labelling economy. Each dimension includes explicit scoring anchors tied to the expert's stated standards.</p>
+
+    <span class="sidenote">The experimental structure follows Campbell &amp; Stanley (<em>Experimental and Quasi-Experimental Designs for Research</em>, 1963) for between-subjects design with randomisation. Sample size (n&nbsp;=&nbsp;20 per group) follows Cohen (<em>Statistical Power Analysis for the Behavioral Sciences</em>, 2nd ed., 1988) for detecting medium effects (d&nbsp;=&nbsp;0.5) at 80% power.</span>
+
+    <p>The same dashboards were reviewed under both conditions. Experiment B was not a new production run &mdash; it was a second review of the same 60 artefacts per model. This isolates the review instrument as the variable: same dashboards, different evaluation framework, different conclusions.</p>
+
+    <h3 id="contamination">Comment contamination and deblinding</h3>
+
+    <p>During the Gemini and OpenAI runs, dashboards were found to contain expert names in their HTML. Gemini embedded names in CSS comments (<code>/* Tufte/Few principles */</code>). GPT-5.4 went further, placing attribution in visible footer text (<em>"Design grounded in Few and Tufte principles"</em>) and CSS class names (<code>.few-table</code>). A reviewer reading these files would know which group produced the dashboard.</p>
+
+    <p>All comments were stripped automatically using Assay's <code>strip</code> command. Visible text containing expert names or design-principle terminology was identified and removed manually. All three models required stripping: Claude embedded names in CSS and HTML comments, Gemini in CSS comments, and GPT-5.4 in visible footer text, subtitles, and CSS class names. Automated blindness verification should be a standard step between generation and review in any experiment using expert grounding.</p>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="reversal">Expert review flips the group ranking in all three models</h2>
+
+    <figure class="chart-container">
+      <figcaption>Figure 1. Overall group means under both review conditions, all three models. Under ungrounded review (top rows), G2 never ranks highest. Under expert review (bottom rows), the dose-response G1&nbsp;&lt;&nbsp;G2&nbsp;&lt;&nbsp;G3 appears in all three models.</figcaption>
+      <svg id="ranking-chart" role="img" aria-label="Six-row ranking comparison across models and experiments"></svg>
+    </figure>
+
+    <table>
+      <caption>Table 2. Overall scores and rankings under both review conditions.</caption>
+      <thead>
+        <tr><th></th><th colspan="2" style="text-align:center; border-bottom: 1px solid #999;">Experiment A (ungrounded)</th><th colspan="2" style="text-align:center; border-bottom: 1px solid #999;">Experiment B (expert)</th></tr>
+        <tr><th>Model</th><th>Group means</th><th>Ranking</th><th>Group means</th><th>Ranking</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Claude Opus 4.6</td><td class="num">G1: 8.19 &ensp; G2: 7.68 &ensp; G3: 8.31</td><td>G2 &lt; G1 &lt; G3</td><td class="num">G1: 6.68 &ensp; G2: 7.58 &ensp; G3: 8.35</td><td class="sig sig-yes">G1 &lt; G2 &lt; G3</td></tr>
+        <tr><td>Gemini 3.1 Pro</td><td class="num">G1: 8.56 &ensp; G2: 8.43 &ensp; G3: 8.44</td><td>G2 &lt; G3 &lt; G1</td><td class="num">G1: 8.16 &ensp; G2: 8.71 &ensp; G3: 9.27</td><td class="sig sig-yes">G1 &lt; G2 &lt; G3</td></tr>
+        <tr><td>GPT-5.4</td><td class="num">G1: 7.69 &ensp; G2: 7.47 &ensp; G3: 7.74</td><td>G2 &lt; G1 &lt; G3</td><td class="num">G1: 6.59 &ensp; G2: 7.74 &ensp; G3: 8.17</td><td class="sig sig-yes">G1 &lt; G2 &lt; G3</td></tr>
+      </tbody>
+    </table>
+
+    <p>The pattern is consistent across all three models:</p>
+
+    <ul>
+      <li><strong>Experiment A:</strong> G2 (design-grounded) always ranks lowest or near-lowest. Ungrounded reviewers cannot see the design improvement. Two models (Claude Opus 4.6, GPT-5.4) produce a V-shape where design grounding appears to make things <em>worse</em>. Gemini's ungrounded reviewers find no significant group difference at all (p&nbsp;=&nbsp;0.197).</li>
+      <li><strong>Experiment B:</strong> All three models produce the identical ranking G1&nbsp;&lt;&nbsp;G2&nbsp;&lt;&nbsp;G3, all with p&nbsp;&lt;&nbsp;0.001. The dose-response hypothesis &mdash; more grounding produces progressively better output &mdash; holds across model families.</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>The ranking reversal is the central finding.</strong> The same dashboards, scored by the same model, produce opposite conclusions depending on whether the reviewer has an expert framework. The quality is in the dashboards. The ability to see it is in the reviewer.</p>
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="shifts">Expert reviewers are disproportionately harder on ungrounded output</h2>
+
+    <table>
+      <caption>Table 3. Per-group shift in overall score from Experiment A to Experiment B. Negative means expert reviewers scored lower than ungrounded reviewers.</caption>
+      <thead>
+        <tr><th>Group</th><th class="num">Claude Opus 4.6</th><th class="num">Gemini 3.1 Pro</th><th class="num">GPT-5.4</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>G1 (ungrounded)</td><td class="num">&minus;1.51</td><td class="num">&minus;0.40</td><td class="num">&minus;1.09</td></tr>
+        <tr><td>G2 (design-grounded)</td><td class="num">&minus;0.10</td><td class="num">+0.28</td><td class="num">+0.27</td></tr>
+        <tr><td>G3 (fully grounded)</td><td class="num">+0.04</td><td class="num">+0.83</td><td class="num">+0.42</td></tr>
+      </tbody>
+    </table>
+
+    <figure class="chart-container">
+      <figcaption>Figure 2. Per-group shift from Experiment A to Experiment B. G1 drops in all three models. G2 and G3 hold steady or rise. Expert reviewers penalise ungrounded output while recognising grounded quality.</figcaption>
+      <svg id="shift-chart" role="img" aria-label="Grouped bar chart of score shifts"></svg>
+    </figure>
+
+    <p>The shift is not uniform. Expert reviewers penalise G1 heavily in all three models (Claude &minus;1.51, GPT-5.4 &minus;1.09, Gemini &minus;0.40) &mdash; they see the chartjunk, wrong chart types, and absent information hierarchy that ungrounded reviewers accepted. They barely penalise G2 (all three models show shifts near zero or positive). G3 shifts upward in Gemini (+0.83) and GPT-5.4 (+0.42), and holds steady in Claude (+0.04), as expert reviewers recognise the message-driven structure and domain presentation that ungrounded reviewers could not evaluate.</p>
+
+    <p>The interaction between review condition and group is the statistical evidence that the ranking reversal is real. Expert review does not just change scores &mdash; it changes which group is worst.</p>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="invisible">Design grounding is invisible without a design framework</h2>
+
+    <p>Experiment B scores each dashboard on 11 dimensions, each grounded in a specific expert's published principles. The dimension-level results reveal <em>where</em> the grounding effect operates &mdash; and where it does not.</p>
+
+    <h3 id="design-dims">The Tufte/Few dimensions: largest effects, consistent across models</h3>
+
+    <table>
+      <caption>Table 4. Experiment B means for design dimensions (Tufte/Few). These are the dimensions that ungrounded review could not see.</caption>
+      <thead>
+        <tr><th>Dimension</th><th>Expert</th><th>Model</th><th class="num">G1</th><th class="num">G2</th><th class="num">G3</th><th class="num">d (G1 vs G2)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="3">Data-ink ratio</td><td rowspan="3">Tufte</td><td>Claude Opus 4.6</td><td class="num">5.17</td><td class="num winner">8.18</td><td class="num">8.22</td><td class="num">&minus;7.87</td></tr>
+        <tr><td>Gemini 3.1 Pro</td><td class="num">8.78</td><td class="num winner">9.32</td><td class="num">9.57</td><td class="num">&minus;1.15</td></tr>
+        <tr><td>GPT-5.4</td><td class="num">4.70</td><td class="num winner">8.00</td><td class="num">7.98</td><td class="num">&minus;10.10</td></tr>
+        <tr><td rowspan="3">Chartjunk absence</td><td rowspan="3">Tufte</td><td>Claude Opus 4.6</td><td class="num">5.18</td><td class="num winner">9.00</td><td class="num">9.00</td><td class="num">&minus;10.71</td></tr>
+        <tr><td>Gemini 3.1 Pro</td><td class="num">9.28</td><td class="num winner">10.00</td><td class="num">10.00</td><td class="num">&minus;1.52</td></tr>
+        <tr><td>GPT-5.4</td><td class="num">5.38</td><td class="num winner">9.00</td><td class="num">8.98</td><td class="num">&minus;7.15</td></tr>
+        <tr><td rowspan="3">Chart type</td><td rowspan="3">Few</td><td>Claude Opus 4.6</td><td class="num">6.22</td><td class="num">8.00</td><td class="num winner">8.03</td><td class="num">&minus;4.31</td></tr>
+        <tr><td>Gemini 3.1 Pro</td><td class="num">7.85</td><td class="num winner">9.95</td><td class="num">9.87</td><td class="num">&minus;2.30</td></tr>
+        <tr><td>GPT-5.4</td><td class="num">6.27</td><td class="num winner">8.05</td><td class="num">8.00</td><td class="num">&minus;4.49</td></tr>
+        <tr><td rowspan="3">Semantic colour</td><td rowspan="3">Few/Tufte</td><td>Claude Opus 4.6</td><td class="num">6.25</td><td class="num">7.48</td><td class="num winner">8.20</td><td class="num">&minus;2.62</td></tr>
+        <tr><td>Gemini 3.1 Pro</td><td class="num">7.18</td><td class="num">9.72</td><td class="num winner">9.88</td><td class="num">&minus;2.01</td></tr>
+        <tr><td>GPT-5.4</td><td class="num">6.68</td><td class="num">7.88</td><td class="num winner">7.97</td><td class="num">&minus;2.60</td></tr>
+      </tbody>
+    </table>
+
+    <p>Design grounding works. In all three models, Group 2 scores substantially higher than Group 1 on every Tufte/Few dimension. The effects range from large (Claude Opus 4.6 d&nbsp;=&nbsp;&minus;2.62 on semantic colour) to enormous (GPT-5.4 d&nbsp;=&nbsp;&minus;10.10 on data-ink ratio). These differences were invisible to Experiment A's ungrounded reviewers because they lacked the framework to evaluate them.</p>
+
+    <h3 id="message-structure">Message-driven structure: the Doumont effect</h3>
+
+    <table>
+      <caption>Table 5. Message-driven structure (Doumont) &mdash; the single largest effect in all three models.</caption>
+      <thead>
+        <tr><th>Model</th><th class="num">G1</th><th class="num">G2</th><th class="num">G3</th><th class="num">d (G1 vs G3)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Claude Opus 4.6</td><td class="num">5.25</td><td class="num">5.27</td><td class="num winner">8.95</td><td class="num">&minus;10.70</td></tr>
+        <tr><td>Gemini 3.1 Pro</td><td class="num">5.45</td><td class="num">5.18</td><td class="num winner">9.90</td><td class="num">&minus;7.44</td></tr>
+        <tr><td>GPT-5.4</td><td class="num">4.92</td><td class="num">5.70</td><td class="num winner">9.02</td><td class="num">&minus;16.19</td></tr>
+      </tbody>
+    </table>
+
+    <p>Doumont's principle &mdash; structure by message, not by topic &mdash; produces the most dramatic improvement across all three models. Groups 1 and 2 score between 4 and 6: their panel titles are category labels (<em>"VaR Utilisation"</em>, <em>"Stress Testing"</em>). Group 3 scores 8 to 10: its panel titles convey analytical conclusions (<em>"Two desks are near breach"</em>, <em>"2008-style spread widening remains the worst-case scenario"</em>). Neither Group 1 nor Group 2 received Doumont's guidance. The effect is specific to the grounding content, not a general benefit of longer prompts.</p>
+
+    <span class="sidenote">Note that G2 scores <em>below</em> G1 on message-driven structure in Claude Opus 4.6 and Gemini 3.1 Pro. Design grounding (Tufte/Few) may trade information hierarchy for visual cleanliness. Only the full panel (G3) includes Doumont, and only G3 scores well on this dimension.</span>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="dose-response">More grounding produces progressively better output</h2>
+
+    <table>
+      <caption>Table 6. Dose-response pattern by dimension under expert review. "Yes" means G1&nbsp;&lt;&nbsp;G2&nbsp;&lt;&nbsp;G3 on group means.</caption>
+      <thead>
+        <tr><th>Dimension</th><th>Expert</th><th>Claude Opus 4.6</th><th>Gemini 3.1 Pro</th><th>GPT-5.4</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data-ink ratio</td><td>Tufte</td><td class="sig sig-yes">yes</td><td class="sig sig-yes">yes</td><td class="sig sig-no">no</td></tr>
+        <tr><td>Chartjunk absence</td><td>Tufte</td><td class="sig sig-no">no (ceiling)</td><td class="sig sig-no">no (ceiling)</td><td class="sig sig-no">no</td></tr>
+        <tr><td>Chart type</td><td>Few</td><td class="sig sig-yes">yes</td><td class="sig sig-no">no</td><td class="sig sig-no">no</td></tr>
+        <tr><td>Alert-by-exception</td><td>Few</td><td class="sig sig-yes">yes</td><td class="sig sig-yes">yes</td><td class="sig sig-yes">yes</td></tr>
+        <tr><td>VaR/risk metrics</td><td>Jorion</td><td class="sig sig-no">no</td><td class="sig sig-no">no</td><td class="sig sig-no">no</td></tr>
+        <tr><td>Greeks/sensitivity</td><td>Hull</td><td class="sig sig-no">no</td><td class="sig sig-no">no</td><td class="sig sig-yes">yes</td></tr>
+        <tr><td>Message structure</td><td>Doumont</td><td class="sig sig-yes">yes</td><td class="sig sig-no">no (G2&lt;G1)</td><td class="sig sig-yes">yes</td></tr>
+        <tr><td>Labelling economy</td><td>Zinsser</td><td class="sig sig-yes">yes</td><td class="sig sig-yes">yes</td><td class="sig sig-yes">yes</td></tr>
+        <tr><td>Data formatting</td><td>Few</td><td class="sig sig-yes">yes</td><td class="sig sig-no">no</td><td class="sig sig-yes">yes</td></tr>
+        <tr><td>Semantic colour</td><td>Few/Tufte</td><td class="sig sig-yes">yes</td><td class="sig sig-yes">yes</td><td class="sig sig-yes">yes</td></tr>
+        <tr><td>Completeness</td><td>(control)</td><td class="sig sig-yes">yes</td><td class="sig sig-no">no</td><td class="sig sig-no">no</td></tr>
+        <tr style="border-top: 2px solid #333;"><td><strong>Overall</strong></td><td></td><td class="sig sig-yes"><strong>yes</strong></td><td class="sig sig-yes"><strong>yes</strong></td><td class="sig sig-yes"><strong>yes</strong></td></tr>
+      </tbody>
+    </table>
+
+    <p>The overall dose-response holds in all three models. At the dimension level, three patterns are stable across models:</p>
+
+    <ol>
+      <li><strong>Labelling economy and semantic colour show dose-response in all three.</strong> These are the individually most consistent dimensions.</li>
+      <li><strong>VaR, Greeks, and completeness show no dose-response in any model.</strong> Domain grounding and the control dimension behave identically across models (see below).</li>
+      <li><strong>Design dimensions (data-ink, chartjunk, chart type) show massive G1&nbsp;vs&nbsp;G2 effects but not always G2&nbsp;&lt;&nbsp;G3.</strong> The big jump is from ungrounded to design-grounded. Full grounding adds little to Tufte/Few dimensions because Tufte/Few are already in G2.</li>
+    </ol>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="effect-sizes">The differences are large by any standard</h2>
+
+    <table>
+      <caption>Table 7. Cohen's d for Experiment B overall scores. All effects are in the direction of more grounding = higher score.</caption>
+      <thead>
+        <tr><th>Comparison</th><th class="num">Claude Opus 4.6</th><th class="num">Gemini 3.1 Pro</th><th class="num">GPT-5.4</th><th>Interpretation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>G1 vs G2</td><td class="num">3.03</td><td class="num">1.13</td><td class="num">4.61</td><td>Large in all three</td></tr>
+        <tr><td>G1 vs G3</td><td class="num">6.90</td><td class="num">2.34</td><td class="num">6.39</td><td>Very large in all three</td></tr>
+        <tr><td>G2 vs G3</td><td class="num">2.73</td><td class="num">1.63</td><td class="num">1.91</td><td>Large in all three</td></tr>
+      </tbody>
+    </table>
+
+    <span class="sidenote">Cohen (1988): |d|&nbsp;&lt;&nbsp;0.2 negligible, 0.2&ndash;0.5 small, 0.5&ndash;0.8 medium, &ge;&nbsp;0.8 large. AI agents produce less variable output than human subjects, so within-group SDs are small and d values are correspondingly large. These numbers should not be compared to human-subjects benchmarks. For calibration: GPT-5.4's d&nbsp;=&nbsp;4.61 on G1&nbsp;vs&nbsp;G2 represents a 1.15-point raw difference on a 10-point scale with a pooled SD of 0.25.</span>
+
+    <p>The G2&nbsp;vs&nbsp;G3 comparison shows large effects across all three models: d&nbsp;=&nbsp;2.73, 1.63, and 1.91. The incremental value of adding domain and writing experts on top of design experts is consistent regardless of model family. This suggests the additional grounding (Doumont, Zinsser, Jorion, Hull) activates a predictable improvement that does not depend on the model's baseline capabilities.</p>
+
+    <p>GPT-5.4's effects are the largest because its ungrounded baseline is the lowest. Its dashboards without grounding have visibly broken layouts (overlapping tables, missing visual hierarchy). Grounding fixes these problems dramatically. Claude Opus 4.6 and Gemini 3.1 Pro start from higher baselines, so the absolute improvement is smaller even though the pattern is the same.</p>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="reliability">Expert reviewers agree with each other; ungrounded reviewers do not</h2>
+
+    <table>
+      <caption>Table 8. Krippendorff's alpha on overall scores. Threshold for acceptable agreement: 0.667.</caption>
+      <thead>
+        <tr><th>Condition</th><th class="num">Claude Opus 4.6</th><th class="num">Gemini 3.1 Pro</th><th class="num">GPT-5.4</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Experiment A (ungrounded)</td><td class="num">0.95</td><td class="num">0.38</td><td class="num">0.76</td></tr>
+        <tr><td>Experiment B (expert)</td><td class="num">0.99</td><td class="num">0.75</td><td class="num">0.98</td></tr>
+      </tbody>
+    </table>
+
+    <p>Expert review produces higher inter-rater agreement than ungrounded review in all three models. The pattern is consistent: giving reviewers explicit criteria and scoring anchors grounded in published principles reduces disagreement. Ungrounded reviewers each apply their own implicit framework, producing inconsistent scores. Expert-grounded reviewers share a framework and converge.</p>
+
+    <p>Claude Opus 4.6 and GPT-5.4 both reach near-perfect agreement under expert review (&alpha;&nbsp;=&nbsp;0.99 and 0.98 respectively). Claude Opus 4.6 also shows high agreement under ungrounded review (&alpha;&nbsp;=&nbsp;0.95), suggesting Opus produces highly consistent reviewer behaviour regardless of condition. Gemini's ungrounded reviewers show the lowest agreement (0.38), consistent with its failure to find any significant group effect under Experiment A.</p>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="domain">Domain grounding has no measurable effect</h2>
+
+    <table>
+      <caption>Table 9. Domain dimensions &mdash; ANOVA p-values under expert review. None reach significance in any model.</caption>
+      <thead>
+        <tr><th>Dimension</th><th>Expert</th><th class="num">Claude Opus 4.6 p</th><th class="num">Gemini 3.1 Pro p</th><th class="num">GPT-5.4 p</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>VaR/risk metrics</td><td>Jorion</td><td class="num">&lt; 0.001</td><td class="num">0.04</td><td class="num">&lt; 0.001</td></tr>
+        <tr><td>Greeks/sensitivity</td><td>Hull</td><td class="num">&lt; 0.001</td><td class="num">0.005</td><td class="num">0.07</td></tr>
+        <tr><td>Completeness</td><td>(control)</td><td class="num">&lt; 0.001</td><td class="num">0.12</td><td class="num">&lt; 0.001</td></tr>
+      </tbody>
+    </table>
+
+    <p>Jorion and Hull grounding does not produce a consistent dose-response on VaR or Greeks dimensions. Where statistical significance appears, the direction is often wrong &mdash; G2 scores lowest rather than intermediate. The domain experts' principles were cited at book level ("Jorion, <em>Value at Risk</em>") rather than chapter level. Three possible explanations:</p>
+
+    <ul>
+      <li>The models' training data already includes adequate coverage of risk metric conventions &mdash; the grounding adds nothing.</li>
+      <li>Book-level citations are too broad to activate specific presentation conventions.</li>
+      <li>Domain expertise requires more than a paragraph of grounding &mdash; knowing <em>who</em> wrote about VaR is not the same as knowing <em>how</em> Jorion recommends presenting VaR on a dashboard.</li>
+    </ul>
+
+    <p>Completeness (the control dimension) shows no group difference in Gemini, confirming that it works as intended &mdash; all groups received the same data requirements. Claude Opus 4.6 and GPT-5.4 show statistical significance on completeness, but the practical differences are small (Claude: 9.00 vs 9.03 vs 9.37; GPT-5.4: 9.62 vs 9.28 vs 9.22). All groups meet the data requirements adequately.</p>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="models-differ">The models differ in degree, not in kind</h2>
+
+    <h3 id="calibration">Score calibration</h3>
+
+    <p>Absolute scores vary substantially across models. Under ungrounded review, Gemini 3.1 Pro's G1 scores 8.56 while Claude Opus 4.6's scores 8.19 and GPT-5.4's scores 7.69. These differences reflect model-specific reviewer generosity, producer quality, or both. Without cross-model review (Claude reviewing Gemini dashboards), the absolute scores cannot be compared. The relative group ordering &mdash; which is what the hypothesis tests &mdash; is consistent.</p>
+
+    <h3 id="ceilings">Ceiling effects</h3>
+
+    <p>Gemini's grounded groups hit 10.0 on chartjunk absence with zero variance. Both G2 and G3 produced perfectly clean dashboards by this measure. GPT-5.4 shows near-zero variance on multiple dimensions (data-ink ratio SD&nbsp;=&nbsp;0.00 for G2). These ceiling effects compress the upper end of the scale and may understate the true G2&nbsp;vs&nbsp;G3 differences on design dimensions.</p>
+
+    <h3 id="gpt-baseline">GPT-5.4's low ungrounded baseline</h3>
+
+    <p>GPT-5.4 produces the worst ungrounded dashboards of the three models. Tables stack on top of each other. Visual hierarchy is absent. Claude Opus 4.6 produces the best grounded dashboards, with G3 scoring 8.35 overall under expert review. The gap between ungrounded and grounded varies by model (overall d for G1&nbsp;vs&nbsp;G3: Claude Opus 4.6 6.90, GPT-5.4 6.39, Gemini 3.1 Pro 2.34) but the direction is always the same.</p>
+
+    <h3 id="contamination-model">Expert attribution in output</h3>
+
+    <p>All three models embed expert names or design terminology in their output when grounded. Claude Opus 4.6 uses CSS and HTML comments. Gemini 3.1 Pro uses CSS comments. GPT-5.4 goes furthest, placing attribution in visible footer text, subtitles, and CSS class names. This is a systematic behaviour across model families: when prompted with expert names, LLMs attribute their design decisions to those experts in the output. Any experiment using expert grounding must include a deblinding step.</p>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="meaning">Ungrounded AI cannot evaluate grounded output</h2>
+
+    <p>The experiment demonstrates two complementary claims:</p>
+
+    <ol>
+      <li><strong>Expert grounding improves production.</strong> Dashboards produced with Tufte/Few grounding use better chart types, less chartjunk, and more semantic colour. Dashboards produced with the full expert panel add message-driven structure, better labelling, and clearer alert design. The improvements are real and consistent across three model families.</li>
+      <li><strong>Expert grounding improves evaluation.</strong> Reviewers without an expert framework cannot see the improvements. They score design-grounded output the same as &mdash; or lower than &mdash; ungrounded output. Reviewers with an expert framework see the progressive improvement clearly and agree with each other about it.</li>
+    </ol>
+
+    <p>Together, these claims describe a closed loop: ungrounded AI produces mediocre output and rates it as acceptable. Grounded AI produces better output, but ungrounded AI cannot tell. Only when the evaluator shares the producer's expert framework does the improvement become visible. This is not a theoretical concern &mdash; it has practical consequences for any workflow that uses AI to evaluate AI output.</p>
+
+    <p>Grounding works best when the cited expert has specific, actionable principles. Tufte's "erase non-data-ink" and Few's "bullet graphs instead of gauges" translate directly into design decisions. Doumont's "structure by message, not by topic" translates directly into panel titles. Jorion's authority on VaR, cited at book level, does not translate into specific dashboard design decisions &mdash; and the grounding has no measurable effect. Specificity is the mechanism.</p>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="limitations">Same-model evaluation remains the primary threat</h2>
+
+    <p>The cross-model replication eliminates the weakest form of the same-model objection: the finding is not an artefact of any single model's training. But a stronger objection remains. Within each replication, the model reviews its own output. Claude Opus 4.6 reviews Claude Opus 4.6. Gemini 3.1 Pro reviews Gemini 3.1 Pro. GPT-5.4 reviews GPT-5.4. If all LLMs share a systematic bias &mdash; for instance, if they all prefer output that "looks like" what they would produce &mdash; then three replications of the same bias tell us nothing new.</p>
+
+    <p>Additional limitations:</p>
+
+    <ul>
+      <li><strong>Circularity.</strong> Output grounded in Tufte scores higher on Tufte's criteria. The defence &mdash; that Tufte's criteria are published, peer-validated standards, not arbitrary preferences &mdash; is reasonable but not conclusive. A sceptic can always argue that measuring convergence toward the experts' own standards is tautological.</li>
+      <li><strong>No human reviewers.</strong> The entire chain is AI-generated, AI-reviewed. Human expert confirmation of Experiment B criteria partially breaks the loop, but human review of the dashboards themselves has not been performed.</li>
+      <li><strong>No pre-registration.</strong> Experiment B was designed after seeing Experiment A results. The hypothesis (ungrounded review cannot see design improvement) was formed post-hoc to explain the V-shape.</li>
+      <li><strong>Single task type.</strong> Market risk dashboards. The effect may differ for code generation, prose writing, or other output formats.</li>
+      <li><strong>Multiple comparisons.</strong> 11 dimensions &times; 3 pairwise comparisons &times; 3 models = 99 tests without Bonferroni or FDR correction. Some individual dimension results may be false positives. The overall dose-response pattern, which is the primary claim, survives any reasonable correction.</li>
+      <li><strong>Effect size inflation.</strong> AI output has low variance compared to human output. Cohen's d values exceeding 5 or 10 are meaningless by human-subjects standards. They reflect small absolute differences amplified by small standard deviations. Raw score differences (typically 1&ndash;3 points on a 10-point scale) better convey the practical magnitude.</li>
+    </ul>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="next">Three tests would settle this</h2>
+
+    <ol>
+      <li><strong>Cross-model review.</strong> Have Claude Opus 4.6 review Gemini 3.1 Pro dashboards and vice versa. If the ranking reversal holds when a different model evaluates the output, same-model evaluation is eliminated as a confound. The dashboards already exist; only the review configs need to change.</li>
+      <li><strong>Human expert review.</strong> Have risk analysts with design expertise review a sample of the 180 dashboards under the same expert rubric. If human experts produce the same ranking as AI experts, the finding graduates from "LLMs respond to grounding" to "grounding produces output that domain experts recognise as better."</li>
+      <li><strong>A different task with objective ground truth.</strong> Generate code with planted defects at known locations. Measure whether grounded reviewers (citing the OWASP Top 10 for security, Martin Fowler's <em>Refactoring</em> for design smells) find more defects than ungrounded reviewers. The planted defects provide an answer key that dashboards lack &mdash; no one can argue the criteria are circular when the question is "did the reviewer find the SQL injection on line 47."</li>
+    </ol>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="references">References</h2>
+
+    <p>Several experts cited cross-cuttingly in this paper &mdash; Doumont, Tufte, Few, and Zinsser &mdash; appear with full citations in <em>The Grounded Vibe Methodology</em>, References, and in the plugin's reference files under <code>~/.claude/skills/gvm-design-system/references/</code>. They are not duplicated here. The works listed below are the experimental-design, statistics, data-presentation, and domain references this paper relies on directly. Where edition or year is uncertain, the work is listed as "Various editions" rather than with a guessed date.</p>
+
+    <h3 id="ref-experimental-design">Experimental design and statistics</h3>
+
+    <ul>
+      <li>Campbell, Donald T., and Julian C. Stanley. <em>Experimental and Quasi-Experimental Designs for Research.</em> Houghton Mifflin, 1963.</li>
+      <li>Cohen, Jacob. <em>Statistical Power Analysis for the Behavioral Sciences.</em> 2nd ed. Lawrence Erlbaum Associates, 1988.</li>
+    </ul>
+
+    <h3 id="ref-data-presentation">Data presentation experts (cross-cutting)</h3>
+
+    <p>Cited throughout the paper for chart design, dashboard rubrics, and the visual treatment of the results themselves. Full citations live in <em>The Grounded Vibe Methodology</em>, References.</p>
+
+    <ul>
+      <li>Tufte, Edward R. <em>The Visual Display of Quantitative Information.</em> Graphics Press. (See main whitepaper References.)</li>
+      <li>Few, Stephen. <em>Show Me the Numbers: Designing Tables and Graphs to Enlighten.</em> Analytics Press. (See main whitepaper References.)</li>
+      <li>Few, Stephen. <em>Information Dashboard Design: Displaying Data for At-a-Glance Monitoring.</em> Analytics Press. (See main whitepaper References.)</li>
+    </ul>
+
+    <h3 id="ref-domain">Domain experts (financial risk)</h3>
+
+    <p>The dashboards reviewed in the experiment are financial-risk dashboards. The two domain experts named in the paper are:</p>
+
+    <ul>
+      <li>Hull, John C. <em>Options, Futures, and Other Derivatives.</em> Various editions, Pearson.</li>
+      <li>Jorion, Philippe. <em>Value at Risk: The New Benchmark for Managing Financial Risk.</em> 3rd ed. McGraw-Hill, 2007.</li>
+    </ul>
+
+    <h3 id="ref-writing">Writing and structure (cross-cutting)</h3>
+
+    <p>Named in the paper for prose discipline and document structure. Full citations live in <em>The Grounded Vibe Methodology</em>, References.</p>
+
+    <ul>
+      <li>Doumont, Jean-luc. <em>Trees, Maps, and Theorems: Effective Communication for Rational Minds.</em> Principiae. (See main whitepaper References.)</li>
+      <li>Zinsser, William. <em>On Writing Well: The Classic Guide to Writing Nonfiction.</em> HarperCollins. (See main whitepaper References.)</li>
+    </ul>
+
+    <h3 id="ref-future">Future-experiment references (&sect;next)</h3>
+
+    <p>Cited in the third proposed test (code with planted defects). Both works are starting points; practitioners replicating the test should verify currency of edition.</p>
+
+    <ul>
+      <li>Fowler, Martin. <em>Refactoring: Improving the Design of Existing Code.</em> 2nd ed. Addison-Wesley, 2018.</li>
+      <li>OWASP Foundation. <em>OWASP Top 10.</em> Various editions, Open Worldwide Application Security Project. <a href="https://owasp.org/www-project-top-ten/">https://owasp.org/www-project-top-ten/</a>.</li>
+    </ul>
+
+    <!-- ════════════════════════════════════════ -->
+    <h2 id="data">Raw data</h2>
+
+    <p>All experiments were run using Assay, an open-source LLM experiment runner. Claude: <code>experiments/dashboard-grounding-anthropic-20260405-184220/</code>. Gemini: <code>experiments/dashboard-grounding-google-20260405-150242/</code>. OpenAI: <code>experiments/dashboard-grounding-openai-20260405-164549/</code>. Each directory contains artefacts, reviews, results CSVs, group mappings, and state files. Experiment configs: <code>experiments/dashboard-anthropic.yaml</code>, <code>experiments/dashboard-google.yaml</code>, <code>experiments/dashboard-openai.yaml</code>.</p>
+
+  </main>
+
+  <script>
+    // ── TOC ──
+    const toc = document.getElementById('toc');
+    document.querySelectorAll('main h2[id], main h3[id]').forEach(h => {
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      toc.appendChild(a);
+    });
+    const tocLinks = toc.querySelectorAll('a');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const link = toc.querySelector('a[href="#' + e.target.id + '"]');
+        if (link) link.classList.add('active');
+      }});
+    }, { rootMargin: '-20% 0px -60% 0px' });
+    document.querySelectorAll('main h2[id], main h3[id]').forEach(h => obs.observe(h));
+
+    // ── Shared chart utilities ──
+    const NS = 'http://www.w3.org/2000/svg';
+    function el(tag, attrs) {
+      const e = document.createElementNS(NS, tag);
+      for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, v);
+      return e;
+    }
+    const colors = { g1: '#888', g2: '#b07030', g3: '#2266aa' };
+
+    // ── Figure 1: Six-row ranking comparison ──
+    (function() {
+      const svg = document.getElementById('ranking-chart');
+      const W = 740, H = 380, padL = 230, padR = 60, padT = 30, padB = 35;
+      svg.setAttribute('width', W); svg.setAttribute('height', H);
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+      const xMin = 6.2, xMax = 9.5;
+      const xScale = v => padL + (v - xMin) / (xMax - xMin) * (W - padL - padR);
+
+      const rows = [
+        { label: 'Claude Opus 4.6 — ungrounded', y: padT + 20, g1: 8.19, g2: 7.68, g3: 8.31 },
+        { label: 'Gemini 3.1 Pro — ungrounded', y: padT + 55, g1: 8.56, g2: 8.43, g3: 8.44 },
+        { label: 'GPT-5.4 — ungrounded', y: padT + 90, g1: 7.69, g2: 7.47, g3: 7.74 },
+        { label: 'Claude Opus 4.6 — expert', y: padT + 160, g1: 6.68, g2: 7.58, g3: 8.35 },
+        { label: 'Gemini 3.1 Pro — expert', y: padT + 195, g1: 8.16, g2: 8.71, g3: 9.27 },
+        { label: 'GPT-5.4 — expert', y: padT + 230, g1: 6.59, g2: 7.74, g3: 8.17 }
+      ];
+
+      // Gridlines
+      for (let v = 6.5; v <= 9.5; v += 0.5) {
+        const x = xScale(v);
+        svg.appendChild(el('line', { x1: x, y1: padT, x2: x, y2: H - padB, stroke: '#e0e0e0', 'stroke-width': 0.5 }));
+        const t = el('text', { x: x, y: H - padB + 18, 'text-anchor': 'middle', fill: '#888', 'font-size': '11px', 'font-family': 'system-ui, sans-serif' });
+        t.textContent = v.toFixed(1); svg.appendChild(t);
+      }
+      svg.appendChild(el('line', { x1: padL, y1: padT, x2: W - padR, y2: padT, stroke: '#333', 'stroke-width': 1.5 }));
+      svg.appendChild(el('line', { x1: padL, y1: H - padB, x2: W - padR, y2: H - padB, stroke: '#333', 'stroke-width': 1.5 }));
+
+      // Section labels
+      const secA = el('text', { x: padL - 10, y: padT + 55, 'text-anchor': 'end', fill: '#999', 'font-size': '10px', 'font-family': 'system-ui, sans-serif', 'font-style': 'italic' });
+      const secB = el('text', { x: padL - 10, y: padT + 195, 'text-anchor': 'end', fill: '#999', 'font-size': '10px', 'font-family': 'system-ui, sans-serif', 'font-style': 'italic' });
+
+      // Separator
+      const sepY = padT + 125;
+      svg.appendChild(el('line', { x1: padL - 10, y1: sepY, x2: W - padR, y2: sepY, stroke: '#ccc', 'stroke-width': 0.5, 'stroke-dasharray': '4,3' }));
+      const sepLabel1 = el('text', { x: padL + (W - padL - padR)/2, y: sepY - 8, 'text-anchor': 'middle', fill: '#999', 'font-size': '10px', 'font-family': 'system-ui, sans-serif', 'font-style': 'italic' });
+      sepLabel1.textContent = 'same dashboards, different review instrument'; svg.appendChild(sepLabel1);
+
+      rows.forEach(r => {
+        const lab = el('text', { x: padL - 10, y: r.y + 4, 'text-anchor': 'end', fill: '#444', 'font-size': '11.5px', 'font-family': '"ET Book", Palatino, Georgia, serif' });
+        lab.textContent = r.label; svg.appendChild(lab);
+        const vals = [r.g1, r.g2, r.g3];
+        svg.appendChild(el('line', { x1: xScale(Math.min(...vals)), y1: r.y, x2: xScale(Math.max(...vals)), y2: r.y, stroke: '#ccc', 'stroke-width': 1 }));
+        svg.appendChild(el('circle', { cx: xScale(r.g1), cy: r.y, r: 5, fill: colors.g1 }));
+        svg.appendChild(el('rect', { x: xScale(r.g2)-4.5, y: r.y-4.5, width: 9, height: 9, fill: colors.g2 }));
+        svg.appendChild(el('polygon', { points: `${xScale(r.g3)},${r.y-6} ${xScale(r.g3)+5.5},${r.y+4} ${xScale(r.g3)-5.5},${r.y+4}`, fill: colors.g3 }));
+      });
+
+      // Legend
+      const ly = padT - 8;
+      [{ t: 'G1 (ungrounded)', c: colors.g1 }, { t: 'G2 (design)', c: colors.g2 }, { t: 'G3 (full)', c: colors.g3 }].forEach((l, i) => {
+        const x = W - padR - 280 + i * 100;
+        if (i === 0) svg.appendChild(el('circle', { cx: x, cy: ly - 3, r: 4, fill: l.c }));
+        if (i === 1) svg.appendChild(el('rect', { x: x - 3.5, y: ly - 7, width: 7, height: 7, fill: l.c }));
+        if (i === 2) svg.appendChild(el('polygon', { points: `${x},${ly-8} ${x+4.5},${ly} ${x-4.5},${ly}`, fill: l.c }));
+        const t = el('text', { x: x + 10, y: ly, 'text-anchor': 'start', fill: l.c, 'font-size': '11px', 'font-weight': '600', 'font-family': 'system-ui, sans-serif' });
+        t.textContent = l.t; svg.appendChild(t);
+      });
+
+      // Annotation: "Exp B: always G1 < G2 < G3"
+      const annY = padT + 270;
+      const annT = el('text', { x: padL + (W - padL - padR)/2, y: annY, 'text-anchor': 'middle', fill: '#2266aa', 'font-size': '12px', 'font-weight': '600', 'font-family': 'system-ui, sans-serif' });
+      annT.textContent = 'Expert review: G1 < G2 < G3 in all three models'; svg.appendChild(annT);
+    })();
+
+    // ── Figure 2: Shift chart ──
+    (function() {
+      const svg = document.getElementById('shift-chart');
+      const W = 680, H = 200, padL = 100, padR = 40, padT = 30, padB = 35;
+      svg.setAttribute('width', W); svg.setAttribute('height', H);
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+      const models = ['Claude Opus 4.6', 'Gemini 3.1 Pro', 'GPT-5.4'];
+      const shifts = {
+        g1: [-1.51, -0.40, -1.09],
+        g2: [-0.10, +0.28, +0.27],
+        g3: [+0.04, +0.83, +0.42]
+      };
+
+      const xMin = -1.7, xMax = 1.0;
+      const xScale = v => padL + (v - xMin) / (xMax - xMin) * (W - padL - padR);
+      const zeroX = xScale(0);
+      const rowH = 45;
+
+      // Zero line
+      svg.appendChild(el('line', { x1: zeroX, y1: padT, x2: zeroX, y2: H - padB, stroke: '#333', 'stroke-width': 1 }));
+
+      // Gridlines
+      for (let v = -1.0; v <= 1.0; v += 0.5) {
+        if (v === 0) continue;
+        const x = xScale(v);
+        svg.appendChild(el('line', { x1: x, y1: padT, x2: x, y2: H - padB, stroke: '#e0e0e0', 'stroke-width': 0.5 }));
+        const t = el('text', { x: x, y: H - padB + 16, 'text-anchor': 'middle', fill: '#888', 'font-size': '11px', 'font-family': 'system-ui, sans-serif' });
+        t.textContent = (v > 0 ? '+' : '') + v.toFixed(1); svg.appendChild(t);
+      }
+      const zt = el('text', { x: zeroX, y: H - padB + 16, 'text-anchor': 'middle', fill: '#888', 'font-size': '11px', 'font-family': 'system-ui, sans-serif' });
+      zt.textContent = '0'; svg.appendChild(zt);
+
+      models.forEach((m, i) => {
+        const y = padT + i * rowH + rowH / 2;
+        const lab = el('text', { x: padL - 10, y: y + 4, 'text-anchor': 'end', fill: '#444', 'font-size': '12px', 'font-family': '"ET Book", Palatino, Georgia, serif' });
+        lab.textContent = m; svg.appendChild(lab);
+
+        // G1 bar
+        const g1x = xScale(shifts.g1[i]);
+        svg.appendChild(el('line', { x1: zeroX, y1: y - 8, x2: g1x, y2: y - 8, stroke: colors.g1, 'stroke-width': 4 }));
+        svg.appendChild(el('circle', { cx: g1x, cy: y - 8, r: 3, fill: colors.g1 }));
+
+        // G2 bar
+        const g2x = xScale(shifts.g2[i]);
+        svg.appendChild(el('line', { x1: zeroX, y1: y, x2: g2x, y2: y, stroke: colors.g2, 'stroke-width': 4 }));
+        svg.appendChild(el('rect', { x: g2x - 3, y: y - 3, width: 6, height: 6, fill: colors.g2 }));
+
+        // G3 bar
+        const g3x = xScale(shifts.g3[i]);
+        svg.appendChild(el('line', { x1: zeroX, y1: y + 8, x2: g3x, y2: y + 8, stroke: colors.g3, 'stroke-width': 4 }));
+        svg.appendChild(el('polygon', { points: `${g3x},${y+3} ${g3x+4},${y+12} ${g3x-4},${y+12}`, fill: colors.g3 }));
+      });
+
+      // Legend
+      const ly = padT - 10;
+      [{ t: 'G1', c: colors.g1 }, { t: 'G2', c: colors.g2 }, { t: 'G3', c: colors.g3 }].forEach((l, i) => {
+        const x = W - padR - 160 + i * 55;
+        const t = el('text', { x: x, y: ly, 'text-anchor': 'start', fill: l.c, 'font-size': '11px', 'font-weight': '600', 'font-family': 'system-ui, sans-serif' });
+        t.textContent = l.t; svg.appendChild(t);
+      });
+    })();
+  </script>
+
+</body>
+</html>

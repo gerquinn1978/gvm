@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-analysis &mdash; User Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 240px; }
+
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026</p>
+<h1>/gvm-analysis</h1>
+<p class="subtitle">
+  Privacy-preserving exploratory data analysis &mdash; Claude orchestrates a Python engine
+  that reads your CSV, produces a grounded findings report, and never lets raw rows enter
+  its context.
+</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>
+  <code>/gvm-analysis</code> is the GVM data-analysis skill. Point it at a CSV (or
+  TSV / xlsx / parquet / JSON) and it produces a structured <code>findings.json</code>
+  plus a self-contained HTML hub. Four modes cover the main analytical patterns:
+  Explore (descriptive only), Decompose (drivers when a target column is supplied),
+  Validate (drivers plus baseline comparison), and Run-everything (every block fires).
+</p>
+
+<span class="sidenote">
+  Privacy boundary: the Python engine reads your input file. The orchestrating Claude
+  reads <code>findings.json</code>, which carries aggregates only &mdash; never raw cell
+  values. NFR-1 (the project&rsquo;s first non-functional requirement &mdash; "raw rows
+  never leave the engine") is enforced by an end-to-end sentinel-string privacy audit.
+</span>
+
+<p>
+  The skill is the engine + renderer behind the slash command. A direct-CLI invocation
+  (<code>python scripts/analyse.py ...</code>) produces the same output as an
+  LLM-orchestrated run, with one difference noted in the
+  <a href="#comprehension">Comprehension Questions</a> section below.
+</p>
+
+<h2 id="when-to-use">When to Use</h2>
+
+<ul>
+  <li><strong>First-pass exploratory analysis</strong> on any tabular data &mdash; understand the shape, find outliers, surface time-series patterns, identify drivers, before reaching for full statistical software.</li>
+  <li><strong>Privacy-sensitive data</strong> &mdash; the engine never echoes cell values into output. The optional anonymisation pipeline (<code>scripts/anonymise.py</code>) tokenises high-cardinality columns before analysis, with a deterministic round-trip via <code>scripts/de_anonymise.py</code>.</li>
+  <li><strong>When you need provenance</strong> &mdash; every report carries SHA-256 of the input, library versions, deterministic seed, and a methodology appendix. The same input always produces the same report.</li>
+  <li><strong>Baseline comparison</strong> &mdash; Validate mode joins your input against a baseline file and runs driver decomposition to surface what changed between the two.</li>
+</ul>
+
+<h2 id="modes">Modes</h2>
+
+<table>
+  <caption>Table 1 &mdash; Analysis modes</caption>
+  <thead>
+    <tr><th>Mode</th><th>Purpose</th><th>Required flags</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>explore</code></td><td>Descriptive analysis: per-column stats with bootstrap CIs, missingness, outliers, time-series, duplicates summary, headline selection.</td><td>None</td></tr>
+    <tr><td><code>decompose</code></td><td>Adds driver decomposition for a chosen target column (variance + partial correlation + RF importance, three-way agreement).</td><td><code>--target-column</code></td></tr>
+    <tr><td><code>validate</code></td><td>Adds comparison: load a baseline file, join it with the input (tagged via <code>_dataset</code> column), run driver decomposition over the joined frame.</td><td><code>--target-column</code>, <code>--baseline-file</code></td></tr>
+    <tr><td><code>run-everything</code></td><td>Every analytical pass against the input. Drivers fire when target resolves; otherwise behaves as Explore.</td><td><code>--target-column</code> (recommended)</td></tr>
+  </tbody>
+</table>
+
+<h2 id="invocation">Invocation</h2>
+
+<p>
+  Through the Claude skill, call the slash command:
+</p>
+
+<pre><code>/gvm-analysis path/to/input.csv</code></pre>
+
+<p>
+  Claude orchestrates mode selection, target-column choice (when applicable), and the
+  comprehension-question synthesiser. The orchestrated path is what most users want.
+</p>
+
+<p>
+  Direct CLI invocation runs the same engine without an orchestrator:
+</p>
+
+<pre><code>python3 scripts/analyse.py \
+    --input path/to/input.csv \
+    --output-dir /tmp/analysis \
+    --mode run-everything \
+    --target-column outcome
+
+python3 scripts/render_report.py \
+    --findings /tmp/analysis/findings.json \
+    --out /tmp/analysis</code></pre>
+
+<p>
+  The engine writes <code>findings.json</code>; the renderer writes <code>report.html</code>
+  alongside. Both are self-contained &mdash; the report opens in any browser without external
+  assets.
+</p>
+
+<h2 id="output">What the Report Carries</h2>
+
+<p>
+  Every <code>findings.json</code> carries:
+</p>
+
+<table class="no-stripe">
+  <caption>Table 2 &mdash; <code>findings.json</code> sections</caption>
+  <thead>
+    <tr><th>Section</th><th>Content</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>columns[]</code></td><td>Per-column entries: name, dtype, completeness, missingness classification, statistical tier (n&lt;10 / 10-29 / 30-99 / 100+ / 1000+ / 10000+), robust + classical stats, distribution check, 95% bootstrap CI on the median (computed when n &ge; 30, suppressed below per AN-12).</td></tr>
+    <tr><td><code>outliers</code></td><td>IQR + MAD always; IsolationForest + LOF when n &ge; 1000. Three-way agreement matrix with confidence labels.</td></tr>
+    <tr><td><code>duplicates</code></td><td>Privacy-safe summary: counts of exact-duplicate row groups, near-duplicate clusters with row indices, similarity scores, key column. <strong>No cell values.</strong></td></tr>
+    <tr><td><code>time_series</code></td><td>Cadence inference, gap detection, stale-period detection, multi-window outliers with regime-shift labels, trend test, seasonality detection.</td></tr>
+    <tr><td><code>drivers</code></td><td>(Decompose / Validate / Run-everything) variance decomposition + partial correlation + RF importance with three-way agreement, top-K confidence labels, target-not-found / zero-variance refusal.</td></tr>
+    <tr><td><code>headline_findings[]</code></td><td>The cross-section finding selector picks the K most impactful items across all sections, with plain-language titles and summaries.</td></tr>
+    <tr><td><code>comprehension_questions[]</code></td><td>Exactly three plain-language Q/A pairs referencing real headline IDs.</td></tr>
+    <tr><td><code>provenance</code></td><td>SHA-256 of every input file, ISO-8601 timestamp, resolved seed, sub-seeds for every RNG-using module, library versions, preferences hash, AN-40 anonymisation flag.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="comprehension">Comprehension Questions</h2>
+
+<p>
+  Every report carries exactly three plain-language Q/A pairs. The questions help any
+  reader (statistical background or not) understand the report's most important findings
+  without consulting the analyst.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Two-path semantics</div>
+  <p>The engine produces <em>deterministic</em> baseline questions from the headline findings &mdash; structurally-real, reference real headline IDs, plain language. Direct-CLI invocations ship these.</p>
+  <p>Under SKILL.md orchestration with an LLM in the loop, the orchestration step <strong>overwrites</strong> the deterministic baseline with richer LLM-synthesised content. The LLM reads the headlines, writes more contextual questions, and patches them in via <code>scripts/_patch_questions.py</code>.</p>
+  <p>Either path produces three plain-language questions referencing real headlines. The orchestrated path is more contextually-rich; the deterministic path is reproducible without an LLM.</p>
+</div>
+
+<h2 id="privacy">Privacy</h2>
+
+<p>
+  NFR-1: raw cell values must not appear in any output artefact under <code>--output-dir</code>.
+  The boundary is enforced end-to-end by
+  <code>tests/integration/test_privacy_audit.py</code>, which drives the engine against a
+  fixture whose every cell is a unique sentinel string and asserts no sentinel appears in
+  <code>findings.json</code>, the rendered HTML, or any other file the run produces.
+</p>
+
+<p>
+  The duplicates module specifically returns aggregates only (group counts, row indices,
+  similarity scores) &mdash; never the duplicate values themselves. The internal
+  <code>find_exact</code> and <code>find_near</code> helpers continue to return value-bearing
+  shapes for in-engine use, but the public summariser strips values at the JSON boundary.
+</p>
+
+<h2 id="anonymisation">Anonymisation</h2>
+
+<p>
+  When the input contains identifying values, run them through the anonymisation pipeline
+  before passing to the analysis engine:
+</p>
+
+<pre><code>python3 scripts/anonymise.py \
+    --input raw.csv \
+    --output anonymised.csv \
+    --mapping-out mapping.csv \
+    --cols email,phone \
+    --i-accept-the-risk
+
+python3 scripts/analyse.py \
+    --input anonymised.csv \
+    --output-dir /tmp/analysis \
+    --mode explore</code></pre>
+
+<p>
+  The mapping file is the only place where original values live; keep it on a trusted
+  filesystem. To reverse the tokenisation in a rendered report:
+</p>
+
+<pre><code>python3 scripts/de_anonymise.py \
+    --input /tmp/analysis/report.html \
+    --mapping mapping.csv \
+    --output report.deanonymised.html</code></pre>
+
+<p>
+  AN-40 detection: if the engine notices an input whose values match the
+  <code>TOK_&lt;column&gt;_NNN</code> token pattern in &ge; 80% of one or more columns, the
+  provenance footer notes "input appears anonymised" and lists the matched columns.
+</p>
+
+<h2 id="provenance-section">Provenance</h2>
+
+<p>
+  Every run records:
+</p>
+
+<ul>
+  <li>SHA-256 of every input file (and baseline file in Validate mode)</li>
+  <li>ISO-8601 UTC timestamp of the run</li>
+  <li>Resolved seed: explicit <code>--seed</code> value, or a deterministic 31-bit derivation from the input file's SHA-256 prefix when <code>--seed</code> is omitted (per ADR-202 &mdash; the decision record governing deterministic seed derivation)</li>
+  <li>Sub-seeds for every analytical module that uses RNG &mdash; outliers, drivers, forecasts, per-column bootstrap CIs &mdash; so reproducibility is column-isolated</li>
+  <li>Library versions captured via <code>importlib.metadata</code></li>
+  <li>Preferences hash (when a prefs file is supplied)</li>
+  <li>AN-40 anonymisation flag and the columns that triggered it</li>
+</ul>
+
+<div class="rule">
+  <p><strong>Same input &rarr; same report.</strong> The deterministic seed default plus column-isolated sub-seeds mean two runs of the same input file produce byte-identical findings. Different inputs produce different seeds; reproducibility holds without coordinating seed values manually.</p>
+</div>
+
+<h2 id="modes-flags">CLI Flag Reference</h2>
+
+<table class="no-stripe">
+  <caption>Table 3 &mdash; <code>analyse.py</code> flags</caption>
+  <thead>
+    <tr><th>Flag</th><th>Required</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>--input PATH</code></td><td>Yes</td><td>Input file (CSV, TSV, xlsx, parquet, JSON).</td></tr>
+    <tr><td><code>--output-dir PATH</code></td><td>Yes</td><td>Output directory; created if absent. Must be on the same filesystem volume as the input file (atomic write).</td></tr>
+    <tr><td><code>--mode {explore,decompose,validate,run-everything}</code></td><td>No (default <code>explore</code>)</td><td>Analytical mode.</td></tr>
+    <tr><td><code>--target-column NAME</code></td><td>For Decompose / Validate</td><td>Column to decompose. Validate also requires <code>--baseline-file</code>.</td></tr>
+    <tr><td><code>--baseline-file PATH</code></td><td>For Validate</td><td>Baseline file joined with the input for comparison.</td></tr>
+    <tr><td><code>--time-column NAME</code></td><td>No</td><td>Override time-column auto-detection. Default scan: first datetime-typed column, then the first non-numeric column whose values parse as datetime &ge; 80%.</td></tr>
+    <tr><td><code>--seed INT</code></td><td>No</td><td>Random seed. Omitted &rarr; deterministic derivation from input SHA-256.</td></tr>
+    <tr><td><code>--prefs PATH</code></td><td>No</td><td>YAML preferences file (analytical thresholds, palette overrides).</td></tr>
+    <tr><td><code>--sample-n INT</code></td><td>No</td><td>Sample N rows before analysis (NFR-2 escape hatch for very large inputs).</td></tr>
+  </tbody>
+</table>
+
+<h2 id="pipeline">Pipeline Position</h2>
+
+<p>
+  <code>/gvm-analysis</code> is a standalone GVM skill &mdash; it does not sit in the
+  build-pipeline sequence. It produces a self-contained report from a CSV; nothing
+  downstream consumes its output. Invoke it whenever you have data to analyse.
+</p>
+
+<p>
+  Three common situations to reach for it: <strong>before <code>/gvm-requirements</code></strong>
+  to understand the shape of the data the product will work with;
+  <strong>after <code>/gvm-build</code></strong> to validate that real outputs match the
+  expectations the requirements set; or <strong>independently of any project</strong> when
+  someone hands you a CSV and asks "what's in this?". The skill runs the same way in all
+  three contexts.
+</p>
+
+<div class="pipeline">
+  <span class="label">Standalone</span>
+  /gvm-analysis &lt;your-data.csv&gt; &rarr; <strong>findings.json + report.html</strong>
+</div>
+
+<p>
+  The skill itself was built using the full GVM build pipeline
+  (<code>/gvm-impact-map</code> &rarr; <code>/gvm-requirements</code> &rarr;
+  <code>/gvm-test-cases</code> &rarr; <code>/gvm-tech-spec</code> &rarr;
+  <code>/gvm-design-review</code> &rarr; <code>/gvm-walking-skeleton</code> &rarr;
+  <code>/gvm-build</code> &rarr; <code>/gvm-code-review</code> &rarr;
+  <code>/gvm-test</code>). The analysis work is the case study under the methodology,
+  not part of the methodology pipeline.
+</p>
+
+<h2 id="detail">For More Detail</h2>
+
+<p>
+  See the package <a href="../README.md">README</a> for installation, layout, and test
+  invocation. For the GVM build pipeline that produced this skill, see the
+  <a href="../../gvm-design-system/docs/user-guide.html">Design System</a> and
+  <a href="../../gvm-build/docs/user-guide.html">Build</a> guides.
+</p>
+
+</main>
+
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

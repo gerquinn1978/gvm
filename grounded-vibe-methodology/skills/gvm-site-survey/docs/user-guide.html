@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-site-survey — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">March 2026</p>
+<h1>/gvm-site-survey</h1>
+<p class="subtitle">
+  A codebase diagnostic and health assessment that scores an existing system across
+  multiple dimensions, selects grounding experts based on what it finds, and recommends
+  where to enter the GVM pipeline. Can also be run at any point as a health check.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  The <code>/gvm-site-survey</code> command is primarily an entry point for existing
+  codebases. It has the AI explore the codebase, produce a scored health
+  assessment, diagnose its architectural state, and assemble the right expert panel
+  for whatever comes next.
+</p>
+
+<span class="sidenote">
+  The name comes from the construction industry, where a site survey evaluates conditions,
+  structural integrity, and constraints before any work begins. The same principle applies
+  here: understand the system before changing it.
+</span>
+
+<p>
+  Unlike other GVM skills, <code>/gvm-site-survey</code> does not start with a fixed
+  expert panel. It uses two distinct sets of experts: <strong>diagnostic experts</strong>
+  who conduct the survey (pattern recognition, legacy assessment, data layer, boundary
+  assessment), and <strong>project experts</strong> who are assembled as the survey&rsquo;s
+  output for downstream pipeline phases. The project expert roster emerges from the
+  codebase, not the other way around.
+</p>
+
+<p>
+  While it is primarily an entry point, the diagnostic machinery also makes it a
+  general-purpose health check. Run it mid-build on a greenfield project to verify
+  the implementation tracks the intended architecture, or after a remediation effort
+  to confirm the scores have improved. Each run produces a new numbered report,
+  preserving the history for before-and-after comparisons.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Non-destructive</div>
+  <p>The site survey is a static analysis. It reads code, git history, and configuration files. It does not execute the application, run tests, or modify any files.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+  Run <code>/gvm-site-survey</code> with no arguments. The skill will begin by asking
+  scoping questions before exploring the codebase:
+</p>
+
+<pre><code>/gvm-site-survey</code></pre>
+
+<p>
+  The skill opens with Phase 0 &mdash; scoping &mdash; to establish boundaries
+  before exploring:
+</p>
+
+<ul>
+  <li><strong>What is the intended work?</strong> A feature addition, a remediation effort, a modernisation, an audit?</li>
+  <li><strong>Is there a specific area of concern?</strong> You may already know where the problems are.</li>
+  <li><strong>How large is the codebase?</strong> For very large codebases (100k+ lines), the survey focuses on agreed-upon modules rather than the entire system.</li>
+</ul>
+
+<span class="sidenote">
+  Scoping is critical for large codebases. A full survey of a million-line monorepo
+  is not useful. Agree on boundaries first.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="scenarios">The Five Scenarios</h2>
+
+<p>
+  The survey classifies the codebase into one of five scenarios. Each implies a
+  different expert panel and a different entry point into the GVM pipeline.
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Scenario overview</caption>
+  <thead>
+    <tr><th>Scenario</th><th>Description</th><th>Typical Cause</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="scenario coherent">COHERENT</span></td><td>Consistent, well-executed design</td><td>Strong original team, maintained discipline</td></tr>
+    <tr><td><span class="scenario outdated">OUTDATED</span></td><td>Internally consistent but era-bound</td><td>Built 5+ years ago, not refactored since</td></tr>
+    <tr><td><span class="scenario fractured">FRACTURED</span></td><td>Original design drifted over time</td><td>Many developers, no architectural stewardship</td></tr>
+    <tr><td><span class="scenario migration">MID-MIGRATION</span></td><td>Incomplete deliberate transition</td><td>Team turnover or reprioritisation during rewrite</td></tr>
+    <tr><td><span class="scenario incoherent">INCOHERENT</span></td><td>No consistent design</td><td>Deadline pressure, no architectural guidance</td></tr>
+  </tbody>
+</table>
+
+<h3 id="scenario-coherent"><span class="scenario coherent">COHERENT</span> Continue it</h3>
+
+<div class="scenario-block coherent">
+  <div class="scenario-title">The codebase follows a consistent, well-executed design.</div>
+  <div class="scenario-detail">New work should extend the existing architecture. The experts are selected to align with the patterns already in use.</div>
+  <div class="scenario-evidence">Evidence: consistent patterns throughout, clear module boundaries, conventions followed, tests present and meaningful.</div>
+</div>
+
+<h3 id="scenario-outdated"><span class="scenario outdated">OUTDATED</span> Modernise it</h3>
+
+<div class="scenario-block outdated">
+  <div class="scenario-title">The design is internally consistent but reflects an earlier era of best practice.</div>
+  <div class="scenario-detail">Modernisation should be deliberate, not piecemeal. The experts are selected to guide the transition while respecting what works.</div>
+  <div class="scenario-evidence">Evidence: callback-based async when the language now supports async/await, jQuery-era frontend patterns, monolithic structure when the scale now demands decomposition.</div>
+</div>
+
+<h3 id="scenario-fractured"><span class="scenario fractured">FRACTURED</span> Repair it</h3>
+
+<div class="scenario-block fractured">
+  <div class="scenario-title">The original design drifted through accumulated quick fixes and feature additions.</div>
+  <div class="scenario-detail">The experts provide the evaluative framework to identify where the design has fractured and bring it back into line.</div>
+  <div class="scenario-evidence">Evidence: traces of an original coherent design but deviations accumulate. Multiple conventions coexist. Hotspot files modified by many contributors.</div>
+</div>
+
+<h3 id="scenario-migration"><span class="scenario migration">MID-MIGRATION</span> Finish it (or reverse it)</h3>
+
+<div class="scenario-block migration">
+  <div class="scenario-title">A deliberate migration was started but not completed.</div>
+  <div class="scenario-detail">The task is to decide which direction to finish going. The experts are selected for the target architecture.</div>
+  <div class="scenario-evidence">Evidence: two distinct patterns coexist with directional intent. Adapter layers, compatibility shims, or bridge code. Half REST / half GraphQL, partial TypeScript migration.</div>
+</div>
+
+<h3 id="scenario-incoherent"><span class="scenario incoherent">INCOHERENT</span> Redesign it</h3>
+
+<div class="scenario-block incoherent">
+  <div class="scenario-title">The system was never well-designed in the first place.</div>
+  <div class="scenario-detail">The AI identifies what the codebase <em>is</em>; the grounded experts provide the framework for what it <em>should be</em>; the gap becomes an actionable remediation plan.</div>
+  <div class="scenario-evidence">Evidence: no consistent pattern. Each module built in isolation with different conventions. No discernible architectural intent.</div>
+</div>
+
+<span class="sidenote">
+  A large codebase may have different diagnoses for different areas &mdash; a well-designed
+  core with an incoherent reporting module. The survey flags mixed cases and diagnoses
+  each area separately.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="process">Survey Process</h2>
+
+<p>
+  The survey follows six phases. Each builds on the previous one.
+</p>
+
+<table>
+  <caption>Table 2 &mdash; Survey phases</caption>
+  <thead>
+    <tr><th>Phase</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="phase">0</span> Scope</td>
+      <td>Establish survey boundaries with the user: intended work, areas of concern, codebase size</td>
+    </tr>
+    <tr>
+      <td><span class="phase">1</span> Reconnaissance</td>
+      <td>Project structure, tech stack, dependencies, test infrastructure, git archaeology, size and scope, and any existing requirements, test cases, or architecture documents (used as seed input for downstream pipeline phases)</td>
+    </tr>
+    <tr>
+      <td><span class="phase">2</span> Architectural Mapping</td>
+      <td>Pattern identification, boundary assessment, data layer diagnosis, legacy assessment, convention audit (diagnostic experts loaded from reference files)</td>
+    </tr>
+    <tr>
+      <td><span class="phase">3</span> Diagnosis</td>
+      <td>Score the codebase across multiple health dimensions (1&ndash;5 scale). Classify into one of the five scenarios based on the score pattern. Present scores and diagnosis to user for confirmation.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4</span> Expert Selection</td>
+      <td>Assemble the project-specific expert roster across all three tiers based on the diagnosis and tech stack. Includes a mandatory expert coverage assessment: which areas are covered by existing experts, which have gaps, and discovery of new experts for uncovered domains. Expert discovery delegates to the centralised process in the design system.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5</span> Route Recommendation</td>
+      <td>Classify the intended work type (user-facing feature, technical remediation, targeted fix, or unclear scope). Recommend the appropriate GVM pipeline entry point based on both diagnosis and work type.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Git archaeology is first-class evidence</div>
+  <p>Commit history, contributor patterns, and file hotspots are diagnostic data, not secondary to code structure. The most frequently modified files often reveal the most problematic areas of the codebase.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Load Expert References at Session Start.</strong> Read <code>architecture-specialists.md</code> and relevant per-domain files from <code>references/domain/</code> and per-stack files from <code>references/stack/</code> before beginning the survey.</li>
+  <li><strong>Read Actual Code.</strong> The survey must read actual source files &mdash; every architectural claim in the report must be backed by a file that was read. No guessing from directory listings.</li>
+  <li><strong>Write Paired HTML + MD Output.</strong> Both files must be written.</li>
+  <li><strong>Expert Roster Table is Mandatory.</strong> The output must include a &ldquo;Recommended Project Experts&rdquo; table &mdash; downstream skills read it to assemble their expert panels.</li>
+  <li><strong>HTML Before Approval.</strong> Write the survey MD first, then immediately write the HTML &mdash; both must exist before presenting the survey for user review.</li>
+</ol>
+
+<h3 id="reconnaissance">Phase 1: What it looks at</h3>
+
+<p>
+  The reconnaissance phase gathers facts through systematic exploration:
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Reconnaissance areas</caption>
+  <thead>
+    <tr><th>Area</th><th>What it examines</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Project structure</strong></td><td>Directory layout, organisational pattern (by feature, layer, or domain), entry points</td></tr>
+    <tr><td><strong>Tech stack</strong></td><td>Languages, versions, frameworks, key dependencies from config files</td></tr>
+    <tr><td><strong>Test infrastructure</strong></td><td>Test directories, runner configuration, approximate coverage, test patterns</td></tr>
+    <tr><td><strong>Git history</strong></td><td>Recent activity, commit patterns, contributor count, most frequently modified files (hotspots)</td></tr>
+    <tr><td><strong>Size and scope</strong></td><td>Line counts by language, number of modules/services, external API integrations</td></tr>
+  </tbody>
+</table>
+
+<h3 id="architectural-mapping">Phase 2: Diagnostic experts</h3>
+
+<p>
+  Diagnostic experts are loaded from the skill's reference files and guide the
+  deeper analysis. These are not the project&rsquo;s permanent expert panel &mdash;
+  they are the lens through which the survey reads the codebase.
+</p>
+
+<table>
+  <caption>Table 4 &mdash; Diagnostic expert roles (loaded from reference files)</caption>
+  <thead>
+    <tr><th>Diagnostic role</th><th>What they look for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Pattern recognition / refactoring</strong></td><td>Application and enterprise patterns in use, code smells, structural drift</td></tr>
+    <tr><td><strong>Legacy code assessment</strong></td><td>Testability, seams, coupling, change risk</td></tr>
+    <tr><td><strong>Data layer diagnosis</strong></td><td>Storage patterns, consistency models, caching strategies, data flow</td></tr>
+    <tr><td><strong>Boundary assessment</strong></td><td>Service boundaries, module structure, coupling between components</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  The diagnostic experts guide what to look for. The codebase determines which
+  downstream experts (Tier 1, 2, and 3) get locked in for the project. Diagnostic
+  experts can be swapped by editing the reference files.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="expert-selection">Expert Selection</h2>
+
+<p>
+  Based on the diagnosis, the survey assembles a three-tier expert roster for
+  downstream GVM phases. The roster is tailored to both the diagnosed state and
+  the identified tech stack.
+</p>
+
+<table>
+  <caption>Table 5 &mdash; Expert emphasis by scenario (experts loaded from reference files)</caption>
+  <thead>
+    <tr><th>Scenario</th><th>Tier 1 Emphasis</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="scenario coherent">COHERENT</span></td><td>ADR capture for new decisions, risk-calibrated depth</td></tr>
+    <tr><td><span class="scenario outdated">OUTDATED</span></td><td>Refactoring guidance, boundary extraction, conceptual integrity during transition</td></tr>
+    <tr><td><span class="scenario fractured">FRACTURED</span></td><td>Refactoring guidance, legacy code techniques, quality attribute restoration</td></tr>
+    <tr><td><span class="scenario migration">MID-MIGRATION</span></td><td>Migration patterns, strangler fig, seam identification</td></tr>
+    <tr><td><span class="scenario incoherent">INCOHERENT</span></td><td>Establishing architecture, C4 for structure, conceptual integrity</td></tr>
+  </tbody>
+</table>
+
+<p>
+  Tier 2a (domain) and Tier 3 (stack) specialists are loaded selectively from
+  per-domain files in <code>references/domain/</code> and per-stack files in <code>references/stack/</code>,
+  selected based on what the codebase does and what technologies it uses.
+  The full roster is presented to the user for approval before being locked in.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Mandatory expert discovery</div>
+  <p>Every survey must present a coverage assessment: which technologies, patterns, and domains are covered by existing experts, and which have gaps. When gaps are found, the survey discovers and offers to persist new experts. This step is not conditional &mdash; it runs on every survey.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="routing">Route Recommendations</h2>
+
+<p>
+  The survey recommends where to enter the GVM pipeline based on two factors:
+  the <strong>diagnosis</strong> (what state the codebase is in) and the
+  <strong>nature of the intended work</strong> (what you want to do).
+</p>
+
+<h3 id="work-types">Work types</h3>
+
+<table>
+  <caption>Table 6 &mdash; Work type classification</caption>
+  <thead>
+    <tr><th>Work Type</th><th>Description</th><th>Requirements needed?</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>User-facing feature</strong></td><td>New functionality that changes what users experience</td><td>Yes &mdash; always needs <code>/gvm-requirements</code></td></tr>
+    <tr><td><strong>Technical remediation</strong></td><td>Refactoring, pattern consolidation, modernisation</td><td>No &mdash; the survey itself defines the problem and target state. Go to <code>/gvm-tech-spec</code>.</td></tr>
+    <tr><td><strong>Targeted fix</strong></td><td>Small, well-understood change in a healthy codebase</td><td>No &mdash; go to <code>/gvm-build</code> directly</td></tr>
+    <tr><td><strong>Unclear scope</strong></td><td>Areas of concern but severity or scope is uncertain</td><td>Route to <code>/gvm-doc-review</code> for deeper investigation first</td></tr>
+  </tbody>
+</table>
+
+<h3 id="route-matrix">Route matrix</h3>
+
+<table>
+  <caption>Table 7 &mdash; Route by scenario and work type</caption>
+  <thead>
+    <tr><th>Scenario</th><th>User-facing feature</th><th>Technical remediation</th><th>Targeted fix</th><th>Unclear scope</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="scenario coherent">COHERENT</span></td><td><code>/gvm-requirements</code></td><td><code>/gvm-tech-spec</code></td><td><code>/gvm-build</code></td><td><code>/gvm-doc-review</code></td></tr>
+    <tr><td><span class="scenario outdated">OUTDATED</span></td><td><code>/gvm-requirements</code></td><td><code>/gvm-tech-spec</code></td><td><code>/gvm-tech-spec</code></td><td><code>/gvm-doc-review</code></td></tr>
+    <tr><td><span class="scenario fractured">FRACTURED</span></td><td><code>/gvm-requirements</code></td><td><code>/gvm-tech-spec</code></td><td><code>/gvm-tech-spec</code></td><td><code>/gvm-doc-review</code></td></tr>
+    <tr><td><span class="scenario migration">MID-MIGRATION</span></td><td><code>/gvm-requirements</code></td><td><code>/gvm-tech-spec</code></td><td><code>/gvm-tech-spec</code></td><td><code>/gvm-doc-review</code></td></tr>
+    <tr><td><span class="scenario incoherent">INCOHERENT</span></td><td><code>/gvm-requirements</code></td><td><code>/gvm-requirements</code></td><td><code>/gvm-tech-spec</code></td><td><code>/gvm-doc-review</code></td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  For technical remediation, the survey report itself serves as the requirements
+  document &mdash; it has defined the gap between what the codebase <em>is</em> and
+  what it <em>should be</em>. Routing through <code>/gvm-requirements</code> would be
+  ceremony without substance.
+</span>
+
+<h3 id="existing-docs">Existing documentation</h3>
+
+<p>
+  The survey scans for existing requirements, test cases, specifications, and architecture documents in any format. If found, they are included in the route recommendation as seed input for the corresponding pipeline phase. For example, an existing PRD would be fed into <code>/gvm-requirements</code> as a rich seed &mdash; the skill extracts what it can, runs the normal elicitation flow to refine and fill gaps, then verifies the GVM output against the original for completeness and accuracy.
+</p>
+
+<p>
+  Existing documents accelerate the pipeline without skipping the quality process. Each downstream phase still runs its full expert-guided flow and independent verification.
+</p>
+
+<div class="callout">
+  <div class="callout-label">The survey recommends, it does not mandate</div>
+  <p>The user always decides where to enter the pipeline. The route matrix is guidance, not a gate.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output</h2>
+
+<p>
+  The survey produces paired HTML and Markdown files:
+</p>
+
+<pre><code>site-survey/site-survey-001.html    site-survey/site-survey-001.md
+site-survey/site-survey-002.html    site-survey/site-survey-002.md
+...</code></pre>
+
+<p>
+  Each run produces a new numbered pair. Previous surveys are never overwritten,
+  preserving the history for before-and-after comparisons.
+</p>
+
+<p>
+  The report follows the same Tufte/Few design system used by all GVM documents.
+  It is structured in this order:
+</p>
+
+<ol>
+  <li><strong>Executive Summary</strong> &mdash; one-paragraph diagnosis, scenario classification, recommended entry point</li>
+  <li><strong>Codebase Profile</strong> &mdash; tech stack, size, structure, activity level, contributor count</li>
+  <li><strong>Architectural Map</strong> &mdash; patterns identified, module boundaries, data flow, conventions</li>
+  <li><strong>Health Scorecard</strong> &mdash; scored dimensions (Coherence, Currency, Testability, Modularity, Documentation, Dependency Health, Usability if applicable) as a 1&ndash;5 table</li>
+  <li><strong>Diagnosis</strong> &mdash; scenario classification with supporting evidence, showing how the score pattern maps to the scenario</li>
+  <li><strong>Risk Areas</strong> &mdash; hotspots, high-coupling zones, untested areas (prioritised as Critical / Important / Minor)</li>
+  <li><strong>Diagnostic Experts Used</strong> &mdash; which experts were loaded to conduct the survey and their roles (pattern recognition, legacy assessment, data layer, boundary assessment)</li>
+  <li><strong>Expert Coverage Assessment</strong> &mdash; which technologies, patterns, and domains are covered by existing experts, which have gaps, and what was done about each gap (expert discovered, scored, added &mdash; or gap acknowledged)</li>
+  <li><strong>Recommended Project Experts</strong> &mdash; the assembled three-tier panel for downstream pipeline phases, with a summary table: expert name, work, tier, classification, reference file, status (existing / newly added)</li>
+  <li><strong>Route Recommendation</strong> &mdash; recommended pipeline entry point based on both the diagnosis and the work type, with rationale</li>
+  <li><strong>Open Questions</strong> &mdash; anything the survey could not determine from code alone</li>
+</ol>
+
+<span class="sidenote">
+  The Markdown version is designed for Claude consumption in downstream commands.
+  The recommended project experts section is the key input for <code>/gvm-requirements</code>,
+  <code>/gvm-tech-spec</code>, and <code>/gvm-build</code>.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline">Where This Fits</h2>
+
+<p>
+  <code>/gvm-site-survey</code> is the alternative entry point for existing codebases.
+  It replaces <code>/gvm-init</code> as the entry point.
+</p>
+
+<div class="pipeline">
+  <span class="label">GVM v2.0 pipeline</span>
+  [/gvm-init] &rarr; [/gvm-impact-map] &rarr; /gvm-requirements &rarr; /gvm-test-cases &rarr; /gvm-tech-spec &rarr; [/gvm-design-review] &rarr; [/gvm-walking-skeleton] &rarr; /gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; [/gvm-explore-test] &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy<br><br>
+  <span class="label">Existing codebases</span>
+  <strong>/gvm-site-survey</strong> &rarr; /gvm-requirements | /gvm-tech-spec | /gvm-build (depends on diagnosis)
+</div>
+
+<p>
+  The survey output &mdash; particularly the expert roster and diagnosis &mdash; travels
+  with the project through all subsequent pipeline phases. Downstream skills read the
+  survey report to understand which experts are active and why.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="tips">Tips</h2>
+
+<ul>
+  <li><strong>Scope before you explore.</strong> For large codebases, agree on survey boundaries first. Surveying everything produces noise, not insight.</li>
+  <li><strong>Your domain knowledge matters.</strong> The code tells the AI what the system <em>is</em>. You know <em>why</em> it is that way. When the survey presents its diagnosis, confirm or correct it.</li>
+  <li><strong>Don&rsquo;t skip the git archaeology.</strong> Commit history and contributor patterns often reveal more about a codebase&rsquo;s health than the code itself. Hotspot files are where the problems live.</li>
+  <li><strong>Mixed diagnoses are valid.</strong> A well-designed core with an incoherent reporting module is not unusual. The survey handles mixed cases explicitly.</li>
+  <li><strong>The expert roster is a starting point.</strong> You can add or remove experts based on your knowledge of the project. The survey&rsquo;s selections are evidence-based suggestions, not mandates.</li>
+  <li><strong>Run it once, use it everywhere.</strong> The survey report persists and is consumed by all downstream commands. You do not need to re-survey for each pipeline phase.</li>
+  <li><strong>Re-survey after major changes.</strong> If you complete a significant modernisation or remediation effort, a fresh survey confirms the codebase has moved to a healthier state.</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">Best practice</div>
+  <p>Run <code>/gvm-site-survey</code> before your first change to any existing codebase. The upfront investment of 10&ndash;15 minutes prevents weeks of working against the grain of an architecture you did not understand.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

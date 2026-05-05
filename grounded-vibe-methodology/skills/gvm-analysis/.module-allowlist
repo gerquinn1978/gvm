@@ -1,0 +1,18 @@
+# Modules without an entry-point consumer in the wiring matrix
+# (audited by gvm-build/scripts/_module_audit.py at /gvm-build phase
+# completion). Each entry must carry a one-line rationale.
+#
+# These modules are NOT dead code — they are internal helpers consumed
+# by other _shared modules or CLI wrappers, not by analyse.main or
+# render_report.main directly. The wiring matrix tracks entry-point
+# consumers, so internal-helper-only modules legitimately do not have
+# a matrix row.
+
+constants          # internal: prefs.py + findings.py read shared constants
+diagnostics        # CLI helper: anonymise.py, prefs_cli.py, _check_deps.py
+domain_detect      # CLI backing: domain_detect_cli.py is its consumer
+
+# default_questions is NOT allowlisted — analyse.main calls
+# default_questions.generate() directly. That is an entry-point
+# consumer, so it must appear in the wiring matrix as a row (added in
+# the P20-C02 patch alongside this allowlist).

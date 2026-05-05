@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grounded Vibe Methodology — Overview</title>
+  <style>
+/* === Reset & Base === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "et-book", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #111;
+  background: #fffff8;
+  overflow: hidden;
+}
+
+/* === Deck Layout === */
+.deck {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.slide {
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 8vh 12vw;
+  background: #fffff8;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.slide.active {
+  display: flex;
+}
+
+.slide-content {
+  max-width: 900px;
+  width: 100%;
+}
+
+.slide.diagram-slide .slide-content {
+  max-width: 1280px;
+}
+
+/* === Title Slide === */
+.title-slide {
+  text-align: center;
+  flex-direction: column;
+}
+
+.title-slide h1 {
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  color: #111;
+}
+
+.title-slide .subtitle {
+  font-size: 1.4rem;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.title-slide .author {
+  font-size: 1.1rem;
+  color: #777;
+}
+
+/* === Content Slides === */
+.slide h2 {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.3;
+  margin-bottom: 1.5rem;
+  color: #111;
+}
+
+.slide p {
+  font-size: 1.4rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  max-width: 38em;
+}
+
+.slide ul, .slide ol {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.slide li {
+  margin-bottom: 0.5rem;
+}
+
+/* === Diagram Slides === */
+.slide .diagram {
+  width: 100%;
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.slide .diagram svg {
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+  stroke: #333;
+  fill: none;
+}
+
+.slide .diagram svg text {
+  fill: #111;
+  stroke: none;
+  font-family: "et-book", "Palatino Linotype", serif;
+  font-size: 26px;
+}
+
+.slide .diagram svg text.label-small { font-size: 20px; fill: #555; }
+.slide .diagram svg text.label-heading { font-size: 32px; font-weight: 600; }
+.slide .diagram svg text.label-accent { font-size: 22px; fill: #a00000; font-weight: 600; }
+
+.slide .diagram svg .node {
+  fill: #fffff8;
+  stroke: #333;
+  stroke-width: 1.5;
+}
+
+.slide .diagram svg .node-accent {
+  fill: #f7f0f0;
+  stroke: #a00000;
+  stroke-width: 2;
+}
+
+.slide .diagram svg .node-light {
+  fill: #f7f7f0;
+  stroke: #999;
+  stroke-width: 1;
+}
+
+.slide .diagram svg .arrow {
+  stroke: #333;
+  stroke-width: 1.5;
+  fill: none;
+  marker-end: url(#arrowhead);
+}
+
+.slide .diagram svg .arrow-accent {
+  stroke: #a00000;
+  stroke-width: 2;
+  fill: none;
+  marker-end: url(#arrowhead-accent);
+}
+
+.slide .diagram svg .arrow-grey {
+  stroke: #999;
+  stroke-width: 1.5;
+  fill: none;
+  marker-end: url(#arrowhead-grey);
+}
+
+/* === Big-text slide === */
+.bigtext-slide .slide-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.bigtext-slide .bigtext {
+  font-size: 2.8rem;
+  font-weight: 400;
+  line-height: 1.3;
+  max-width: 22em;
+  text-align: center;
+}
+
+.bigtext-slide .bigtext em {
+  font-style: italic;
+  color: #a00000;
+}
+
+/* === Contrast / Turning-Point Slide === */
+.contrast-slide {
+  background: #111;
+  color: #fffff8;
+  text-align: center;
+  flex-direction: column;
+}
+
+.contrast-slide h2 {
+  color: #fffff8;
+  font-size: 2.6rem;
+  max-width: 900px;
+}
+
+.contrast-slide p {
+  color: #ccc;
+  font-size: 1.3rem;
+  margin-top: 1.5rem;
+  max-width: 700px;
+}
+
+/* === Data / Table Slides === */
+.slide table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+
+.slide th {
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #111;
+  padding: 0.5rem 1rem 0.5rem 0;
+}
+
+.slide td {
+  padding: 0.4rem 1rem 0.4rem 0;
+  border-bottom: 1px solid #ddd;
+  vertical-align: top;
+}
+
+.slide td.num, .slide th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* === Two-column layout for text slides === */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 1rem;
+}
+
+.two-col-wide {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 3rem;
+  margin-top: 1rem;
+}
+
+.col-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+  margin-bottom: 0.6rem;
+}
+
+/* === Presenter Notes === */
+.notes {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #333;
+  color: #eee;
+  padding: 1.5rem 12vw;
+  font-size: 1rem;
+  line-height: 1.5;
+  max-height: 30vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+body.show-notes .notes {
+  display: block;
+}
+
+body.show-notes .slide {
+  height: 70vh;
+}
+
+/* === Slide Counter === */
+.slide-counter {
+  position: fixed;
+  bottom: 1rem;
+  right: 2rem;
+  font-size: 0.9rem;
+  color: #999;
+  z-index: 50;
+}
+
+/* === GVM Attribution === */
+.gvm-attribution {
+  font-size: 0.7rem;
+  color: #bbb;
+  font-style: italic;
+  text-align: center;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+/* === Print === */
+@media print {
+  body { overflow: visible; }
+  .deck { width: auto; height: auto; position: static; }
+  .slide {
+    display: flex !important;
+    position: static;
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+  .slide-counter, .notes { display: none !important; }
+}
+  </style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ACT I: WHAT IT IS
+       Slides 1–10
+       ═══════════════════════════════════════════════════════════ -->
+
+  <!-- SLIDE 1 — TITLE -->
+  <section class="slide title-slide">
+    <div class="slide-content">
+      <h1>Grounded Vibe Methodology</h1>
+      <p class="subtitle">Expert-anchored AI development — from requirements to release</p>
+      <p class="author">Conor Brennan &amp; Gerard Quinn &mdash; April 2026</p>
+    </div>
+    <aside class="notes">30-minute overview for mixed audience — practitioners and leadership. Three acts: what GVM is, why it matters, how it works. Hit the contrast slide at the 12-minute mark.</aside>
+  </section>
+
+  <!-- SLIDE 2 — SO WHAT? OPENING (Doumont: answer first) -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>One sentence activates thousands of pages of expert knowledge.</h2>
+      <p>That is GVM's core claim. Name a specific expert, cite their specific work, and the AI shifts from a broad blend of everything it was trained on to a focused application of that expert's framework.</p>
+      <p>"Apply Tufte and Few's data-ink principles" — eight words — compresses four books, decades of research, and dozens of specific techniques into a single instruction.</p>
+      <p>The controlled experiment confirms the quality shift is real, measurable, and reproducible across Claude, GPT, and Gemini.</p>
+    </div>
+    <aside class="notes">Doumont's "answer first" principle — the audience should know what GVM is before they see the evidence. Don't build to the reveal; lead with it.</aside>
+  </section>
+
+  <!-- SLIDE 3 — THE PROBLEM (diagram: vague prompt vs citation) -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>A bare prompt draws from a broad, undifferentiated blend of training data.</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#333"/>
+            </marker>
+            <marker id="arrowhead-accent" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#a00000"/>
+            </marker>
+            <marker id="arrowhead-grey" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto">
+              <path d="M0,0 L0,8 L11,4 z" fill="#999"/>
+            </marker>
+          </defs>
+
+          <!-- Ungrounded side — top row -->
+          <rect class="node-light" x="30" y="30" width="320" height="80" rx="6"/>
+          <text x="190" y="78" text-anchor="middle" class="label-small">"Design this system."</text>
+
+          <!-- arrow down to blob -->
+          <line class="arrow-grey" x1="190" y1="110" x2="190" y2="185" stroke="#999" stroke-width="1.5" marker-end="url(#arrowhead-grey)"/>
+
+          <!-- Blob: broad distribution -->
+          <ellipse cx="190" cy="235" rx="140" ry="60" fill="#f0f0e0" stroke="#bbb" stroke-width="1.5"/>
+          <text x="190" y="240" text-anchor="middle" class="label-small">Everything the model knows</text>
+
+          <!-- arrow to output -->
+          <line class="arrow-grey" x1="190" y1="295" x2="190" y2="370" stroke="#999" stroke-width="1.5" marker-end="url(#arrowhead-grey)"/>
+
+          <!-- Unfocused output -->
+          <rect class="node-light" x="50" y="370" width="280" height="80" rx="6"/>
+          <text x="190" y="403" text-anchor="middle" class="label-small">Competent but</text>
+          <text x="190" y="430" text-anchor="middle" class="label-small">undifferentiated output</text>
+
+          <!-- Grounded side — top row -->
+          <rect class="node-accent" x="650" y="30" width="520" height="80" rx="6"/>
+          <text x="910" y="65" text-anchor="middle">"Apply Tufte &amp; Few's data-ink</text>
+          <text x="910" y="96" text-anchor="middle">principles when designing this dashboard."</text>
+
+          <!-- arrow down to focused region -->
+          <line x1="910" y1="110" x2="910" y2="185" stroke="#a00000" stroke-width="2" marker-end="url(#arrowhead-accent)"/>
+
+          <!-- Focused knowledge region -->
+          <ellipse cx="910" cy="235" rx="100" ry="55" fill="#fff0f0" stroke="#a00000" stroke-width="2"/>
+          <text x="910" y="228" text-anchor="middle" class="label-small" style="fill:#a00000;">Tufte &amp; Few's</text>
+          <text x="910" y="252" text-anchor="middle" class="label-small" style="fill:#a00000;">framework activated</text>
+
+          <!-- arrow to focused output -->
+          <line x1="910" y1="290" x2="910" y2="370" stroke="#a00000" stroke-width="2" marker-end="url(#arrowhead-accent)"/>
+
+          <!-- Focused output box — Bringhurst: longest line = "✓ Right-aligned numbers, sparklines" = 37 chars at 20px -->
+          <!-- 37×11+30 = 437. Use 450. -->
+          <rect x="685" y="370" width="450" height="90" rx="6" fill="#fff8f8" stroke="#a00000" stroke-width="1.5"/>
+          <text x="920" y="400" text-anchor="middle" class="label-small">✓ Data-ink ratio, no chartjunk</text>
+          <text x="920" y="424" text-anchor="middle" class="label-small">✓ Right-aligned numbers, sparklines</text>
+          <text x="920" y="448" text-anchor="middle" class="label-small">✓ Small multiples, minimal gridlines</text>
+
+          <!-- VS divider -->
+          <line x1="600" y1="30" x2="600" y2="460" stroke="#ddd" stroke-width="1" stroke-dasharray="6,4"/>
+          <text x="600" y="245" text-anchor="middle" class="label-small" style="fill:#bbb;">vs</text>
+
+          <!-- Bottom label -->
+          <text x="190" y="468" text-anchor="middle" class="label-small" style="fill:#999; font-style:italic;">Ungrounded</text>
+          <text x="910" y="468" text-anchor="middle" class="label-small" style="fill:#999; font-style:italic;">Grounded (one sentence)</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">Duarte: "diagrams over prose for relationships." The contrast is the message. Don't explain it — let the diagram carry it.</aside>
+  </section>
+
+  <!-- SLIDE 4 — THE MECHANISM (compression diagram) -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>One citation compresses thousands of pages of expert knowledge.</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Books column -->
+          <!-- Longest line in each book rect: "Designing Data-Intensive Applications" = 36 chars at 20px → 36×11+30 = 426. Use 240 wide — these are label-small 20px = 36×11+30=426 but we have two shorter lines. Actual longest line = "Designing Data-Intensive Applications" in the box. Need 36×11+30=426. But books column space is limited. Use 260 width and truncate to fit. Actually longest actual text = "Software Testing Techniques" (27 chars) → 27×11+30=327. "Designing Data-Intensive Apps" (29 chars) → 29×11+30=349. Use 360 wide to be safe. -->
+          <rect class="node-light" x="30" y="40" width="360" height="56" rx="4"/>
+          <text x="210" y="65" text-anchor="middle" class="label-small">Software Testing Techniques</text>
+          <text x="210" y="87" text-anchor="middle" class="label-small" style="fill:#999;">Beizer — 550 pages</text>
+
+          <rect class="node-light" x="30" y="104" width="360" height="56" rx="4"/>
+          <text x="210" y="129" text-anchor="middle" class="label-small">Visual Display of Quantitative Info</text>
+          <text x="210" y="151" text-anchor="middle" class="label-small" style="fill:#999;">Tufte — 197 pages</text>
+
+          <rect class="node-light" x="30" y="168" width="360" height="56" rx="4"/>
+          <text x="210" y="193" text-anchor="middle" class="label-small">Show Me the Numbers</text>
+          <text x="210" y="215" text-anchor="middle" class="label-small" style="fill:#999;">Few — 351 pages</text>
+
+          <rect class="node-light" x="30" y="232" width="360" height="56" rx="4"/>
+          <text x="210" y="257" text-anchor="middle" class="label-small">Just Enough Architecture</text>
+          <text x="210" y="279" text-anchor="middle" class="label-small" style="fill:#999;">Fairbanks — 376 pages</text>
+
+          <rect class="node-light" x="30" y="296" width="360" height="56" rx="4"/>
+          <text x="210" y="321" text-anchor="middle" class="label-small">Designing Data-Intensive Apps</text>
+          <text x="210" y="343" text-anchor="middle" class="label-small" style="fill:#999;">Kleppmann — 614 pages</text>
+
+          <rect class="node-light" x="30" y="360" width="360" height="56" rx="4"/>
+          <text x="210" y="385" text-anchor="middle" class="label-small">The Mythical Man-Month</text>
+          <text x="210" y="407" text-anchor="middle" class="label-small" style="fill:#999;">Brooks — 322 pages</text>
+
+          <text x="210" y="448" text-anchor="middle" class="label-small" style="fill:#777; font-weight:600;">~2,410 pages total</text>
+
+          <!-- Arrow: absorbed during training -->
+          <!-- Connector label: midpoint of line from x=390 to x=500, y=240. Midpoint=(445,240). Offset perp by -16 (above). Label at y=224. -->
+          <line x1="390" y1="240" x2="498" y2="240" stroke="#bbb" stroke-width="2" marker-end="url(#arrowhead-grey)"/>
+          <rect fill="#fffff8" x="390" y="205" width="112" height="36" rx="2"/>
+          <text x="446" y="220" text-anchor="middle" class="label-small" style="fill:#aaa;">absorbed</text>
+          <text x="446" y="240" text-anchor="middle" class="label-small" style="fill:#aaa;">during training</text>
+
+          <!-- AI Model box — longest line "Knowledge encoded in params" = 27 chars at 20px → 297+30=327. Use 220 height, 200 wide -->
+          <rect class="node" x="500" y="170" width="200" height="140" rx="6"/>
+          <text x="600" y="224" text-anchor="middle">AI Model</text>
+          <text x="600" y="254" text-anchor="middle" class="label-small">Knowledge encoded</text>
+          <text x="600" y="278" text-anchor="middle" class="label-small">in parameters</text>
+
+          <!-- Arrow: activated by -->
+          <!-- Line from x=700 to x=800, y=240. Midpoint=(750,240). Label above at y=214. -->
+          <line x1="700" y1="240" x2="798" y2="240" stroke="#a00000" stroke-width="2" marker-end="url(#arrowhead-accent)"/>
+          <rect fill="#fffff8" x="700" y="210" width="112" height="30" rx="2"/>
+          <text x="756" y="231" text-anchor="middle" class="label-small" style="fill:#a00000; font-weight:600;">activated by</text>
+
+          <!-- The Citation box — longest line: '"Apply Tufte and Few's principles' = 33 chars at 20px = 33×11+30=393. Use 230 wide. -->
+          <rect x="800" y="150" width="230" height="120" rx="6" fill="#fffff8" stroke="#a00000" stroke-width="2"/>
+          <text x="915" y="188" text-anchor="middle" class="label-small" style="fill:#a00000; font-weight:600; letter-spacing:0.05em;">ONE SENTENCE</text>
+          <text x="915" y="212" text-anchor="middle" class="label-small" style="font-style:italic;">"Apply Tufte &amp; Few's</text>
+          <text x="915" y="234" text-anchor="middle" class="label-small" style="font-style:italic;">principles on this</text>
+          <text x="915" y="256" text-anchor="middle" class="label-small" style="font-style:italic;">dashboard."</text>
+
+          <!-- Arrow: produces -->
+          <!-- Line from x=1030 to x=1110, y=240. Midpoint=(1070,240). Label above. -->
+          <line x1="1030" y1="240" x2="1108" y2="240" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+          <rect fill="#fffff8" x="1028" y="210" width="84" height="30" rx="2"/>
+          <text x="1070" y="231" text-anchor="middle" class="label-small" style="fill:#555;">produces</text>
+
+          <!-- Focused output box — longest line "✓ Right-aligned numbers" = 22 chars at 20px → 22×11+30=272. Use 165 wide, x=1110. But we have a list. Longest "✓ Data-ink ratio" = 16 chars → 206. Use 175 wide. -->
+          <rect x="1112" y="110" width="68" height="0" rx="4" fill="none" stroke="none"/>
+          <!-- Actually draw a proper box. Longest visible line "✓ Minimal gridlines" = 19 chars → 239. Use 240 wide. x=1112 to 1352 but viewbox is 1200. Use x=1000 offset. Let me reconsider layout. Place output box starting x=1035, viewbox is 1200. -->
+          <!-- Revised: output box x=1040, width=140. Longest label text = "✓ No chartjunk" = 14 chars at 20px = 14×11+30=184. Use 185 wide. x=1015. -->
+          <rect x="1010" y="90" width="185" height="310" rx="6" fill="#fff8f8" stroke="#a00000" stroke-width="1.5"/>
+          <text x="1102" y="124" text-anchor="middle" class="label-small" style="fill:#a00000; font-weight:600;">FOCUSED</text>
+          <text x="1102" y="148" text-anchor="middle" class="label-small" style="fill:#a00000; font-weight:600;">OUTPUT</text>
+          <text x="1102" y="180" text-anchor="middle" class="label-small">✓ Data-ink ratio</text>
+          <text x="1102" y="206" text-anchor="middle" class="label-small">✓ No chartjunk</text>
+          <text x="1102" y="232" text-anchor="middle" class="label-small">✓ Small multiples</text>
+          <text x="1102" y="258" text-anchor="middle" class="label-small">✓ Min. gridlines</text>
+          <text x="1102" y="284" text-anchor="middle" class="label-small">✓ Right-aligned #s</text>
+          <text x="1102" y="310" text-anchor="middle" class="label-small">✓ Zebra striping</text>
+          <text x="1102" y="336" text-anchor="middle" class="label-small">✓ Sparklines</text>
+          <text x="1102" y="362" text-anchor="middle" class="label-small">+ more</text>
+
+          <!-- Caption -->
+          <text x="600" y="490" text-anchor="middle" class="label-small" style="fill:#999; font-style:italic;">~2,410 pages activated by eight words</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">Source: whitepaper Section 3.3. The compression diagram from the whitepaper adapted for projection. Don't read out the checklist — let the audience absorb it.</aside>
+  </section>
+
+  <!-- SLIDE 5 — WHAT GVM IS (definition) -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>GVM builds a development process around citation-based expert activation.</h2>
+      <p>The Grounded Vibe Methodology keeps what works about vibe coding — natural language, low barrier to entry, conversational flow — while anchoring every phase to <strong>named experts and their published works</strong>.</p>
+      <ul>
+        <li>Adzic, Cagan, and Patton ground the discovery work — deciding what is worth building.</li>
+        <li>Beck, Fagan, Freeman &amp; Pryce, and Beizer ground the construction and verification work — building it correctly.</li>
+        <li>Every discipline is guided by named authorities with specific published works, not generic role labels.</li>
+      </ul>
+    </div>
+    <aside class="notes">Atkinson: one idea per slide. The one idea here is "GVM = citation-based grounding + structured process." Don't wander into the pipeline yet.</aside>
+  </section>
+
+  <!-- SLIDE 6 — SIX DESIGN PRINCIPLES -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Six principles distinguish GVM from adjacent approaches.</h2>
+      <ul>
+        <li><strong>Named Experts, Not Abstract Personas</strong> — every discipline uses named authorities with specific published works.</li>
+        <li><strong>Multi-Expert Panels</strong> — 3–7 experts per discipline whose competing frameworks force principled trade-offs.</li>
+        <li><strong>Conditional Activation</strong> — specialists load only when their domain appears, keeping context focused.</li>
+        <li><strong>Curated Reference Files</strong> — expert knowledge codified in phase-keyed files structured for maximum citation effect.</li>
+        <li><strong>Self-Improving Expert Roster</strong> — the roster grows through use via discovery and divergence analysis.</li>
+        <li><strong>Builds on Published Canon</strong> — GVM activates established methodologies; it does not replace them.</li>
+      </ul>
+    </div>
+    <aside class="notes">Source: whitepaper Section 1, Design Principles block. These are the stated principles from the paper — do not embellish.</aside>
+  </section>
+
+  <!-- SLIDE 7 — THREE-TIER EXPERT MODEL (diagram) -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>Expertise activates in three tiers, each with a different scope and trigger.</h2>
+      <div class="diagram">
+        <!-- Three-tier hierarchy. viewBox 1200×560.
+             Bringhurst sizing for each box:
+             Tier 1 heading: "Tier 1 — Process Experts" = 24 chars at 26px → 24×14+40=376
+             Tier 1 subtitle: "Always active: Wiegers, Beck, Beizer, Clements, Brooks…" = 55 chars at 20px → 55×11+30=635
+             Therefore Tier 1 box width ≥ 635.
+
+             Tier 2a heading: "Tier 2a — Software Domain Specialists" = 37 chars at 26px → 37×14+40=558
+             Tier 2a subtitle: "On signal: Cooper, Kleppmann, Tufte, Nygard, Newman…" = 52 chars at 20px → 52×11+30=602
+             Therefore Tier 2a box width ≥ 602.
+
+             Tier 2b heading: "Tier 2b — Industry Domain Specialists" = 37 chars at 26px → 558
+             Tier 2b subtitle: "On signal: Hull, Jorion, Altman, Chapelle per project" = 52 chars at 20px → 602
+             Width ≥ 602.
+
+             Tier 3 heading: "Tier 3 — Stack Specialists" = 26 chars at 26px → 404
+             Tier 3 subtitle: "After tech choice: Ramalho, Abramov, Kleppmann, Winand" = 55 chars at 20px → 635
+             Width ≥ 635.
+
+             Strategy: boxes stacked vertically centred at x=600.
+             Widths: T1=640, T2a+T2b side-by-side in one row, T3=640.
+             T2a box: 600 wide. T2b box: 600 wide. Gap between: 40. Total = 1240 > 1200.
+             Reduce: T2a=580, T2b=560, gap=30. Total = 1170. x T2a starts 15, T2b=625.
+             Actually, place them as single wide boxes, stacked. Let viewBox=1200×580.
+        -->
+        <svg viewBox="0 0 1200 580" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Tier 1 box. Width=640, centred at x=600. x=280, y=30, h=90. -->
+          <rect class="node-accent" x="280" y="30" width="640" height="90" rx="6"/>
+          <text x="600" y="64" text-anchor="middle">Tier 1 — Process Experts</text>
+          <text x="600" y="93" text-anchor="middle" class="label-small">Always active: Wiegers, Beck, Beizer, Clements, Brooks…</text>
+
+          <!-- Arrow down from Tier 1 to Tier 2 row -->
+          <line x1="600" y1="120" x2="600" y2="175" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+          <!-- Tier 2a box. Width=580. x=20, y=175, h=90. -->
+          <rect class="node" x="20" y="175" width="580" height="90" rx="6"/>
+          <text x="310" y="209" text-anchor="middle">Tier 2a — Software Domain</text>
+          <text x="310" y="240" text-anchor="middle" class="label-small">On signal: Cooper, Kleppmann, Tufte, Nygard…</text>
+
+          <!-- Tier 2b box. Width=560. x=620, y=175, h=90. -->
+          <rect class="node" x="620" y="175" width="560" height="90" rx="6"/>
+          <text x="900" y="209" text-anchor="middle">Tier 2b — Industry Domain</text>
+          <text x="900" y="240" text-anchor="middle" class="label-small">On signal: Hull, Jorion, Altman, Chapelle…</text>
+
+          <!-- Line from bottom of Tier 1 arrow splitting to Tier 2a centre and Tier 2b centre -->
+          <line x1="600" y1="175" x2="310" y2="175" stroke="#333" stroke-width="1.5"/>
+          <line x1="600" y1="175" x2="900" y2="175" stroke="#333" stroke-width="1.5"/>
+          <!-- arrowheads on T2a and T2b top edges -->
+          <polygon points="310,165 305,175 315,175" fill="#333"/>
+          <polygon points="900,165 895,175 905,175" fill="#333"/>
+
+          <!-- Arrow down from Tier 2 row to Tier 3 -->
+          <line x1="600" y1="265" x2="600" y2="330" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+          <!-- Tier 3 box. Width=640. x=280, y=330, h=90. -->
+          <rect class="node" x="280" y="330" width="640" height="90" rx="6"/>
+          <text x="600" y="364" text-anchor="middle">Tier 3 — Stack Specialists</text>
+          <text x="600" y="393" text-anchor="middle" class="label-small">After tech choice: Ramalho, Abramov, Winand, Majors…</text>
+
+          <!-- Scope labels — right margin. Williams: clear zone ≥20 units from any node. Node right edge = 920. Label x=950. -->
+          <text x="1185" y="78" text-anchor="end" class="label-small" style="fill:#999; font-style:italic;">Every phase</text>
+          <text x="1185" y="222" text-anchor="end" class="label-small" style="fill:#999; font-style:italic;">On domain signal</text>
+          <text x="1185" y="378" text-anchor="end" class="label-small" style="fill:#999; font-style:italic;">After tech choice</text>
+
+          <!-- Activation key at bottom -->
+          <rect fill="#fffff8" x="25" y="440" width="460" height="110" rx="4" stroke="#ddd" stroke-width="1"/>
+          <text x="255" y="468" text-anchor="middle" class="label-small" style="font-weight:600;">Activation is transparent</text>
+          <text x="255" y="494" text-anchor="middle" class="label-small">The methodology announces which experts</text>
+          <text x="255" y="518" text-anchor="middle" class="label-small">have activated and why, at every step.</text>
+
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">Source: whitepaper Section 4. The three tiers are the load-bearing structure. Tier 2 splits into 2a (software domains — ships with GVM) and 2b (industry domains — curated per project). Don't conflate them.</aside>
+  </section>
+
+  <!-- SLIDE 8 — PANELS OF COMPETING EXPERTS -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Panels of competing experts force principled trade-offs that single experts cannot.</h2>
+      <p>The architecture panel illustrates the dynamic. Fairbanks says "specify only the risky parts." Brooks says "maintain conceptual integrity everywhere." Neither wins outright.</p>
+      <p>The panel's resolution for a low-risk utility module: a light specification (Fairbanks) that explicitly cross-references the system's naming conventions, error handling, and logging format (Brooks). Brief but connected to the whole.</p>
+      <p>This is not additive. It is a genuine trade-off where competing priorities produce a result neither expert would reach alone.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Section 3.4. Use the concrete configuration-loader example if asked. Don't claim this is the only benefit of panels — panel size (3–7) is also calibrated to avoid expert overload, which is a documented failure mode.</aside>
+  </section>
+
+  <!-- SLIDE 9 — HOW THE MECHANISM WORKS (retrieval key) -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The citation acts as a retrieval key into the model's trained knowledge.</h2>
+      <p>Large language models process text that references major works during pre-training. These associations are encoded in the model's attention patterns.</p>
+      <p>When a prompt names "Beizer" alongside "boundary value," the model's attention activates representations associated with Beizer's specific formulation: the six-value boundary test and the distinction between on-point and off-point testing.</p>
+      <p>Without the citation, the model produces a blend — typically a three-value test representing multiple sources averaged together.</p>
+      <p style="font-size:1.1rem; color:#888; font-style:italic;">The retrieval-key mechanism is the working hypothesis the methodology is built on. The experimental evidence in Section 7 of the whitepaper demonstrates the quality effect rather than directly testing the mechanism.</p>
+    </div>
+    <aside class="notes">Be careful here — the whitepaper is explicit that the retrieval-key mechanism is a working hypothesis, supported by transformer interpretability research but not directly tested by the dashboard experiment. Don't overclaim.</aside>
+  </section>
+
+  <!-- SLIDE 10 — WHAT GVM IS NOT (positioning) -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>GVM differs from role prompting, SDD, BMAD, and RAG on one organising axis.</h2>
+      <div class="diagram">
+        <!-- Matrix: rows = approaches, cols = "building the right thing" / "building it right" -->
+        <!-- This is a table slide, but rendered as SVG for consistent diagram sizing -->
+        <!-- viewBox 1200×500. Table headers y=40. Rows y=100,170,240,310,380,450 -->
+        <svg viewBox="0 0 1200 460" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Column headers -->
+          <line x1="40" y1="55" x2="1180" y2="55" stroke="#111" stroke-width="2"/>
+          <text x="240" y="40" text-anchor="middle" class="label-small" style="font-weight:600;">Approach</text>
+          <line x1="440" y1="20" x2="440" y2="460" stroke="#ddd" stroke-width="1"/>
+          <text x="710" y="40" text-anchor="middle" class="label-small" style="font-weight:600;">Grounds "right thing to build"?</text>
+          <line x1="980" y1="20" x2="980" y2="460" stroke="#ddd" stroke-width="1"/>
+          <text x="1080" y="40" text-anchor="middle" class="label-small" style="font-weight:600;">Grounds "build it right"?</text>
+
+          <!-- Row 1: Role Prompting -->
+          <text x="240" y="98" text-anchor="middle" class="label-small">Role Prompting</text>
+          <text x="710" y="98" text-anchor="middle" class="label-small" style="fill:#999;">No</text>
+          <text x="1080" y="98" text-anchor="middle" class="label-small" style="fill:#555;">Partially (narrows persona)</text>
+          <line x1="40" y1="115" x2="1180" y2="115" stroke="#eee" stroke-width="1"/>
+
+          <!-- Row 2: SDD -->
+          <text x="240" y="153" text-anchor="middle" class="label-small">Spec-Driven Dev (SDD)</text>
+          <text x="710" y="153" text-anchor="middle" class="label-small" style="fill:#999;">No</text>
+          <text x="1080" y="153" text-anchor="middle" class="label-small" style="fill:#555;">Yes (structures what to build)</text>
+          <line x1="40" y1="170" x2="1180" y2="170" stroke="#eee" stroke-width="1"/>
+
+          <!-- Row 3: BMAD -->
+          <text x="240" y="208" text-anchor="middle" class="label-small">BMAD</text>
+          <text x="710" y="208" text-anchor="middle" class="label-small" style="fill:#555;">Partially (Analyst role, no outcome gate)</text>
+          <text x="1080" y="208" text-anchor="middle" class="label-small" style="fill:#555;">Yes (role-based pipeline)</text>
+          <line x1="40" y1="225" x2="1180" y2="225" stroke="#eee" stroke-width="1"/>
+
+          <!-- Row 4: RAG -->
+          <text x="240" y="263" text-anchor="middle" class="label-small">RAG</text>
+          <text x="710" y="263" text-anchor="middle" class="label-small" style="fill:#999;">No</text>
+          <text x="1080" y="263" text-anchor="middle" class="label-small" style="fill:#555;">Yes (retrieves relevant docs)</text>
+          <line x1="40" y1="280" x2="1180" y2="280" stroke="#eee" stroke-width="1"/>
+
+          <!-- Row 5: GVM — highlighted -->
+          <rect x="40" y="283" width="1140" height="60" rx="3" fill="#fff8f8" stroke="none"/>
+          <text x="240" y="318" text-anchor="middle" class="label-small" style="font-weight:600;">GVM</text>
+          <text x="710" y="311" text-anchor="middle" class="label-small" style="fill:#a00000; font-weight:600;">Yes — impact map + traceability gate</text>
+          <text x="710" y="335" text-anchor="middle" class="label-small" style="fill:#a00000;">+ exploratory test + release verdict</text>
+          <text x="1080" y="318" text-anchor="middle" class="label-small" style="fill:#a00000; font-weight:600;">Yes — named experts + phased pipeline</text>
+          <line x1="40" y1="343" x2="1180" y2="343" stroke="#111" stroke-width="2"/>
+
+          <text x="600" y="390" text-anchor="middle" class="label-small" style="fill:#888; font-style:italic;">Source: whitepaper Tables 4 and 5 — structural comparison, not head-to-head experimental results</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">The whitepaper is explicit: this is a descriptive structural comparison against published documentation. There is no head-to-head controlled experiment comparing GVM to these approaches. Don't imply otherwise.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CONTRAST SLIDE — the pivot (Duarte: sparkline pivot)
+       ═══════════════════════════════════════════════════════════ -->
+
+  <!-- SLIDE 11 — CONTRAST / WHY IT MATTERS PIVOT -->
+  <section class="slide contrast-slide">
+    <div class="slide-content">
+      <h2>Ungrounded evaluation cannot see the improvement that grounded output produces.</h2>
+      <p>The controlled experiment revealed not one finding but two: grounding improves quality, and you need the experts' own frameworks to see that it has. Without the framework, the improvement is invisible.</p>
+    </div>
+    <aside class="notes">Duarte: the contrast slide marks the pivot in the sparkline. This is the "why it matters" moment — not just that GVM produces better output, but that you cannot detect the improvement without grounding the evaluation too. This is the single sentence the audience should leave with.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ACT II: WHY IT MATTERS
+       Slides 12–22
+       ═══════════════════════════════════════════════════════════ -->
+
+  <!-- SLIDE 12 — THE EXPERIMENT -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>A controlled experiment across three model families confirmed the quality effect.</h2>
+      <p>180 market risk dashboards generated under three conditions: ungrounded, design-grounded (Tufte &amp; Few), and fully grounded (design + domain + writing experts). Shuffled, anonymised, reviewed blind.</p>
+      <p>1,080 blind reviews total: 180 dashboards × 3 reviewers × 2 review instruments, reproduced across Claude, GPT, and Gemini.</p>
+      <p>Two review instruments — one derived from ungrounded AI consensus, one from the cited experts' published principles.</p>
+      <p style="font-size:1.1rem; color:#888; font-style:italic;">Full design, per-dimension scores, and statistical analysis in the companion paper <em>Grounding Produces Measurably Better Output</em>.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Section 7.1. Don't give statistics without context — always lead with the experimental design. The p-value (p < 0.001) and effect sizes (Cohen's d up to 3.87) are in the next slide.</aside>
+  </section>
+
+  <!-- SLIDE 13 — THE RESULT (ranking reversal diagram) -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>The group ranking reversed between the ungrounded and expert-grounded review instruments.</h2>
+      <div class="diagram">
+        <!-- Slope chart: Experiment A (ungrounded review) vs Experiment B (expert-grounded review) -->
+        <!-- Three lines for G1/G2/G3. Under Exp A: G1~G2~G3. Under Exp B: G1<G2<G3 clearly. -->
+        <!-- viewBox 1200×500 -->
+        <svg viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Column labels -->
+          <!-- Bringhurst: "Experiment A — ungrounded review" = 33 chars at 26px = 33×14+40=502.
+               "Experiment B — expert-grounded review" = 37 chars → 558.
+               Position columns so boxes fit. Col A centred at x=320, col B at x=880. -->
+
+          <!-- Col A header box: width=502 centred at 320. x=320-251=69. -->
+          <rect class="node-light" x="69" y="20" width="502" height="56" rx="4"/>
+          <text x="320" y="54" text-anchor="middle">Experiment A — ungrounded review</text>
+
+          <!-- Col B header box: width=558 centred at 880. x=880-279=601. -->
+          <rect class="node-light" x="601" y="20" width="558" height="56" rx="4"/>
+          <text x="880" y="54" text-anchor="middle">Experiment B — expert-grounded review</text>
+
+          <!-- Axis line -->
+          <line x1="320" y1="76" x2="320" y2="450" stroke="#ddd" stroke-width="1.5"/>
+          <line x1="880" y1="76" x2="880" y2="450" stroke="#ddd" stroke-width="1.5"/>
+
+          <!-- Under Exp A: G1, G2, G3 clustered near same score (~flat at y=260) -->
+          <!-- G1 dot Exp A -->
+          <circle cx="320" cy="250" r="12" fill="#555" stroke="none"/>
+          <text x="298" y="256" text-anchor="end" class="label-small" style="fill:#555;">G1</text>
+
+          <!-- G2 dot Exp A — slightly below G1 (not ordered as expected) -->
+          <circle cx="320" cy="275" r="12" fill="#888" stroke="none"/>
+          <text x="298" y="281" text-anchor="end" class="label-small" style="fill:#888;">G2</text>
+
+          <!-- G3 dot Exp A — near G1 -->
+          <circle cx="320" cy="255" r="12" fill="#bbb" stroke="none"/>
+          <!-- G3 label slightly offset to avoid collision -->
+          <text x="298" y="231" text-anchor="end" class="label-small" style="fill:#bbb;">G3</text>
+
+          <!-- Under Exp B: G1 low, G2 mid, G3 high — clear staircase -->
+          <circle cx="880" cy="390" r="12" fill="#555" stroke="none"/>
+          <text x="902" y="396" text-anchor="start" class="label-small" style="fill:#555;">G1 (ungrounded)</text>
+
+          <circle cx="880" cy="260" r="12" fill="#888" stroke="none"/>
+          <text x="902" y="266" text-anchor="start" class="label-small" style="fill:#888;">G2 (design-grounded)</text>
+
+          <circle cx="880" cy="130" r="12" fill="#a00000" stroke="none"/>
+          <text x="902" y="136" text-anchor="start" class="label-small" style="fill:#a00000;">G3 (fully grounded)</text>
+
+          <!-- Slope lines -->
+          <line x1="332" y1="250" x2="868" y2="390" stroke="#555" stroke-width="2" stroke-dasharray="none"/>
+          <line x1="332" y1="275" x2="868" y2="260" stroke="#888" stroke-width="2"/>
+          <line x1="332" y1="255" x2="868" y2="130" stroke="#a00000" stroke-width="2.5"/>
+
+          <!-- Annotation: "No predicted ordering" -->
+          <rect fill="#fffff8" x="120" y="300" width="202" height="54" rx="3"/>
+          <text x="221" y="325" text-anchor="middle" class="label-small" style="fill:#888;">No predicted</text>
+          <text x="221" y="349" text-anchor="middle" class="label-small" style="fill:#888;">ordering</text>
+
+          <!-- Annotation: "G1 < G2 < G3 — p < 0.001" -->
+          <rect fill="#fffff8" x="800" y="220" width="254" height="54" rx="3"/>
+          <text x="927" y="245" text-anchor="middle" class="label-small" style="fill:#a00000; font-weight:600;">G1 &lt; G2 &lt; G3</text>
+          <text x="927" y="269" text-anchor="middle" class="label-small" style="fill:#a00000;">p &lt; 0.001 all pairwise</text>
+
+          <!-- Note on axes -->
+          <text x="320" y="472" text-anchor="middle" class="label-small" style="fill:#999; font-style:italic;">Quality score →</text>
+          <text x="880" y="472" text-anchor="middle" class="label-small" style="fill:#999; font-style:italic;">Quality score →</text>
+
+          <!-- Effect size footnote -->
+          <text x="600" y="494" text-anchor="middle" class="label-small" style="fill:#aaa; font-style:italic;">Effect sizes: chartjunk absence d=3.67, data-ink ratio d=3.87 (Cohen's d ≥ 0.8 = large)</text>
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">Source: whitepaper Section 7.2. The pattern reproduced identically across Claude Opus 4.6, GPT-5.4, and Gemini 3.1 Pro. Same-model evaluation remains a limitation — cross-model review has not been performed. Be explicit about this limitation if asked.</aside>
+  </section>
+
+  <!-- SLIDE 14 — WHY THE REVERSAL MATTERS -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Evaluating quality requires the same frameworks that producing quality requires.</h2>
+      <p>The Group 2 improvements were real — expert reviewers confirmed enormous effect sizes on chartjunk absence, data-ink ratio, and chart type appropriateness. But ungrounded reviewers could not see them. The improvements were invisible without the framework to evaluate them.</p>
+      <p>This is the core claim made concrete: ungrounded AI does not know what "good" looks like, because it lacks a framework for evaluating quality. The experts' published works are the definition of good. Grounded output converges toward those standards. Only reviewers who know those standards can detect the convergence.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Section 7.3. This slide answers "so what?" for the experiment finding. Don't rush past it.</aside>
+  </section>
+
+  <!-- SLIDE 15 — TWO FAILURE MODES -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>GVM addresses two distinct AI failure modes that unstructured vibe coding hits reliably.</h2>
+      <div class="diagram">
+        <!-- Two-column flow showing failure modes and GVM's response -->
+        <svg viewBox="0 0 1200 440" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Header: Two failure modes -->
+          <!-- FM1 box — longest line "Building the wrong thing fluently" = 32 chars at 26px = 32×14+40=488. Use 500. -->
+          <rect class="node-light" x="50" y="30" width="500" height="70" rx="6"/>
+          <text x="300" y="59" text-anchor="middle">Failure Mode 1</text>
+          <text x="300" y="87" text-anchor="middle" class="label-small">Building the wrong thing fluently</text>
+
+          <!-- FM2 box — longest line "Building the right thing badly" = 30 chars at 26px = 460. Use 480. -->
+          <rect class="node-light" x="650" y="30" width="500" height="70" rx="6"/>
+          <text x="900" y="59" text-anchor="middle">Failure Mode 2</text>
+          <text x="900" y="87" text-anchor="middle" class="label-small">Building the right thing badly</text>
+
+          <!-- Why AI hits both -->
+          <text x="600" y="138" text-anchor="middle" class="label-small" style="fill:#888; font-style:italic;">AI agents are compliant — they will confidently produce something for any prompt.</text>
+
+          <!-- Arrow to GVM answers -->
+          <line x1="300" y1="100" x2="300" y2="165" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+          <line x1="900" y1="100" x2="900" y2="165" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+          <!-- GVM answers — FM1: discovery axis -->
+          <!-- Longest line "  → Exploratory test (Bach & Bolton)" = 37 chars at 20px = 37×11+30=437. Box width=460. -->
+          <rect class="node-accent" x="70" y="165" width="460" height="160" rx="6"/>
+          <text x="300" y="197" text-anchor="middle" class="label-small" style="font-weight:600;">Discovery axis</text>
+          <text x="300" y="222" text-anchor="middle" class="label-small">→ Impact map (Adzic) + outcome gate</text>
+          <text x="300" y="247" text-anchor="middle" class="label-small">→ Requirements (Wiegers, Patton)</text>
+          <text x="300" y="272" text-anchor="middle" class="label-small">→ Test-first gate on requirements</text>
+          <text x="300" y="297" text-anchor="middle" class="label-small">→ Exploratory test (Bach &amp; Bolton)</text>
+
+          <!-- GVM answers — FM2: construction axis -->
+          <!-- Longest line "→ Expert panels (Beck, Fagan, Beizer)" = 37 chars at 20px = 437. Box width=460. -->
+          <rect class="node-accent" x="670" y="165" width="460" height="160" rx="6"/>
+          <text x="900" y="197" text-anchor="middle" class="label-small" style="font-weight:600;">Construction axis</text>
+          <text x="900" y="222" text-anchor="middle" class="label-small">→ Expert panels (Beck, Fagan, Beizer)</text>
+          <text x="900" y="247" text-anchor="middle" class="label-small">→ MVP-1 ordering (Cockburn, Reinertsen)</text>
+          <text x="900" y="272" text-anchor="middle" class="label-small">→ Parallel code-review panels</text>
+          <text x="900" y="297" text-anchor="middle" class="label-small">→ Structured release gate</text>
+
+          <!-- Release verdict at bottom -->
+          <!-- Longest line "Ship-ready / Demo-ready / Not shippable" = 39 chars at 20px = 459. Use 480 wide. -->
+          <rect x="360" y="360" width="480" height="60" rx="6" fill="#f7f7f0" stroke="#999" stroke-width="1"/>
+          <text x="600" y="384" text-anchor="middle" class="label-small">Release verdict: Ship-ready / Demo-ready / Not shippable</text>
+          <text x="600" y="408" text-anchor="middle" class="label-small" style="fill:#888;">Mechanical, not advisory</text>
+
+          <line x1="300" y1="325" x2="600" y2="360" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+          <line x1="900" y1="325" x2="600" y2="360" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">Source: whitepaper Sections 1 and 5. Brooks named failure mode 1 in 1975. Both failure modes pass casual inspection. Both can ship. GVM's phase set is structured so neither has a path to the release tag.</aside>
+  </section>
+
+  <!-- SLIDE 16 — HALLUCINATION IS STRUCTURAL -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>GVM reduces hallucination's surface area structurally, not by eliminating it.</h2>
+      <p>AI-generated code contains security vulnerabilities at rates around 40% (Pearce et al., 2022). Around 21.7% of open-source model package recommendations point to libraries that do not exist (Spracklen et al., 2024). No technique eliminates hallucination entirely.</p>
+      <p>GVM's structural defences:</p>
+      <ul>
+        <li><strong>Artefact contracts</strong> — structured IDs and traceability links are harder to hallucinate than vague prose.</li>
+        <li><strong>Strict TDD</strong> — catches hallucinated API methods immediately.</li>
+        <li><strong>Parallel review panels</strong> — hallucinated findings are unlikely to appear consistently across independent panels.</li>
+        <li><strong>Independent source verification</strong> — a separate agent confirms that cited experts and publications exist.</li>
+      </ul>
+    </div>
+    <aside class="notes">Source: whitepaper Section 5.8. The statistics (40%, 21.7%) are cited with sources in the whitepaper. Don't quote them without attribution.</aside>
+  </section>
+
+  <!-- SLIDE 17 — ATTRIBUTION ARGUMENT -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Making expert citations visible creates the technical precondition for expert compensation.</h2>
+      <p>AI models already contain the full body of work from the experts GVM names. Practitioners who previously would have bought books now have that knowledge through AI — often without awareness of its provenance.</p>
+      <p>GVM logs two events for every expert: <em>loaded</em> (reference file read into context) and <em>cited</em> (named as the source of a decision in output). That log is the technical precondition for a compensation framework.</p>
+      <p>The parallel to streaming music royalties is instructive: compensation eventually arrived through per-play licensing infrastructure, not enforcement. The structural question is identical: how does value generated by widespread activation flow back to the creators of the activated knowledge?</p>
+    </div>
+    <aside class="notes">Source: whitepaper Sections 6.4 and 8. This is not a solved problem — GVM creates the precondition. The compensation infrastructure does not yet exist. Don't overstate GVM's role here.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ACT III: HOW IT WORKS
+       Slides 18–32
+       ═══════════════════════════════════════════════════════════ -->
+
+  <!-- SLIDE 18 — THE PIPELINE OVERVIEW (diagram) -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>A phased pipeline activates the right experts at each stage.</h2>
+      <div class="diagram">
+        <!-- Vertical pipeline with 4 phase groups and feedback arrows.
+             viewBox 1200×560.
+             Phase group boxes stacked. Labels left-aligned. -->
+        <svg viewBox="0 0 1200 560" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Discovery group -->
+          <!-- Longest box label: "/gvm-requirements — Wiegers, Gause & Weinberg, Patton" = 54 chars at 20px = 54×11+30=624. Use 640. -->
+          <rect x="30" y="20" width="640" height="56" rx="6" fill="#f7f7f0" stroke="#669" stroke-width="1.5"/>
+          <text x="350" y="45" text-anchor="middle" class="label-small" style="font-weight:600;">DISCOVERY</text>
+          <text x="350" y="68" text-anchor="middle" class="label-small">/gvm-impact-map → /gvm-requirements → /gvm-test-cases</text>
+
+          <line x1="350" y1="76" x2="350" y2="135" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+          <!-- Construction group -->
+          <rect x="30" y="135" width="640" height="56" rx="6" fill="#f0f7f0" stroke="#696" stroke-width="1.5"/>
+          <text x="350" y="160" text-anchor="middle" class="label-small" style="font-weight:600;">CONSTRUCTION</text>
+          <text x="350" y="183" text-anchor="middle" class="label-small">/gvm-tech-spec → /gvm-design-review → /gvm-build</text>
+
+          <line x1="350" y1="191" x2="350" y2="250" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+          <!-- Verification group -->
+          <rect x="30" y="250" width="640" height="56" rx="6" fill="#f7f0f0" stroke="#966" stroke-width="1.5"/>
+          <text x="350" y="275" text-anchor="middle" class="label-small" style="font-weight:600;">VERIFICATION</text>
+          <text x="350" y="298" text-anchor="middle" class="label-small">/gvm-code-review → /gvm-test → /gvm-explore-test</text>
+
+          <line x1="350" y1="306" x2="350" y2="365" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+          <!-- Release group -->
+          <rect x="30" y="365" width="640" height="56" rx="6" fill="#f0f0f7" stroke="#669" stroke-width="1.5"/>
+          <text x="350" y="390" text-anchor="middle" class="label-small" style="font-weight:600;">RELEASE</text>
+          <text x="350" y="413" text-anchor="middle" class="label-small">/gvm-doc-write → /gvm-doc-review → /gvm-deploy</text>
+
+          <!-- Feedback arrows (right side) -->
+          <!-- Feedback label: "Issues feed back upstream" — clear of all nodes. Nodes right edge = 670. Place feedback at x=750. -->
+          <path d="M 670 400 Q 850 400 850 48" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-dasharray="6,4" marker-end="url(#arrowhead-accent)"/>
+          <rect fill="#fffff8" x="780" y="200" width="200" height="54" rx="3"/>
+          <text x="880" y="225" text-anchor="middle" class="label-small" style="fill:#c0392b;">Issues feed back</text>
+          <text x="880" y="249" text-anchor="middle" class="label-small" style="fill:#c0392b;">upstream by design</text>
+
+          <!-- Entry points note -->
+          <rect x="30" y="450" width="640" height="90" rx="4" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="350" y="476" text-anchor="middle" class="label-small" style="font-weight:600;">Three entry points</text>
+          <text x="350" y="500" text-anchor="middle" class="label-small">Greenfield: /gvm-impact-map or /gvm-requirements</text>
+          <text x="350" y="524" text-anchor="middle" class="label-small">Existing codebase: /gvm-site-survey → routes automatically</text>
+
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">Source: whitepaper Section 5. The pipeline is not a waterfall — the feedback arrows are the methodology working as designed. Don't present it as rigid top-to-bottom.</aside>
+  </section>
+
+  <!-- SLIDE 19 — DISCOVERY PHASES -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Discovery phases ensure every requirement traces to an actor outcome before any code is written.</h2>
+      <p><strong>/gvm-impact-map</strong> produces a four-level goal → actor → impact → deliverable map (Adzic). No requirement may finalise unless it traces to a leaf deliverable on this map.</p>
+      <p><strong>/gvm-requirements</strong> elicits, structures, and prioritises requirements through expert conversation — Wiegers on classification, Patton on user story mapping, Gause &amp; Weinberg on questioning techniques.</p>
+      <p><strong>/gvm-test-cases</strong> generates acceptance tests before the technical specification — a quality gate on requirements, not a downstream activity. If a requirement cannot be expressed as a concrete test, it is not yet ready.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Section 5.1 and 5.3. The test-first ordering is deliberate and structural. Beizer, Copeland, North, and Kaner ground the test case generation. By the time the spec begins, every requirement has been validated through testability.</aside>
+  </section>
+
+  <!-- SLIDE 20 — CONSTRUCTION PHASES -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The first build chunk must touch every external boundary the system will ever cross.</h2>
+      <p>This is MVP-1 ordering (Cockburn, Reinertsen, Freeman &amp; Pryce): the first chunk produces a thin vertical slice through process, network, persistence, and third-party boundaries. It does almost nothing functionally. It proves the wiring works.</p>
+      <p>Subsequent chunks add behaviour through boundaries that are already exercised. Integration risk is bounded by what the first slice validated, not discovered at the end when assumptions have hardened.</p>
+      <p>MVP-1 is enforced mechanically at three points: the tech spec chunk plan, the build phase hard gate, and the design review's final pass.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Section 5.13. Four chunk shapes are exempt: library, refactor, performance-driven, fully-specified. An exempted chunk declares its category and rationale in its handover — the rationale is the audit trail.</aside>
+  </section>
+
+  <!-- SLIDE 21 — THE THREE-TIER MODEL IN PRACTICE (diagram showing which experts activate when) -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>Three tiers of experts activate at different pipeline phases.</h2>
+      <div class="diagram">
+        <!-- Matrix: tiers (rows) × pipeline phases (cols) -->
+        <!-- viewBox 1200×480 -->
+        <svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Row headers. Each row label box: longest "Tier 2b — Industry Domain" = 25 chars at 20px = 25×11+30=305. Use 240 for col width. -->
+          <!-- Column headers. Phases: Discovery, Construction, Verification, Release. -->
+          <!-- Layout: col 0 (label) x=0-240, col 1 (Discovery) x=240-480, col 2 (Constr) x=480-720, col 3 (Verif) x=720-960, col 4 (Release) x=960-1200 -->
+
+          <!-- Header row -->
+          <rect x="240" y="20" width="240" height="50" rx="0" fill="#f7f7f0" stroke="#ddd" stroke-width="1"/>
+          <text x="360" y="52" text-anchor="middle" class="label-small" style="font-weight:600;">Discovery</text>
+          <rect x="480" y="20" width="240" height="50" rx="0" fill="#f7f7f0" stroke="#ddd" stroke-width="1"/>
+          <text x="600" y="52" text-anchor="middle" class="label-small" style="font-weight:600;">Construction</text>
+          <rect x="720" y="20" width="240" height="50" rx="0" fill="#f7f7f0" stroke="#ddd" stroke-width="1"/>
+          <text x="840" y="52" text-anchor="middle" class="label-small" style="font-weight:600;">Verification</text>
+          <rect x="960" y="20" width="240" height="50" rx="0" fill="#f7f7f0" stroke="#ddd" stroke-width="1"/>
+          <text x="1080" y="52" text-anchor="middle" class="label-small" style="font-weight:600;">Release</text>
+
+          <!-- Row 1: Tier 1 -->
+          <rect x="0" y="70" width="240" height="90" rx="0" fill="#fff8f8" stroke="#ddd" stroke-width="1"/>
+          <text x="120" y="101" text-anchor="middle" class="label-small" style="font-weight:600;">Tier 1</text>
+          <text x="120" y="125" text-anchor="middle" class="label-small">Process Experts</text>
+          <text x="120" y="149" text-anchor="middle" class="label-small" style="fill:#888;">(always active)</text>
+
+          <rect x="240" y="70" width="240" height="90" rx="0" fill="#fff8f8" stroke="#ddd" stroke-width="1"/>
+          <text x="360" y="115" text-anchor="middle" class="label-small">Wiegers, Patton</text>
+          <text x="360" y="139" text-anchor="middle" class="label-small">Beizer, Copeland</text>
+
+          <rect x="480" y="70" width="240" height="90" rx="0" fill="#fff8f8" stroke="#ddd" stroke-width="1"/>
+          <text x="600" y="115" text-anchor="middle" class="label-small">Clements, Brown</text>
+          <text x="600" y="139" text-anchor="middle" class="label-small">Fairbanks, Brooks</text>
+
+          <rect x="720" y="70" width="240" height="90" rx="0" fill="#fff8f8" stroke="#ddd" stroke-width="1"/>
+          <text x="840" y="115" text-anchor="middle" class="label-small">Fagan, Kaner</text>
+          <text x="840" y="139" text-anchor="middle" class="label-small">Bach &amp; Bolton</text>
+
+          <rect x="960" y="70" width="240" height="90" rx="0" fill="#fff8f8" stroke="#ddd" stroke-width="1"/>
+          <text x="1080" y="115" text-anchor="middle" class="label-small">Doumont, Zinsser</text>
+          <text x="1080" y="139" text-anchor="middle" class="label-small">Redish</text>
+
+          <!-- Row 2: Tier 2a -->
+          <rect x="0" y="160" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="120" y="191" text-anchor="middle" class="label-small" style="font-weight:600;">Tier 2a</text>
+          <text x="120" y="215" text-anchor="middle" class="label-small">Software Domain</text>
+          <text x="120" y="239" text-anchor="middle" class="label-small" style="fill:#888;">(on tech signal)</text>
+
+          <rect x="240" y="160" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="360" y="215" text-anchor="middle" class="label-small" style="fill:#ccc;">—</text>
+
+          <rect x="480" y="160" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="600" y="204" text-anchor="middle" class="label-small">Kleppmann (data)</text>
+          <text x="600" y="228" text-anchor="middle" class="label-small">Cooper (UX)</text>
+          <text x="600" y="252" text-anchor="middle" class="label-small">Nygard (resilience)</text>
+
+          <rect x="720" y="160" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="840" y="215" text-anchor="middle" class="label-small">Tufte &amp; Few (data)</text>
+
+          <rect x="960" y="160" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="1080" y="215" text-anchor="middle" class="label-small">Bringhurst (layout)</text>
+
+          <!-- Row 3: Tier 2b -->
+          <rect x="0" y="250" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="120" y="281" text-anchor="middle" class="label-small" style="font-weight:600;">Tier 2b</text>
+          <text x="120" y="305" text-anchor="middle" class="label-small">Industry Domain</text>
+          <text x="120" y="329" text-anchor="middle" class="label-small" style="fill:#888;">(per project)</text>
+
+          <rect x="240" y="250" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="360" y="295" text-anchor="middle" class="label-small">Hull, Jorion</text>
+          <text x="360" y="319" text-anchor="middle" class="label-small">(domain reqs)</text>
+
+          <rect x="480" y="250" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="600" y="295" text-anchor="middle" class="label-small">Domain experts</text>
+          <text x="600" y="319" text-anchor="middle" class="label-small">per spec</text>
+
+          <rect x="720" y="250" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="840" y="295" text-anchor="middle" class="label-small">Domain accuracy</text>
+          <text x="840" y="319" text-anchor="middle" class="label-small">audit</text>
+
+          <rect x="960" y="250" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="1080" y="295" text-anchor="middle" class="label-small" style="fill:#ccc;">—</text>
+
+          <!-- Row 4: Tier 3 -->
+          <rect x="0" y="340" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="120" y="371" text-anchor="middle" class="label-small" style="font-weight:600;">Tier 3</text>
+          <text x="120" y="395" text-anchor="middle" class="label-small">Stack Specialists</text>
+          <text x="120" y="419" text-anchor="middle" class="label-small" style="fill:#888;">(after tech choice)</text>
+
+          <rect x="240" y="340" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="360" y="395" text-anchor="middle" class="label-small" style="fill:#ccc;">—</text>
+
+          <rect x="480" y="340" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="600" y="383" text-anchor="middle" class="label-small">Ramalho, Abramov</text>
+          <text x="600" y="407" text-anchor="middle" class="label-small">Winand, Majors</text>
+
+          <rect x="720" y="340" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="840" y="395" text-anchor="middle" class="label-small">Stack-specific</text>
+          <text x="840" y="419" text-anchor="middle" class="label-small">review criteria</text>
+
+          <rect x="960" y="340" width="240" height="90" rx="0" fill="#fffff8" stroke="#ddd" stroke-width="1"/>
+          <text x="1080" y="395" text-anchor="middle" class="label-small" style="fill:#ccc;">—</text>
+
+        </svg>
+      </div>
+    </div>
+    <aside class="notes">Source: whitepaper Section 4. This matrix is an interpretation — it is not reproduced directly from the whitepaper. Flag if presenting to readers who will check against the source.</aside>
+  </section>
+
+  <!-- SLIDE 22 — CODE REVIEW PANELS -->
+  <section class="slide diagram-slide">
+    <div class="slide-content">
+      <h2>Parallel non-overlapping review panels catch what a single reviewer misses.</h2>
+      <div class="diagram">
+        <!-- Radial diagram: code at centre, 4 panels as nodes around it.
+             viewBox 800×500. Centre at (400,260). -->
+        <svg viewBox="0 0 1100 500" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Centre node: Implementation -->
+          <circle cx="550" cy="250" r="80" fill="#f7f7f0" stroke="#333" stroke-width="2"/>
+          <text x="550" y="245" text-anchor="middle">Implementation</text>
+          <text x="550" y="275" text-anchor="middle" class="label-small">under review</text>
+
+          <!-- Panel 1: References & Dependencies — top -->
+          <!-- Bringhurst: "References & Dependencies" = 24 chars at 20px → 24×11+30=294. Use 300 width. -->
+          <rect class="node" x="380" y="20" width="340" height="80" rx="6"/>
+          <text x="550" y="49" text-anchor="middle" class="label-small" style="font-weight:600;">References &amp; Dependencies</text>
+          <text x="550" y="73" text-anchor="middle" class="label-small">Are imports correct? No stubs?</text>
+          <text x="550" y="97" text-anchor="middle" class="label-small" style="fill:#888;">Hunt &amp; Thomas, McConnell</text>
+
+          <line x1="550" y1="170" x2="550" y2="100" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+          <!-- Panel 2: Contracts & Interfaces — right -->
+          <!-- "Contracts & Interfaces" = 22 chars at 20px → 272. Use 310 width. -->
+          <rect class="node" x="750" y="185" width="310" height="130" rx="6"/>
+          <text x="905" y="234" text-anchor="middle" class="label-small" style="font-weight:600;">Contracts &amp; Interfaces</text>
+          <text x="905" y="258" text-anchor="middle" class="label-small">API contracts met?</text>
+          <text x="905" y="282" text-anchor="middle" class="label-small">Types consistent?</text>
+          <text x="905" y="306" text-anchor="middle" class="label-small" style="fill:#888;">Newman, Fowler</text>
+
+          <line x1="630" y1="250" x2="750" y2="250" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+          <!-- Panel 3: Logic & Completeness — bottom -->
+          <!-- "Logic & Completeness" = 20 chars at 20px → 250. Use 300 width. -->
+          <rect class="node" x="400" y="390" width="300" height="90" rx="6"/>
+          <text x="550" y="425" text-anchor="middle" class="label-small" style="font-weight:600;">Logic &amp; Completeness</text>
+          <text x="550" y="449" text-anchor="middle" class="label-small">All paths handled? DRY?</text>
+          <text x="550" y="473" text-anchor="middle" class="label-small" style="fill:#888;">Beck, McConnell</text>
+
+          <line x1="550" y1="390" x2="550" y2="330" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+          <!-- Panel 4: Naming & Spec Compliance — left -->
+          <!-- "Naming & Spec Compliance" = 24 chars at 20px → 294. Use 310 width. -->
+          <rect class="node" x="30" y="185" width="310" height="130" rx="6"/>
+          <text x="185" y="234" text-anchor="middle" class="label-small" style="font-weight:600;">Naming &amp; Spec Compliance</text>
+          <text x="185" y="258" text-anchor="middle" class="label-small">Names match spec?</text>
+          <text x="185" y="282" text-anchor="middle" class="label-small">All requirements met?</text>
+          <text x="185" y="306" text-anchor="middle" class="label-small" style="fill:#888;">Wiegers, Keeling</text>
+
+          <line x1="340" y1="250" x2="470" y2="250" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+          <!-- Label: "Four reviews execute in the wall-clock time of one" -->
+          <!-- Position: below diagram, clear of all nodes. Lowest node bottom = 480. y=465 inside viewBox. -->
+
+        </svg>
+      </div>
+      <p style="font-size:1.1rem; color:#888; margin-top:0.5rem; font-style:italic;">Grounded in Laitenberger et al. (Perspective-Based Reading, 2000): non-overlapping mandates detected 41% more unique defects at 58% lower cost per defect. Four panels execute in one review's wall-clock time.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Section 5.6. Satisfaction-of-search bias (Cain, Adamo & Mitroff, 2013; Drew, Võ & Wolfe, 2013) is why a single reviewer misses things. Liberal detection threshold on first pass — Signal Detection Theory (Green & Swets, 1966). Synthesis filters false positives.</aside>
+  </section>
+
+  <!-- SLIDE 23 — PROGRESSIVE CALIBRATION -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Reviews calibrate across rounds — and correct for the blind spots calibration creates.</h2>
+      <p>The AI review tools treat each round as independent. GVM accumulates project-specific knowledge: score histories per dimension, anchor examples from this project, recurring findings tracked until resolved.</p>
+      <p>By round 3, the reviewer knows which modules score well, which have recurring issues, and what has already been flagged twice. Reviews converge toward the actual quality profile rather than rediscovering the same issues each round.</p>
+      <p>But calibration introduces anchoring bias. From round 3 onwards, a blind reviewer runs in parallel — same criteria, same experts, no calibration data. Reconciliation merges genuinely new findings; discards rediscovered noise. The practitioner sees one report, not two.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Section 5.7. Grounded in Fagan's inspection methodology, Shewhart's common-cause vs special-cause distinction, and Tversky & Kahneman's anchoring bias research. Promoted build checks (permanent vs retirable) are the memory system — don't skip them.</aside>
+  </section>
+
+  <!-- SLIDE 24 — EXPERT SCORING -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Not every citation carries equal weight — a scoring system prevents self-serving assessments.</h2>
+      <p>Two independent scales: one for the expert (Authority, Publication, Breadth, Adoption, Currency), one for each work (Specificity, Depth, Currency, Influence). Classifications from Canonical to Provisional.</p>
+      <p>Two safeguards prevent the AI from scoring its own citations unchecked:</p>
+      <ul>
+        <li><strong>Evidence requirement</strong> — any score of 4 or 5 must include verifiable evidence the practitioner can check independently.</li>
+        <li><strong>Independent agent review</strong> — a separate agent, with no access to the original scores, produces its own assessment. Convergence builds confidence; divergence is flagged for the practitioner to decide.</li>
+      </ul>
+    </div>
+    <aside class="notes">Source: whitepaper Sections 4.4 and Appendix A. The scoring mirrors model validation practice in financial services (SR 11-7): the validator must be independent of the developer. Classifications: Canonical ≥4.5, Established 3.5–4.4, Recognised 2.5–3.4, Emerging 1.5–2.4, Provisional below 1.5.</aside>
+  </section>
+
+  <!-- SLIDE 25 — THE ROSTER GROWS THROUGH USE -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The expert roster grows through use, not centralised maintenance.</h2>
+      <p>When a domain is encountered with no matching specialist, the AI identifies the gap, researches candidate experts with published work, scores them using independent verification, and presents the candidates to the practitioner. Experts who pass verification are added permanently.</p>
+      <p>Tier 2b (industry domain) files compound value across projects. The market risk reference file built for one trading system serves the next, deepening with each project rather than starting fresh. A financial services practitioner running five projects accumulates a richer expert panel than one built in a single session.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Sections 4.5 and 4.6. Discovery applies the same independent verification as initial scoring — the most dangerous failure mode is confidently wrong citations entering the roster unchecked.</aside>
+  </section>
+
+  <!-- SLIDE 26 — WHERE EXPERT GROUNDING DOES NOT HELP (limitation) -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Expert grounding is demonstrably effective during design and review — its effectiveness during code construction is undemonstrated.</h2>
+      <p>The code review caught issues that expert-grounded build prompts should have prevented: a DRY violation that Hunt &amp; Thomas grounding should have stopped, but did not. The same violation was caught immediately by the independent review phase, grounded in the same experts.</p>
+      <p>The correction: the build prompt now separates a <em>Framework Reference</em> (procedural knowledge — API docs, method signatures) from <em>Review Criteria</em> (declarative knowledge — expert principles applied in the code-review loop, not during construction).</p>
+      <p style="font-size:1.1rem; color:#888; font-style:italic;">Evidence from one project, no control group. The separation is implemented; whether it improves construction quality is itself an open question.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Section 9.1. This is an honest limitation — don't downplay it. The whitepaper is explicit: "evidence is compatible with multiple explanations." The declarative/procedural hypothesis is the load-bearing assumption; it has not been independently validated.</aside>
+  </section>
+
+  <!-- SLIDE 27 — THE FULL PIPELINE IS NOT ALWAYS WARRANTED -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>GVM scales down as well as up — the citation mechanism itself costs nothing.</h2>
+      <p>The full pipeline is designed for production systems where quality matters: regulated industries, software people depend on, systems where the cost of defects is high. It is not designed for throwaway scripts or weekend prototypes.</p>
+      <p>But the citation mechanism itself — without the full pipeline — costs one sentence: "Apply Kleppmann's cache-aside pattern with TTLs calibrated to data volatility." That sentence activates a body of work whether or not you are running the full GVM pipeline.</p>
+      <p>GVM's overhead is also front-loaded. Once the expert reference files are assembled, the per-project cost is low. The same files serve every subsequent project in that domain.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Sections 1 (last paragraph) and 5.4. Don't oversell — acknowledge the setup cost is real. But also don't undersell the minimum-viable form, which is just citation-based grounding without any pipeline machinery.</aside>
+  </section>
+
+  <!-- SLIDE 28 — EXISTING CODEBASES -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Existing codebases get a diagnostic entry point that routes to the right pipeline phase.</h2>
+      <p>The site survey phase has the AI explore the codebase, diagnose its architectural state across multiple health dimensions, select the appropriate grounding experts, and recommend where to enter the pipeline.</p>
+      <p>A codebase that scores high on coherence but low on currency gets different expert selection than one that scores low across the board. Purely technical remediation can skip directly to specification — the survey has defined what the codebase is, what it should be, and where the gaps are.</p>
+      <p>The grounded experts become a lens for recovering lost rationale and identifying design drift, not just a guide for extending the system.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Section 5.5. This matters for the leadership audience — most of them are managing existing codebases, not greenfield projects. Don't skip this slide.</aside>
+  </section>
+
+  <!-- SLIDE 29 — WHAT THE TOOL-AGNOSTIC CLAIM MEANS -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>GVM is a methodology, not a product — it travels as structured text, not tooling.</h2>
+      <p>The components — expert panels, curated reference files, phased pipelines, conditional activation — are patterns implementable in any AI development environment that supports contextual instructions.</p>
+      <p>What travels directly: expert reference files (Markdown), pipeline phase definitions, scoring rubrics, build-check format.</p>
+      <p>What requires per-tool adaptation: the conditional activation mechanism, parallel panel dispatch, and calibration file location.</p>
+      <p>The reference implementation uses Claude Code. A port to Cursor replaces skill invocation with rules and chat hooks while keeping the reference files unchanged.</p>
+    </div>
+    <aside class="notes">Source: whitepaper Section 6.1. The tool-agnostic claim is structural, not experimental. It has not been ported to Cursor or GitHub Copilot. Be precise about what "tool-agnostic" does and does not mean.</aside>
+  </section>
+
+  <!-- SLIDE 30 — THE CASE STUDY (Assay project) -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The Assay project demonstrates GVM applied end-to-end on a production tool.</h2>
+      <p>Assay is a data-quality analysis tool built using GVM. The case study covers the full pipeline: impact mapping through deployment, with the methodology's own review scoring system providing the measurement instrument.</p>
+      <p>Key findings from the case study:</p>
+      <ul>
+        <li>The build-check system learned from its own history — recurring findings were promoted to permanent checks, preventing reintroduction of the same defect classes.</li>
+        <li>The MVP-1 slice exposed integration gaps in session 1 that would otherwise have appeared in the final integration phase.</li>
+        <li>The code-review loop (four parallel panels) caught the DRY violation that motivated the build-prompt separation now in the methodology.</li>
+      </ul>
+    </div>
+    <aside class="notes">Source: companion paper "Building a Production Tool with GVM" and case-study-assay.html. The case study is a single-project, no-control-group evaluation. It is illustrative, not experimental. Don't present it as equivalent to the dashboard experiment.</aside>
+  </section>
+
+  <!-- SLIDE 31 — OPEN QUESTIONS -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Three experimental questions remain open.</h2>
+      <ul>
+        <li><strong>Cross-model review</strong> — the experiment used same-model evaluation (each model reviewing its own output). Cross-model review — Claude reviewing Gemini output — has not been performed.</li>
+        <li><strong>Expert grounding during construction</strong> — whether separating Framework Reference from Review Criteria improves construction quality is measurable but unmeasured. The methodology's review scoring system provides the instrument; the study has not been run.</li>
+        <li><strong>Discovery axis effectiveness</strong> — the experiment validated the construction axis (dashboard quality). The discovery axis — impact mapping, traceability gates, exploratory testing effectiveness — requires separate experimental validation.</li>
+      </ul>
+    </div>
+    <aside class="notes">Source: whitepaper Sections 7.4 and 9. Showing open questions builds credibility. Don't hide them to make GVM look more complete than it is.</aside>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ACTION CLOSE (Inform/Explain type: one concrete next step)
+       ═══════════════════════════════════════════════════════════ -->
+
+  <!-- SLIDE 32 — ACTION SLIDE: NEXT STEP -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>The minimum-viable starting point is one citation in your next prompt.</h2>
+      <p>You do not need the full pipeline to get the grounding effect. Name the expert, cite the work, specify the technique. Do this on the next task where quality matters.</p>
+      <ul>
+        <li><strong>For practitioners:</strong> add one expert citation to your next prompt. Compare the output to the ungrounded version of the same task. The difference is immediate and visible.</li>
+        <li><strong>For teams considering the full pipeline:</strong> run <code>/gvm-site-survey</code> on an existing codebase. The diagnostic report shows where expert grounding would change what the AI produces — before committing to the setup cost.</li>
+        <li><strong>For leadership:</strong> the controlled experiment is in the whitepaper. The open questions are named. Ask your team to run a trial on one project and measure output quality before and after.</li>
+      </ul>
+    </div>
+    <aside class="notes">Doumont: close with one concrete next step the audience can take. The action slide is type-specific to "Inform / explain" — it replaces the persuade type's "single ask." Give the audience something to do tomorrow morning, not just something to think about.</aside>
+  </section>
+
+  <!-- SLIDE 33 — SUMMARY / TAKEAWAYS -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Three things to take away.</h2>
+      <ul>
+        <li><strong>Citations work as retrieval keys.</strong> Naming a specific expert and a specific work shifts AI output from a broad blend to a focused application of that expert's framework. A controlled experiment across three model families confirms the quality effect (p &lt; 0.001).</li>
+        <li><strong>You need the framework to see the improvement.</strong> Ungrounded reviewers cannot detect what grounded output produces. Evaluating quality requires the same expert frameworks that producing quality requires.</li>
+        <li><strong>The methodology addresses both failure modes.</strong> Building the wrong thing fluently, and building the right thing badly. Both pass casual inspection. GVM's phase set gates both structurally, not as guidelines.</li>
+      </ul>
+    </div>
+    <aside class="notes">Atkinson: headlines read in sequence tell the story. These three bullets are the story of the deck.</aside>
+  </section>
+
+  <!-- SLIDE 34 — REFERENCES AND SOURCES -->
+  <section class="slide">
+    <div class="slide-content">
+      <h2>Sources and further reading.</h2>
+      <table>
+        <thead>
+          <tr><th>Document</th><th>Contains</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Whitepaper — <em>The Grounded Vibe Methodology</em></td><td>Full methodology, mechanism, all experimental data</td></tr>
+          <tr><td>Companion — <em>Grounding Produces Measurably Better Output</em></td><td>Full experimental design, per-dimension scores, effect sizes</td></tr>
+          <tr><td>Companion — <em>Why Citation-Based Activation Works</em></td><td>Transformer interpretability evidence for the retrieval-key mechanism</td></tr>
+          <tr><td>Companion — <em>Building a Production Tool with GVM</em></td><td>Assay case study — full pipeline applied end-to-end</td></tr>
+          <tr><td>Training — <em>Engineering Leaders Guide</em></td><td>Leadership-specific guidance on pipeline adoption</td></tr>
+          <tr><td>Training — <em>Expert Grounding Workshop</em></td><td>Hands-on practitioner exercises</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:1.1rem; color:#888; font-style:italic; margin-top:1rem;">Brennan, C. &amp; Quinn, G. (2026). <em>The Grounded Vibe Methodology</em>. April 2026.</p>
+    </div>
+    <aside class="notes">The companion papers are listed by their names in the whitepaper's opening context box. Don't invent titles that aren't there.</aside>
+  </section>
+
+  <!-- SLIDE 35 — CLOSING -->
+  <section class="slide title-slide">
+    <div class="slide-content">
+      <h1>Questions</h1>
+      <p class="subtitle">Grounded Vibe Methodology — April 2026</p>
+      <p class="author">Conor Brennan &amp; Gerard Quinn</p>
+      <p class="gvm-attribution" style="margin-top:2rem;">Developed using the Grounded Vibe Methodology</p>
+    </div>
+    <aside class="notes">Leave time for questions. Likely questions: "How long to set up?" (front-loaded, amortises across projects), "Does it work with other models?" (reproduced on Claude, GPT, Gemini), "What about hallucination?" (structural defences in Section 5.8 — not eliminated, surface area reduced).</aside>
+  </section>
+
+</div>
+
+<div class="slide-counter">
+  <span class="current-slide">1</span> / <span class="total-slides">35</span>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const currentEl = document.querySelector('.current-slide');
+  const totalEl = document.querySelector('.total-slides');
+  let current = 0;
+
+  if (totalEl) totalEl.textContent = slides.length;
+
+  function show(n) {
+    slides.forEach(s => s.classList.remove('active'));
+    current = Math.max(0, Math.min(n, slides.length - 1));
+    slides[current].classList.add('active');
+    if (currentEl) currentEl.textContent = current + 1;
+  }
+
+  show(0);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      show(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      show(current - 1);
+    } else if (e.key === 'n' || e.key === 'N') {
+      document.body.classList.toggle('show-notes');
+    } else if (e.key === 'Home') {
+      show(0);
+    } else if (e.key === 'End') {
+      show(slides.length - 1);
+    }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+  document.addEventListener('touchend', function(e) {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 50) {
+      diff < 0 ? show(current + 1) : show(current - 1);
+    }
+  });
+})();
+</script>
+</body>
+</html>

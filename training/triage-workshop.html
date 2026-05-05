@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triage Workshop: Fix, Defer, Dismiss</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 260px; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .callout {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .callout-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .callout.key-finding {
+      background: #fdf0ef;
+      border-left: 3px solid #a00000;
+    }
+
+    .callout.key-finding .callout-label {
+      color: #a00000;
+    }
+
+    .practice {
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .practice-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #27ae60;
+      margin-bottom: 0.3rem;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      width: auto;
+      min-width: 480px;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 1rem 0.5rem 0;
+      border-bottom: 2px solid #333;
+      color: #111;
+    }
+
+    tbody td {
+      padding: 0.45rem 1rem 0.45rem 0;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .verdict-example {
+      border: 2px solid #333;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .verdict-example.ready { border-color: #27ae60; background: #f0faf4; }
+    .verdict-example.caveats { border-color: #e67e22; background: #fef8f0; }
+    .verdict-example.not-ready { border-color: #c0392b; background: #fdf0ef; }
+
+    .verdict-example-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .verdict-example-text {
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin-bottom: 0.3rem;
+    }
+
+    .verdict-example.ready .verdict-example-text { color: #27ae60; }
+    .verdict-example.caveats .verdict-example-text { color: #e67e22; }
+    .verdict-example.not-ready .verdict-example-text { color: #c0392b; }
+
+    .issue-example {
+      border-left: 3px solid;
+      padding: 0.6rem 1rem;
+      margin: 0.6rem 0;
+      max-width: 640px;
+      font-size: 0.92rem;
+    }
+
+    .issue-example.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue-example.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue-example.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+
+    .sidenote {
+      float: right;
+      clear: right;
+      width: 220px;
+      margin-right: -260px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #666;
+      padding-left: 1rem;
+      border-left: 2px solid #e0e0e0;
+    }
+
+    .cmd-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.85rem;
+      padding: 0.8rem 1.2rem;
+      border-radius: 3px;
+      margin: 1rem 0;
+      max-width: 640px;
+      line-height: 1.6;
+    }
+
+    .finding-block {
+      border: 1px solid #ddd;
+      padding: 0.9rem 1.1rem;
+      margin: 1rem 0;
+      max-width: 640px;
+      background: #fafaf6;
+      font-size: 0.92rem;
+    }
+
+    .finding-block .fb-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #999;
+      margin-bottom: 0.5rem;
+    }
+
+    .finding-block .fb-field {
+      margin-bottom: 0.3rem;
+    }
+
+    .finding-block .fb-field span.label {
+      font-weight: 600;
+      color: #555;
+      font-size: 0.85rem;
+      min-width: 100px;
+      display: inline-block;
+    }
+
+    .gate-table td { font-size: 0.9rem; }
+    .gate-table td:first-child { font-weight: 600; white-space: nowrap; }
+
+    details { max-width: 640px; margin: 1rem 0; }
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: #27ae60;
+      padding: 0.4rem 0;
+      user-select: none;
+      list-style: none;
+    }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::before {
+      content: "Show answer \25ba";
+      font-size: 0.82rem;
+    }
+    details[open] summary::before {
+      content: "Hide answer \25bc";
+      font-size: 0.82rem;
+    }
+    details .answer {
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+      padding: 1rem 1.2rem;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <p class="date">May 2026</p>
+    <h1>Triage Workshop: Fix, Defer, Dismiss</h1>
+    <p class="subtitle">Practising the Finding Quality Gate across document, code, and design reviews.</p>
+
+    <h2 id="what-this-is-for">What this workshop is for</h2>
+
+    <p>You've read how the Finding Quality Gate works. This is where you practise using it. The gap between knowing the rules and applying them under time pressure is where triage goes wrong: findings get silently dropped, deferred without a rationale, or fixed when dismissal was the right call. Each section below gives you a synthetic finding, asks you to triage it, then shows the reasoning in a hidden answer block. Work through each one before revealing the answer.</p>
+
+    <h2 id="scope">Triage applies to all three review types</h2>
+
+    <p>Three GVM skills emit findings that need triage: <code>/gvm-doc-review</code>, <code>/gvm-code-review</code>, and <code>/gvm-design-review</code>. The triage decision is the same shape in all three &mdash; fix, defer (with rationale), or dismiss &mdash; and the user (not the skill) owns it. What differs is the gate the panels use to decide what reaches you, and the verdict vocabulary used to record the outcome.</p>
+
+    <table class="gate-table">
+      <thead>
+        <tr><th>Review type</th><th>Panel emit threshold (R2+ strict)</th><th>Verdict vocabulary</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>/gvm-doc-review</code> (standalone documents)</td>
+          <td>The six-test Finding Quality Gate detailed below</td>
+          <td>Publish / Publish with caveats / Do not publish (type-specific wording from <code>review-reference.md</code>)</td>
+        </tr>
+        <tr>
+          <td><code>/gvm-code-review</code></td>
+          <td>Would a consumer FAIL or an executor take WRONG ACTION? (per <code>review-reference.md</code> Finding Quality Gate)</td>
+          <td>Merge / Merge with caveats / Do not merge</td>
+        </tr>
+        <tr>
+          <td><code>/gvm-design-review</code></td>
+          <td>Same FAIL / WRONG-ACTION test, applied to design artefacts (specs, ADRs)</td>
+          <td>Build from this / Build with caveats / Do not build</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>The worked examples below use a document-review setting because that is where the six-test gate has the most teaching texture (citations, scope claims, audience, cuts). The triage discipline &mdash; user-owned, no silent suppression, verdict <em>after</em> triage not before, no hidden defer counts &mdash; is identical across all three. Where a code-review or design-review finding is materially different from the document case, it is called out inline.</p>
+
+    <h2 id="gate-summary">The six-test gate (document review) in 60 seconds</h2>
+
+    <p>Under R2+ strict criterion in <code>/gvm-doc-review</code>, a finding earns Critical or Important status only if it passes at least one of the six tests. Failing all six means the finding is tagged <code>[POLISH]</code> and recorded as Minor &mdash; it does not block publication and does not require your triage decision.</p>
+
+    <table class="gate-table">
+      <thead>
+        <tr><th>Test</th><th>What it asks</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1. Integrity</td>
+          <td>Would a reader who can verify this claim against a published source find it wrong? (Misquote, wrong year, fabricated statistic, broken citation chain.)</td>
+        </tr>
+        <tr>
+          <td>2. Misdirection (load-bearing)</td>
+          <td>Could a reader come away with the wrong understanding of a load-bearing claim &mdash; the thesis, a section's central argument, a numerical result, a methodology decision? Peripheral misdirection is Minor, not Important.</td>
+        </tr>
+        <tr>
+          <td>3. Reproducibility</td>
+          <td>Would a researcher attempting to replicate an empirical claim lack a piece of information they need? (Unstated multipliers, undisclosed prompts, missing dataset details.)</td>
+        </tr>
+        <tr>
+          <td>4. Honesty of scope</td>
+          <td>Does the document claim more than its evidence supports, or fail to flag a significant limitation where the unqualified claim would mislead?</td>
+        </tr>
+        <tr>
+          <td>5. Audience hospitality</td>
+          <td>Does the document assume reader knowledge inconsistent with its stated audience? Not wrong understanding (that's Misdirection) &mdash; <em>no</em> understanding.</td>
+        </tr>
+        <tr>
+          <td>6. Cut-damage protection</td>
+          <td>When a finding recommends a cut, does the cut damage orientation, evidence, scope-limits, or honesty disclaimers? If yes, the finding is rejected &mdash; the section stays.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Once a finding is emitted by the panel, you &mdash; not the review skill &mdash; decide what to do with it. Your options are fix, defer (with a recorded rationale), or dismiss as a false positive.</p>
+
+    <h2 id="code-review-gate">The three-test gate (code and design review) in 60 seconds</h2>
+
+    <p>Code reviews and design reviews use a different gate from the six-test document gate above. The full definition lives in <code>review-reference.md</code>; the summary you need for triage is below. Findings must pass <em>all three</em> tests in order &mdash; failing any one means the finding does not enter the report.</p>
+
+    <table class="gate-table">
+      <thead>
+        <tr><th>Test</th><th>What it asks</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1. Consumer harm</td>
+          <td>State the <em>negative</em> consequence as a sentence: "A [consumer] would [concrete bad outcome]." This test captures harm the finding is preventing &mdash; not value the finding might add. For code, the consumer is an end user or downstream developer; the bad outcome is "hit a bug," "encounter a security boundary violation," "get wrong data." For design, the consumer is the developer implementing it; the bad outcome is "build a structure that cannot support the requirements," "create an irreversible data-model error." If you cannot name a specific bad outcome &mdash; only a "this could be nicer" or "consider also&hellip;" improvement &mdash; the finding is polish; discard it.</td>
+        </tr>
+        <tr>
+          <td>2. Propagation</td>
+          <td>Does the finding cause a downstream problem in another artefact or system? A wrong requirement ID propagates through tests, specs, and code. A wrong field name in a shared schema propagates through every consumer. High-propagation findings (core architecture, shared code, requirements) warrant strict scrutiny; low-propagation findings (leaf code, one-off scripts) get the consumer impact test applied tightly.</td>
+        </tr>
+        <tr>
+          <td>3. Theoretical-failure check</td>
+          <td>Is the failure this finding prevents already blocked by a stronger upstream mechanism? "What if the input is null?" is theoretical when the type system rejects null at the boundary. Defence-in-depth is valid only when the inner defence covers a <em>different</em> failure mode from the outer one &mdash; otherwise it is noise.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>The triage decision is the same shape as the document case: fix, defer (with rationale), or dismiss. The forbidden patterns &mdash; silent suppression, batched verdict, hidden defer counts &mdash; apply identically. What changes is what reaches you and the verdict vocabulary you record (Merge / Merge with caveats / Do not merge for code; Build from this / Build with caveats / Do not build for design).</p>
+
+    <h2 id="worked-example-code">Worked example: code review &mdash; fix</h2>
+
+    <h3 id="exc-finding">The finding</h3>
+
+    <div class="finding-block">
+      <div class="fb-label">Panel finding</div>
+      <div class="fb-field"><span class="label">Source:</span> <code>/gvm-code-review</code>, Panel B (Contracts &amp; Interfaces)</div>
+      <div class="fb-field"><span class="label">Severity:</span> Important</div>
+      <div class="fb-field"><span class="label">Location:</span> <code>src/billing/invoice_emitter.py:147</code></div>
+      <div class="fb-field"><span class="label">Issue:</span> The function <code>emit_invoice(order_id, customer_email)</code> declares <code>order_id: str</code> but is called from <code>src/orders/finalise.py:88</code> with <code>order.id</code> (an integer). Python passes the integer through unchanged. The downstream Mailgun template renders it as <code>"Invoice #1247.0"</code> on the template versions that coerce numbers via <code>str()</code>, and <code>"Invoice #1247"</code> on the older templates. Customer-facing output is inconsistent depending on the Mailgun template version configured for the account.</div>
+      <div class="fb-field"><span class="label">Fix:</span> Change the signature to <code>order_id: int</code> and update callers, or coerce at the boundary with <code>str(order_id)</code>. Either choice; one of them.</div>
+    </div>
+
+    <h3 id="exc-analysis">Gate analysis</h3>
+
+    <ol>
+      <li><strong>Consumer harm</strong> &mdash; "An end user would receive an invoice rendered as <code>Invoice #1247.0</code> &mdash; a visibly wrong invoice number." Concrete bad outcome, not polish. <em>Passes.</em></li>
+      <li><strong>Propagation</strong> &mdash; <code>emit_invoice</code> is on a shared call path that crosses an external system boundary into customer-facing output. The defect propagates beyond a single leaf module. <em>Passes.</em></li>
+      <li><strong>Theoretical-failure check</strong> &mdash; The failure is not blocked upstream. Python's type annotation is a hint, not a runtime guarantee, and there is no validator at the boundary. The defect is observable in production templates today. <em>Passes.</em></li>
+    </ol>
+
+    <p>All three pass. The finding earns Important. The recommended fix is small and the consumer harm is concrete.</p>
+
+    <div class="callout">
+      <div class="callout-label">The triage decision</div>
+      <p><strong>Fix.</strong> Decide whether the contract is <code>str</code> or <code>int</code> &mdash; that is a design call for the team, not the reviewer &mdash; then update the callers and add a <code>[CONTRACT]</code>-tagged test against the Mailgun boundary that asserts the rendered output. Do not silently patch the coercion at the call site; that hides the type confusion for the next caller.</p>
+    </div>
+
+    <h2 id="worked-example-design">Worked example: design review &mdash; fix</h2>
+
+    <h3 id="exd-finding">The finding</h3>
+
+    <div class="finding-block">
+      <div class="fb-label">Panel finding</div>
+      <div class="fb-field"><span class="label">Source:</span> <code>/gvm-design-review</code>, Panel C (Logic &amp; Completeness)</div>
+      <div class="fb-field"><span class="label">Severity:</span> Important</div>
+      <div class="fb-field"><span class="label">Location:</span> <code>specs/inventory.md</code> &mdash; ADR-073</div>
+      <div class="fb-field"><span class="label">Issue:</span> ADR-073 specifies eventual consistency between the order service and the inventory service, propagation bounded at 5 seconds. <code>RQ-OR-12</code> requires the oversold-stock warning to display within 200&nbsp;ms of order placement. A developer building from this design cannot satisfy both: either inventory consistency is faster than the ADR allows, or the warning is later than the requirement allows.</div>
+      <div class="fb-field"><span class="label">Fix:</span> Resolve the conflict in the spec before build &mdash; tighten the ADR, weaken the requirement, or introduce an explicit local-cache layer with a documented trade-off.</div>
+    </div>
+
+    <h3 id="exd-analysis">Gate analysis</h3>
+
+    <ol>
+      <li><strong>Consumer harm</strong> &mdash; "A developer implementing this would either violate ADR-073 or fail RQ-OR-12." Concrete bad outcome &mdash; the implementer cannot ship a correct system from this spec. <em>Passes.</em></li>
+      <li><strong>Propagation</strong> &mdash; The conflict sits in the spec that drives the build. Every chunk implementing the order/inventory boundary inherits the contradiction. High propagation. <em>Passes.</em></li>
+      <li><strong>Theoretical-failure check</strong> &mdash; No upstream mechanism catches this. The build will start with the contradiction unresolved unless the design review surfaces it. <em>Passes.</em></li>
+    </ol>
+
+    <div class="callout">
+      <div class="callout-label">The triage decision</div>
+      <p><strong>Fix &mdash; before build starts.</strong> Design-review findings on internal contradictions are not deferrable in the same way as code findings: deferring means committing the contradiction to the implementation. Convene a brief design discussion, pick one of the three resolutions in the Fix line, and update the spec. Then re-run <code>/gvm-design-review</code> to confirm the contradiction is gone.</p>
+    </div>
+
+    <h2 id="worked-example-1">Worked example: document review &mdash; dismiss</h2>
+
+    <h3 id="ex1-finding">The finding</h3>
+
+    <div class="finding-block">
+      <div class="fb-label">Panel finding</div>
+      <div class="fb-field"><span class="label">Severity:</span> Important</div>
+      <div class="fb-field"><span class="label">Location:</span> Section 3.2, first paragraph</div>
+      <div class="fb-field"><span class="label">Issue:</span> The phrase "modern AI systems" is used without defining what "modern" means. Readers may hold different assumptions about the date boundary.</div>
+      <div class="fb-field"><span class="label">Fix:</span> Replace with a specific year range, e.g. "AI systems released after 2020."</div>
+    </div>
+
+    <h3 id="ex1-analysis">Gate analysis</h3>
+
+    <p>Run the finding against each test in order. You stop as soon as one passes &mdash; the finding earns its severity. If none pass, it's Minor <code>[POLISH]</code>.</p>
+
+    <ol>
+      <li><strong>Integrity</strong> &mdash; No external source is misquoted or misdated. The phrase "modern AI systems" is imprecise but not factually wrong against any cited source. <em>Fails.</em></li>
+      <li><strong>Misdirection (load-bearing)</strong> &mdash; Does a reader form the wrong understanding of a load-bearing claim? The section is making a contextual observation, not a thesis argument that hinges on a specific date boundary. The imprecision is peripheral. <em>Fails.</em></li>
+      <li><strong>Reproducibility</strong> &mdash; No empirical replication is involved; this is not a methodology paper. <em>Not applicable / Fails.</em></li>
+      <li><strong>Honesty of scope</strong> &mdash; The document is not overclaiming because of this phrase. No limitation is being hidden. <em>Fails.</em></li>
+      <li><strong>Audience hospitality</strong> &mdash; The stated audience is practitioners familiar with the AI tooling space. For that audience, "modern AI systems" is not an undefined term; it carries shared referential meaning. Reader comprehension is not blocked. <em>Fails.</em></li>
+      <li><strong>Cut-damage protection</strong> &mdash; No cut is being recommended. <em>Not applicable.</em></li>
+    </ol>
+
+    <p>All six fail. The finding does not earn Important status. The panel should have tagged it <code>[POLISH]</code>. If it arrived in your triage list labelled Important (a mislabelled R1 finding, or a borderline the panel over-promoted), the correct triage decision is <strong>dismiss</strong> &mdash; it is a polish item that does not block publication.</p>
+
+    <div class="callout">
+      <div class="callout-label">The triage decision</div>
+      <p><strong>Dismiss.</strong> Record in the report as "dismissed &mdash; fails all six tests; recorded as Minor [POLISH]." The document does not need to change before this finding is closed.</p>
+    </div>
+
+    <h2 id="worked-example-2">Worked example: document review &mdash; fix</h2>
+
+    <h3 id="ex2-finding">The finding</h3>
+
+    <div class="finding-block">
+      <div class="fb-label">Panel finding</div>
+      <div class="fb-field"><span class="label">Severity:</span> Important</div>
+      <div class="fb-field"><span class="label">Location:</span> Section 2, references list</div>
+      <div class="fb-field"><span class="label">Issue:</span> The document cites Laitenberger et al. (2002) for the 41% defect-detection improvement claim, but the paper's actual year of publication is 2000. The citation year is wrong by two years.</div>
+      <div class="fb-field"><span class="label">Fix:</span> Correct the citation year to 2000 throughout.</div>
+    </div>
+
+    <h3 id="ex2-analysis">Gate analysis</h3>
+
+    <ol>
+      <li><strong>Integrity</strong> &mdash; A reader who fetches the Laitenberger paper would find the citation year wrong. The paper is "An experimental comparison of reading techniques for defect detection in UML design documents," published in the <em>Journal of Systems and Software</em> in 2000, not 2002. The claim is verifiable; the year is wrong. <em>Passes.</em></li>
+    </ol>
+
+    <p>Test 1 passes. No need to run further tests &mdash; the finding earns Important. The fix is a one-character change in the references list and a corresponding in-text correction. Low cost, clear scope, zero structural risk.</p>
+
+    <div class="callout">
+      <div class="callout-label">The triage decision</div>
+      <p><strong>Fix.</strong> The citation error is mechanical and verifiable. Cost: one edit pass. Risk of over-fixing: none. This is the default fix case &mdash; the gate passed, the correction is bounded, do it now.</p>
+    </div>
+
+    <h2 id="worked-example-3">Worked example: document review &mdash; defer</h2>
+
+    <h3 id="ex3-finding">The finding</h3>
+
+    <div class="finding-block">
+      <div class="fb-label">Panel finding</div>
+      <div class="fb-field"><span class="label">Severity:</span> Important</div>
+      <div class="fb-field"><span class="label">Location:</span> Section 5 (Methodology), throughout</div>
+      <div class="fb-field"><span class="label">Issue:</span> The document presents the four-panel parallel dispatch structure as producing "maximum first-pass coverage" but does not report an actual defect-detection rate for the document reviews run to date. A reader replicating the methodology would not know whether to expect 80% coverage or 60%. The Reproducibility test is triggered: the missing piece is the empirical coverage result from capture-recapture data.</div>
+      <div class="fb-field"><span class="label">Fix:</span> Add a table of actual panel-overlap data from the project's calibration file to ground the coverage claim.</div>
+    </div>
+
+    <h3 id="ex3-analysis">Gate analysis</h3>
+
+    <ol>
+      <li><strong>Integrity</strong> &mdash; No cited source is misquoted or misdated. The "maximum first-pass coverage" language is a design claim, not an attributed statistic. <em>Fails.</em></li>
+      <li><strong>Misdirection (load-bearing)</strong> &mdash; The methodology section is load-bearing &mdash; it is the thesis of the document. "Maximum coverage" without a reference range could mislead a practitioner about what to expect. But the claim is directional ("more than single-reviewer"), not a specific number. Whether this rises to load-bearing misdirection is a judgement call; the finding is plausible but not certain. <em>Marginal: does not clearly pass.</em></li>
+      <li><strong>Reproducibility</strong> &mdash; A practitioner attempting to replicate the methodology would want to know the expected coverage range. The document provides no empirical data point. A researcher could not calibrate their own expectations from the document alone. <em>Passes.</em></li>
+    </ol>
+
+    <p>Test 3 passes. The finding is Important. Now assess the fix cost against deferral.</p>
+
+    <p>The fix requires gathering panel-overlap data from the calibration file, computing Lincoln-Petersen estimates across past rounds, and inserting a properly structured table into the methodology section. This is not a one-pass edit &mdash; it requires data, analysis, and structural addition. Publishing without this data is not a credibility-killer (the claim is supported by the referenced Wohlin work); the gap is a disclosure gap, not a fabrication. The document's stopping-rule conditions are otherwise met.</p>
+
+    <div class="callout">
+      <div class="callout-label">The triage decision</div>
+      <p><strong>Defer.</strong> Record: "Deferred to v2.1 &mdash; Reproducibility gap in §5 coverage claim. Fix requires panel-overlap data from calibration file. Does not block publication; addressed in-text with forward reference to forthcoming empirical addendum." The rationale is explicit; the finding is visible in the report's Deferred Findings section. It does not silently disappear.</p>
+    </div>
+
+    <span class="sidenote">Defer does not mean ignore. The finding stays visible in the review report's Deferred Findings section. A later round will re-surface it if the gap is still open.</span>
+
+    <h2 id="design-decision-clause">The design-decision-recurrence clause</h2>
+
+    <p>From round 3 onwards, the blind panel sees the document fresh each round. If you added a scope disclaimer in round 4 &mdash; say, "this methodology was validated on single-team projects; multi-team generalisation is untested" &mdash; the blind panel in round 5 will likely surface the same concern again, because it never saw round 4's fix.</p>
+
+    <p>Without the clause, condition 3 of the stopping rule (both calibrated and blind Panel D scores at threshold) never triggers. You are punished for doing the honest work of scoping your claims.</p>
+
+    <h3 id="ddr-example">Worked example</h3>
+
+    <p>The calibration file shows the following blind-panel concern recurring across rounds 4, 5, and 6:</p>
+
+    <div class="finding-block">
+      <div class="fb-label">Recurring blind-panel concern</div>
+      <div class="fb-field"><span class="label">Finding:</span> The whitepaper's claim that "GVM reduces review false-positive rate" is not quantified. Reader cannot assess magnitude. Honesty-of-scope trigger.</div>
+      <div class="fb-field"><span class="label">Rounds flagged:</span> R4 (blind), R5 (blind), R6 (blind)</div>
+    </div>
+
+    <p>In round 4 you added the following to the document: "False-positive reduction has not been measured across projects; the claim reflects practitioner experience from the Assay build and should be treated as directional, not empirical."</p>
+
+    <p>The blind panel in rounds 5 and 6 did not see that addition and keeps raising the same concern. Applying the clause:</p>
+
+    <ul>
+      <li><strong>Confirmed-recurring?</strong> Yes &mdash; flagged in three consecutive rounds (R4, R5, R6).</li>
+      <li><strong>Explicitly addressed in the document?</strong> Yes &mdash; the caveat added in round 4 directly states the scope limitation the blind panel is concerned about.</li>
+      <li><strong>Clause satisfied:</strong> Record in the stopping-rule notes: "Blind-panel Honesty-of-scope concern on false-positive claim: confirmed-recurring (R4&ndash;R6), addressed by caveat at §6.3 ('treated as directional, not empirical'). Clause applied &mdash; does not block termination."</li>
+    </ul>
+
+    <div class="callout">
+      <div class="callout-label">What the clause does not cover</div>
+      <p>The clause only applies when the document has <em>already addressed</em> the concern. A recurring blind concern that the document has not addressed is still a block. The clause is not a way to dismiss findings you haven't acted on.</p>
+    </div>
+
+    <h2 id="integrity-pass">The Pre-Publication Integrity Pass</h2>
+
+    <p>The six-test gate is a panel-side emit threshold. Panels are reading and classifying &mdash; they are not fetching cited sources and verifying numbers against the actual text. That is what the Integrity Pass does. It runs after the regular terminal round and catches one specific class of failure: credibility-killers that survived all the panels because they look plausible.</p>
+
+    <p>The pass is five mechanical checks, not judgement calls:</p>
+
+    <ol>
+      <li><strong>Direct-quotation verification.</strong> Every direct quotation is fetched from its cited source and compared word-for-word. Dropped words, misattributed quotes, and wrong years are surfaced.</li>
+      <li><strong>Statistic verification.</strong> Every specific number (e.g. "41% more defects," "p &lt; 0.001") is checked against its cited source. Numbers that don't match, or that have no traceable source, are surfaced.</li>
+      <li><strong>BC-3 extended audit.</strong> Every body-named author appears in the References list; every References entry has at least one body citation; no duplicate entries; companion papers tracked. Scope is the full document including table cells, sidenotes, captions, and appendix blocks &mdash; not only inline prose.</li>
+      <li><strong>Title/topic match.</strong> For every external paper cited, the cited title is compared against what the source paper is actually about. Catches the case where the title sounds relevant but the paper addresses a different question.</li>
+      <li><strong>Edition/date precision.</strong> For every cited book, the cited edition is verified to contain the cited content. Different editions sometimes contain different chapters, chapter numbers, and page ranges.</li>
+    </ol>
+
+    <h3 id="integrity-pass-examples">What it catches that panels miss: two real examples</h3>
+
+    <p>The whitepaper review round R79 produced two findings that illustrate why the pass exists as a separate step.</p>
+
+    <p><strong>Example 1 &mdash; Title/topic match.</strong> A PRISM citation was included to support a claim about systematic review transparency. The title the whitepaper used sounded consistent with that purpose. The Integrity Pass fetched the paper and found that the actual paper was about a different aspect of PRISM &mdash; the title matched the citation but the paper's argument did not support the whitepaper's claim. The panel had accepted the citation because the title was plausible; mechanical fetch-and-compare caught the mismatch.</p>
+
+    <p><strong>Example 2 &mdash; Edition/date precision.</strong> A citation to the Brooks <em>Mythical Man-Month</em> gave the 1995 anniversary edition but used a quote and chapter number that existed only in the original 1975 edition. The chapter numbering changed between editions. A reader trying to locate the quote in the 1995 edition would not find it where the citation directed them. The panel had not fetched the book; the Integrity Pass flagged the edition mismatch.</p>
+
+    <div class="callout key-finding">
+      <div class="callout-label">Why judgement doesn't catch this</div>
+      <p>Both findings are invisible to a panel reading the document. The citation <em>looks</em> correct &mdash; the author exists, the year is plausible, the title sounds relevant. Only external fetch-and-compare can confirm that the cited source says what the document claims it says. This is why the Integrity Pass is mechanical, not judgemental.</p>
+    </div>
+
+    <h2 id="exercises">Practice exercises</h2>
+
+    <h3 id="ex-a">Exercise A</h3>
+
+    <div class="practice">
+      <div class="practice-label">Exercise A</div>
+      <p>A panel emits the following finding during an R3 review of a strategy whitepaper. Triage it: fix, defer, or dismiss? Show your gate reasoning.</p>
+    </div>
+
+    <div class="finding-block">
+      <div class="fb-label">Finding to triage</div>
+      <div class="fb-field"><span class="label">Severity:</span> Important</div>
+      <div class="fb-field"><span class="label">Location:</span> Section 4.1, final sentence</div>
+      <div class="fb-field"><span class="label">Issue:</span> The document states "Rumelt identifies five hallmarks of bad strategy." Rumelt's <em>Good Strategy Bad Strategy</em> (2011) identifies four hallmarks, not five: fluff, failure to face the challenge, mistaking goals for strategy, and bad strategic objectives. The fifth item the document lists ("incoherent objectives") is a paraphrase of the fourth, not a separate hallmark from the source.</div>
+      <div class="fb-field"><span class="label">Fix:</span> Correct to four hallmarks; consolidate the fourth and fifth items.</div>
+    </div>
+
+    <details>
+      <summary></summary>
+      <div class="answer">
+        <p><strong>Gate: Test 1 (Integrity) passes.</strong></p>
+        <p>A reader who checks Rumelt (2011) would find the count wrong and one item duplicated from the source. The claim is attributable to a specific published source and is verifiably incorrect. No further tests needed.</p>
+        <p><strong>Triage: Fix.</strong></p>
+        <p>The correction is bounded: change "five" to "four" and merge the fourth and fifth items. Cost is low; the alternative &mdash; leaving a countable factual error in a published strategy document &mdash; is a credibility risk if the reader knows Rumelt's work. Fix it before publication.</p>
+      </div>
+    </details>
+
+    <h3 id="ex-b">Exercise B</h3>
+
+    <div class="practice">
+      <div class="practice-label">Exercise B</div>
+      <p>A panel emits the following finding during an R2 review of a training document for practitioners new to the GVM pipeline. Triage it.</p>
+    </div>
+
+    <div class="finding-block">
+      <div class="fb-label">Finding to triage</div>
+      <div class="fb-field"><span class="label">Severity:</span> Important</div>
+      <div class="fb-field"><span class="label">Location:</span> Section 2, introductory paragraph</div>
+      <div class="fb-field"><span class="label">Issue:</span> The document introduces the phrase "Lincoln-Petersen estimator" without explanation in a section addressed to practitioners with no prior statistics background. A reader who does not already know the estimator has no way to understand what the number it produces means or why it matters for the capture-recapture step.</div>
+      <div class="fb-field"><span class="label">Fix:</span> Add a one-sentence gloss: "The estimator works like a wildlife census — count the overlapping fish caught in two nets to estimate the total population."</div>
+    </div>
+
+    <details>
+      <summary></summary>
+      <div class="answer">
+        <p><strong>Gate: Test 5 (Audience hospitality) passes.</strong></p>
+        <p>The stated audience is practitioners new to GVM who have no prior statistics background. The Lincoln-Petersen estimator is a specialist term from ecological sampling. An unglossed use of it in a section aimed at that audience means the reader forms no understanding of the concept &mdash; they cannot evaluate what the estimate represents or whether a coverage result of 72% should concern them. This is not Misdirection (they don't form the <em>wrong</em> understanding); they form <em>no</em> understanding. Audience hospitality applies.</p>
+        <p><strong>Triage: Fix.</strong></p>
+        <p>The fix is a one-sentence gloss. The cost is trivial. Without it, a training document fails its training purpose for its stated audience at the specific point where the concept matters most. Fix now.</p>
+      </div>
+    </details>
+
+    <h3 id="ex-c">Exercise C</h3>
+
+    <div class="practice">
+      <div class="practice-label">Exercise C</div>
+      <p>A panel emits the following finding during an R4 review of a public-facing whitepaper. The stopping-rule check is otherwise clean: zero Critical, zero reader-impact Important, calibrated score 9.4, blind score 8.9. Triage the finding, and state whether it affects the stopping-rule decision.</p>
+    </div>
+
+    <div class="finding-block">
+      <div class="fb-label">Finding to triage</div>
+      <div class="fb-field"><span class="label">Severity:</span> Important</div>
+      <div class="fb-field"><span class="label">Location:</span> Appendix B, evidence table, row 3</div>
+      <div class="fb-field"><span class="label">Issue:</span> The evidence table cites "Designing Data-Intensive Applications, Kleppmann (2017), Chapter 4" for the claim about write-ahead log semantics. Chapter 4 of the first edition covers "Encoding and Evolution," not storage engine internals or write-ahead logs. The relevant content is in Chapter 3 ("Storage and Retrieval"). The chapter number is wrong by one.</div>
+      <div class="fb-field"><span class="label">Fix:</span> Correct the chapter number in the appendix citation to Chapter 3.</div>
+    </div>
+
+    <details>
+      <summary></summary>
+      <div class="answer">
+        <p><strong>Gate: Test 1 (Integrity) passes.</strong></p>
+        <p>A reader who follows the citation to DDIA (<em>Designing Data-Intensive Applications</em>, Kleppmann) Chapter 4 will not find the claimed content. The chapter number is verifiably wrong &mdash; it is an edition/location precision failure, the same class as the Brooks misquote example. The BC-3 extended audit and the Title/topic match checks in the Integrity Pass exist precisely to catch this in appendix tables, not only inline prose.</p>
+        <p><strong>Triage: Fix.</strong></p>
+        <p>One character change, no structural implication. A wrong chapter number in an appendix citation is a credibility-killer-class error for a public-facing whitepaper at the ≥9.3 threshold. Correct before publication.</p>
+        <p><strong>Stopping-rule impact:</strong> This finding passes the Integrity test and is Important, which means stopping-rule condition 2 is not yet satisfied ("zero Important findings on the four reader-impact tests" &mdash; Integrity is one of the four). Fix the chapter number, then re-run the stopping-rule check. If the fix is the only remaining item and it has been applied, the round can be declared terminal.</p>
+        <p><strong>Note:</strong> This is exactly why the BC-3 extended audit scope explicitly includes table cells. The panel might miss an appendix citation that inline prose review would skip.</p>
+      </div>
+    </details>
+
+    <h2 id="common-mistakes">Common triage mistakes</h2>
+
+    <p>These are the forbidden patterns from shared-rules.md &sect; 28. They have a common structure: a disposition is recorded without the user seeing the finding.</p>
+
+    <h3 id="silent-suppression">Silent suppression</h3>
+
+    <p>A finding is emitted by the panel, passes the gate, and then is not presented to you. The report records it as "filtered under R2+ strict" or simply omits it from the findings list. You never saw it; you never made a triage decision.</p>
+
+    <p>This is a structural failure. The Finding Quality Gate is a <em>panel-side emit threshold</em> &mdash; once a finding passes the gate and is emitted, the skill has no authority to suppress it. Filtering emitted Critical or Important findings without user input is forbidden regardless of whether the technical rationale is sound.</p>
+
+    <h3 id="batched-verdict">Batched verdict</h3>
+
+    <p>The review presents a verdict ("Proceed with named fixes") at the same moment as the finding list &mdash; before you have triaged anything. The verdict was formed before triage. You are being shown a conclusion before you have seen the evidence.</p>
+
+    <p>The verdict must come <em>after</em> triage, not before. If you see a verdict in the same message as your first sight of the findings, the review has bundled the conclusion with the evidence. Push back: ask to see findings first, then get a verdict after you have triaged them.</p>
+
+    <h3 id="hidden-defers">Hidden defer counts</h3>
+
+    <p>The report summary says "12 findings, 8 fixed." Four findings are not accounted for. Where did they go? If any were deferred, the summary must say so: "8 fixed, 4 deferred &mdash; see Deferred Findings section." A summary count that hides which findings were deferred denies you audit trail. You cannot review the deferred items or challenge the rationale if you don't know they exist.</p>
+
+    <p>Zero-deferred summaries are permitted: "12 findings, all fixed" is accurate and hides nothing. The problem is a non-zero deferred count presented as if it were zero.</p>
+
+    <div class="callout key-finding">
+      <div class="callout-label">The shared principle</div>
+      <p>All three forbidden patterns have the same root: a disposition was recorded without you seeing the finding. Review findings are evidence you paid for. Your ability to disagree, weigh fix cost against deferral cost, or dismiss a false positive depends entirely on seeing the finding first. Auto mode reduces interruptions for routine actions; it does not transfer triage authority.</p>
+    </div>
+
+    <h2 id="takeaways">Takeaways</h2>
+
+    <ul>
+      <li><strong>The gate filters noise at panel-emit time.</strong> Findings that fail all six tests are Minor [POLISH]; they don't reach your triage queue.</li>
+      <li><strong>You own triage, not the skill.</strong> Fix, defer, and dismiss are your decisions. The skill may recommend; it may not decide.</li>
+      <li><strong>Dismiss is for findings that fail all six tests.</strong> If a finding passed at least one test, it earned its severity; dismissing it requires a specific rationale beyond "it's not important to me."</li>
+      <li><strong>Defer requires a written rationale.</strong> "Deferred" with no explanation is not a triage decision; it is a hidden drop.</li>
+      <li><strong>The stopping rule is a calculation, not a feeling.</strong> All four conditions must hold: zero Critical, zero reader-impact Important, both scores at threshold, no indefinite polish loop.</li>
+      <li><strong>The design-decision-recurrence clause only fires when the document has already addressed the concern.</strong> Recurring blind concerns the document has not addressed still block termination.</li>
+      <li><strong>The Integrity Pass catches what panels cannot.</strong> Mechanical fetch-and-compare for quotes, statistics, chapter numbers, and edition precision is a separate step from judgemental review; it is the complement to dual review, not a substitute.</li>
+      <li><strong>Silent suppression, batched verdicts, and hidden defer counts are forbidden.</strong> All three hide dispositions from the person who owns the decision.</li>
+    </ul>
+
+  </main>
+
+  <script>
+  (function () {
+    const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+    const links = [];
+    headings.forEach(function (h) {
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      toc.appendChild(a);
+      links.push({ el: a, target: h });
+    });
+    function onScroll() {
+      let current = links[0];
+      for (let i = 0; i < links.length; i++) {
+        if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+      }
+      links.forEach(function (l) { l.el.classList.remove('active'); });
+      if (current) {
+        current.el.classList.add('active');
+        const tocEl = document.getElementById('toc');
+        const elTop = current.el.offsetTop - tocEl.offsetTop;
+        const elBot = elTop + current.el.offsetHeight;
+        if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+          tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
+</body>
+</html>

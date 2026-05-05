@@ -1,0 +1,67 @@
+{#-
+  Provenance footer (P6-C06 / ADR-308).
+
+  Renders the full provenance block required by AN-30: input files with
+  SHA-256 + mtime + shape, seed, timestamp, mode, library versions, active
+  preferences. Optional blocks (sampling applied, anonymised columns,
+  formula columns, analysis warnings) render only when present.
+
+  ADR-307b bare-name policy: the template reads bare names
+  (`mode`, `preferences`, `lib_versions`, `sample`, `anonymised_columns`,
+  `formula_columns`) and the `provenance` object for the remaining fields
+  that have no bare alias (`input_files`, `seed`, `timestamp`, `warnings`).
+
+  Shared between hub.html.j2 and drillthrough.html.j2 so the footer stays
+  conceptually unified (Brooks). Both hosts must keep the GVM attribution
+  as the last child of <main> (shared rule 24, AN-31).
+-#}
+<section class="provenance" id="provenance">
+  <h2>Provenance</h2>
+  <dl>
+    <dt>Input file(s)</dt>
+    <dd>
+      {% for f in provenance.input_files %}
+        <code>{{ f.path }}</code> &middot; SHA-256: <code>{{ f.sha256 }}</code> &middot; {{ f.rows if f.rows is not none else '?' }} rows &times; {{ f.cols if f.cols is not none else '?' }} cols &middot; modified {{ f.mtime }}
+      {% endfor %}
+    </dd>
+    <dt>Mode</dt><dd>{{ mode }}</dd>
+    <dt>Random seed</dt><dd><code>{{ provenance.seed }}</code></dd>
+    <dt>Run timestamp</dt><dd>{{ provenance.timestamp }}</dd>
+    <dt>Library versions</dt>
+    <dd>
+      {% for name, version in lib_versions.items() %}
+        {{ name }} {{ version }}{% if not loop.last %}; {% endif %}
+      {% endfor %}
+    </dd>
+    <dt>Active preferences</dt>
+    <dd><code>{{ preferences | tojson }}</code></dd>
+    {% if sample %}
+      <dt>Sampling applied</dt>
+      <dd>Sampled {{ sample.n_sampled }} of {{ sample.n_total }} rows (seed {{ sample.seed }})</dd>
+    {% endif %}
+    {% if anonymised_columns %}
+      <dt>Anonymised input</dt>
+      <dd>input appears anonymised &mdash; {{ anonymised_columns | length }} column(s) match token pattern: {{ anonymised_columns | join(", ") }}</dd>
+    {% endif %}
+    {% if formula_columns %}
+      <dt>Excel-formula columns (cached values used)</dt>
+      <dd>
+        <ul class="provenance-formulas">
+          {% for fc in formula_columns %}
+            <li><code>{{ fc.column }}</code> &mdash; formula: <code>{{ fc.formula }}</code></li>
+          {% endfor %}
+        </ul>
+      </dd>
+    {% endif %}
+  </dl>
+  {% if provenance.warnings %}
+  <section class="provenance-warnings" aria-label="Analysis warnings">
+    <h3>Analysis warnings</h3>
+    <ul>
+      {% for w in provenance.warnings %}
+      <li>{{ w }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</section>

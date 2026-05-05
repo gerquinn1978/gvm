@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grounded Vibe Methodology</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.6rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; line-height: 1.2; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.4rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 720px; }
+    ul { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+    a { color: #a00000; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .subtitle { font-size: 1.2rem; font-style: italic; color: #555; margin-bottom: 1rem; max-width: 720px; }
+    .tagline { font-size: 1rem; color: #666; margin-bottom: 2.5rem; max-width: 720px; }
+
+    .path-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      margin: 1.5rem 0 2.5rem;
+    }
+
+    .path-card {
+      background: #f7f7f0;
+      border-top: 3px solid #999;
+      padding: 1.2rem;
+    }
+
+    .path-card.recommended { border-top-color: #a00000; }
+
+    .path-time {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .path-card.recommended .path-time { color: #a00000; }
+
+    .path-card h3 { margin-top: 0; margin-bottom: 0.4rem; }
+    .path-card p { font-size: 0.92rem; margin-bottom: 0; }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .doc-item {
+      padding: 0.8rem 1rem;
+      border-left: 3px solid #ddd;
+    }
+
+    .doc-item.primary { border-left-color: #a00000; }
+
+    .doc-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #888;
+      margin-bottom: 0.2rem;
+    }
+
+    .doc-item h3 { margin-top: 0; font-size: 1.05rem; }
+    .doc-item p { font-size: 0.88rem; color: #555; margin-bottom: 0; }
+
+    .install-block {
+      font-family: "Menlo", "Consolas", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.8rem 1rem;
+      margin: 1rem 0 1.5rem;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+
+    .authors {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .path-cards { grid-template-columns: 1fr; }
+      .doc-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Grounded Vibe Methodology</h1>
+  <p class="subtitle">AI can build fully engineered software. You just need the right process and the right experts.</p>
+  <p class="tagline">A methodology for building well-engineered software with AI. Structure catches failures. Citation-based expert grounding defines quality. Both together produce software that ships with confidence.</p>
+  <p class="authors">Conor Brennan &amp; Gerard Quinn</p>
+
+  <h2>Where to start</h2>
+
+  <p>Three reading paths depending on how much time you have.</p>
+
+  <div class="path-cards">
+    <div class="path-card recommended">
+      <div class="path-time">5 minutes</div>
+      <h3>The argument</h3>
+      <p>Read the <a href="blog-announcing-gvm.html">blog post</a>. It covers the core problem, the experiment's surprise finding, and what GVM does about it.</p>
+    </div>
+    <div class="path-card">
+      <div class="path-time">20 minutes</div>
+      <h3>The evidence</h3>
+      <p>Read the <a href="case-studies/case-study-assay.html">case study</a>. A real project built end-to-end with GVM &mdash; 38 requirements, 207 tests, 7 review rounds, expert patterns traceable in the production code.</p>
+    </div>
+    <div class="path-card">
+      <div class="path-time">Deep dive</div>
+      <h3>The full thesis</h3>
+      <p>Five whitepapers covering the methodology, the experiment, the mechanism, the pipeline structure, and the verification architecture. Start with <a href="whitepapers/whitepaper-grounded-vibe-methodology.html">The Grounded Vibe Methodology</a>.</p>
+    </div>
+  </div>
+
+  <h2>The documents</h2>
+
+  <div class="doc-grid">
+    <div class="doc-item primary">
+      <div class="doc-label">Blog</div>
+      <h3><a href="blog-announcing-gvm.html">AI Can Build Fully Engineered Software</a></h3>
+      <p>The core argument in 5 minutes. Start here.</p>
+    </div>
+    <div class="doc-item primary">
+      <div class="doc-label">Case Study</div>
+      <h3><a href="case-studies/case-study-assay.html">Building a Production Tool with GVM</a></h3>
+      <p>Assay: 35 hours, 38 requirements, zero critical findings at ship. Expert patterns visible in the code.</p>
+    </div>
+  </div>
+
+  <h3>Whitepapers</h3>
+
+  <div class="doc-grid">
+    <div class="doc-item">
+      <div class="doc-label">Paper 1</div>
+      <h3><a href="whitepapers/whitepaper-grounded-vibe-methodology.html">The Grounded Vibe Methodology</a></h3>
+      <p>The full thesis: expert model, pipeline, experiment, attribution argument.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Paper 2</div>
+      <h3><a href="whitepapers/whitepaper-pipeline-structure.html">Well-Engineered Software Needs an End-to-End Pipeline</a></h3>
+      <p>The structural decisions and durable artefacts that distinguish the GVM pipeline, independent of expert grounding.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Paper 3</div>
+      <h3><a href="whitepapers/whitepaper-experiment-results.html">Grounding Produces Measurably Better Output</a></h3>
+      <p>The controlled experiment: 180 dashboards, three models, 1,080 blind reviews.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Paper 4</div>
+      <h3><a href="whitepapers/whitepaper-technical-mechanism-grounded.html">Why Citation-Based Activation Works</a></h3>
+      <p>The transformer-level mechanism: why naming an expert changes what the model produces.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Paper 5</div>
+      <h3><a href="whitepapers/whitepaper-verifying-ai-generated-code.html">Verifying AI-Generated Code</a></h3>
+      <p>Five-layer verification: property-based testing, mutation testing, security testing, stack-aware tooling.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Paper 6</div>
+      <h3><a href="whitepapers/whitepaper-beyond-the-pipeline.html">Beyond the Pipeline</a></h3>
+      <p>Standalone tools, document types beyond pipeline artefacts, Tier 2b industry compounds, and the methodology applied to non-software domains.</p>
+    </div>
+  </div>
+
+  <h3>Training</h3>
+
+  <div class="doc-grid">
+    <div class="doc-item">
+      <div class="doc-label">Getting Started</div>
+      <h3><a href="training/getting-started.html">Getting Started with GVM</a></h3>
+      <p>Install, run your first project, quick reference for all commands.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Workshop</div>
+      <h3><a href="training/expert-grounding-workshop.html">Expert Grounding Workshop</a></h3>
+      <p>Why citations work, practice exercises, where grounding is effective.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Training</div>
+      <h3><a href="training/review-calibration-training.html">Review Calibration Training</a></h3>
+      <p>Progressive calibration, dual review, build check tiers, practice exercises.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Workshop</div>
+      <h3><a href="training/triage-workshop.html">Triage Workshop</a></h3>
+      <p>Practising the Finding Quality Gate across document, code, and design reviews. Fix, defer, dismiss decisions with worked examples.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Training</div>
+      <h3><a href="training/writing-requirements.html">Writing Requirements That Pass</a></h3>
+      <p>Acceptance-criteria-first requirements that survive <code>/gvm-test-cases</code> Phase 4. Five common failure modes with before/after examples.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Training</div>
+      <h3><a href="training/standalone-doc-write.html">Standalone /gvm-doc-write</a></h3>
+      <p>Producing presentations, strategy, newsletters, and prose grounded in named experts &mdash; outside the pipeline.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Guide</div>
+      <h3><a href="training/engineering-leaders-guide.html">Engineering Leader's Guide to GVM</a></h3>
+      <p>Adopting the methodology &mdash; what it changes, what it costs, how to roll it out.</p>
+    </div>
+    <div class="doc-item">
+      <div class="doc-label">Training</div>
+      <h3><a href="training/gvm-analysis-training.html">/gvm-analysis Training</a></h3>
+      <p>Privacy-preserving exploratory data analysis grounded in named experts (Tukey, Cleveland, Hyndman &amp; Athanasopoulos).</p>
+    </div>
+  </div>
+
+  <h2>Get started</h2>
+
+  <div class="install-block">
+    git clone &lt;repository-url&gt;<br>
+    claude plugin add grounded_vibe_methodology/grounded-vibe-methodology
+  </div>
+
+  <p>Run <code>/gvm-status</code> in Claude Code to verify. Start a project with <code>/gvm-requirements</code>. See the <a href="training/getting-started.html">getting started guide</a> for a full walkthrough, or keep the <a href="quick-reference.html">quick reference card</a> open while you work.</p>
+
+</body>
+</html>

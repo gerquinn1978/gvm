@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-build — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026 (v2.1.0)</p>
+<h1>/gvm-build</h1>
+<p class="subtitle">
+  Execute technical specifications as working code &mdash; one chunk at a time, with strict TDD,
+  automated code review, and handover files for session resilience.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="whats-new">What&rsquo;s new in v2.1.0</h2>
+<p>The methodology-hardening release adds five user-visible build gates. See <code>methodology-changelog.md</code> for full rationale and validation method. Identifier prefixes (NFR, ADR, TDD, REVIEW, GATE) decode in the changelog.</p>
+<ul>
+  <li><strong>Hard Gate 8 &mdash; chunk-acceptance smoke gate.</strong> After tests pass and wiring audits run, every chunk must execute a literal smoke command exercising its user-facing surface and assert structural contracts on the output (HTML elements present, JSON keys present). Refusal blocks the handover write.</li>
+  <li><strong>Hard Gate 8 &mdash; carry-over and helper exemptions.</strong> Chunks built before 2026-04-28 are exempt as &ldquo;v2.0.x carry-over&rdquo;. Pure internal helpers may claim exemption with a written rationale (see ADR-MH-04 in the changelog).</li>
+  <li><strong>TDD-1 outside-in ordering.</strong> For user-facing chunks, the outside-in acceptance test is the first deliverable &mdash; written before any unit test. Both Red and Green commit SHAs are recorded in the handover. Pure-internal-helper chunks may record <code>TDD-1 exempted: &lt;reason&gt;</code> in the handover (blank reason is treated as no exemption).</li>
+  <li><strong>TDD-2 mock budget &mdash; severity escalation.</strong> Mock-budget violations escalate from Important to Critical when the target appears in the project&rsquo;s opt-in <code>.cross-chunk-seams</code> file. Internal Python class mocks in collaboration-contract tests are flagged by the EBT lint.</li>
+  <li><strong>TDD-3 realistic-fixture catalogue.</strong> TDD-3 defines a six-domain catalogue of realistic-fixture starter shapes (data-analysis, web/UI, API, parsing, security validation, concurrency). Panel C in <code>/gvm-code-review</code> currently emits Important findings in three of the six (data-analysis, parsing, security validation); practitioners ship variants in the others by judgement. Override per chunk via <code>realistic-fixture-not-applicable: &lt;rationale&gt;</code> in the handover.</li>
+  <li><strong>NFR-2 diff-budget tracking.</strong> Each handover records a <code>Diff budget delta</code> integer (net SKILL.md LOC added). The build summary aggregates per-chunk values; you are prompted when the cumulative total crosses 500 LOC.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="overview">Overview</h2>
+
+<p><code>/gvm-build</code> reads the implementation guide produced by <code>/gvm-tech-spec</code> and executes it as code &mdash; one chunk at a time. Each chunk produces two artifacts:</p>
+
+<ul>
+  <li><strong>Pre-build prompt</strong> (<code>build/prompts/P{X}-C{XX}.md</code>) &mdash; a self-contained work order generated before execution. Everything a fresh agent needs to build the chunk.</li>
+  <li><strong>Post-build handover</strong> (<code>build/handovers/P{X}-C{XX}.md</code>) &mdash; a record of what was actually built. Files created, tests passing, deviations from spec, lessons learned.</li>
+</ul>
+
+<span class="sidenote">
+  Prompts and handovers are immutable records. If a chunk needs to be redone, a v2 is created alongside the original &mdash; nothing is overwritten.
+</span>
+
+<!-- ============================================================ -->
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>Before running <code>/gvm-build</code>, you need:</p>
+
+<ol>
+  <li><code>specs/implementation-guide.md</code> &mdash; produced by <code>/gvm-tech-spec</code></li>
+  <li><code>specs/*.md</code> &mdash; domain spec files referenced by the implementation guide</li>
+  <li>A git repository (for commits, branches, and worktrees)</li>
+</ol>
+
+<p>If the implementation guide doesn&rsquo;t exist, <code>/gvm-build</code> will tell you to run <code>/gvm-tech-spec</code> first.</p>
+
+<!-- ============================================================ -->
+<h2 id="getting-started">Getting Started</h2>
+
+<h3 id="starting">Starting a Build</h3>
+
+<p>Run <code>/gvm-build</code> in a project that has <code>specs/implementation-guide.md</code>. The skill detects what&rsquo;s been built (from handover files) and offers your options:</p>
+
+<ul>
+  <li><strong>Build next chunk</strong> &mdash; the first unbuilt chunk on the critical path</li>
+  <li><strong>Build specific chunk</strong> &mdash; pick any pending chunk</li>
+  <li><strong>Build all of Phase N</strong> &mdash; run all chunks in a phase sequentially</li>
+  <li><strong>Parallel dispatch</strong> &mdash; when multiple chunks have no shared dependencies</li>
+</ul>
+
+<h3 id="resuming">Resuming</h3>
+
+<p>Stop any time. Handover files persist your progress. Next session, run <code>/gvm-build</code> again &mdash; it picks up where you left off. Works across <code>/compact</code>, session restarts, even different machines (if handovers are committed to git).</p>
+
+<span class="sidenote">
+  This is the key design insight: prompts and handovers make the build process <em>session-independent</em>. Context can be lost; progress cannot.
+</span>
+
+<!-- ============================================================ -->
+<h2 id="process">The Build Process</h2>
+
+<table>
+  <caption>Table 1 &mdash; Build process steps</caption>
+  <thead>
+    <tr><th>Step</th><th>What Happens</th><th>Your Role</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="phase">1</span> Detect State</td>
+      <td>Reads the implementation guide, scans for existing prompts and handovers, builds a progress map. <strong>Context budget:</strong> after 2 chunks in a session, recommends <code>/compact</code>. After 3, strongly recommends. After 4 without compacting, makes it mandatory &mdash; quality degrades before you notice it.</td>
+      <td>Automatic. Accept compact at 2&ndash;3 chunks; mandatory at 4.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">2</span> Present Options</td>
+      <td>Offers: next chunk, specific chunk, full phase, or parallel dispatch.</td>
+      <td>Choose what to build.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">3</span> Git Strategy</td>
+      <td>Per-chunk choice: current branch, feature branch, or git worktree.</td>
+      <td>Choose based on workflow.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4</span> Generate Prompt</td>
+      <td>Checks dependency handovers exist. <strong>Checks spec timestamps</strong> against completed handovers &mdash; if a spec changed after a chunk was built, stops and asks: rebuild or accept divergence. Then reads chunk description, spec sections, framework docs, conventions, dependency handovers. Assembles a self-contained prompt.</td>
+      <td>Approve before execution. Decide on spec changes if flagged.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5a</span> Execute &mdash; per deliverable</td>
+      <td>Write failing test &rarr; write code &rarr; run unit test (verify exit code from tool result) &rarr; self-review against Review Criteria &rarr; refactor &rarr; commit.</td>
+      <td>Monitor. Intervene on failures.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5b</span> Execute &mdash; after all deliverables</td>
+      <td><strong>Dependency verification</strong> (verify every new import resolves) &rarr; lint &rarr; <strong>credential scanning</strong> (detects hardcoded secrets, API keys, tokens &mdash; hard block if found) &rarr; <strong>static analysis</strong> (security scanning and complexity checks, tools selected per stack from <code>stack-tooling.md</code>) &rarr; <strong>independent chunk review</strong> (spawned agent) &rarr; chunk-level tests (exit code + pass count verified) &rarr; <strong>integration seam check</strong> (verifies interfaces between this chunk and its dependencies actually connect).</td>
+      <td>Review independent agent findings.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">6</span> Write Handover</td>
+      <td>Records files created, tests passing, deviations, surfaced requirements, upstream fixes, downstream notes.</td>
+      <td>Review the handover.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">7</span> Phase Completion</td>
+      <td>After all chunks in a phase: runs the full phase test suite across all chunks.</td>
+      <td>Confirm integration passes.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">8</span> Build Summary</td>
+      <td>8a. Between phases (optional): offers a build summary to capture progress before compacting. 8b. After the final phase (mandatory): writes paired HTML + MD to <code>build/build-summary.html</code> and <code>.md</code> covering what was built, what was not, open questions, surfaced requirements, and expert panel activation summary.</td>
+      <td>Review summary. Between phases, accept or skip.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">9</span> Offer Next</td>
+      <td>Build next chunk, compact first, or done for now.</td>
+      <td>Choose.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">10</span> Hand Off</td>
+      <td>When all chunks are complete, directs you to run <code>/gvm-code-review</code> to review the implementation, then <code>/gvm-test</code> for final verification.</td>
+      <td>Run the indicated commands to complete the pipeline.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Test results are never trusted from interpretation of stdout &mdash; exit codes and parsed counts are the source of truth.</p>
+
+<!-- ============================================================ -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol start="0">
+  <li><strong>Bootstrap GVM Home Directory.</strong> Verify <code>~/.claude/gvm/</code> exists and is initialised before writing any output.</li>
+  <li><strong>Load Grounding Material Before Generating Any Prompt.</strong> Load both framework documentation (language docs, API references &mdash; for the &ldquo;Framework Reference&rdquo; section) and expert principles (architecture, domain, stack specialists &mdash; for the &ldquo;Review Criteria&rdquo; section). Construction uses framework docs; the review loop uses expert principles.</li>
+  <li><strong>Write the Prompt File.</strong> Every chunk must have a prompt file at <code>build/prompts/P{X}-C{XX}.md</code> written before execution begins.</li>
+  <li><strong>Code Review Loop.</strong> After writing code, review against the Review Criteria (expert principles and build checks). For fast unit tests: test first, then review working code. For slower chunk/phase tests: review first &mdash; catches API and design errors faster. Loop until clean; stop if issue count is not decreasing after 5 iterations.</li>
+  <li><strong>Write the Handover File.</strong> Every completed chunk must have a handover file at <code>build/handovers/P{X}-C{XX}.md</code> written after all tests pass.</li>
+  <li><strong>Test First, Always.</strong> Write the failing test before writing the implementation code.</li>
+  <li><strong>Wiring matrix required.</strong> Refuse to start a phase if the implementation guide lacks a wiring matrix section. Without (entry point &rarr; consumed modules &rarr; wiring chunk) rows, the build cannot verify what each phase delivered.</li>
+  <li><strong>Wiring verification at phase completion.</strong> For every (entry_point, module) row in the wiring matrix, mechanically grep the entry-point file for both an import statement and a call site of the named module. Acceptance is by code, not by chunk-handover claim. A missing import or call site refuses the phase. The inverse audit (<code>_module_audit.py</code>) catches modules built but never written into the matrix.</li>
+  <li><strong>Chunk-acceptance smoke gate (v2.1.0, NFR-1 / GATE-1).</strong> After tests pass, run a literal smoke command exercising the chunk&rsquo;s user-facing surface and assert structural contracts on the output. Non-zero exit refuses the handover write. Carry-over and ADR-MH-04 internal-helper exemptions are recorded explicitly in the handover; silent skip is a violation.</li>
+  <li><strong>MVP-first ordering (v2.2.0, MVP-1 read-side mirror; MVP = Minimum Viable Product).</strong> When opening an implementation guide, verify the first user-facing chunk delivers a runnable end-to-end slice (acceptance test against walking-skeleton boundaries) OR carries the literal <em>MVP-1 exempted: &lt;category&gt; — rationale: &lt;why&gt;</em> marker with one of the four named categories: <em>library</em>, <em>refactor</em>, <em>performance-driven</em>, <em>fully-specified</em>. Refusal blocks chunk-prompt generation when neither holds. Companion gate to the write-side rule in <code>/gvm-tech-spec</code> Phase 5; the two compose so an impl guide that bypasses one is caught by the other.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2 id="tdd">Testing Tiers</h2>
+
+<table>
+  <caption>Table 2 &mdash; Testing tiers</caption>
+  <thead>
+    <tr><th>Tier</th><th>When</th><th>Scope</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Per-deliverable</td><td>During TDD loop</td><td>One test at a time</td></tr>
+    <tr><td>Chunk-level</td><td>After all deliverables</td><td>All tests in the chunk</td></tr>
+    <tr><td>Phase-level</td><td>After all chunks in phase</td><td>All tests across the phase</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">On test failure</div>
+  <p>No auto-rollback. You&rsquo;re offered: &ldquo;Fix it now&rdquo;, &ldquo;Stash and come back later&rdquo;, or &ldquo;Show diff so far&rdquo;. The fix may be one line away.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="git">Git Strategies</h2>
+
+<table>
+  <caption>Table 3 &mdash; Git strategy options</caption>
+  <thead>
+    <tr><th>Strategy</th><th>When to Use</th><th>Overhead</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Current branch</td><td>Sequential, small/medium chunks</td><td>Lowest</td></tr>
+    <tr><td>Feature branch</td><td>Large chunks, want PR review</td><td>Medium</td></tr>
+    <tr><td>Git worktree</td><td>Parallel dispatch</td><td>Required for true parallelism</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="parallel">Parallel Dispatch</h2>
+
+<p>When the dependency matrix shows chunks that can run simultaneously (e.g., 4 independent domain agents), <code>/gvm-build</code> offers to dispatch them to parallel subagents. Each gets its own git worktree, executes its prompt independently, and writes its own handover.</p>
+
+<p>After all parallel chunks complete, you choose a merge strategy: sequential merge, combined PR, or manual.</p>
+
+<span class="sidenote">
+  Parallel dispatch only works when chunks have no shared dependencies. The implementation guide&rsquo;s dependency matrix determines which chunks qualify.
+</span>
+
+<!-- ============================================================ -->
+<h2 id="grounding">Construction and Review Grounding</h2>
+
+<p>The build prompt separates two types of grounding, applied at different points:</p>
+
+<table>
+  <caption>Table 4 &mdash; Grounding separation</caption>
+  <thead>
+    <tr><th>Prompt Section</th><th>Knowledge Type</th><th>Used During</th><th>Content</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Framework Reference</strong></td><td>Procedural</td><td>Code generation (writing code)</td><td>Language docs, framework API sections, library method signatures</td></tr>
+    <tr><td><strong>Review Criteria</strong></td><td>Declarative</td><td>Code review loop (evaluating code)</td><td>Expert principles from architecture/domain/stack specialists + build checks</td></tr>
+  </tbody>
+</table>
+
+<p>Expert principles are quality criteria for the review loop &mdash; they define what good code looks like. Framework documentation is for construction &mdash; it defines how to use specific APIs correctly. Preliminary evidence suggests expert grounding is demonstrably effective during review but has undemonstrated effectiveness during code generation (see whitepaper Section 9.1).</p>
+
+<p>Review criteria are loaded from the expert reference files per chunk type:</p>
+
+<table>
+  <caption>Table 5 &mdash; Expert references (Review Criteria)</caption>
+  <thead>
+    <tr><th>File</th><th>Loaded When</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>architecture-specialists.md</code></td><td>Always (Tier 1)</td></tr>
+    <tr><td>Per-domain files from <code>references/domain/</code></td><td>Loaded selectively based on chunk&rsquo;s domain (Tier 2a)</td></tr>
+    <tr><td>Per-stack files from <code>references/stack/</code></td><td>Loaded selectively based on chunk&rsquo;s language/framework (Tier 3)</td></tr>
+  </tbody>
+</table>
+
+<p>The review loop is iterative: review working code, fix issues, re-test, re-review. Loop until clean &mdash; stop only if issue count is not decreasing after 5 iterations.</p>
+
+<div class="callout">
+  <div class="callout-label">Finding quality gate</div>
+  <p>During the code review loop, findings must pass the consumer impact test: &ldquo;An end user would [concrete outcome].&rdquo; Findings that interrupt the build flow cost the most to address &mdash; polish findings during a TDD cycle waste time without improving quality. The loop is clean when all remaining observations are polish. See <code>review-reference.md</code> for the full quality gate.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="build-checks">Build Check Promotion</h2>
+
+<p>Build checks are recurring review findings that have been promoted to build-time checklists. They represent patterns that reviewers have flagged repeatedly &mdash; problems worth preventing at generation time rather than catching again in review.</p>
+
+<h3 id="how-build-checks-work">How It Works</h3>
+
+<p>During prompt generation (Step 4), the skill loads <code>reviews/build-checks.md</code> if it exists. Relevant checks are included in chunk prompts under a &ldquo;Known Patterns to Avoid&rdquo; section, giving the implementation agent advance warning of pitfalls that have recurred in this project. The code review loop (Hard Gate 3) also checks against build checks during its review passes.</p>
+
+<h3 id="build-checks-origin">Where They Come From</h3>
+
+<p>Build checks are promoted automatically by <code>/gvm-code-review</code>, <code>/gvm-doc-review</code>, and <code>/gvm-design-review</code> when findings recur 3 or more consecutive rounds or regress after being resolved. The review skills write promoted checks to <code>reviews/build-checks.md</code>.</p>
+
+<h3 id="build-checks-tiers">Tiers</h3>
+
+<p>Each build check is classified at promotion time. <strong>Tier 1</strong> checks represent general engineering practice (DRY violations, resource lifecycle, single source of truth) and are never retired &mdash; they apply to any project regardless of stack. <strong>Tier 2</strong> checks are tied to a specific library, SDK, or domain convention. When a tier 2 check has not triggered in 3 consecutive rounds, you are asked whether to retire it. The system flags candidates; you decide.</p>
+
+<!-- ============================================================ -->
+<h2 id="stubs">Working with STUBS.md</h2>
+
+<p>When honesty-triad is active on a project &mdash; that is, when <code>.gvm-track2-adopted</code> is present at the project root &mdash; <code>/gvm-build</code> runs the <strong>HS-1 gate</strong> immediately before writing each chunk handover. The gate inspects the chunk&rsquo;s &ldquo;Files Created&rdquo; and &ldquo;Files Modified&rdquo; list. Any path under a <code>stubs/</code> directory must be registered in <code>STUBS.md</code>; otherwise the handover is refused.</p>
+
+<p>The intent is plain: a stub is a placeholder for real behaviour. Without a registry, placeholders accumulate silently and ship as features. The HS-1 gate makes that impossible &mdash; an unregistered stub blocks the chunk until the practitioner records the reason, the real-provider plan, an owner, and an expiry date.</p>
+
+<h3 id="stubs-registry">The registry shape</h3>
+
+<p>Every entry in <code>STUBS.md</code> carries four fields, per cross-cutting ADR-004:</p>
+
+<ul>
+  <li><strong>Reason</strong> &mdash; why a stub is acceptable here (e.g. &ldquo;real provider unavailable in dev environment&rdquo;).</li>
+  <li><strong>Real-provider plan</strong> &mdash; the concrete path back to a real implementation (which API, which library, which chunk will wire it).</li>
+  <li><strong>Owner</strong> &mdash; the person or team accountable for resolving the stub.</li>
+  <li><strong>Expiry</strong> &mdash; an ISO-8601 date by which the stub must be replaced. Expired entries fail the release-gate verifier.</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">Missing STUBS.md is not a bypass</div>
+  <p>If <code>STUBS.md</code> doesn&rsquo;t exist, the gate treats it as an empty registry. Any stub-namespaced file in the chunk surfaces as unregistered &mdash; not silently accepted. This is deliberate: the absence of a registry must not become a loophole.</p>
+</div>
+
+<h3 id="stubs-resolving">Resolving a refused handover</h3>
+
+<p>When the HS-1 gate refuses a handover, you have two options:</p>
+
+<ol>
+  <li><strong>Register the stub.</strong> Add an entry to <code>STUBS.md</code> with the four fields above, then re-run the handover step. This is the right move when the placeholder is genuinely needed for now.</li>
+  <li><strong>Replace the stub.</strong> Move the file out of the <code>stubs/</code> namespace by wiring real behaviour. This is the right move when the placeholder shouldn&rsquo;t exist at all.</li>
+</ol>
+
+<p>What the gate doesn&rsquo;t do: silently let the chunk pass. The handover file is the audit trail; if its file list claims a stub, the registry must explain why.</p>
+
+<h3 id="stubs-retroactive">Pre-existing legacy stubs</h3>
+
+<p>The HS-1 gate only sees files the current chunk touches. Stubs that pre-date the honesty-triad rollout are caught by a separate retroactive audit run by <code>/gvm-explore-test</code> (the HS-6 hook). <code>/gvm-build</code> does not run a retroactive sweep itself &mdash; it enforces the chunk-level gate, and exploratory testing owns the retroactive sweep.</p>
+
+<!-- ============================================================ -->
+<h2 id="rules">Key Rules</h2>
+
+<div class="rule"><strong>1. Spec is the contract.</strong> Code follows the spec. Deviations recorded in handover with rationale.</div>
+<div class="rule"><strong>2. Strict TDD.</strong> Failing test first. Red &rarr; Green &rarr; Refactor.</div>
+<div class="rule"><strong>3. Review working code, not speculative code.</strong> For fast unit tests: test first, review after. For slow chunk/phase tests: review first &mdash; API and design errors are caught faster by review. Expert principles are review criteria (declarative quality), not construction framing. Framework docs ground construction; experts ground review.</div>
+<div class="rule"><strong>4. Lint before commit.</strong> Tools selected per stack from <code>stack-tooling.md</code>. Unknown stacks trigger automatic tool discovery.</div>
+<div class="rule"><strong>5. Never auto-rollback.</strong> On failure: present the error, offer options.</div>
+<div class="rule"><strong>6. Never overwrite artifacts.</strong> Prompts and handovers are immutable. Re-doing a chunk creates a v2.</div>
+<div class="rule"><strong>7. New requirements bubble up, not sideways &mdash; and they promote, never park.</strong> Discovered during build? Record in the handover&rsquo;s &ldquo;Surfaced Requirements&rdquo; field as the staging ground. Then on triage, <code>AskUserQuestion</code> presents three promotion options (per shared rule 27): append as acceptance criterion to an existing requirement, add a new requirement entry, or run <code>/gvm-requirements</code> in &ldquo;New round&rdquo; mode. Dismiss the question and the finding is marked &ldquo;deferred &mdash; awaiting triage&rdquo; and re-prompted at the next checkpoint. The destination is always <code>requirements/requirements.md</code>. Surfaced requirements MUST NEVER be parked in <code>STUBS.md</code> &mdash; that file is for code-level placeholders only.</div>
+<div class="rule"><strong>8. Backward fixes go forward.</strong> Need to change prior code? Do it in the current chunk, record in &ldquo;Upstream Fixes&rdquo;, re-run prior tests.</div>
+
+<!-- ============================================================ -->
+<h2 id="simple-build">Simple Build Check</h2>
+
+<p>When the implementation guide has a single chunk with no dependencies, <code>/gvm-build</code> detects this and takes a shorter path. The dependency matrix and parallel dispatch steps are skipped entirely. The output is just two artifacts:</p>
+
+<ul>
+  <li>A single pre-build prompt (<code>build/prompts/P1-C01.md</code>)</li>
+  <li>A post-build handover once execution completes</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">When this applies</div>
+  <p>Simple projects &mdash; a single script, a standalone tool, a self-contained API with no cross-service dependencies &mdash; are common. The simple build path removes overhead that adds no value when there is only one chunk to build.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="api-boundary-contracts">API Boundary Contracts</h2>
+
+<p>Build prompts for chunks that produce or consume an API endpoint now include the exact response shape from the spec. Both backend and frontend chunks reference the same contract, copied verbatim from the domain spec&rsquo;s component design section:</p>
+
+<ul>
+  <li><strong>Backend chunks</strong> include the response shape they must produce</li>
+  <li><strong>Frontend chunks</strong> include the response shape they consume</li>
+</ul>
+
+<p>This means the two sides of every API boundary are built against an identical contract, not independent interpretations of the same spec prose.</p>
+
+<div class="callout">
+  <div class="callout-label">Where the contracts come from</div>
+  <p>The spec (produced by <code>/gvm-tech-spec</code>) must define the exact response shape with a concrete JSON example for every endpoint crossing a service boundary. If the spec lacks this, <code>/gvm-build</code> will flag it before generating the prompt rather than proceeding on ambiguous ground.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="files">File Structure</h2>
+
+<pre><code>build/
+├── prompts/              # Generated before execution
+│   ├── P1-C01.md
+│   ├── P1-C02.md
+│   └── ...
+└── handovers/            # Written after execution
+    ├── P1-C01.md
+    ├── P1-C02.md
+    └── ...</code></pre>
+
+<!-- ============================================================ -->
+<h2 id="lifecycle">Where This Fits</h2>
+
+<pre><code>[/gvm-init] → [/gvm-impact-map] → /gvm-requirements → /gvm-test-cases → /gvm-tech-spec
+  → [/gvm-design-review] → [/gvm-walking-skeleton] → /gvm-build → /gvm-code-review
+  → /gvm-test → [/gvm-explore-test] → /gvm-doc-write → /gvm-doc-review → /gvm-deploy
+                                              ↑
+                                        you are here
+
+Optional phases shown in [ ].</code></pre>
+
+<p><code>/gvm-build</code> is the execution phase of the Grounded Vibe Methodology. Everything upstream &mdash; requirements, test cases, specifications &mdash; was preparation. This is where the spec becomes code.</p>
+
+<div class="callout">
+  <div class="callout-label">Feedback loop</div>
+  <p>Issues discovered during build are recorded in handovers, not silently fixed. If a spec is ambiguous or a requirement is missing, the handover flags it for upstream revision.</p>
+</div>
+
+<!-- ============================================================ -->
+</main>
+
+<script>
+(function () {
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('h2[id], h3[id]');
+  var links = [];
+  headings.forEach(function (h) {
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+  function onScroll() {
+    var current = links[0];
+    for (var i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

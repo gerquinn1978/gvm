@@ -1,0 +1,139 @@
+{#-
+  Rendered-content interactivity (P6-C07 / ADR-307).
+
+  Plain JS; no Jinja variables. Loaded at the end of <body> in hub and
+  drillthrough. Everything operates on already-rendered DOM — zero network
+  calls and zero storage access (TC-AN-29-05).
+
+  Sections:
+    1. TOC population from <section><h2> elements.
+    2. Sortable tables (<th data-sortable="true">).
+    3. Findings filter (<input id="findings-filter">).
+    4. Chart tooltips (<g class="tooltip-zone">).
+-#}
+<script>
+(function () {
+  "use strict";
+
+  // --- 1. TOC population --------------------------------------------------
+  function populateToc() {
+    var toc = document.querySelector("nav.toc");
+    if (!toc) return;
+    var sections = document.querySelectorAll("main > section[id]");
+    if (!sections.length) return;
+    var ul = document.createElement("ul");
+    for (var i = 0; i < sections.length; i++) {
+      var sec = sections[i];
+      var h2 = sec.querySelector("h2");
+      if (!h2) continue;
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = "#" + sec.id;
+      a.textContent = h2.textContent;
+      li.appendChild(a);
+      ul.appendChild(li);
+    }
+    toc.appendChild(ul);
+  }
+
+  // --- 2. Sortable tables -------------------------------------------------
+  function makeSortable() {
+    var headers = document.querySelectorAll('th[data-sortable="true"]');
+    for (var i = 0; i < headers.length; i++) {
+      (function (th) {
+        th.addEventListener("click", function () {
+          var table = th.closest("table");
+          if (!table) return;
+          var tbody = table.querySelector("tbody");
+          if (!tbody) return;
+          var thIndex = Array.prototype.indexOf.call(
+            th.parentNode.children, th
+          );
+          var current = th.getAttribute("aria-sort") || "none";
+          var next = current === "ascending"
+            ? "descending"
+            : current === "descending" ? "none" : "ascending";
+          // Reset siblings.
+          var sibs = th.parentNode.querySelectorAll("th");
+          for (var s = 0; s < sibs.length; s++) {
+            sibs[s].setAttribute("aria-sort", "none");
+          }
+          th.setAttribute("aria-sort", next);
+          if (next === "none") return;
+          var rows = Array.prototype.slice.call(tbody.querySelectorAll("tr"));
+          rows.sort(function (a, b) {
+            var av = a.children[thIndex].getAttribute("data-sort-value");
+            var bv = b.children[thIndex].getAttribute("data-sort-value");
+            var an = parseFloat(av);
+            var bn = parseFloat(bv);
+            if (!isNaN(an) && !isNaN(bn)) {
+              return next === "ascending" ? an - bn : bn - an;
+            }
+            av = av || a.children[thIndex].textContent;
+            bv = bv || b.children[thIndex].textContent;
+            if (av < bv) return next === "ascending" ? -1 : 1;
+            if (av > bv) return next === "ascending" ? 1 : -1;
+            return 0;
+          });
+          for (var r = 0; r < rows.length; r++) tbody.appendChild(rows[r]);
+        });
+      })(headers[i]);
+    }
+  }
+
+  // --- 3. Findings filter -------------------------------------------------
+  function wireFilter() {
+    var input = document.getElementById("findings-filter");
+    if (!input) return;
+    input.addEventListener("keyup", function () {
+      var q = (input.value || "").toLowerCase();
+      var rows = document.querySelectorAll("[data-search-text]");
+      for (var i = 0; i < rows.length; i++) {
+        var txt = (rows[i].getAttribute("data-search-text") || "").toLowerCase();
+        rows[i].style.display = (!q || txt.indexOf(q) !== -1) ? "" : "none";
+      }
+    });
+  }
+
+  // --- 4. Chart tooltips --------------------------------------------------
+  function wireTooltips() {
+    var zones = document.querySelectorAll("g.tooltip-zone, .tooltip-zone");
+    if (!zones.length) return;
+    var tip = document.createElement("div");
+    tip.setAttribute("role", "tooltip");
+    tip.style.position = "absolute";
+    tip.style.display = "none";
+    tip.style.pointerEvents = "none";
+    tip.className = "chart-tooltip";
+    document.body.appendChild(tip);
+    function show(e) {
+      var text = e.currentTarget.getAttribute("data-tooltip-text");
+      if (!text) return;
+      tip.textContent = text;
+      tip.style.left = (e.pageX + 8) + "px";
+      tip.style.top = (e.pageY + 8) + "px";
+      tip.style.display = "block";
+    }
+    function hide() { tip.style.display = "none"; }
+    for (var i = 0; i < zones.length; i++) {
+      zones[i].addEventListener("mouseover", show);
+      zones[i].addEventListener("mouseout", hide);
+      zones[i].addEventListener("focus", show);
+      zones[i].addEventListener("blur", hide);
+    }
+  }
+
+  function init() {
+    populateToc();
+    makeSortable();
+    wireFilter();
+    wireTooltips();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>

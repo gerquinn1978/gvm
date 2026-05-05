@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-walking-skeleton &mdash; User Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 240px; }
+
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026</p>
+<h1>/gvm-walking-skeleton</h1>
+<p class="subtitle">
+  Discovery + scaffolding skill &mdash; wires a thin end-to-end execution thread through every
+  external boundary the project touches, surfacing integration failure modes at hour 1
+  rather than month 6.
+</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>
+  <code>/gvm-walking-skeleton</code> produces two artefacts: a runnable
+  <code>walking-skeleton/</code> directory with a single test that exercises every external
+  boundary (HTTP outbound, database, cloud SDK, filesystem, subprocess, email), and a
+  project-root <code>boundaries.md</code> registry of those boundaries with their wiring
+  status. The skeleton is an architectural spike, not production code &mdash; the
+  integration thread runs end-to-end, but no feature behaviour is implemented.
+</p>
+
+<span class="sidenote">
+  Freeman &amp; Pryce&rsquo;s <em>Growing Object-Oriented Software, Guided by Tests</em> is
+  the structural model. Cockburn names the discipline in <em>Crystal Clear</em>: keep it
+  thin. Reinertsen names the failure mode the skeleton mechanically prevents &mdash;
+  horizontal slicing defers integration risk to month 6.
+</span>
+
+<p>
+  Run <code>/gvm-walking-skeleton</code> after <code>/gvm-tech-spec</code> and before
+  <code>/gvm-build</code>. The boundaries registry becomes the authority that downstream
+  skills gate against: <code>/gvm-build</code> Hard Gate WS-5 (the fifth walking-skeleton
+  cross-skill check) refuses chunks if the skeleton is red in CI; <code>/gvm-test</code>
+  VV-4(d) (the verdict-evaluator&rsquo;s fourth criterion, branch d &mdash; sandbox
+  divergence) audits sandbox-divergence notes against the same registry.
+</p>
+
+<h2 id="when-to-use">When to Use</h2>
+
+<ul>
+  <li><strong>Greenfield projects with multiple external integrations</strong> &mdash; before any feature work begins, when auth, CORS, rate limits, and connection strings would otherwise surface during integration weeks later.</li>
+  <li><strong>Projects switching providers</strong> (e.g. moving from one payment processor to another) &mdash; the skeleton verifies the new provider&rsquo;s contract end-to-end before consuming chunks rely on it.</li>
+  <li><strong>When the boundary set is non-trivial</strong> &mdash; three or more external dependencies of mixed kind (DB + HTTP + cloud SDK) is the threshold above which an explicit boundaries registry repays its cost.</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">When to skip</div>
+  <p>If the project has zero or one external boundary (a single database, no third-party APIs), the registry's cost exceeds its value. The skill is opt-in: WS-5 only fires when <code>boundaries.md</code> exists, so the gate is inactive on projects that never ran the skill. Any project that touches multiple external boundaries should still run it &mdash; the inactive gate is not a free pass.</p>
+</div>
+
+<h2 id="experts">Expert Panel</h2>
+
+<table>
+  <caption>Table 1 &mdash; Experts grounding /gvm-walking-skeleton</caption>
+  <thead>
+    <tr><th>Expert</th><th>Work</th><th>Role in this skill</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Steve Freeman &amp; Nat Pryce</td><td><em>Growing Object-Oriented Software, Guided by Tests</em></td><td>Walking-skeleton purpose: the outcome is &ldquo;the integration thread runs end-to-end&rdquo;, not &ldquo;the feature works&rdquo;.</td></tr>
+    <tr><td>Alistair Cockburn</td><td><em>Crystal Clear</em></td><td>Architectural spike vs production code &mdash; keeps the skeleton intentionally thin.</td></tr>
+    <tr><td>Michael Nygard</td><td><em>Release It!</em></td><td>Stability patterns at boundaries &mdash; circuit breakers, timeouts, bulkheads. The first-run debug exposes which boundaries need them.</td></tr>
+    <tr><td>Mike Cohn</td><td><em>Agile Estimating and Planning</em></td><td>Vertical-slice discipline &mdash; the skeleton is the canonical vertical slice.</td></tr>
+    <tr><td>Donald Reinertsen</td><td><em>Principles of Product Development Flow</em></td><td>Names the horizontal-slicing failure mode the gates mechanically prevent.</td></tr>
+    <tr><td>Dave Farley &amp; Jez Humble</td><td><em>Continuous Delivery</em></td><td>Pipeline-as-truth &mdash; once the skeleton is green, staying green is the integration health metric.</td></tr>
+    <tr><td>J.B. Rainsberger</td><td><em>Integrated Tests Are A Scam</em></td><td>Why mocked boundaries hide integration failures &mdash; the policy basis for the real-call validation.</td></tr>
+    <tr><td>Marty Cagan</td><td><em>Inspired</em></td><td>Provider selection (WS-7) framed as bounded feasibility-risk evaluation.</td></tr>
+  </tbody>
+</table>
+
+<p>
+  Stack specialists (Python, TypeScript, Go) load when the skeleton generator writes the
+  runnable test file in the project&rsquo;s language.
+</p>
+
+<h2 id="process">The Eight-Phase Flow</h2>
+
+<table class="no-stripe">
+  <caption>Table 2 &mdash; Phases</caption>
+  <thead>
+    <tr><th>Phase</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>0. Bootstrap</strong> <span class="phase">Pre-flight</span></td><td>Verify <code>~/.claude/gvm/</code> exists; load architecture experts and the walking-skeleton domain spec.</td></tr>
+    <tr><td><strong>1. Prereq check</strong></td><td>Refuse to run if <code>specs/cross-cutting.md</code> or <code>requirements/requirements.md</code> are missing. If <code>walking-skeleton/</code> already exists, confirm overwrite.</td></tr>
+    <tr><td><strong>2. Discovery</strong></td><td>Source-scan via <code>_discovery.scan()</code> using boundary-discovery heuristics. Each candidate becomes a draft row; the practitioner confirms each via AskUserQuestion. Free-text capture for boundaries the scan missed.</td></tr>
+    <tr><td><strong>3. Provider selection</strong></td><td>Per boundary: provider, endpoints, cost, SLA. Mark <code>wired</code> / <code>wired_sandbox</code> / <code>deferred_stub</code>. Write the row immediately so the skill is resumable if interrupted.</td></tr>
+    <tr><td><strong>4. Skeleton generation</strong></td><td>Generate <code>walking-skeleton/test_skeleton.{py,ts,go}</code>, per-boundary client wrappers (real auth wired), and stubs under <code>walking-skeleton/stubs/</code> for deferred boundaries. Single-flow lint refuses skeletons with more than three tests.</td></tr>
+    <tr><td><strong>5. CI integration</strong></td><td>Detect CI provider via filesystem markers; offer to add a walking-skeleton job. Falls back to Makefile + RUNBOOK if no CI is detected.</td></tr>
+    <tr><td><strong>6. First run</strong></td><td>Practitioner executes the skeleton locally. Pass/fail recorded in <code>walking-skeleton/.first-run.log</code>. The point of WS-3: a red first run is the signal to fix auth / CORS / rate limits NOW, before feature work begins.</td></tr>
+    <tr><td><strong>7. Approval</strong></td><td>Skeleton summary via AskUserQuestion. On approval the skill exits; <code>/gvm-build</code> can proceed (subject to the WS-5 red-skeleton CI status check).</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">First-run failure is the feature, not a bug</div>
+  <p>If the skeleton fails on the first execution, the skill has done its job: integration risk surfaced at hour 1 instead of month 6. The practitioner debugs auth / CORS / rate limits / connection strings; the skill does not advance to approval until the first run is green (or the practitioner explicitly accepts a red status with a rationale).</p>
+</div>
+
+<h2 id="schema">Boundaries Registry</h2>
+
+<p>
+  The <code>boundaries.md</code> registry is a flat table at the project root. One row per
+  external boundary; row schema versioned in YAML frontmatter.
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Row shape</caption>
+  <thead>
+    <tr><th>Column</th><th>Required</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>boundary_id</code></td><td>Yes</td><td>Stable identifier (e.g. <code>B-payment-stripe</code>).</td></tr>
+    <tr><td><code>kind</code></td><td>Yes</td><td><code>http</code> / <code>db</code> / <code>cloud_sdk</code> / <code>filesystem</code> / <code>subprocess</code> / <code>email</code>.</td></tr>
+    <tr><td><code>provider</code></td><td>Yes</td><td>Concrete provider name (Stripe, Postgres, S3&hellip;).</td></tr>
+    <tr><td><code>endpoints</code></td><td>Yes</td><td>URL or hostname pattern; abstract endpoint names for SDKs.</td></tr>
+    <tr><td><code>real_call_status</code></td><td>Yes</td><td><code>wired</code> / <code>wired_sandbox</code> / <code>deferred_stub</code>.</td></tr>
+    <tr><td><code>production_sandbox_divergence</code></td><td>If <code>wired_sandbox</code></td><td>Non-trivial note explaining what the sandbox does NOT cover.</td></tr>
+    <tr><td><code>cost_per_call</code></td><td>Optional</td><td>Cost signal for budget-sensitive boundaries.</td></tr>
+    <tr><td><code>sla</code></td><td>Optional</td><td>Provider SLA, latency expectations.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the walking-skeleton output is invalid.</p>
+<ol>
+  <li><strong>Every external dependency registered in <code>boundaries.md</code>.</strong> The source-scan in Phase 2 produces draft rows; the practitioner confirms each via AskUserQuestion. No undeclared boundary may be left unregistered when the skill exits.</li>
+  <li><strong>Every boundary either wired or deferred &mdash; no in-between.</strong> Each row carries <code>real_call_status &in; {wired, wired_sandbox, deferred_stub}</code>. <code>wired_sandbox</code> requires a non-trivial divergence note; <code>deferred_stub</code> requires a corresponding <code>STUBS.md</code> entry with expiry.</li>
+  <li><strong>Mocked-boundary refusal at validation.</strong> A wired boundary must be exercised by a real (or sandbox) runtime call. The validator inspects the skeleton test file and refuses skeletons whose tests mock instead of calling.</li>
+  <li><strong>Paired MD + HTML before approval.</strong> <code>boundaries.md</code> and <code>boundaries.html</code> exist at project root before the approval prompt fires.</li>
+  <li><strong>CI hook installed on completion.</strong> The skill writes (or amends) a CI job, or falls back to a Makefile + RUNBOOK. The CI hook is what makes the WS-5 red-skeleton refusal in <code>/gvm-build</code> enforceable downstream.</li>
+</ol>
+
+<h2 id="output">Output</h2>
+
+<p>
+  Two artefacts:
+</p>
+
+<pre><code>boundaries.md
+boundaries.html
+walking-skeleton/
+  test_skeleton.{py,ts,go}
+  &lt;per-boundary client wrappers&gt;
+  stubs/  (for deferred boundaries)
+  .first-run.log</code></pre>
+
+<p>
+  Plus a CI job entry in your existing CI configuration (or a Makefile + RUNBOOK if no CI
+  was detected).
+</p>
+
+<h2 id="downstream">How <code>/gvm-build</code> and <code>/gvm-test</code> Consume This</h2>
+
+<ul>
+  <li><strong>WS-5 red-skeleton refusal in <code>/gvm-build</code>.</strong> Before any chunk runs, <code>/gvm-build</code> queries CI status for the walking-skeleton job. If red, the chunk is refused with a pointer to fix the integration first. The honour-system fallback (manual confirmation when CI is unavailable) writes a sidecar that <code>/gvm-test</code> later audits.</li>
+  <li><strong>VV-4(d) sandbox-divergence audit in <code>/gvm-test</code>.</strong> The verdict evaluator reads <code>boundaries.md</code> and refuses Ship-ready when <code>wired_sandbox</code> rows lack a divergence note or when manual WS-5 fallbacks were used without later CI confirmation.</li>
+</ul>
+
+<div class="rule">
+  <p><strong>The registry is the contract.</strong> Adding a new external boundary later means re-running the skill or updating the registry by hand and re-running the validator. The downstream gates read the registry, not the source.</p>
+</div>
+
+<h2 id="pipeline">Pipeline Position</h2>
+
+<div class="pipeline">
+  <span class="label">Greenfield</span>
+  /gvm-init &rarr; /gvm-impact-map &rarr; /gvm-requirements &rarr; /gvm-test-cases &rarr; /gvm-tech-spec &rarr; /gvm-design-review &rarr; <strong>/gvm-walking-skeleton</strong> &rarr; /gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; /gvm-explore-test &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy
+</div>
+
+<p>
+  Sits between <code>/gvm-tech-spec</code> (which names the architectural boundaries) and
+  <code>/gvm-build</code> (which gates against the resulting registry). The boundaries
+  registry is the authority for downstream skills; if the skill is skipped, the gates that
+  read it become no-ops.
+</p>
+
+<h2 id="mvp-1">Relationship to MVP-1</h2>
+
+<p>
+  The walking skeleton is the mechanical enabler of <strong>MVP-1</strong> (Minimum Viable
+  Product first ordering). MVP-1 is the rule that <code>/gvm-tech-spec</code> Phase 5
+  sequences chunks so the first user-visible flow lands first, then later chunks add slices;
+  <code>/gvm-build</code> Hard Gate 9 mirrors the rule on the read side, and
+  <code>/gvm-design-review</code> Panel D Pass 3 flags designs that structurally prevent it.
+  This skill produces the wiring that the first slice runs on. Even projects claiming an
+  MVP-1 exemption (<code>library</code>, <code>refactor</code>, <code>performance-driven</code>,
+  <code>fully-specified</code>) may still need the skeleton if they touch external
+  boundaries &mdash; the exemption is about chunk sequencing, not about whether boundaries
+  need wiring.
+</p>
+
+<h2 id="detail">For More Detail</h2>
+
+<p>
+  For the build skill that gates against this registry, see the
+  <a href="../../gvm-build/docs/user-guide.html">Build User Guide</a>. For verification,
+  see the <a href="../../gvm-test/docs/user-guide.html">Test User Guide</a>.
+</p>
+
+</main>
+
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

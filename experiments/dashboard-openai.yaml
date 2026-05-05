@@ -1,0 +1,423 @@
+name: dashboard-grounding-openai
+description: >
+  Does expert grounding improve market risk dashboard quality?
+  Between-subjects, single-blind, three groups: ungrounded, design-grounded, fully-grounded.
+  Based on Campbell & Stanley experimental design with Cohen's effect size framework.
+
+default_provider: openai
+default_model: gpt-5.4
+
+producer_groups:
+  - name: ungrounded
+    sample_size: 20
+    system_prompt: "Output only the raw HTML. No explanation, no commentary, no markdown code fences. Start with <!DOCTYPE html> and end with </html>."
+    user_prompt: |
+      Create a single-page HTML market risk dashboard for a trading desk. The dashboard should display the following data (use realistic but fictional values):
+
+      Portfolio Summary:
+      - Total portfolio value: ~$2.4B across 6 asset classes
+      - Asset classes: Equities, Fixed Income, FX, Commodities, Credit, Rates
+
+      Risk Metrics:
+      - Value at Risk (VaR): 1-day 95% and 99% confidence levels, per asset class and total
+      - Expected Shortfall (ES/CVaR): 1-day 99%, per asset class and total
+      - VaR utilisation: actual VaR as percentage of VaR limit, per desk
+      - Limit breaches: 2 desks currently above 90% utilisation
+
+      Greeks Exposure:
+      - Delta, Gamma, Vega, Theta — portfolio level and per asset class
+      - Net delta by currency (USD, EUR, GBP, JPY, CHF)
+
+      Stress Testing:
+      - 5 historical scenarios (2008 Financial Crisis, 2020 COVID, 2022 Rate Shock, Brexit, Taper Tantrum)
+      - P&L impact per scenario, per asset class
+
+      Time Series:
+      - 30-day rolling VaR with actual P&L overlay
+      - Show VaR backtesting exceptions (days where loss exceeded VaR)
+
+      Concentration:
+      - Top 10 single-name exposures
+      - Sector concentration as percentage of total
+
+      The dashboard must be a single self-contained HTML file with inline CSS and inline JavaScript. Use fictional but realistic data. Include all charts, tables, and visual elements inline. The file should open in a browser and display correctly without any external dependencies.
+
+  - name: design-grounded
+    sample_size: 20
+    system_prompt: "Output only the raw HTML. No explanation, no commentary, no markdown code fences. Start with <!DOCTYPE html> and end with </html>."
+    user_prompt: |
+      Ground your dashboard design in the work of two information design experts:
+
+      **Stephen Few** (*Show Me the Numbers*, 2nd ed., 2012; *Information Dashboard Design*, 2nd ed., 2013):
+      - Dashboards should fit on a single screen without scrolling — if it doesn't fit, you have too much or it's poorly laid out
+      - Use tables when users need precise values; use charts only when shape/trend matters more than exact numbers
+      - Minimise gridlines — top and bottom rules only, no internal borders, subtle zebra striping for row tracking
+      - Left-align text, right-align numbers — follows natural reading and comparison patterns
+      - No decorative elements: no 3D effects, no gradient fills, no rounded containers, no drop shadows, no icon grids
+      - Colour should encode meaning (red for breach/danger, amber for warning) not decoration
+      - Sparklines for inline trend context — small, intense, word-sized graphics
+      - Bullet graphs instead of gauges or dials for comparing actual vs target/limit
+      - Alert by exception — highlight what needs attention, don't highlight everything
+      - Progressive disclosure — summary first, detail on demand
+
+      **Edward Tufte** (*The Visual Display of Quantitative Information*, 2nd ed., 2001; *Envisioning Information*, 1990):
+      - Maximise the data-ink ratio — every pixel should convey information, remove anything that doesn't
+      - Small multiples — repeat the same visual format for comparison across categories
+      - Sparklines — intense, simple, word-sized graphics embedded in context
+      - Layered information — the dashboard should work at multiple zoom levels (glance, scan, study)
+      - Chartjunk is the enemy — no decorative borders, no ornamental rules, no background images
+      - Let whitespace do the structural work — space communicates grouping and hierarchy
+      - The smallest effective difference — use the minimum visual distinction needed to communicate
+
+      Apply these experts' principles throughout every design decision.
+
+      Create a single-page HTML market risk dashboard for a trading desk. The dashboard should display the following data (use realistic but fictional values):
+
+      Portfolio Summary:
+      - Total portfolio value: ~$2.4B across 6 asset classes
+      - Asset classes: Equities, Fixed Income, FX, Commodities, Credit, Rates
+
+      Risk Metrics:
+      - Value at Risk (VaR): 1-day 95% and 99% confidence levels, per asset class and total
+      - Expected Shortfall (ES/CVaR): 1-day 99%, per asset class and total
+      - VaR utilisation: actual VaR as percentage of VaR limit, per desk
+      - Limit breaches: 2 desks currently above 90% utilisation
+
+      Greeks Exposure:
+      - Delta, Gamma, Vega, Theta — portfolio level and per asset class
+      - Net delta by currency (USD, EUR, GBP, JPY, CHF)
+
+      Stress Testing:
+      - 5 historical scenarios (2008 Financial Crisis, 2020 COVID, 2022 Rate Shock, Brexit, Taper Tantrum)
+      - P&L impact per scenario, per asset class
+
+      Time Series:
+      - 30-day rolling VaR with actual P&L overlay
+      - Show VaR backtesting exceptions (days where loss exceeded VaR)
+
+      Concentration:
+      - Top 10 single-name exposures
+      - Sector concentration as percentage of total
+
+      The dashboard must be a single self-contained HTML file with inline CSS and inline JavaScript. Use fictional but realistic data. Include all charts, tables, and visual elements inline. The file should open in a browser and display correctly without any external dependencies.
+
+  - name: fully-grounded
+    sample_size: 20
+    system_prompt: "Output only the raw HTML. No explanation, no commentary, no markdown code fences. Start with <!DOCTYPE html> and end with </html>."
+    user_prompt: |
+      Ground your dashboard design in a panel of experts across three disciplines:
+
+      **INFORMATION DESIGN**
+
+      **Stephen Few** (*Show Me the Numbers*, 2nd ed., 2012; *Information Dashboard Design*, 2nd ed., 2013):
+      - Dashboards should fit on a single screen without scrolling — if it doesn't fit, you have too much or it's poorly laid out
+      - Use tables when users need precise values; use charts only when shape/trend matters more than exact numbers
+      - Minimise gridlines — top and bottom rules only, no internal borders, subtle zebra striping for row tracking
+      - Left-align text, right-align numbers — follows natural reading and comparison patterns
+      - No decorative elements: no 3D effects, no gradient fills, no rounded containers, no drop shadows, no icon grids
+      - Colour should encode meaning (red for breach/danger, amber for warning) not decoration
+      - Sparklines for inline trend context — small, intense, word-sized graphics
+      - Bullet graphs instead of gauges or dials for comparing actual vs target/limit
+      - Alert by exception — highlight what needs attention, don't highlight everything
+      - Progressive disclosure — summary first, detail on demand
+
+      **Edward Tufte** (*The Visual Display of Quantitative Information*, 2nd ed., 2001; *Envisioning Information*, 1990):
+      - Maximise the data-ink ratio — every pixel should convey information, remove anything that doesn't
+      - Small multiples — repeat the same visual format for comparison across categories
+      - Sparklines — intense, simple, word-sized graphics embedded in context
+      - Layered information — the dashboard should work at multiple zoom levels (glance, scan, study)
+      - Chartjunk is the enemy — no decorative borders, no ornamental rules, no background images
+      - Let whitespace do the structural work — space communicates grouping and hierarchy
+      - The smallest effective difference — use the minimum visual distinction needed to communicate
+
+      **MARKET RISK DOMAIN**
+
+      **Philippe Jorion** (*Value at Risk*, 3rd ed., 2006):
+      - VaR is a single number that summarises portfolio risk — present it prominently with confidence level and holding period
+      - Always show VaR alongside Expected Shortfall (CVaR) — VaR tells you the threshold, ES tells you the average loss beyond it
+      - Backtesting exceptions (actual losses exceeding VaR) are the primary validation metric — highlight them visually
+      - VaR limit utilisation is the operational metric traders watch — percentage of limit consumed, with breach thresholds
+      - Stress testing complements VaR by showing tail risk that statistical models miss — present scenario P&L impact clearly
+      - Risk decomposition by asset class reveals concentration — the total number alone hides where risk lives
+
+      **John Hull** (*Options, Futures, and Other Derivatives*, 11th ed., 2021; *Risk Management and Financial Institutions*, 5th ed., 2018):
+      - Greeks (Delta, Gamma, Vega, Theta) are the language of derivatives risk — present them as a coherent set, not isolated numbers
+      - Net delta by currency shows directional FX exposure — a key risk for multi-currency portfolios
+      - Stress scenarios should include both historical (what did happen) and hypothetical (what could happen)
+      - Concentration risk is as important as market risk — top exposures and sector breakdown belong on the main dashboard
+      - Risk metrics should be current (intraday if possible) with clear timestamps — stale risk data is dangerous
+
+      **TECHNICAL COMMUNICATION AND PRESENTATION**
+
+      **Jean-Luc Doumont** (*Trees, Maps, and Theorems*):
+      - Structure by message not topic — each section of the dashboard should answer "so what?"
+      - The title of each panel should state the conclusion, not the category (e.g., "VaR limit 92% consumed — near breach" not "VaR Utilisation")
+      - Maximise signal, minimise noise — every element must earn its place
+      - Introduce before you use — if a metric needs explanation, provide it in context
+
+      **William Zinsser** (*On Writing Well*):
+      - Labels, headings, and annotations should be clear and concise — no jargon without context
+      - Every word in a label must earn its place — "1-Day 99% VaR" not "Value at Risk (1-Day Horizon, 99th Percentile Confidence Level)"
+
+      Apply all experts' principles throughout every design and content decision.
+
+      Create a single-page HTML market risk dashboard for a trading desk. The dashboard should display the following data (use realistic but fictional values):
+
+      Portfolio Summary:
+      - Total portfolio value: ~$2.4B across 6 asset classes
+      - Asset classes: Equities, Fixed Income, FX, Commodities, Credit, Rates
+
+      Risk Metrics:
+      - Value at Risk (VaR): 1-day 95% and 99% confidence levels, per asset class and total
+      - Expected Shortfall (ES/CVaR): 1-day 99%, per asset class and total
+      - VaR utilisation: actual VaR as percentage of VaR limit, per desk
+      - Limit breaches: 2 desks currently above 90% utilisation
+
+      Greeks Exposure:
+      - Delta, Gamma, Vega, Theta — portfolio level and per asset class
+      - Net delta by currency (USD, EUR, GBP, JPY, CHF)
+
+      Stress Testing:
+      - 5 historical scenarios (2008 Financial Crisis, 2020 COVID, 2022 Rate Shock, Brexit, Taper Tantrum)
+      - P&L impact per scenario, per asset class
+
+      Time Series:
+      - 30-day rolling VaR with actual P&L overlay
+      - Show VaR backtesting exceptions (days where loss exceeded VaR)
+
+      Concentration:
+      - Top 10 single-name exposures
+      - Sector concentration as percentage of total
+
+      The dashboard must be a single self-contained HTML file with inline CSS and inline JavaScript. Use fictional but realistic data. Include all charts, tables, and visual elements inline. The file should open in a browser and display correctly without any external dependencies.
+
+review_configs:
+  - name: ungrounded-review
+    reviewers_per_artefact: 3
+    user_prompt: |
+      You are reviewing a market risk dashboard HTML file. The dashboard was created from these requirements:
+
+      Portfolio Summary:
+      - Total portfolio value: ~$2.4B across 6 asset classes
+      - Asset classes: Equities, Fixed Income, FX, Commodities, Credit, Rates
+
+      Risk Metrics:
+      - Value at Risk (VaR): 1-day 95% and 99% confidence levels, per asset class and total
+      - Expected Shortfall (ES/CVaR): 1-day 99%, per asset class and total
+      - VaR utilisation: actual VaR as percentage of VaR limit, per desk
+      - Limit breaches: 2 desks currently above 90% utilisation
+
+      Greeks Exposure:
+      - Delta, Gamma, Vega, Theta — portfolio level and per asset class
+      - Net delta by currency (USD, EUR, GBP, JPY, CHF)
+
+      Stress Testing:
+      - 5 historical scenarios (2008 Financial Crisis, 2020 COVID, 2022 Rate Shock, Brexit, Taper Tantrum)
+      - P&L impact per scenario, per asset class
+
+      Time Series:
+      - 30-day rolling VaR with actual P&L overlay
+      - Show VaR backtesting exceptions (days where loss exceeded VaR)
+
+      Concentration:
+      - Top 10 single-name exposures
+      - Sector concentration as percentage of total
+
+      Rate the dashboard on these eight dimensions, each scored 1-10. For each dimension, provide a score and a 2-3 sentence justification. Do not inflate scores — use the full range.
+
+      1. **Information hierarchy** — Does the page lead the eye to the most critical risk numbers first? Can you find portfolio-level VaR, P&L, and limit utilisation within two seconds, or are they buried?
+      2. **Data density** — Does the dashboard pack enough useful information into the available space without becoming cluttered? Is space used efficiently or wasted?
+      3. **Labeling and context** — Can you understand every number without guessing? Are units, currencies, confidence levels, time horizons, and as-of dates clearly stated?
+      4. **Colour and visual encoding** — Does colour encode meaning consistently (red for breaches, amber for warnings)? Are chart types appropriate for the data they represent? Is the palette accessible?
+      5. **Layout and grouping** — Are related metrics placed together in logical groups? Does the spatial arrangement reflect how a risk analyst reads the data?
+      6. **Table and chart readability** — Are numbers right-aligned and consistently formatted? Are charts legible at the rendered size? Are axes, legends, and gridlines helpful rather than noisy?
+      7. **Alert and threshold visibility** — Are limit breaches, exceptions, and risk warnings visually distinct and immediately noticeable? Does the dashboard make problems obvious without requiring the reader to hunt?
+      8. **Completeness** — Does the dashboard contain all the data specified in the requirements above? Are any required sections missing, incomplete, or only partially implemented?
+
+      After scoring, also provide:
+      - **Overall score** (average of the eight)
+      - **One-paragraph summary** of the dashboard's design strengths and weaknesses
+      - **The single best design decision in this dashboard**
+      - **The single worst design decision in this dashboard**
+
+      Format your scores at the top of your response in this exact format:
+
+      SCORES:
+      information_hierarchy: [score]
+      data_density: [score]
+      labeling_and_context: [score]
+      colour_and_encoding: [score]
+      layout_and_grouping: [score]
+      table_chart_readability: [score]
+      alert_threshold_visibility: [score]
+      completeness: [score]
+      overall: [average]
+
+      Then the justifications, summary, best decision, and worst decision below.
+
+  - name: grounded-review
+    reviewers_per_artefact: 3
+    user_prompt: |
+      You are reviewing a market risk dashboard HTML file. The dashboard was created from these requirements:
+
+      Portfolio Summary:
+      - Total portfolio value: ~$2.4B across 6 asset classes
+      - Asset classes: Equities, Fixed Income, FX, Commodities, Credit, Rates
+
+      Risk Metrics:
+      - Value at Risk (VaR): 1-day 95% and 99% confidence levels, per asset class and total
+      - Expected Shortfall (ES/CVaR): 1-day 99%, per asset class and total
+      - VaR utilisation: actual VaR as percentage of VaR limit, per desk
+      - Limit breaches: 2 desks currently above 90% utilisation
+
+      Greeks Exposure:
+      - Delta, Gamma, Vega, Theta — portfolio level and per asset class
+      - Net delta by currency (USD, EUR, GBP, JPY, CHF)
+
+      Stress Testing:
+      - 5 historical scenarios (2008 Financial Crisis, 2020 COVID, 2022 Rate Shock, Brexit, Taper Tantrum)
+      - P&L impact per scenario, per asset class
+
+      Time Series:
+      - 30-day rolling VaR with actual P&L overlay
+      - Show VaR backtesting exceptions (days where loss exceeded VaR)
+
+      Concentration:
+      - Top 10 single-name exposures
+      - Sector concentration as percentage of total
+
+      Rate the dashboard on these eleven dimensions, each scored 1-10. For each dimension, apply the specific expert's principles described below. Provide a score and a 2-3 sentence justification for each. Do not inflate scores — use the full range.
+
+      1. **Data-ink ratio** (Tufte, *Visual Display of Quantitative Information*, Ch. 6) — Is every pixel encoding data or providing essential structure? Are there decorative elements (gradients, 3D effects, background images, ornamental borders, drop shadows)? Are gridlines minimal? Is whitespace functional?
+         - 9-10: Every pixel encodes data or essential structure. No decorative elements.
+         - 5-6: Noticeable decorative chrome but data still readable.
+         - 1-2: Decorative elements dominate; data is secondary.
+
+      2. **Chartjunk absence** (Tufte, *Visual Display of Quantitative Information*, Ch. 5) — Are there 3D effects, gradient fills, texture patterns, moiré effects, redundant encoding, decorative icons, or clip-art? Are chart borders heavier than the data they contain?
+         - 9-10: No chartjunk. Charts are clean, flat, data-focused.
+         - 5-6: Noticeable chartjunk on some charts.
+         - 1-2: Charts are primarily decorative.
+
+      3. **Chart type appropriateness** (Few, *Show Me the Numbers*, Chs. 5-8) — Are tables used for precise values and charts for trends/comparisons? Are bullet graphs used for actual-vs-limit? Sparklines for inline trends? Are pie charts or gauges used where better alternatives exist?
+         - 9-10: Every chart/table is the optimal type for its data.
+         - 5-6: Several decorative rather than functional chart types.
+         - 1-2: Chart types actively obscure the data.
+
+      4. **Alert-by-exception** (Few, *Information Dashboard Design*, Ch. 4) — Do breaches have distinct visual treatment? Is colour semantic (red=danger, amber=warning)? Are non-exceptional values visually quiet? Can a risk manager spot the most urgent item within 5 seconds?
+         - 9-10: Exceptions immediately visible. Clear visual hierarchy.
+         - 5-6: Some alert colouring but inconsistent or overused.
+         - 1-2: No visual alert mechanism.
+
+      5. **VaR and risk metrics** (Jorion, *Value at Risk*, Chs. 5, 12, 14) — Are confidence levels explicit? Time horizon stated? ES alongside VaR? Diversification benefit visible? Limits alongside actuals? Backtesting with Basel zones? Stress results contextualised?
+         - 9-10: All risk metrics carry full professional context.
+         - 5-6: Metrics present but missing significant context.
+         - 1-2: Risk metrics incorrect, misleading, or absent.
+
+      6. **Greeks and sensitivity** (Hull, *Options, Futures, and Other Derivatives*, Chs. 19-20) — Are units stated for each Greek? Sign conventions clear? Net delta by currency? Per asset class AND portfolio level? Units consistent?
+         - 9-10: All Greeks with explicit units, sign conventions, full aggregation.
+         - 5-6: Greeks present but units missing or inconsistent.
+         - 1-2: Greeks absent or incorrect.
+
+      7. **Message-driven structure** (Doumont, *Trees, Maps, and Theorems*, Part I) — Do panel titles convey conclusions or just categories? Does the top answer the most urgent question? Is there a KPI strip? Can you triage by scanning titles alone?
+         - 9-10: Analytical titles. Headlines tell the story. Layout follows decision priority.
+         - 5-6: Well-organised by category but generic titles.
+         - 1-2: No discernible information hierarchy.
+
+      8. **Labelling economy** (Zinsser, *On Writing Well*) — Are units stated once clearly? Abbreviations defined? Axis labels present? As-of date prominent? Redundancy eliminated?
+         - 9-10: Every label earns its place. Units precise. No redundancy.
+         - 5-6: Some labels missing or redundant.
+         - 1-2: Labels absent or misleading.
+
+      9. **Data formatting** (Few, *Show Me the Numbers*, Ch. 7) — Numbers right-aligned? Text left-aligned? Tabular nums? Consistent decimal places? Subtle zebra striping? Totals visually distinct?
+         - 9-10: Perfect alignment, consistent formatting, clear totals.
+         - 5-6: Mixed alignment, inconsistent formatting.
+         - 1-2: No systematic formatting.
+
+      10. **Semantic colour** (Few, *Information Dashboard Design*, Ch. 4; Tufte, *Envisioning Information*, Ch. 5) — Does red mean danger consistently? Amber for warning? Non-semantic colours for neutral elements? Consistent palette? Accessible? Restrained?
+          - 9-10: Every colour encodes meaning. Consistent. Accessible.
+          - 5-6: Mixed semantic and decorative colour.
+          - 1-2: Colour actively misleads.
+
+      11. **Completeness** — Does the dashboard contain all required data: portfolio summary, VaR at 95%/99%, ES, VaR utilisation with 2 breaches, Greeks per asset class, net delta by 5 currencies, 5 stress scenarios with P&L, 30-day rolling VaR with backtesting, top 10 exposures, sector concentration?
+          - 10: All items present with full breakdowns.
+          - 6-7: Most present, one category missing.
+          - 1-3: Majority absent.
+
+      After scoring, also provide:
+      - **Overall score** (average of the eleven)
+      - **One-paragraph summary** of the dashboard's design strengths and weaknesses
+      - **The single best design decision in this dashboard**
+      - **The single worst design decision in this dashboard**
+
+      Format your scores at the top of your response in this exact format:
+
+      SCORES:
+      data_ink_ratio: [score]
+      chartjunk_absence: [score]
+      chart_type_appropriateness: [score]
+      alert_by_exception: [score]
+      var_risk_metrics: [score]
+      greeks_sensitivity: [score]
+      message_driven_structure: [score]
+      labelling_economy: [score]
+      data_formatting: [score]
+      semantic_colour: [score]
+      completeness: [score]
+      overall: [average]
+
+      Then the justifications, summary, best decision, and worst decision below.
+    score_format:
+      header: "SCORES:"
+      fields:
+        - name: data_ink_ratio
+          field_type: float
+        - name: chartjunk_absence
+          field_type: float
+        - name: chart_type_appropriateness
+          field_type: float
+        - name: alert_by_exception
+          field_type: float
+        - name: var_risk_metrics
+          field_type: float
+        - name: greeks_sensitivity
+          field_type: float
+        - name: message_driven_structure
+          field_type: float
+        - name: labelling_economy
+          field_type: float
+        - name: data_formatting
+          field_type: float
+        - name: semantic_colour
+          field_type: float
+        - name: completeness
+          field_type: float
+        - name: overall
+          field_type: float
+
+score_format:
+  header: "SCORES:"
+  fields:
+    - name: information_hierarchy
+      field_type: float
+    - name: data_density
+      field_type: float
+    - name: labeling_and_context
+      field_type: float
+    - name: colour_and_encoding
+      field_type: float
+    - name: layout_and_grouping
+      field_type: float
+    - name: table_chart_readability
+      field_type: float
+    - name: alert_threshold_visibility
+      field_type: float
+    - name: completeness
+      field_type: float
+    - name: overall
+      field_type: float
+
+artefact_extension: ".html"
+budget_limit: 100.00
+max_retries: 3
+timeout: 300.0
+streaming: false

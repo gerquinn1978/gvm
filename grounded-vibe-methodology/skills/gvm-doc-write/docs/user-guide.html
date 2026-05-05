@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-doc-write — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+
+    /* ── Keyboard shortcut styling ── */
+    kbd { display: inline-block; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.82rem; background: #f0f0e8; border: 1px solid #ccc; border-bottom: 2px solid #bbb; border-radius: 3px; padding: 0.1rem 0.4rem; color: #333; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026</p>
+<h1>/gvm-doc-write</h1>
+<p class="subtitle">
+  Expert-grounded document creation and revision &mdash; presentations, strategy
+  documents, newsletters, training materials, status reports, whitepapers,
+  and any prose document. Operates standalone or as the documentation phase
+  after <code>/gvm-test</code> in the pipeline.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  The <code>/gvm-doc-write</code> command creates and revises documents grounded
+  in named experts. Where the pipeline skills (<code>/gvm-requirements</code> &rarr;
+  <code>/gvm-build</code>) produce software artefacts, this skill produces and
+  maintains documents that communicate about, support, or complement the software.
+</p>
+
+<p>
+  Two modes:
+</p>
+
+<ul>
+  <li><strong>Create</strong> &mdash; write a new document from scratch, grounded in relevant experts</li>
+  <li><strong>Revise</strong> &mdash; fix issues in an existing document, using the experts who identified the problems to guide the fixes</li>
+</ul>
+
+<span class="sidenote">
+  Pipeline artefacts (requirements, test cases, specs) are created by their
+  respective pipeline skills. <code>/gvm-doc-write</code> handles standalone
+  documents at any point, and also serves as the pipeline documentation phase
+  after <code>/gvm-test</code> for user-facing docs like README and user guides.
+</span>
+
+<p>
+  Each document type has a specific expert roster drawn from the design system
+  reference files. The experts are not decorative &mdash; they determine the
+  structure, principles, and quality criteria applied to every document. A
+  presentation built by presentation design experts reads differently from one
+  built by copying bullet points into slides.
+</p>
+
+<p>
+  The skill handles any prose document that needs expert-grounded quality &mdash;
+  whitepapers, origin stories, blog posts, and other written content, not just
+  the typed categories below. The document types table provides structured guidance
+  for common formats; documents outside these types still get writing experts,
+  domain experts, and the full quality process.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline-position">Where This Fits</h2>
+
+<p>
+  This skill operates in two modes: <strong>standalone</strong> for documents
+  created at any point, and <strong>pipeline docs</strong> as the documentation
+  phase after <code>/gvm-test</code>.
+</p>
+
+<div class="pipeline">
+  <span class="label">Pipeline (documentation phase)</span>
+  [/gvm-init] &rarr; [/gvm-impact-map] &rarr; /gvm-requirements &rarr; /gvm-test-cases &rarr; /gvm-tech-spec &rarr; [/gvm-design-review] &rarr; [/gvm-walking-skeleton] &rarr; /gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; [/gvm-explore-test] &rarr; <strong>/gvm-doc-write</strong> &rarr; /gvm-doc-review &rarr; /gvm-deploy
+  <br><br>
+  Optional phases shown in [brackets].
+  <br><br>
+  <span class="label">Standalone (any point)</span>
+  /gvm-doc-write &rarr; presentations, strategy, newsletters, training, status reports, whitepapers
+</div>
+
+<p>
+  In <strong>pipeline docs mode</strong>, the skill runs after <code>/gvm-test</code>
+  completes and generates user-facing documentation (README, user guides, API docs)
+  grounded in the verified build and pipeline artefacts. The output is then audited
+  by <code>/gvm-doc-review</code>.
+</p>
+
+<p>
+  In <strong>standalone mode</strong>, the skill creates or revises documents at any
+  point &mdash; presentations, strategy documents, whitepapers, newsletters, and any
+  prose document. If the document concerns a project with pipeline artefacts, the skill
+  reads those for context. Consistency with pipeline artefacts is maintained even though
+  the document itself is not a pipeline artefact.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Quality gate</div>
+  <p>After creating a document with <code>/gvm-doc-write</code>, run
+  <code>/gvm-doc-review</code> to audit it against expert criteria. The doc-review
+  skill auto-detects presentations, strategy documents, and other types produced
+  by doc-write.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+  Run <code>/gvm-doc-write</code> and describe what you need. The skill detects
+  the document type from your request:
+</p>
+
+<h3 id="create-examples">Create mode</h3>
+
+<pre><code>/gvm-doc-write create a presentation on our Q2 architecture changes
+/gvm-doc-write write a strategy document for the platform migration
+/gvm-doc-write draft a newsletter for the engineering team
+/gvm-doc-write build training materials for the new onboarding flow
+/gvm-doc-write write a status report for the steering committee
+/gvm-doc-write write a whitepaper on our attribution methodology</code></pre>
+
+<h3 id="revise-examples">Revise mode</h3>
+
+<p>
+  Triggered when the request references an existing document and an issue to fix:
+</p>
+
+<pre><code>/gvm-doc-write fix the critical issues from the whitepaper review
+/gvm-doc-write fix the structure of section 3 in the whitepaper
+/gvm-doc-write improve the origin story</code></pre>
+
+<p>
+  In revise mode, the skill reads the existing document, identifies the issues
+  (from review findings, an explicit description, or its own assessment), loads
+  the experts who diagnosed those issues, and applies their frameworks to fix them.
+  The principle: experts who find should fix.
+</p>
+
+<p>
+  If the document type is ambiguous, the skill asks. You can also run it with
+  no arguments and answer the prompts:
+</p>
+
+<pre><code>/gvm-doc-write</code></pre>
+
+<p>
+  The skill then asks for the document type, subject, audience, purpose, and
+  scope before loading experts and drafting the structure.
+</p>
+
+<span class="sidenote">
+  The audience question matters. Minto's Pyramid Principle says the reader's
+  existing knowledge determines whether to lead with the answer (deductive) or
+  build to it (inductive). A technical audience gets the conclusion first. A
+  sceptical audience may need the evidence first.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="document-types">Document Types</h2>
+
+<p>
+  Six typed categories with structured guidance, plus support for any other
+  prose document (whitepapers, blog posts, origin stories, proposals).
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Document types and output formats</caption>
+  <thead>
+    <tr><th>Type</th><th>Output Format</th><th>Output Directory</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Presentations</td><td>HTML slides (slide template)</td><td><code>presentations/</code></td></tr>
+    <tr><td>Strategy</td><td>HTML (+ MD if requested)</td><td><code>strategy/</code></td></tr>
+    <tr><td>Newsletters</td><td>HTML (+ MD if requested)</td><td><code>newsletters/</code></td></tr>
+    <tr><td>Training materials</td><td>HTML (+ MD if requested)</td><td><code>training/</code></td></tr>
+    <tr><td>Status reports</td><td>HTML (+ MD if requested)</td><td><code>status-reports/</code></td></tr>
+    <tr><td>Pipeline docs (README, user guides, API docs)</td><td>HTML (+ MD if requested)</td><td><code>docs/</code> or project root</td></tr>
+    <tr><td>Other (whitepapers, blog posts, etc.)</td><td>HTML (+ MD if requested)</td><td>Project root or appropriate subdirectory</td></tr>
+  </tbody>
+</table>
+
+<p>
+  Presentations produce HTML only &mdash; the slide format has no meaningful
+  plain-text representation. For all other types, the skill asks whether you
+  want a Markdown version alongside the HTML. Unlike pipeline artefacts
+  (requirements, specs), these documents are not consumed by downstream skills,
+  so the MD pair is optional.
+</p>
+
+<h3 id="presentations">Presentations</h3>
+
+<p>
+  Self-contained HTML slide decks using the slide template from the design system.
+  The template provides CSS-based slide separation, keyboard navigation, a slide
+  counter, and presenter notes.
+</p>
+
+<p>
+  Structure is governed by complementary expert concerns:
+</p>
+
+<ul>
+  <li><strong>Content structure</strong> &mdash; story-first, three-act structure, one idea per slide, headlines as complete sentences (not topic labels)</li>
+  <li><strong>Narrative arc</strong> &mdash; sparkline between "what is" and "what could be," audience as hero, contrast creates meaning</li>
+  <li><strong>Visual design</strong> &mdash; simplicity, signal-to-noise ratio, full-bleed images, restraint over decoration</li>
+  <li><strong>Data slides</strong> &mdash; data-ink ratio, small multiples, tables for precision, charts for trends</li>
+  <li><strong>Document structure</strong> &mdash; lead with the answer, pyramid structure, MECE grouping</li>
+</ul>
+
+<span class="sidenote">
+  One idea per slide is non-negotiable. If a slide has two ideas, it becomes
+  two slides. Headlines are sentences that state the slide's message, not topic
+  labels like "Q2 Results."
+</span>
+
+<table>
+  <caption>Table 2 &mdash; Slide count guidance</caption>
+  <thead>
+    <tr><th>Context</th><th>Slides per Minute</th><th>Example</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Live keynote</td><td>1&ndash;2 slides/min</td><td>20 min talk &asymp; 20&ndash;40 slides</td></tr>
+    <tr><td>Technical walkthrough</td><td>0.5&ndash;1 slide/min</td><td>30 min demo &asymp; 15&ndash;30 slides</td></tr>
+    <tr><td>Async / read-ahead</td><td>N/A &mdash; reader-paced</td><td>As many as needed, one idea each</td></tr>
+    <tr><td>Executive briefing</td><td>1 slide / 2&ndash;3 min</td><td>15 min slot &asymp; 5&ndash;8 slides</td></tr>
+  </tbody>
+</table>
+
+<h3 id="strategy">Strategy Documents</h3>
+
+<p>
+  Structure follows the kernel from Rumelt:
+</p>
+
+<ol>
+  <li><strong>Diagnosis</strong> &mdash; what is going on? What is the critical challenge (the crux)?</li>
+  <li><strong>Guiding policy</strong> &mdash; the approach to dealing with the challenge. Not goals &mdash; an actual approach.</li>
+  <li><strong>Coherent actions</strong> &mdash; coordinated, mutually reinforcing steps that implement the policy.</li>
+</ol>
+
+<p>
+  If the strategy needs operationalisation, the five cascading choices layer in:
+  winning aspiration, where to play, how to win, capabilities required, management
+  systems.
+</p>
+
+<p>
+  The skill checks for bad strategy patterns: fluff (buzzwords masquerading as
+  insight), failure to face the challenge, goals disguised as strategy, and
+  incoherent actions pulling in different directions. These are flagged explicitly.
+</p>
+
+<h3 id="newsletters">Newsletters</h3>
+
+<ul>
+  <li>Open with a hook that earns the next sentence</li>
+  <li>One core message per newsletter &mdash; do not try to cover everything</li>
+  <li>Utility: the reader should be able to do something with this information</li>
+  <li>Specific over generic &mdash; concrete examples, real numbers, named things</li>
+  <li>Close with a clear call to action or takeaway</li>
+  <li>Keep it scannable: short paragraphs, subheadings, bold key phrases</li>
+</ul>
+
+<h3 id="training">Training Materials</h3>
+
+<ul>
+  <li>Start with learning objectives &mdash; what will the learner be able to do?</li>
+  <li>Identify the gap type: knowledge, skill, motivation, or environment. Training only fixes the first two.</li>
+  <li>Each module: concept &rarr; example &rarr; practice &rarr; assessment</li>
+  <li>Apply multimedia principles: words + relevant images, spatial contiguity, no extraneous content</li>
+  <li>Include practice activities &mdash; not just information. The learner must do something with the knowledge.</li>
+  <li>Provide job aids (checklists, quick-reference cards) where reference is better than memorisation</li>
+</ul>
+
+<h3 id="status-reports">Status Reports</h3>
+
+<ul>
+  <li>Lead with the headline: what is the most important thing the reader needs to know?</li>
+  <li>Situation-complication-resolution for the overall status</li>
+  <li>Traffic light (red/amber/green) for at-a-glance status where appropriate</li>
+  <li>Risks and decisions needed &mdash; prominently positioned, not buried</li>
+  <li>Progress against milestones &mdash; specific and countable</li>
+  <li>Next steps with owners and dates</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the output is invalid.</p>
+<ol>
+  <li><strong>Load Expert References Before Writing.</strong> Read <code>writing-reference.md</code>, relevant per-domain files from <code>references/domain/</code>, and <code>tufte-html-reference.md</code> before writing any document content.</li>
+  <li><strong>Detect Mode Correctly.</strong> If an existing document is provided or referenced, this is Revise mode &mdash; read the document and the review findings before writing. Do not create a new document when the user asked to fix an existing one.</li>
+  <li><strong>Incremental Writing for Large Documents.</strong> If the document will exceed approximately 300 lines of HTML, write it section by section, not as a single monolithic write.</li>
+  <li><strong>User Approval of Expert Panel.</strong> Present the selected experts to the user before writing &mdash; the user must know which experts are shaping the document.</li>
+  <li><strong>HTML Before Approval.</strong> Write HTML for every major section before presenting it for approval &mdash; the user reads the HTML to evaluate the document.</li>
+</ol>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="expert-roster">Expert Roster</h2>
+
+<p>
+  All expert definitions live in the design system reference files. No expert names
+  are hardcoded in the skill. The roster files are the single source of truth.
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Expert sources by document type</caption>
+  <thead>
+    <tr><th>Source File</th><th>When Loaded</th><th>What It Provides</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Per-domain files from <code>references/domain/</code></td>
+      <td>Loaded selectively based on document type</td>
+      <td>Document structure (Minto) plus type-specific experts: presentation design, narrative, data visualisation, strategy, newsletter, training</td>
+    </tr>
+    <tr>
+      <td><code>writing-reference.md</code></td>
+      <td>Always</td>
+      <td>Prose quality &mdash; Doumont (structure), Zinsser (economy), Orwell (clarity), Williams (grace)</td>
+    </tr>
+    <tr>
+      <td><code>tufte-html-reference.md</code></td>
+      <td>Always</td>
+      <td>HTML output design; includes the slide template for presentations</td>
+    </tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  Minto (Pyramid Principle) is the cross-cutting foundation. It applies to every
+  document type: lead with the answer, group by MECE categories, support with
+  evidence. The type-specific experts layer on top.
+</span>
+
+<p>
+  The writing reference loads for all document types. Every piece of prose &mdash;
+  whether a slide headline, a strategy paragraph, or a newsletter hook &mdash; is
+  subject to the same quality standard: Doumont for structure, Zinsser for economy,
+  Orwell for clarity, Williams for grace.
+</p>
+
+<p>
+  Beyond the type-specific experts, the skill assesses the document&rsquo;s content
+  and topic for additional expert needs. A document with data charts loads Tufte
+  and Few. A whitepaper about cognitive biases loads the relevant domain experts.
+  A document covering a specific industry loads the matching industry reference file.
+  If no expert covers a domain encountered in the content, the skill flags it per
+  the Expert Discovery and Persistence Process, discovers and scores candidates,
+  and persists them to the roster for future use.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="branding">Branding Support</h2>
+
+<p>
+  Before writing any document, the skill checks for a branding file at
+  <code>branding/branding.md</code> in the project directory. If it exists, the
+  brand identity is applied to the output.
+</p>
+
+<p>
+  The branding file controls identity elements only. It does not override the
+  design system's body typography, spacing, or layout.
+</p>
+
+<table>
+  <caption>Table 4 &mdash; Branding vs. design system responsibilities</caption>
+  <thead>
+    <tr><th>Element</th><th>Branding Controls</th><th>Design System Controls</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Logo</td><td>Path, placement, size</td><td>&mdash;</td></tr>
+    <tr><td>Header colours</td><td>Background, text colour for headers and title slides</td><td>&mdash;</td></tr>
+    <tr><td>Font stack</td><td>Primary font family for headings</td><td>Body typography (<code>et-book</code>), line-height, measure</td></tr>
+    <tr><td>Accent colour</td><td>Links, highlights, emphasis borders</td><td>Colour usage principles (data-ink ratio)</td></tr>
+    <tr><td>Body text colour</td><td>&mdash;</td><td>Semantic: <code>#111</code> for readability</td></tr>
+    <tr><td>Layout</td><td>&mdash;</td><td>Grid, margins, spacing</td></tr>
+    <tr><td>Data visualisation</td><td>&mdash;</td><td>Tufte/Few principles govern chart design</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Branding is optional</div>
+  <p>If no branding file exists, the skill uses the default Tufte/Few design system styling. The skill never asks you to create a branding file.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="slide-template">Slide Template</h2>
+
+<p>
+  Presentations use a self-contained HTML slide template from the design system.
+  The template provides:
+</p>
+
+<ul>
+  <li>CSS-based slide separation (<code>section.slide</code> elements)</li>
+  <li>Page breaks for print (<code>@media print</code>)</li>
+  <li>Keyboard navigation</li>
+  <li>Slide counter (current / total)</li>
+  <li>Presenter notes (hidden by default, toggled with a key)</li>
+</ul>
+
+<h3 id="keyboard-shortcuts">Keyboard Shortcuts</h3>
+
+<table>
+  <caption>Table 5 &mdash; Slide navigation shortcuts</caption>
+  <thead>
+    <tr><th>Key</th><th>Action</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><kbd>&rarr;</kbd> or <kbd>Space</kbd></td><td>Next slide</td></tr>
+    <tr><td><kbd>&larr;</kbd></td><td>Previous slide</td></tr>
+    <tr><td><kbd>N</kbd></td><td>Toggle presenter notes</td></tr>
+    <tr><td><kbd>Home</kbd></td><td>First slide</td></tr>
+    <tr><td><kbd>End</kbd></td><td>Last slide</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  Presenter notes are written in the HTML as elements within each slide section.
+  They are hidden by default and only visible when toggled. They do not appear
+  in print output.
+</span>
+
+<p>
+  Slides are also print-friendly. Each <code>section.slide</code> maps to a page
+  break in print mode, so printing or exporting to PDF produces a clean deck with
+  one slide per page.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="process-create">How It Works &mdash; Create Mode</h2>
+
+<p>
+  The skill follows nine steps from invocation to finished document:
+</p>
+
+<table>
+  <caption>Table 6 &mdash; Document creation process</caption>
+  <thead>
+    <tr><th>Step</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="phase">1</span> Determine type</td>
+      <td>Detects the document type from your request, context clues, or asks if ambiguous. Supports the five typed categories plus any other prose document.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">2</span> Gather context</td>
+      <td>Asks for subject, audience, purpose, scope, and type-specific details (slide count, delivery context, decision being informed)</td>
+    </tr>
+    <tr>
+      <td><span class="phase">3</span> Load experts</td>
+      <td>Reads writing-reference.md (always), tufte-html-reference.md (always), per-domain files from <code>references/domain/</code> selectively based on document type (document structure + type-specific sections), branding file if present. Assesses document content for additional expert needs &mdash; data presentation, diagrams, industry domains, security, or any uncovered domain. Presents the selected expert panel for your awareness before writing begins.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4</span> Structure</td>
+      <td>Applies type-specific structural principles (pyramid, kernel, sparkline) and presents the proposed structure for your approval</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5</span> Ask about MD</td>
+      <td>For non-presentation documents, asks whether you want a Markdown version alongside the HTML. Skipped for presentations (HTML-only always).</td>
+    </tr>
+    <tr>
+      <td><span class="phase">6</span> Write</td>
+      <td>Drafts the document applying all loaded expert principles and branding</td>
+    </tr>
+    <tr>
+      <td><span class="phase">7</span> Self-review</td>
+      <td>Reviews the draft against loaded expert principles and fixes violations. Includes a factual claims check &mdash; every factual claim is verified against source material. Uncertain claims are flagged to you; unverifiable claims are removed. Max 3 passes.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">8</span> Write output</td>
+      <td>Saves to the type-specific directory; scans for existing files to avoid overwriting</td>
+    </tr>
+    <tr>
+      <td><span class="phase">9</span> Next steps</td>
+      <td>Offers: revise, create another document, run <code>/gvm-doc-review</code>, or done</td>
+    </tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  Step 4 is where structure approval happens. The skill proposes a document
+  outline and waits for your confirmation before writing. Structure determines
+  quality more than prose does.
+</span>
+
+<div class="callout">
+  <div class="callout-label">Structure before writing</div>
+  <p>The skill proposes the document structure and gets your approval before writing content. This is deliberate. A well-structured document with average prose beats a beautifully written document with a confused structure.</p>
+</div>
+
+<div class="callout">
+  <div class="callout-label">HTML written before review</div>
+  <p>The skill writes the HTML document before presenting it for your review. Both the HTML and Markdown (if requested) are current at every approval checkpoint &mdash; you are always reviewing the actual output, not a draft proxy.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="process-revise">How It Works &mdash; Revise Mode</h2>
+
+<p>
+  The revise process edits an existing document rather than writing from scratch.
+  It preserves what works and changes only what the findings require.
+</p>
+
+<table>
+  <caption>Table 7 &mdash; Document revision process</caption>
+  <thead>
+    <tr><th>Step</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="phase">1</span> Read the document</td>
+      <td>Reads the existing document in full and identifies its type and subject matter</td>
+    </tr>
+    <tr>
+      <td><span class="phase">2</span> Identify issues</td>
+      <td>From review findings (if a review file is referenced), from your explicit description, or from a quick expert assessment. Issues are prioritised: critical &rarr; important &rarr; minor.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">3</span> Load experts</td>
+      <td>Writing reference (always) plus the experts who diagnosed each issue. If Orwell found the problem, Orwell&rsquo;s rules guide the fix. Also loads content-relevant experts (data, industry, diagrams) as needed.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">4</span> Fix</td>
+      <td>Works through issues in priority order. Applies the finding expert&rsquo;s framework to determine the fix. Edits the document directly &mdash; no rewriting of sections that are not broken.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">5</span> Self-review</td>
+      <td>Re-reads changed sections against the expert principles that motivated the fix. Checks for new problems introduced by the changes. Includes a factual claims check on changed sections. Max 2 passes.</td>
+    </tr>
+    <tr>
+      <td><span class="phase">6</span> Present changes</td>
+      <td>Summarises what was changed and which expert principles guided each fix. Offers: continue with remaining findings, run <code>/gvm-doc-review</code>, or done.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Experts who find should fix</div>
+  <p>In revise mode, the expert who identified a problem defines what &ldquo;right&rdquo; looks like. If a <code>/gvm-doc-review</code> finding cites Weinberg, Weinberg&rsquo;s framework guides the fix &mdash; not a generic rewrite.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output Locations</h2>
+
+<p>
+  Documents are saved to type-specific directories in your project:
+</p>
+
+<table>
+  <caption>Table 8 &mdash; Output locations and file patterns</caption>
+  <thead>
+    <tr><th>Type</th><th>Directory</th><th>File Pattern</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Presentations</td><td><code>presentations/</code></td><td><code>{name}.html</code></td></tr>
+    <tr><td>Strategy</td><td><code>strategy/</code></td><td><code>{name}.html</code> (+ <code>{name}.md</code> if requested)</td></tr>
+    <tr><td>Newsletters</td><td><code>newsletters/</code></td><td><code>{name}.html</code> (+ <code>{name}.md</code> if requested)</td></tr>
+    <tr><td>Training</td><td><code>training/</code></td><td><code>{name}.html</code> (+ <code>{name}.md</code> if requested)</td></tr>
+    <tr><td>Status reports</td><td><code>status-reports/</code></td><td><code>{name}.html</code> (+ <code>{name}.md</code> if requested)</td></tr>
+    <tr><td>Other</td><td>Project root or appropriate subdirectory</td><td><code>{name}.html</code> (+ <code>{name}.md</code> if requested)</td></tr>
+  </tbody>
+</table>
+
+<p>
+  The skill scans for existing files and increments the filename to avoid
+  overwriting. If <code>q2-update.html</code> exists, the next file becomes
+  <code>q2-update-2.html</code>.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="doc-review">Relationship to /gvm-doc-review</h2>
+
+<p>
+  <code>/gvm-doc-write</code> creates and revises documents. <code>/gvm-doc-review</code>
+  audits them. The two skills are designed to work together:
+</p>
+
+<ol>
+  <li>Create a document with <code>/gvm-doc-write</code> (create mode)</li>
+  <li>Run <code>/gvm-doc-review</code> to score it against expert criteria</li>
+  <li>Fix issues with <code>/gvm-doc-write</code> (revise mode) &mdash; reference the review findings and the skill loads the diagnosing experts to guide the fixes</li>
+  <li>Re-review to confirm</li>
+</ol>
+
+<p>
+  The doc-write skill includes a self-review step that catches many issues before
+  output, including a factual claims check that flags unverifiable assertions. But
+  the doc-review skill applies a broader audit with formal scoring and severity
+  classification. The self-review is a first pass; the doc-review is the quality gate.
+</p>
+
+<span class="sidenote">
+  After completing a document, the skill offers to run
+  <code>/gvm-doc-review</code> as a next step. This is optional but recommended
+  for any document that will be shared externally.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="key-rules">Key Rules</h2>
+
+<div class="rule">
+  <p><strong>Expert grounding is the value.</strong> Every document type has named experts whose principles guide the output. This is what distinguishes <code>/gvm-doc-write</code> from "just write me a document."</p>
+</div>
+
+<div class="rule">
+  <p><strong>Minto is the cross-cutting foundation.</strong> Pyramid structure, lead with the answer, MECE grouping. Applies to every document type regardless of other experts loaded.</p>
+</div>
+
+<div class="rule">
+  <p><strong>Writing reference always loaded.</strong> Doumont for structure, Zinsser for economy, Orwell for clarity, Williams for grace. These experts apply to all prose in all document types.</p>
+</div>
+
+<div class="rule">
+  <p><strong>Branding is identity, not design.</strong> The branding file controls logo, header colours, and heading font. The design system controls body typography, layout, spacing, and data visualisation.</p>
+</div>
+
+<div class="rule">
+  <p><strong>Presentations are HTML-only.</strong> No Markdown pair. The slide format does not have a meaningful plain-text representation. All other types produce HTML by default, with an optional MD pair on request.</p>
+</div>
+
+<div class="rule">
+  <p><strong>Content drives expert loading.</strong> Beyond the document type, the skill assesses the content for additional expert needs &mdash; data charts load Tufte and Few, an industry domain loads the matching industry file, an uncovered domain triggers expert discovery.</p>
+</div>
+
+<div class="rule">
+  <p><strong>Revise means edit, not rewrite.</strong> In revise mode, the skill preserves what works and changes only what the findings require. Sections that are not broken are not touched.</p>
+</div>
+
+<div class="rule">
+  <p><strong>Factual claims are verified.</strong> During self-review, every factual claim (statistics, dates, attributions, named results) is checked against source material. Claims that cannot be verified are flagged to you or removed.</p>
+</div>
+
+<div class="rule">
+  <p><strong>One idea per slide.</strong> For presentations, this is non-negotiable. If a slide has two ideas, it is two slides.</p>
+</div>
+
+<div class="rule">
+  <p><strong>Structure before writing.</strong> The skill proposes and gets approval on the document structure before writing content. Structure determines quality more than prose.</p>
+</div>
+
+<div class="rule">
+  <p><strong>Self-review against experts.</strong> The draft is reviewed against loaded expert principles before presenting to you. Experts who find issues fix them.</p>
+</div>
+
+<div class="rule">
+  <p><strong>Dual mode: standalone and pipeline.</strong> Standalone documents (presentations, strategy, whitepapers) can be created at any point. Pipeline docs (README, user guides, API docs) run after <code>/gvm-test</code> as the documentation phase, followed by <code>/gvm-doc-review</code>. Both modes stay consistent with pipeline artefacts.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="tips">Tips</h2>
+
+<ul>
+  <li><strong>Be specific about your audience.</strong> "Executive leadership" and "the engineering team" produce very different documents. The audience determines structure, depth, and vocabulary.</li>
+  <li><strong>State the purpose as an action.</strong> "The reader should approve the migration budget" is better than "inform about migration." Purpose drives every structural decision.</li>
+  <li><strong>Review the proposed structure carefully.</strong> Step 4 is your highest-leverage intervention point. Changing the structure after writing wastes effort.</li>
+  <li><strong>Use branding for external documents.</strong> If the document leaves your team, a branding file ensures consistent visual identity across all outputs.</li>
+  <li><strong>Run <code>/gvm-doc-review</code> on important documents.</strong> The self-review catches common issues, but the formal review provides scoring and severity classification.</li>
+  <li><strong>For presentations, specify the delivery context.</strong> Live keynote, async read-ahead, and executive briefing produce fundamentally different slide counts and densities.</li>
+  <li><strong>Iterate on sections, not the whole document.</strong> After the first draft, use revise mode to fix specific sections rather than regenerating everything.</li>
+  <li><strong>Reference the review findings file.</strong> When fixing issues from <code>/gvm-doc-review</code>, point the skill at the review output. It reads the findings with their source experts and uses those experts to guide the fixes.</li>
+  <li><strong>Any prose document works.</strong> The typed categories (presentations, strategy, etc.) provide structured guidance for common formats. But the skill handles whitepapers, blog posts, origin stories, or any other document that benefits from expert-grounded quality.</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">Best practice</div>
+  <p>For any document that will be shared beyond your immediate team: create with <code>/gvm-doc-write</code>, audit with <code>/gvm-doc-review</code>, fix issues, re-review. Two passes catches what one misses.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

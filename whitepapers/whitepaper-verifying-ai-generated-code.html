@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verifying AI-Generated Code</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 260px; }
+
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 220px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    .sources-table td:first-child, .sources-table th:first-child, .sources-table td:nth-child(3), .sources-table th:nth-child(3) { text-align: right; font-variant-numeric: tabular-nums; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 640px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+
+    /* ── Evidence blocks ── */
+    .evidence { background: #f5f5ef; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 640px; }
+    .evidence-label { font-size: 0.78rem; font-weight: 600; color: #669; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .evidence p { margin-bottom: 0.3rem; }
+
+    /* ── Layer blocks ── */
+    .layer { background: #f7f7f0; border-left: 3px solid #333; padding: 1rem 1.2rem; margin: 1.5rem 0; max-width: 640px; }
+    .layer h3 { margin-top: 0; }
+    .layer p { margin-bottom: 0.5rem; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<h1>Verifying AI-Generated Code</h1>
+<p class="subtitle">A layered verification architecture for code you didn't write</p>
+<p class="author" style="font-size: 0.9rem; color: #666;">Conor Brennan &amp; Gerard Quinn</p>
+<p class="date" style="margin-bottom: 2rem;">April 2026</p>
+
+    <div style="background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1.5rem 0; max-width: 640px; font-size: 0.92rem;">
+      <strong>This paper in context.</strong> This paper covers the testing and verification architecture. For the full methodology, see <em>The Grounded Vibe Methodology</em>. For the pipeline structure that this verification layer operates within, see <em>Well-Engineered Software Needs an End-to-End Pipeline</em>. For a case study showing the verification approach applied to a real build (207 tests, 7 review rounds), see <em>Building a Production Tool with GVM</em>.
+    </div>
+
+<p>
+  AI-generated code has failure modes that traditional quality gates were not designed to catch:
+  hallucinated dependencies, embedded secrets, systematic vulnerability patterns, and logic
+  that looks correct but violates unstated invariants. Effective verification requires layering
+  detection mechanisms with distinct error models, so that what one layer is blind to, another
+  catches.
+</p>
+
+<p>
+  This paper describes such an architecture across five mechanism families: tool-based layers,
+  construction-time gates, expert-grounded code review, exploratory testing, and a
+  self-correcting feedback loop. The tool-based layers run dependency verification, credential
+  scanning, static analysis, property-based testing, and mutation testing. Construction-time
+  gates refuse builds that fail their preconditions, alongside review-time rules that surface
+  boundary discipline as findings. Expert-grounded code review uses parallel defect-class
+  panels. Exploratory testing brings a human error model that no automated layer can replicate.
+  The self-correcting loop combines progressive calibration, blind reviewer bias correction,
+  build check promotion, a finding quality gate, and user-owned triage. A release quality gate
+  aggregates every verdict and refuses the tag if any layer reports not-ready.
+</p>
+
+<p>
+  The architecture is implemented in the Grounded Vibe Methodology (GVM) and is portable across
+  ten language stacks.
+</p>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="problem">The Problem</h2>
+
+<p>
+  AI-generated code has different failure modes than human-written code. Not uniformly worse &mdash;
+  different. A human developer who writes an insecure SQL query at least used a real library to do it.
+  An AI coding assistant might import a package that does not exist, embed a secret in a constant,
+  or generate a function that looks plausible but violates an invariant no test was written to catch.
+</p>
+
+<p>
+  The evidence is accumulating across independent studies:
+</p>
+
+<div class="evidence">
+  <div class="evidence-label">Vulnerability rates</div>
+  <p>AI-generated pull requests contain 1.75x more logic errors and 3x more readability issues than human-written PRs (CodeRabbit, 2025). 25.1% of AI code samples contain a confirmed vulnerability (AppSec Santa, 2026, 534 samples across 6 LLMs). Injection-class weaknesses &mdash; SSRF, command injection, NoSQL injection, path traversal &mdash; account for 33.1% of all confirmed findings.</p>
+</div>
+
+<span class="sidenote">
+  Perry et al. (ACM CCS, 2023) found that developers with AI assistance wrote significantly less secure code
+  than those without &mdash; and were more likely to believe they had written secure code.
+</span>
+
+<div class="evidence">
+  <div class="evidence-label">Supply chain risk</div>
+  <p>Roughly 20% of AI-recommended packages do not exist. 43% of hallucinated package names are repeatable across runs of the same prompt, making them exploitable attack vectors (Spracklen et al., USENIX Security, 2025; 576,000 code samples). The rate varies by model &mdash; commercial models hallucinate at 5.2%, open-source at 21.7% &mdash; but the pattern is consistent.</p>
+</div>
+
+<div class="evidence">
+  <div class="evidence-label">Secret leakage</div>
+  <p>28.65 million hardcoded secrets were detected on public GitHub in 2025, a 34% year-over-year increase &mdash; the largest single-year jump recorded. AI-assisted commits show elevated secret leakage rates compared to the 1.5% baseline (GitGuardian, State of Secrets Sprawl, 2026).</p>
+</div>
+
+<p>
+  These are not edge cases. They are systematic patterns that emerge from how large language models generate code:
+  they optimise for plausibility, not correctness. A function that looks right, passes a superficial reading,
+  and matches the statistical distribution of training data can still be wrong in ways that matter.
+</p>
+
+<p>
+  The response so far has been to add AI to existing quality gates &mdash; AI-powered code review,
+  AI-generated tests, AI-assisted security scanning. This creates a pipeline where an LLM reviews
+  the output of another LLM, using the same training data, the same architectural biases, and the
+  same blind spots. The detector and the generator share an error model. This is not verification.
+  It is corroboration.
+</p>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="traditional-gates">Why Traditional Gates Fall Short</h2>
+
+<p>
+  Software engineering has always used layered quality techniques. Code review catches design
+  issues. Unit tests catch logic bugs. Integration tests catch wiring failures. The insight,
+  documented by Capers Jones across decades of industry data, is that no single technique
+  exceeds roughly 85% defect removal efficiency &mdash; but combining independent techniques
+  compounds the coverage multiplicatively.
+</p>
+
+<span class="sidenote">
+  Capers Jones's data on defect removal efficiency spans thousands of projects across several
+  decades. The consistent finding: no individual technique &mdash; inspection, testing, or static
+  analysis &mdash; reaches comprehensive coverage on its own. Only stacking multiple independent
+  techniques reaches 95%+ cumulative removal.
+</span>
+
+<p>
+  Traditional gates were designed for human failure modes: typos, off-by-one errors, forgotten
+  null checks, misunderstood requirements. AI failure modes are structurally different:
+</p>
+
+<ul>
+  <li><strong>Hallucinated dependencies</strong> &mdash; the code imports a package that does not exist in any registry. A human developer would not invent a library name; an LLM routinely does.</li>
+  <li><strong>Fabricated API surfaces</strong> &mdash; the code calls a method that looks like it should exist on a real library but does not. The method name is plausible, the arguments are reasonable, and the return type makes sense. It is entirely fictional.</li>
+  <li><strong>Systematic vulnerability patterns</strong> &mdash; AI-generated code exhibits specific vulnerability concentrations (33.1% injection-class) that differ from human vulnerability distributions.</li>
+  <li><strong>Credential embedding</strong> &mdash; LLMs reproduce patterns from training data, including hardcoded secrets, API keys, and connection strings that should be environment variables.</li>
+  <li><strong>Plausible but incorrect logic</strong> &mdash; code that reads correctly, passes a casual review, satisfies simple test cases, but violates an invariant that was never tested.</li>
+</ul>
+
+<p>
+  A code review conducted by a human who understands the domain catches many of these. But AI-assisted
+  development is adopted precisely because the volume of code exceeds what humans can review line by line.
+  The verification architecture must scale with the generation rate, not depend on human attention that
+  is already the bottleneck.
+</p>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="error-models">Distinct Error Models</h2>
+
+<p>
+  The principle that makes layered verification work is not just "run more checks." It is that
+  each layer must use a fundamentally different detection mechanism &mdash; a different <em>error model</em>.
+  Two detectors that share an error model will tend to miss the same defects, no matter how many
+  times you run them. The corroboration trap described above &mdash; where the detector and the
+  generator share training data and biases &mdash; is what happens when layers share an error model.
+</p>
+
+<p>
+  A static analysis tool is a different error model. It does not assess plausibility. It pattern-matches
+  against known vulnerability signatures using deterministic rules. A credential scanner searches for
+  entropy patterns and known secret formats, indifferent to whether the code "looks right." A
+  property-based testing framework generates thousands of random inputs and checks invariants
+  mechanically.
+</p>
+
+<p>
+  A caveat: these layers are not entirely free of LLM involvement. The LLM orchestrates their
+  execution, and in some cases contributes to their setup &mdash; the LLM identifies which invariants
+  to test, writes the property-based test code, and authors the tests that mutation testing runs
+  against. The independence is in the <em>detection mechanism</em>, not in the end-to-end process.
+  Bandit applies deterministic rules regardless of who wrote the code. Hypothesis generates random
+  inputs regardless of who wrote the test. The LLM's blind spots in code generation do not
+  predict the tools' blind spots in detection &mdash; and that partial independence is what makes
+  the layering effective, even though it falls short of full separation.
+</p>
+
+<div class="callout">
+  <div class="callout-label">The compounding principle</div>
+  <p>If each independent layer catches 50% of the defects the others miss, three layers reach 87.5% and five reach 96.9%. These figures assume full independence; partial correlation between layers reduces the compound rate. But the principle holds: the less correlated the detectors, the more their coverage compounds. Correlated detectors do not compound &mdash; they merely agree.</p>
+</div>
+
+<p>
+  The verification architecture described here layers five detection mechanisms, each with a
+  distinct error model, each targeting specific AI failure modes. A sixth layer &mdash; expert-grounded
+  review &mdash; uses the same model family as the generator but applies structural diversity through
+  named expert frameworks rather than undifferentiated prompting.
+</p>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="architecture">The Verification Architecture</h2>
+
+<p>
+  Five layers, ordered from cheapest and fastest (run first, fail fast) to most expensive and
+  most informative (run last, on critical paths only). Each layer targets a specific category
+  of AI failure mode with a detection mechanism that does not share the LLM's error model &mdash;
+  avoiding the corroboration trap described above.
+</p>
+
+<h3 id="layer-dep">Layer 1: Dependency Verification</h3>
+
+<div class="layer">
+  <p><strong>Failure mode:</strong> Hallucinated packages &mdash; imports that reference libraries which do not exist in any registry.</p>
+  <p><strong>Detection mechanism:</strong> Attempt to resolve every new dependency against the actual package registry. For interpreted languages (Python, Node), import the package and check the exit code. For compiled languages (Go, Rust, Java), the build step itself is the verification &mdash; a missing dependency fails compilation.</p>
+  <p><strong>Error model independence:</strong> Registry lookup. No machine learning, no heuristics &mdash; the package either exists or it does not.</p>
+</div>
+
+<span class="sidenote">
+  The 43% repeatability rate of hallucinated package names (USENIX Security, 2025) makes this
+  an exploitable attack vector. An attacker can register the hallucinated name and serve malicious code
+  to every project that trusts the AI's recommendation.
+</span>
+
+<p>
+  A hallucinated dependency poisons everything
+  downstream &mdash; tests, static analysis, and review are all wasted effort if the code
+  cannot even resolve its imports. The attack surface is real: researchers have coined the
+  term "slopsquatting" (coined by security researcher Seth Larson, 2025) for the practice of
+  registering hallucinated package names with malicious payloads, exploiting the predictability
+  of AI package hallucinations.
+</p>
+
+<h3 id="layer-cred">Layer 2: Credential Scanning</h3>
+
+<div class="layer">
+  <p><strong>Failure mode:</strong> Hardcoded secrets &mdash; API keys, connection strings, tokens, and passwords embedded in source code.</p>
+  <p><strong>Detection mechanism:</strong> Entropy analysis and pattern matching against known secret formats. Tools like gitleaks and trufflehog scan for high-entropy strings, known provider patterns (AWS keys beginning with <code>AKIA</code>, GitHub tokens with <code>ghp_</code>), and common assignment patterns (<code>password = "..."</code>).</p>
+  <p><strong>Error model independence:</strong> Pattern matching against known formats and entropy thresholds. Shares nothing with the LLM's generative model.</p>
+</div>
+
+<span class="sidenote">
+  GitGuardian (2026): 28.65 million hardcoded secrets on public GitHub in 2025, a 34% year-over-year
+  increase. Once a secret is committed, it persists in git history even after deletion from the
+  working tree.
+</span>
+
+<p>
+  Any detected secret is a hard block. The remediation is mechanical: replace the hardcoded value
+  with an environment variable or configuration lookup. This layer runs before static analysis
+  because a leaked secret is a more urgent problem than a code quality issue.
+</p>
+
+<h3 id="layer-sast">Layer 3: Static Analysis (SAST)</h3>
+
+<div class="layer">
+  <p><strong>Failure mode:</strong> Systematic vulnerability patterns &mdash; injection, XSS, path traversal, insecure deserialisation, and other categories where AI-generated code shows elevated rates.</p>
+  <p><strong>Detection mechanism:</strong> Dedicated SAST tools that apply deterministic rule sets and data-flow analysis. Each language has established tools: bandit (Python), gosec (Go), eslint-plugin-security (JavaScript/TypeScript), cargo-audit (Rust), SpotBugs with FindSecBugs (Java).</p>
+  <p><strong>Error model independence:</strong> Rule-based pattern matching and data-flow analysis. The tools encode human-authored vulnerability knowledge, not learned distributions.</p>
+</div>
+
+<span class="sidenote">
+  ISSTA 2024: a single SAST tool produces warnings on only 52% of vulnerability-contributing changes, and 22% of vulnerable changes remain undetected even with SAST tooling, due to limitations of SAST rules. This is why SAST is one layer among five, not the entire strategy.
+</span>
+
+<p>
+  HIGH and CRITICAL severity findings block progression. Complexity findings (cyclomatic complexity,
+  cognitive complexity) are reported but do not block &mdash; they inform refactoring decisions
+  rather than gate the build.
+</p>
+
+<h3 id="layer-pbt">Layer 4: Property-Based Testing</h3>
+
+<div class="layer">
+  <p><strong>Failure mode:</strong> Plausible but incorrect logic &mdash; code that passes specific example-based tests but violates general invariants.</p>
+  <p><strong>Detection mechanism:</strong> Generate random inputs and verify that invariant properties hold across all of them. Where an example-based test checks one input-output pair, a property-based test checks thousands &mdash; probing edge cases, boundary values, and combinations that a human tester would not think to specify.</p>
+  <p><strong>Error model independence:</strong> Randomised input generation. The test framework knows nothing about how the code was generated &mdash; it only knows the invariant and whether the code satisfies it.</p>
+</div>
+
+<span class="sidenote">
+  Ravi &amp; Coblenz (OOPSLA, 2025) found each property-based test caught approximately 50x as many
+  mutations as the average unit test, with 76% of mutations detected within the first 20 random
+  inputs. The study quantifies what practitioners have long observed: property tests are
+  disproportionately valuable per test written.
+</span>
+
+<p>
+  Property-based testing is disproportionately effective against AI-generated code because AI
+  optimises for the common case. A function that handles typical inputs correctly but fails on
+  empty collections, negative numbers, or Unicode edge cases will pass example-based tests
+  and fail property-based tests. The invariant patterns &mdash; reversibility, idempotency,
+  commutativity, round-trip encoding, preservation of size &mdash; are precisely the properties
+  that plausible-looking code is most likely to violate.
+</p>
+
+<h3 id="layer-mutation">Layer 5: Mutation Testing</h3>
+
+<div class="layer">
+  <p><strong>Failure mode:</strong> Inadequate test suites &mdash; tests that pass but would not detect injected faults, indicating they are not actually verifying the behaviour they claim to verify.</p>
+  <p><strong>Detection mechanism:</strong> Systematically inject small code changes (mutants) &mdash; flip a comparison operator, change a constant, remove a conditional &mdash; and verify that at least one test fails for each mutation. Surviving mutants indicate test gaps.</p>
+  <p><strong>Error model independence:</strong> Syntactic code transformation. The mutation engine modifies the code mechanically, with no awareness of what the code is supposed to do.</p>
+</div>
+
+<p>
+  Mutation testing is the most expensive layer and runs last, targeting only critical-path code:
+  MUST-priority requirements, security-sensitive logic, and business rules with high consequence
+  of failure. It is optional &mdash; the first four layers provide substantial coverage without it &mdash;
+  but for code where correctness is non-negotiable, mutation testing answers the question that
+  the other layers cannot: "would our tests actually catch a bug if one were introduced?"
+</p>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="construction-time">Construction-Time Verification</h2>
+
+<p>
+  The five tool-based layers run after code exists. A complementary set of mechanisms runs
+  during construction itself: hard gates that refuse builds failing their preconditions, and
+  review-time rules that surface boundary discipline as findings. These catch defect classes
+  that surface only at construction time &mdash; wiring that was never made, contracts that were
+  never honoured, fixtures that never tested the model against the world, and slices that
+  defer user-visible value to later phases. Tests-pass-but-product-broken failures happen
+  because tests verify each layer in isolation while the wiring, the contracts, and the
+  fixtures between layers go unverified. Construction-time verification closes that gap.
+</p>
+
+<h3 id="walking-skeleton">The walking skeleton and boundary registry</h3>
+
+<p>
+  Before any feature work, a thin end-to-end execution thread is wired through every external
+  integration boundary &mdash; HTTP APIs, databases, cloud SDKs, file systems, subprocess calls,
+  email. The output is <code>boundaries.md</code>: a registry naming every boundary, its
+  real-vs-sandbox status, and any divergence between the sandbox and production. Downstream
+  phases gate against this registry mechanically. The build phase refuses chunks if the
+  skeleton is red in CI &mdash; you cannot reliably build features on a foundation that does
+  not connect. The test phase audits the sandbox-divergence notes, so a feature that worked in
+  sandbox but failed in production has a recorded reason rather than a mystery.
+</p>
+
+<span class="sidenote">
+  Walking skeleton from Cockburn (<em>Crystal Clear</em>) and Freeman &amp; Pryce
+  (<em>Growing Object-Oriented Software, Guided by Tests</em>). Both establish the discipline
+  that AI-assisted development still routinely ignores: build features against mocks, discover
+  at integration time that the real boundaries do not behave like the mocks said, and unwind
+  weeks of feature work that was correct against a fiction.
+</span>
+
+<h3 id="tdd-rules">TDD-1, TDD-2, TDD-3</h3>
+
+<p>
+  Three rules sit beneath the outside-in acceptance test, each closing a specific defect class.
+</p>
+
+<p>
+  <strong>TDD-1 (outside-in ordering).</strong> The acceptance test from the user&rsquo;s
+  perspective is the first deliverable for any chunk with a user-facing surface, written before
+  any unit test. The chunk transitions Red &rarr; Green on the acceptance test; both transitions
+  are recorded in the chunk handover. Pure-internal-helper chunks may exempt themselves with a
+  documented rationale; an exemption with no rationale is treated as no exemption (Fagan: silent
+  skips are not skips). Grounded in Freeman &amp; Pryce&rsquo;s outside-in discipline and
+  Beck&rsquo;s TDD cycle from <em>Test-Driven Development: By Example</em> (the Red&rarr;Green&rarr;Refactor slogan is the XP community formulation of Beck&rsquo;s cycle).
+</p>
+
+<p>
+  <strong>TDD-2 (mock budget at the external boundary).</strong> Each test mocks at most one
+  collaborator, and only when that collaborator sits at the network or process edge. Mocking an
+  internal class is a code smell: the seam the mock pretends to verify is the seam the test is
+  silently bypassing (Metz, <em>POODR</em> Ch. 9 &mdash; prefer real objects for code you own;
+  the protocol-drift defect class follows from Freeman &amp; Pryce&rsquo;s GOOS critique of
+  internal mocking). The
+  methodology names a defined set of external-boundary categories &mdash; HTTP clients, sockets,
+  file systems, subprocess, OS environment and signals, paths, plus database and cloud SDKs.
+  Severity escalates from Important to Critical when the mock target appears in a project-level
+  <code>.cross-chunk-seams</code> allowlist &mdash; these are the cross-chunk protocols whose
+  drift would break production wiring. The rule is enforced at runtime in Python, TypeScript
+  (vitest, jest, testdouble, sinon), and Go (testify, gomock, plus
+  <code>*Mock|*Fake|*Stub|*Spy</code> struct types) by an EBT contract lint that runs in the
+  code review phase.
+</p>
+
+<p>
+  <strong>TDD-3 (realistic-fixture catalogue).</strong> Synthetic happy-path fixtures encode the
+  engineer&rsquo;s mental model; realistic fixtures expose the gap between the model and the
+  world (Bach &amp; Bolton, <em>Rapid Software Testing</em>). Six known-edge-shape domains are
+  catalogued &mdash; data analysis, web/UI, API, parsing, security validation, concurrency
+  &mdash; with starter fixture shapes per domain (short categorical codes, malformed inputs,
+  percent-encoding edges, identical baseline-vs-actual datasets). Code review emits an Important
+  finding when a chunk in one of the three highest-ROI domains (data analysis, parsing, security
+  validation) ships with synthetic fixtures only.
+</p>
+
+<h3 id="smoke-gate">Chunk-acceptance smoke gate and the wiring matrix</h3>
+
+<p>
+  After the chunk&rsquo;s tests pass and the wiring audits run, but before the handover is
+  written, the chunk runs a smoke command that exercises its user-facing surface end-to-end and
+  asserts structural contracts on the output (required HTML elements, required JSON keys,
+  non-empty headlines, no placeholder substrings). Non-zero exit code blocks the handover. The
+  chunk is incomplete until the smoke is green.
+</p>
+
+<p>
+  Beside the chunk smoke sits the <strong>wiring matrix</strong>: a four-column table in the
+  implementation guide naming entry point, consumed modules, wiring chunk, and the consumer that
+  demanded each module. The matrix refuses the implementation-guide write if any cell is empty.
+  The build phase mechanically greps every entry point for the modules the matrix says it
+  consumes; the inverse audit catches the dual failure mode (a module built but never written
+  into the matrix). The grounding combines Feathers&rsquo; seam concept (<em>Working Effectively
+  with Legacy Code</em>) with YAGNI applied to producer modules: a producer that no consumer
+  demanded is dead code regardless of how green its tests are.
+</p>
+
+<h3 id="mvp-first">MVP-first phase ordering</h3>
+
+<p>
+  Vertical slicing applies <em>within</em> chunks (TDD-1 makes the acceptance test the first
+  deliverable). MVP-1 (Minimum Viable Product first ordering) applies <em>across</em> chunks. The first user-facing chunk in the
+  implementation guide must constitute the smallest end-to-end shippable slice exercising one
+  user-visible behaviour through every layer it touches against the walking skeleton&rsquo;s
+  wired boundaries. A guide whose first user-facing chunk is a layer fragment (data model only,
+  API endpoint with no caller, UI shell with no backing data) is refused at impl-guide write
+  time and again at impl-guide read time. The two gates compose: tech-spec refuses the write,
+  build refuses the read.
+</p>
+
+<p>
+  Four named project shapes claim exemption with the literal in-guide marker
+  <em>MVP-1 exempted: &lt;category&gt; &mdash; rationale: &lt;why&gt;</em>: <em>library</em>
+  (no user-facing surface), <em>refactor</em> (stable interface, implementation-only),
+  <em>performance-driven</em> (the architectural constraint is the product; the first slice
+  must exercise it rather than a token user-visible behaviour), and <em>fully-specified</em>
+  (regulatory rebuild where user feedback adds no information). An exemption with no rationale
+  is treated as no exemption (Fagan: silent skips are not skips). The defect class addressed is
+  layer-first ordering that defers user-visible feedback to integration time: a build that ships
+  green tests across every layer can still discover at integration that the layers do not
+  compose into the product the user wanted.
+</p>
+
+<p>
+  <strong>Horizontal architecture, vertical sequence.</strong> MVP-1 governs the delivery
+  sequence; the cross-cutting spec and the architecture overview from <code>/gvm-tech-spec</code>
+  govern the patterns every slice is built against. Slice 5 uses the same data-access
+  conventions, error-handling approach, logging discipline, and naming rules as slice 1
+  &mdash; Brooks&rsquo;s conceptual integrity. The first slice exercises one user behaviour
+  through the architecture the spec already defined; subsequent slices inherit those patterns
+  rather than reinvent them. A reader who interprets &ldquo;vertical slice first&rdquo; as
+  licence to invent slice-local architecture is misreading the rule: if slice N&rsquo;s
+  data-access pattern diverges from slice 1&rsquo;s, the divergence is a code-review finding
+  regardless of whether each slice individually shipped a green smoke gate.
+</p>
+
+<span class="sidenote">
+  Each rule cites a defect class observed in production. TDD-1 closes unit-test-green /
+  system-broken. TDD-2 closes internal-mock protocol drift. TDD-3 closes synthetic-fixture-only
+  verification. The smoke gate closes the chunk-completion gap. The wiring matrix closes the
+  tracer-bullet engine boundary &mdash; modules built but never imported by the consumer that
+  was supposed to use them. MVP-1 closes layer-first phase ordering that defers user-visible
+  feedback to integration time. Without the defect class, no rule.
+</span>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="expert-review">Expert-Grounded Review</h2>
+
+<p>
+  The five tool-based layers use detection mechanisms that are mechanistically distinct from the
+  LLM &mdash; but the LLM remains involved in orchestration and, for testing layers, in writing
+  the tests themselves. LLM-based code review adds a different kind of value: it catches design
+  issues, architectural violations, and requirement mismatches that deterministic tools cannot
+  assess. The question is how to make that review as diverse as possible in what it detects.
+</p>
+
+<p>
+  The approach is structural diversity through defect-class partitioning. Instead of prompting a
+  reviewer with &ldquo;review this code,&rdquo; the review dispatches parallel panels, each scanning for
+  a specific class of defect. This orthogonal partitioning is grounded in Perspective-Based Reading
+  research (Laitenberger, Atkinson, Schlich &amp; El Emam, &ldquo;An experimental comparison of reading
+  techniques for defect detection in UML design documents,&rdquo; Fraunhofer IESE, <em>Journal of
+  Systems and Software</em>, 2000) &mdash; teams with non-overlapping scanning mandates detected
+  41% more unique defects than checklist-based teams at 58% lower cost per defect (the original
+  study covered UML design-document inspection; the analogy to parallel code-review panels is
+  structural, not a replicated finding).
+  Drew, V&otilde; &amp; Wolfe&rsquo;s satisfaction-of-search research shows why: finding one defect reduces the
+  likelihood of finding others nearby, so a broad scan misses what a focused scan catches.
+</p>
+
+<ul>
+  <li>A <strong>references panel</strong> scans every import, path, and cross-reference &mdash; Hunt &amp; Thomas&rsquo;s DRY principle applied to dependency verification.</li>
+  <li>A <strong>contracts panel</strong> traces every interface &mdash; Keeling&rsquo;s decision capture framework applied to producer/consumer alignment.</li>
+  <li>A <strong>logic panel</strong> traces every execution path &mdash; Fagan&rsquo;s entry/exit criteria applied to branch completeness.</li>
+  <li>A <strong>naming panel</strong> verifies terminology &mdash; Brooks&rsquo;s conceptual integrity applied to specification compliance.</li>
+</ul>
+
+<span class="sidenote">
+  Each panel receives specific files, specific expert principles, and the instruction to
+  scan only its defect class. A references panel does not comment on logic errors. A contracts
+  panel does not flag naming issues. The scanning mandates do not overlap.
+</span>
+
+<p>
+  Each panel applies a liberal detection threshold &mdash; Green &amp; Swets&rsquo;s Signal Detection
+  Theory: lower the R1 criterion to maximise recall at the cost of false positives, which the
+  synthesis phase filters. Each panel scans in two passes to counter satisfaction-of-search
+  within its own mandate, and capture-recapture estimation (Wohlin) provides a statistical
+  basis for estimating residual defects from the overlap between panels.
+</p>
+
+<p>
+  This is not the same as model diversity &mdash; the panels share an underlying model family.
+  But the defect-class partitioning provides genuine diversity of <em>scanning mandate</em>. A
+  references panel and a logic panel look at the same function and search for different things,
+  apply different criteria, and catch different categories of issue. Combined with the five
+  tool-based layers that share nothing with the model, the review panels add a sixth error model
+  that, while not fully independent, is structurally diversified.
+</p>
+
+<p>
+  The approach follows established principles &mdash; the PBR finding that orthogonal
+  perspectives outperform checklist-based review (Laitenberger et al., 2000), Fagan&rsquo;s finding that role-specific checklists
+  outperform general impressions, and the broader literature on structured expert judgement
+  outperforming unstructured judgement.
+</p>
+
+<p>
+  Early observational data suggests the diversity is real. Panel findings cluster by defect class
+  in ways consistent with the partitioning: references panels find missing imports and broken
+  paths; contracts panels find interface mismatches and missing error contracts; logic panels
+  find unreachable branches and missing edge cases; naming panels find specification drift and
+  inconsistent terminology. The overlap between panels is predominantly at the instance level
+  &mdash; two panels finding the same defect from different angles &mdash; rather than the
+  category level. Some panels produce findings with essentially zero overlap with any other panel.
+</p>
+
+<span class="sidenote">
+  In one project's review cycle, the blind reviewer confirmed calibration bias: calibrated
+  panels had developed tunnel vision on a recurring theme while the blind panel caught
+  config validation, error handling, and untested paths that the calibrated panels overlooked.
+</span>
+
+<p>
+  The sample is still small, and a controlled study comparing finding distributions across
+  expert-framed versus generic LLM review would strengthen the claim. What the data does
+  establish is that the architecture produces the intended effect &mdash; whether it does
+  so reliably and at scale remains open.
+</p>
+
+<p>
+  Spec-driven and ATDD-style toolchains have begun to incorporate similar patterns. The
+  convergence reflects the same underlying research: parallel review with non-overlapping
+  mandates is the documented structural choice for defect detection. What remains distinctive
+  in the architecture described here is three additions to the panel pattern: capture-recapture
+  estimation that converts &ldquo;should we run another round?&rdquo; into a calculation,
+  calibration data that persists across rounds, and the user-owned triage rule described below.
+</p>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="self-correcting">A Self-Correcting Verification System</h2>
+
+<p>
+  The five layers and the expert review panels catch defects. But a verification system that
+  never learns from its own findings is static &mdash; it catches the same categories of issue
+  at the same rate, indefinitely. Three mechanisms make the system adaptive.
+</p>
+
+<h3 id="iterative">Iterative Convergence</h3>
+
+<p>
+  The review layer is not a single pass. Multiple review rounds are expected, and each round
+  catches different things. The first round surfaces the obvious issues &mdash; the problems
+  visible when attention is spread across the entire codebase. Fixing those issues changes
+  the code, and the changed code exposes subtler problems that were masked by the noise of
+  the first-round findings. The second round, operating on a cleaner artefact, catches what
+  the first round could not see.
+</p>
+
+<span class="sidenote">
+  Fagan (IBM, 1976) observed this in manual inspections: removing major defects in the first
+  pass revealed minor defects that were invisible while the major ones dominated reviewer
+  attention. The same principle applies when the reviewer is an LLM.
+</span>
+
+<p>
+  This is a different kind of layering from the five tool-based layers. Those are parallel &mdash;
+  different tools applied to the same code. The review loop is serial &mdash; the same reviewer
+  applied to progressively evolving code. Each pass operates on a different artefact than the
+  last, because the fixes from the previous round have changed what is there to find. The
+  value is not in repeating the same check, but in the fact that each iteration presents a
+  different surface to the reviewer.
+</p>
+
+<h3 id="calibration">Progressive Calibration with Bias Correction</h3>
+
+<p>
+  Each review round produces findings. These findings accumulate into a calibration file that
+  tracks: which issues were found, which were resolved, which recurred, and which areas scored
+  well or poorly. On subsequent rounds, the reviewer loads this history and applies it &mdash;
+  giving more scrutiny to areas that have been problematic and less to areas that have been clean.
+</p>
+
+<p>
+  This makes reviews more precise over time. It also introduces a systematic bias: areas that
+  scored well in prior rounds receive less attention. Resolved findings are trusted without
+  re-verification. The reviewer develops blind spots shaped by its own history.
+</p>
+
+<p>
+  The correction mechanism is a <strong>blind reviewer</strong>, dispatched automatically from
+  the third round onwards. The blind reviewer receives the same code and the same expert references,
+  but no calibration history, no resolved findings, no anchor examples. It reviews as if seeing
+  the project for the first time. Its findings are then reconciled with the calibrated review:
+</p>
+
+<ul>
+  <li><strong>New findings</strong> &mdash; caught by the blind reviewer but not the calibrated one. These are genuine blind spots. Merged into the final report.</li>
+  <li><strong>Confirmed findings</strong> &mdash; caught by both reviewers independently. Higher confidence. Kept.</li>
+  <li><strong>Regressions</strong> &mdash; match a resolved finding from a prior round. The fix did not stick. Flagged.</li>
+  <li><strong>Noise</strong> &mdash; match a finding the calibrated reviewer correctly excluded. Discarded.</li>
+</ul>
+
+<span class="sidenote">
+  This applies Wang et al.'s self-consistency principle (ICLR, 2023) at the review level:
+  two independent assessments with different information sets, reconciliation that keeps
+  consistent findings and flags divergences.
+</span>
+
+<p>
+  The dual review runs automatically, not on request. A practitioner who has run five calibrated
+  rounds and developed blind spots is the least likely to think they need a blind review.
+  The cost &mdash; one additional parallel reviewer plus reconciliation &mdash; is proportional to
+  the value of catching what calibration systematically misses.
+</p>
+
+<h3 id="build-checks">Build Check Promotion</h3>
+
+<p>
+  Review findings fix the output. Build checks fix the <em>process</em>.
+</p>
+
+<span class="sidenote">
+  Deming: recurring defects are common-cause variation &mdash; the process must change, not just the
+  output. Fagan (IBM, 1976): checklists derived from past inspections are the most effective
+  calibration tool for future inspections.
+</span>
+
+<p>
+  When a finding recurs in three or more consecutive review rounds, or when a resolved finding
+  reappears (a regression), the finding is promoted to a <strong>build check</strong> &mdash;
+  a concrete instruction that is injected into the code generation prompt for all subsequent builds.
+  The AI that generates the code receives the pattern to avoid as part of its instructions,
+  preventing the defect from being generated in the first place.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Process feedback, not just output correction</div>
+  <p>Traditional quality systems inspect the output and fix what they find. The build check promotion creates a feedback loop from inspection back to generation: recurring defects modify the generation instructions, not just the generated code. The system learns from its own review history.</p>
+</div>
+
+<p>
+  Not all build checks are equal. A check that traces to published expert literature &mdash;
+  McConnell's prohibition on magic numbers, Hunt &amp; Thomas's fail-fast principle &mdash; is
+  a permanent engineering principle that the project's review history surfaced but that exists
+  independently of the project. These <strong>Tier 1</strong> checks never retire. The code may
+  be clean <em>because</em> the check is enforced. Removing it would reintroduce the class of
+  defect the system learned to prevent.
+</p>
+
+<p>
+  Project-specific checks with no grounding in expert literature &mdash; "the search module
+  keeps using raw SQL instead of the query builder" &mdash; are <strong>Tier 2</strong>. After
+  three consecutive rounds without being triggered, the practitioner is asked whether to keep
+  or retire them. The system flags; the user decides. A practitioner who knows the module is
+  fragile will keep the check. One who knows the module was refactored away will retire it.
+</p>
+
+<h3 id="quality-gate">Finding Quality Gate</h3>
+
+<p>
+  A verification system that never stops finding issues is not thorough &mdash; it is
+  miscalibrated. Reviewers can generate findings indefinitely by lowering the threshold
+  for what counts as a problem. Without a stop condition, each review round produces
+  diminishing-value observations dressed up as findings, and the practitioner cannot
+  distinguish signal from noise.
+</p>
+
+<p>
+  The quality gate is a three-part test that every finding must pass before it enters
+  the report. First, <strong>consumer impact</strong>: state the consequence as a sentence
+  &mdash; "a developer would build the wrong thing," "a reader would cite a wrong source."
+  If you cannot finish that sentence with a concrete outcome, the finding is polish.
+  Second, <strong>propagation</strong>: does the finding cause a downstream problem in
+  another artefact? A wrong requirement ID propagates through tests, specs, and code.
+  A left-aligned number in a table propagates nowhere. Third,
+  <strong>diminishing returns</strong>: each review round holds new findings to a higher
+  bar than the last. Round 1 catches structural problems. Round 3 should not be surfacing
+  redundant sentences or minor formatting preferences.
+</p>
+
+<span class="sidenote">
+  The stop condition is explicit: when all remaining observations fail the consumer impact
+  test, the artefact is done. A clean review &mdash; no actionable findings &mdash; is a
+  valid outcome. It means the quality system worked.
+</span>
+
+<p>
+  The combination of iterative convergence, progressive calibration, blind reviewer bias
+  correction, tiered build check promotion, and a finding quality gate creates a verification
+  system that improves with each iteration: reviews get more precise, blind spots get caught,
+  systemic patterns get prevented at the source, and the system knows when to stop.
+</p>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="triage">User-Owned Finding Triage</h2>
+
+<p>
+  Self-correction handles the system&rsquo;s detection. Triage handles its disposition. They
+  are different mechanisms, and conflating them creates a particular failure mode in review
+  skills: after dispatching panels and surfacing findings, the skill is tempted to triage them
+  itself. It silently filters borderlines, defers Important findings to a future hardening
+  release, or bundles the verdict with the user&rsquo;s first sight of the finding list. Each
+  move is locally reasonable: the panel&rsquo;s emit threshold becomes a post-synthesis filter,
+  and the skill claims it is saving the user time. Globally, each move is a defect. The user
+  never sees what was hidden, and the calibration record drifts away from what panels actually
+  found.
+</p>
+
+<p>
+  The methodology treats this as a structural defect class. Every Critical or Important finding
+  is presented to the practitioner before any disposition is recorded. The skill may recommend
+  &ldquo;fix / defer / dismiss&rdquo; per finding but must not decide. Forbidden patterns
+  (silent suppression, blanket deferral under cover of a stricter criterion, bundling the
+  verdict with the finding list) are spelled out verbatim and pinned by structural tests so the
+  gate cannot be paraphrased away. A &ldquo;fix all&rdquo; authorisation does not extend to new
+  Critical findings discovered during the fix; those re-enter triage.
+</p>
+
+<span class="sidenote">
+  This is a small rule with a large effect on trust. The verification report a practitioner
+  reads is the same one the panels emitted. Anything the skill might have hidden, it cannot
+  hide. The practitioner&rsquo;s authority over disposition is not advisory; it is the gate.
+</span>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="exploratory">Exploratory Testing as Verification</h2>
+
+<p>
+  The architecture so far covers automated verification: tools and reviewers operating
+  without human intervention beyond orchestration. A complementary mechanism uses human
+  attention deliberately.
+</p>
+
+<p>
+  The error model is genuinely distinct from every layer above. No rule set, no random input,
+  no LLM scan &mdash; a human running the software and noticing what is wrong. Scripted tests
+  verify what someone thought to write down; exploratory testing is the discipline of looking
+  for the paths nobody thought to write down. The defect classes it reaches are precisely those
+  automated verification cannot anticipate: a sequence of operations no one wrote a test for,
+  a state combination that no fixture covered, a usability failure that compiles, lints, and
+  tests clean.
+</p>
+
+<p>
+  The methodology gives exploratory testing first-class pipeline status. The practitioner
+  writes a YAML charter (mission, tour, scope, duration) and the skill runs the timer. Defects
+  are captured through structured prompts: severity in the practitioner&rsquo;s words,
+  Given/When/Then in the practitioner&rsquo;s framing, reproduction steps the practitioner
+  verifies. The skill does not auto-classify severity; that is a judgment the practitioner
+  makes about the risk of the defect in their context. The output is a paired session report
+  that the build verification phase reads when computing the final verdict.
+</p>
+
+<span class="sidenote">
+  Charter format from Bach &amp; Bolton, <em>Rapid Software Testing</em>; the time-box discipline
+  from session-based test management. Severity is the practitioner&rsquo;s call &mdash; the
+  classification depends on context the practitioner has and the model does not (regulatory
+  exposure, customer impact, the cost of the workaround). The skill records what the
+  practitioner said.
+</span>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="portable">Making It Portable</h2>
+
+<p>
+  A verification architecture that only works for Python is not an architecture &mdash; it is a script.
+  Most teams use multiple languages, and AI coding assistants generate code in whatever
+  language the project requires. The verification architecture must be language-agnostic in
+  principle but stack-specific in execution.
+</p>
+
+<p>
+  Dependency verification for Python (<code>python3 -c "import {package}"</code>) is a different
+  command than for Go (<code>go build ./...</code>), but the principle &mdash; verify that every
+  dependency resolves against a real registry &mdash; is the same.
+</p>
+
+<p>
+  A stack-aware tooling reference maps each verification layer to concrete commands for each
+  supported technology. The reference covers dependency verification, linting, security SAST,
+  complexity analysis, credential scanning, property-based testing libraries, and mutation
+  testing tools across ten language stacks: Python, TypeScript/JavaScript, Go, Rust, Java,
+  C#, Ruby, PHP, Swift, and Kotlin.
+</p>
+
+<p>
+  For technologies not in the reference, a discovery process activates: identify the language's
+  standard toolchain, find the most widely adopted tools for each verification category
+  (preferring built-in over third-party, widely adopted over niche, actively maintained over
+  stale), test the commands, and add them to the reference. The verification architecture
+  self-extends to new stacks rather than requiring manual configuration for each one.
+</p>
+
+<span class="sidenote">
+  Not every stack has mature tooling for every layer. Swift, for example, lacks a widely adopted
+  mutation testing tool. The architecture accommodates gaps honestly &mdash; skip what does not
+  exist rather than pretend it does.
+</span>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="reference-impl">Reference Implementation</h2>
+
+<p>
+  The Grounded Vibe Methodology (GVM) implements this verification architecture as a pipeline
+  for AI-assisted software development. Each layer maps to a specific point in the build and
+  test process:
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Verification mechanisms in the GVM pipeline</caption>
+  <thead>
+    <tr><th>Mechanism</th><th>Pipeline position</th><th>Behaviour</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Walking-skeleton boundary gate</td><td>Before feature work; re-checked per build chunk</td><td>Refuses chunks if the end-to-end skeleton is red in CI; <code>boundaries.md</code> records sandbox-vs-production divergence</td></tr>
+    <tr><td>MVP-first phase ordering</td><td>At impl-guide write AND read time</td><td>Refuses impl guides whose first user-facing chunk is a layer fragment; four named exemption categories with rationale required</td></tr>
+    <tr><td>Design review</td><td>After tech spec, before build</td><td>Parallel panels validate data model, UI/UX, API contracts, and performance against requirements</td></tr>
+    <tr><td>TDD-1 outside-in</td><td>First deliverable per chunk</td><td>Acceptance test written before unit tests; Red&rarr;Green transitions recorded in handover</td></tr>
+    <tr><td>TDD-2 mock budget</td><td>Per test, runtime-enforced</td><td>One mock per test, only at the network/process boundary; cross-chunk seams escalate Important &rarr; Critical</td></tr>
+    <tr><td>TDD-3 realistic fixtures</td><td>Per chunk, per domain</td><td>Six-domain catalogue; review emits Important when high-ROI domains ship synthetic-only fixtures</td></tr>
+    <tr><td>Dependency verification</td><td>After each build chunk, before lint</td><td>Resolves every new import against the real package registry</td></tr>
+    <tr><td>Credential scanning</td><td>After lint, before static analysis</td><td>Scans for hardcoded secrets; blocks on any detection</td></tr>
+    <tr><td>Static analysis (SAST)</td><td>After credential scanning</td><td>Runs deterministic rule sets; blocks on HIGH/CRITICAL findings</td></tr>
+    <tr><td>Property-based testing</td><td>During TDD, when requirements are tagged <code>[PROPERTY]</code></td><td>Generates random inputs to verify invariant properties hold</td></tr>
+    <tr><td>Mutation testing</td><td>After acceptance tests pass (optional)</td><td>Injects code mutations to verify tests detect faults</td></tr>
+    <tr><td>Wiring-matrix audit</td><td>Before chunk handover</td><td>Greps every entry point for declared consumed modules; refuses if any cell empty</td></tr>
+    <tr><td>Chunk-acceptance smoke</td><td>Before chunk handover</td><td>End-to-end smoke command + structural contract assertions; non-zero exit blocks handover</td></tr>
+    <tr><td>Code review</td><td>After build, before verification</td><td>Parallel defect-class panels (references, contracts, logic, naming) with progressive calibration and dual review from round 3</td></tr>
+    <tr><td>Build verification</td><td>After code review, before doc-write</td><td>Integration seam audit, full code review, startup verification, smoke testing, stub audit, sandbox-divergence check</td></tr>
+    <tr><td>Exploratory testing</td><td>Between build verification and doc-write</td><td>Charter-driven, time-boxed, practitioner-classified severity; report feeds the verification verdict</td></tr>
+    <tr><td>Doc review</td><td>After doc-write</td><td>Parallel panels review documents for structure, traceability, content quality, scoring</td></tr>
+    <tr><td>Release quality gate</td><td>Final phase</td><td>Aggregates every review verdict; blocks release on any &ldquo;not ready&rdquo;; checks documentation accuracy against the current build</td></tr>
+  </tbody>
+</table>
+
+<p>
+  The release gate is what makes every preceding layer enforced rather than advisory. The
+  pipeline produces verdicts; the release phase consumes them. A practitioner cannot tag a
+  release without the pipeline having produced the evidence. Stale documentation is treated
+  as a release defect, not an acceptable gap.
+</p>
+
+<p>
+  Pipeline steps run on different models. Architectural reasoning, requirements elicitation,
+  and document review run on the primary reasoning model. Code generation, panel-level finding
+  emission, and structured extraction run on Sonnet. HTML rendering runs on Haiku. The pipeline
+  picks the right model for each step rather than running everything on the most expensive
+  option &mdash; a structural contract between the skill and the runtime, not a per-invocation
+  guess.
+</p>
+
+<p>
+  The build is structured as dependency-ordered chunks, each with its own TDD cycle and quality
+  gates. Verification runs per-chunk, not as a monolithic step at the end. A defect caught in
+  chunk 3 is fixed in chunk 3, before chunks 4 through N are built on top of it.
+</p>
+
+<p>
+  The progressive calibration and build check promotion operate across review rounds. On the first
+  code review, findings are recorded. On the second, calibration begins. From the third round
+  onwards, the blind reviewer activates automatically. Recurring findings promote to build checks
+  that modify subsequent generation prompts. The pipeline gets better at preventing defects with
+  each iteration.
+</p>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="open">What Remains Open</h2>
+
+<p>
+  This architecture addresses the AI code quality problems that have published evidence and
+  established tooling. Several areas remain open:
+</p>
+
+<ul>
+  <li><strong>Model diversity in review.</strong> The expert-grounded review panels use different frameworks but typically the same model family. The grounding effect has been validated across Claude, GPT, and Gemini (see <em>Grounding Produces Measurably Better Output</em>), but cross-model review &mdash; using one model to review another's output &mdash; has not yet been tested. Genuine model diversity in review would reduce correlated errors further and is the theoretically correct approach as tooling constraints ease.</li>
+  <li><strong>Mutation testing maturity.</strong> Not all language ecosystems have mature mutation testing tools. Swift has no widely adopted option. Go's tooling is limited. As these ecosystems mature, the fifth verification layer becomes more universally applicable.</li>
+  <li><strong>Emerging failure modes.</strong> As AI coding capabilities evolve, new failure patterns will emerge that current layers do not target. The architecture is designed to be extensible &mdash; new layers can be added without restructuring existing ones &mdash; but identifying what those layers should be requires ongoing observation.</li>
+  <li><strong>Quantifying layer effectiveness.</strong> The individual evidence (ISSTA for SAST coverage, USENIX for dependency hallucination rates) is strong, but no study has measured the compound effectiveness of all layers running together on AI-generated code. The multiplicative independence assumption is theoretically sound but empirically untested at the system level. A controlled study comparing defect escape rates with and without layered verification on AI-generated codebases would validate or refine the architecture.</li>
+  <li><strong>Expert framing effectiveness.</strong> Observational data shows expert-framed panels catching meaningfully different defect categories with low cross-panel overlap. A controlled study comparing expert-framed versus generic LLM review would establish whether the pattern holds broadly.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="conclusion">Conclusion</h2>
+
+<p>
+  AI-generated code fails differently from human-written code. The verification architecture
+  must match. Layered verification with distinct error models catches what no single technique
+  can, because each layer is blind to different things than the others.
+</p>
+
+<p>
+  The architecture spans five mechanism families. Tool-based layers catch defects in code
+  that exists. Construction-time gates close defect classes before code reaches
+  review: walking-skeleton boundary checks, the chunk-acceptance smoke, the wiring matrix, and
+  MVP-first phase ordering refuse work that fails its preconditions, while mock-budget and
+  realistic-fixture rules surface boundary discipline as findings the practitioner triages.
+  Expert-grounded code review adds structural diversity within the LLM itself, separated by
+  defect class. Exploratory testing adds a human error model that no automated layer can
+  replicate. The self-correcting feedback loop combines progressive calibration, blind
+  reviewer bias correction, build check promotion, a finding quality gate, and user-owned
+  triage. A release gate aggregates every verdict and blocks the tag if any layer reports
+  not-ready.
+</p>
+
+<p>
+  The result is a verification pipeline that improves with each iteration. Not by running the
+  same checks harder, but by compounding the coverage of genuinely different detection
+  mechanisms.
+</p>
+
+<!-- ═══════════════════════════════════════ -->
+<h2 id="sources">Sources</h2>
+
+<table class="sources-table">
+  <caption>Table 2 &mdash; Cited sources</caption>
+  <thead>
+    <tr><th>#</th><th>Source</th><th>Year</th><th>Finding used</th><th>Link</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Spracklen et al., USENIX Security</td><td>2025</td><td>~20% of AI-recommended packages do not exist; 43% of hallucinated names repeat across runs</td><td><a href="https://www.usenix.org/publications/loginonline/we-have-package-you-comprehensive-analysis-package-hallucinations-code">usenix.org</a></td></tr>
+    <tr><td>2</td><td>AppSec Santa</td><td>2026</td><td>25.1% of AI code samples contain a confirmed vulnerability; 33.1% are injection-class</td><td><a href="https://appsecsanta.com/research/application-security-statistics">appsecsanta.com</a></td></tr>
+    <tr><td>3</td><td>GitGuardian, State of Secrets Sprawl</td><td>2026</td><td>28.65M hardcoded secrets on GitHub; 34% YoY increase; 1.5% baseline leak rate</td><td><a href="https://blog.gitguardian.com/the-state-of-secrets-sprawl-2026/">gitguardian.com</a></td></tr>
+    <tr><td>4</td><td>CodeRabbit</td><td>2025</td><td>AI PRs: 1.75x more logic errors, 3x more readability issues</td><td><a href="https://www.coderabbit.ai/blog/state-of-ai-vs-human-code-generation-report">coderabbit.ai</a></td></tr>
+    <tr><td>5</td><td>Perry et al., ACM CCS</td><td>2023</td><td>AI-assisted developers wrote less secure code with higher confidence</td><td><a href="https://arxiv.org/abs/2211.03622">arxiv.org</a></td></tr>
+    <tr><td>6</td><td>Lipp et al., empirical study of SAST tools, ISSTA</td><td>2024</td><td>Single SAST: 52% of vulnerability-contributing changes detected; 22% remain undetected due to SAST rule limitations</td><td><a href="https://arxiv.org/abs/2407.12241">arxiv.org</a></td></tr>
+    <tr><td>7</td><td>Capers Jones</td><td>various</td><td>No single technique exceeds ~85% DRE; layered techniques compound multiplicatively</td><td><a href="https://www.ppi-int.com/wp-content/uploads/2021/01/Software-Defect-Removal-Efficiency.pdf">ppi-int.com</a></td></tr>
+    <tr><td>8</td><td>Wang et al., "Self-Consistency Improves Chain of Thought Reasoning in Language Models," ICLR</td><td>2023</td><td>Self-consistency across independent generations improves reasoning reliability</td><td><a href="https://arxiv.org/abs/2203.11171">arxiv.org</a></td></tr>
+    <tr><td>9</td><td>Ravi &amp; Coblenz, "An Empirical Evaluation of Property-Based Testing in Python," OOPSLA</td><td>2025</td><td>Each property-based test catches ~50x more mutations than the average unit test; 76% of mutations found within the first 20 inputs</td><td><a href="https://dl.acm.org/doi/10.1145/3764068">acm.org</a></td></tr>
+    <tr><td>10</td><td>Fagan, <em>Design and Code Inspections to Reduce Errors in Program Development</em>, IBM Systems Journal</td><td>1976</td><td>Role-specific checklists outperform general impressions; removing major defects reveals minor ones; inspection checklists should evolve from prior inspection findings</td><td><a href="https://doi.org/10.1147/sj.153.0182">doi.org</a></td></tr>
+    <tr><td>11</td><td>Deming, <em>Out of the Crisis</em>, MIT Press</td><td>1986</td><td>Recurring defects are common-cause variation &mdash; fix the process, not just the output; stabilise the measurement system before improving the product</td><td><a href="https://mitpress.mit.edu/9780262541152/">mitpress.mit.edu</a></td></tr>
+    <tr><td>12</td><td>McConnell, <em>Code Complete</em> (2nd ed.), Microsoft Press</td><td>2004</td><td>No magic numbers; construction practices for reliable code</td><td><a href="https://www.microsoftpressstore.com/store/code-complete-9780735619678">microsoftpressstore.com</a></td></tr>
+    <tr><td>13</td><td>Laitenberger, Atkinson, Schlich &amp; El Emam, "An experimental comparison of reading techniques for defect detection in UML design documents," <em>Journal of Systems and Software</em></td><td>2000</td><td>Perspective-Based Reading: orthogonal scanning mandates detected 41% more unique defects at 58% lower cost than checklist-based teams</td><td><a href="https://doi.org/10.1016/S0164-1212(00)00052-2">doi.org</a></td></tr>
+    <tr><td>14</td><td>Drew, V&otilde; &amp; Wolfe, "The Invisible Gorilla Strikes Again," <em>Psychological Science</em></td><td>2013</td><td>Satisfaction-of-Search effect: probability of finding a second defect drops after the first is found in the same region</td><td><a href="https://doi.org/10.1177/0956797613479386">doi.org</a></td></tr>
+    <tr><td>15</td><td>Beck, <em>Test-Driven Development: By Example</em>, Addison-Wesley</td><td>2002</td><td>Red-green-refactor cycle; tests drive design; tests are the contract</td><td><a href="https://www.oreilly.com/library/view/test-driven-development/0321146530/">oreilly.com</a></td></tr>
+    <tr><td>16</td><td>Bach &amp; Bolton, <em>Rapid Software Testing</em> (course materials and methodology)</td><td>various</td><td>Session-based test management; exploratory testing as a structured discipline</td><td><a href="https://www.satisfice.com/rapid-testing-methodology">satisfice.com</a></td></tr>
+    <tr><td>17</td><td>Brooks, <em>The Mythical Man-Month</em>, Addison-Wesley</td><td>1975</td><td>Conceptual integrity: a system designed by many minds reflects no mind; consistency of vocabulary and structure matters more than individual brilliance</td><td><a href="https://www.oreilly.com/library/view/the-mythical-man-month/0201835959/">oreilly.com</a></td></tr>
+    <tr><td>13</td><td>Hunt &amp; Thomas, <em>The Pragmatic Programmer</em> (20th anniversary ed.), Addison-Wesley</td><td>2019</td><td>DRY principle; fail fast; don&rsquo;t repeat yourself applied to defect prevention</td><td><a href="https://pragprog.com/titles/tpp20/">pragprog.com</a></td></tr>
+  </tbody>
+</table>
+
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) {
+      current.el.classList.add('active');
+      const tocEl = document.getElementById('toc');
+      const elTop = current.el.offsetTop - tocEl.offsetTop;
+      const elBot = elTop + current.el.offsetHeight;
+      if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+        tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+      }
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grounded Vibe Methodology — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026 (v2.2.0)</p>
+<h1>Grounded Vibe Methodology</h1>
+<p class="subtitle">
+  A practitioner's guide to using the GVM plugin for Claude Code &mdash; from installation to pipeline execution.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="whats-new-v220">What&rsquo;s new in v2.2.0</h2>
+<p>v2.2.0 closes the last v2.1.x issue: TS and Go projects now get <code>mock-budget</code> detection from <code>/gvm-code-review</code> Panel B, matching Python.</p>
+<ul>
+  <li><strong>TypeScript mock-budget detection.</strong> The detector now recognises the vitest, jest, testdouble, and sinon mock APIs &mdash; <code>vi.mock</code>, <code>vi.spyOn</code>, <code>jest.mock</code>, <code>jest.spyOn</code>, <code>td.replace</code>, <code>sinon.stub</code>, and <code>sinon.replace</code> &mdash; via <code>_lint_typescript</code> and <code>_TS_STACK_DEFAULTS</code>. The allowlist treats the following as external boundaries: node:* builtins, major HTTP clients (axios, undici, got, ky, node-fetch), DB drivers (pg, mongodb, redis), and AI/cloud SDKs. Internal mocks emit Important; matches in <code>.cross-chunk-seams</code> escalate to Critical. The wrapper-as-SUT exemption applies when the test-file stem equals the mocked target&rsquo;s basename &mdash; matching ADR-MH-02.</li>
+  <li><strong>Go mock-budget detection.</strong> Adapted to Go: the detector counts distinct test-double instances per <code>func TestXxx(t *testing.T)</code> body. Three signals (ADR-TG-02): types ending in <code>Mock|Fake|Stub|Spy</code>, <code>gomock.NewController</code> invocations, and types embedding testify&rsquo;s <code>mock.Mock</code> (recognised by the embedded library type, not by struct name). <code>_GO_STACK_DEFAULTS</code> covers <code>net/http</code>, <code>os</code>, <code>io</code>, <code>database/sql</code>, <code>context</code>, plus AWS/Google/Anthropic/OpenAI/Redis/MongoDB/Postgres SDK package paths.</li>
+  <li><strong>Per-project seam allowlists now apply on TS and Go.</strong> Previously the per-stack readers silently dropped the <code>_lint_typescript.seam_allowlist</code> and <code>_lint_go.seam_allowlist</code> parameters &mdash; they are now wired into the per-stack detector. STUBS.md retires both entries as a result.</li>
+</ul>
+<p>See <code>methodology-changelog.md</code> for the audit trail.</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="whats-new-v210">What&rsquo;s new in v2.1.0</h2>
+<p>v2.1.0 hardens the methodology: same pipeline, stricter gates. See <code>methodology-changelog.md</code> for the audit trail. Identifier prefixes (NFR, ADR, TDD, REVIEW, GATE) decode in the changelog.</p>
+<ul>
+  <li><strong>Build &mdash; chunk-acceptance smoke gate (Hard Gate 8).</strong> Every chunk runs a literal smoke command exercising its user-facing surface and asserts structural contracts on the output before the handover is written. Chunks built before 2026-04-28 are exempt as &ldquo;v2.0.x carry-over&rdquo;; pure internal helpers may claim exemption with rationale (see ADR-MH-04 in the changelog).</li>
+  <li><strong>Build &mdash; TDD-1 outside-in ordering.</strong> The acceptance test that exercises the user-facing surface must be the first deliverable for user-facing chunks &mdash; written before any unit test.</li>
+  <li><strong>Build &mdash; TDD-2 mock-budget escalation.</strong> Mock-budget violations escalate from Important to Critical when the target appears in the project&rsquo;s opt-in <code>.cross-chunk-seams</code> file.</li>
+  <li><strong>Build &mdash; TDD-3 realistic-fixture catalogue.</strong> Six-domain catalogue of realistic-fixture starter shapes (data-analysis, web/UI, API, parsing, security validation, concurrency). Panel C in <code>/gvm-code-review</code> currently emits Important findings in three of the six.</li>
+  <li><strong>Reviews &mdash; user owns finding triage (shared rule 28).</strong> Every Critical or Important finding from <code>/gvm-code-review</code>, <code>/gvm-design-review</code>, and <code>/gvm-doc-review</code> is presented to you before any disposition is recorded. The skill may recommend &ldquo;fix / defer / dismiss&rdquo; but must not decide. (Hard Gate 6 in code-review and design-review; Hard Gate 7 in doc-review.) Added after an incident where the skill unilaterally deferred 2 findings and filtered 10.</li>
+  <li><strong>Reviews &mdash; EBT contract / collaboration lint (REVIEW-1).</strong> <code>/gvm-code-review</code> Panel B runs the EBT contract lint against every test file, flagging HTTP transport patched in consumers, internal-class mocks in collaboration-contract tests, and TDD-2 mock-budget violations. (Mock-budget detection covered Python at v2.1.0 and was extended to TypeScript and Go in v2.2.0 &mdash; see &ldquo;What&rsquo;s new in v2.2.0&rdquo; above.)</li>
+  <li><strong>Diff-budget tracking (NFR-2).</strong> Each chunk handover records a <code>Diff budget delta</code> integer; the build summary aggregates per-chunk values and prompts you when cumulative SKILL.md additions cross 500 LOC.</li>
+  <li><strong>Methodology-changelog inclusion heuristic (NFR-3).</strong> <code>/gvm-status</code> &sect;6 documents the heuristic for what gets a changelog entry &mdash; behaviour-changing methodology evolution requires an entry; typo and formatting edits do not.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+  AI coding assistants without spec discipline produce code that drifts from intent. Requirements stay vague, test cases miss edge cases, architecture decisions go unrecorded, and the team has no audit trail when something breaks. "Vibe-coded" output looks plausible but cannot be traced back to a stated need.
+</p>
+
+<p>
+  The Grounded Vibe Methodology (GVM) addresses that drift. Each pipeline phase activates named experts &mdash; Wiegers, Beizer, Clements, Fairbanks, Beck, and others &mdash; whose published frameworks guide the AI's work, instead of relying on undifferentiated training data. The result is more complete requirements, more thorough test cases, and better-documented architecture decisions, all traceable through the pipeline. Expert names and their contributions are detailed in <a href="#expert-sources">Tier 1 Expert Sources</a> below. This plugin is the reference implementation of GVM for Claude Code.
+</p>
+
+<h3 id="what-you-need">What you need</h3>
+
+<ul>
+  <li><strong>Claude Code</strong> with the GVM plugin installed</li>
+</ul>
+
+<h3 id="entry-points">Three entry points</h3>
+
+<p>
+  GVM has three entry points depending on your situation:
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Entry points</caption>
+  <thead>
+    <tr><th>Situation</th><th>Command</th><th>What it does</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>New project, general-purpose software</td><td><code>/gvm-requirements</code></td><td>Start here for most projects. The pipeline discovers and scores experts automatically as needed.</td></tr>
+    <tr><td>New project, specialised domain</td><td><code>/gvm-init</code></td><td>For financial services, healthcare, regulated industries. Loads industry domain experts before requirements start.</td></tr>
+    <tr><td>Existing codebase</td><td><code>/gvm-site-survey</code></td><td>Diagnoses architectural health, selects experts based on findings, routes to the appropriate pipeline phase.</td></tr>
+  </tbody>
+</table>
+
+<h3 id="decision-table">Decision table &mdash; pick a command for what you want to do</h3>
+
+<p>
+  Use this table to pick the right command for the task at hand. Detail on each command, the pipeline that connects them, and the expert grounding that powers them follows below.
+</p>
+
+<table>
+  <caption>Decision table</caption>
+  <thead>
+    <tr><th>I want to&hellip;</th><th>Use this command</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Start a new project in a specialised domain</td><td><code>/gvm-init</code> then follow the pipeline &mdash; loads industry experts before requirements start</td></tr>
+    <tr><td>Start a new general-purpose project</td><td><code>/gvm-impact-map</code> for outcome framing, or <code>/gvm-requirements</code> directly</td></tr>
+    <tr><td>Assess an existing codebase before making changes</td><td><code>/gvm-site-survey</code></td></tr>
+    <tr><td>Write structured requirements for a feature or system</td><td><code>/gvm-requirements</code></td></tr>
+    <tr><td>Generate acceptance tests from requirements</td><td><code>/gvm-test-cases</code></td></tr>
+    <tr><td>Create a technical specification and implementation plan</td><td><code>/gvm-tech-spec</code></td></tr>
+    <tr><td>Surface integration risk before writing features</td><td><code>/gvm-walking-skeleton</code></td></tr>
+    <tr><td>Build code from a specification</td><td><code>/gvm-build</code></td></tr>
+    <tr><td>Review implementation code</td><td><code>/gvm-code-review</code></td></tr>
+    <tr><td>Verify the build works as a product</td><td><code>/gvm-test</code></td></tr>
+    <tr><td>Run a charter-driven exploratory test session</td><td><code>/gvm-explore-test</code></td></tr>
+    <tr><td>Audit the quality of a requirements, test, or spec document</td><td><code>/gvm-doc-review</code></td></tr>
+    <tr><td>Create a presentation, strategy doc, newsletter, whitepaper, or any prose document</td><td><code>/gvm-doc-write</code></td></tr>
+    <tr><td>Revise or fix issues in an existing document</td><td><code>/gvm-doc-write</code> in revise mode &mdash; reference the document and the issues or review findings</td></tr>
+    <tr><td>Run privacy-preserving exploratory data analysis on a CSV / TSV / xlsx / parquet / JSON file</td><td><code>/gvm-analysis</code></td></tr>
+    <tr><td>Check pipeline progress and staleness</td><td><code>/gvm-status</code></td></tr>
+    <tr><td>Score, rescore, or add experts in the roster</td><td><code>/gvm-experts</code></td></tr>
+    <tr><td>Add a new industry domain (e.g., healthcare, logistics)</td><td><code>/gvm-experts</code> to add and score experts, or <code>/gvm-init</code> to discover them from a domain prompt</td></tr>
+    <tr><td>Add a new technology stack specialist</td><td><code>/gvm-experts</code> to add directly, or <code>/gvm-tech-spec</code> discovers them automatically during stack selection</td></tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline">The Pipeline</h2>
+
+<div class="pipeline">
+  <span class="label">Entry points (pick one)</span>
+  /gvm-init &mdash; greenfield, calibrate experts before anything else (recommended for specialised domains: financial services, healthcare, regulated)
+  <br>
+  /gvm-impact-map &mdash; greenfield, outcome-framing first (skip /gvm-init when general-purpose software needs no specialised calibration)
+  <br>
+  /gvm-site-survey &mdash; existing codebase (routes to /gvm-requirements, /gvm-tech-spec, or /gvm-build based on diagnosis)
+  <br><br>
+  <span class="label">Greenfield pipeline</span>
+  [/gvm-init &rarr;] [/gvm-impact-map &rarr;] /gvm-requirements &rarr; /gvm-test-cases &rarr; /gvm-tech-spec &rarr; /gvm-design-review &rarr; /gvm-walking-skeleton &rarr; /gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; /gvm-explore-test &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy
+  <br><br>
+  <span class="label">Quality gate (any phase)</span>
+  /gvm-doc-review &mdash; cross-cutting audit, usable at any stage
+  <br><br>
+  <span class="label">Standalone documents (any point)</span>
+  /gvm-doc-write &mdash; create or revise presentations, whitepapers, and any prose document
+  <br><br>
+  <span class="label">Standalone analysis (any point)</span>
+  /gvm-analysis &mdash; privacy-preserving exploratory data analysis on any tabular file
+  <br><br>
+  <span class="label">Diagnostic (any point)</span>
+  /gvm-status &mdash; shows pipeline progress, staleness, and expert engagement
+</div>
+
+<p>
+  Square brackets <code>[/gvm-init &rarr;]</code> and <code>[/gvm-impact-map &rarr;]</code>
+  mark optional steps. Both are recommended for greenfield projects but neither is a hard
+  prerequisite for downstream skills. The shared bootstrap rule creates
+  <code>~/.claude/gvm/</code> on first invocation of any skill, so a project that goes
+  straight to <code>/gvm-requirements</code> still has a valid GVM home directory.
+</p>
+
+<span class="sidenote">
+  Each phase reads the output of the previous phase. The pipeline is sequential but not rigid &mdash; you can re-enter at any point if you already have the prerequisite artefacts.
+</span>
+
+<table>
+  <caption>Table 2 &mdash; Pipeline commands</caption>
+  <thead>
+    <tr><th>Command</th><th>What it does</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/gvm-init</code></td>
+      <td>Asks one question (your business domain), then automatically calibrates the expert roster, scores experts, and writes a calibration report to <code>init/init-001.html</code> and <code>init/init-001.md</code>. Stack specialists and component domains are deferred to later pipeline phases. Run this once at the start of a greenfield project.</td>
+    </tr>
+    <tr>
+      <td><code>/gvm-site-survey</code></td>
+      <td>Scores an existing codebase across coherence, currency, testability, modularity, documentation, and dependency health. Includes a mandatory expert coverage assessment (identifying covered areas and gaps) and recommends project experts for downstream phases. Routes you to the right pipeline phase based on what it finds.</td>
+    </tr>
+    <tr>
+      <td><code>/gvm-impact-map</code></td>
+      <td>Discovery skill that produces an <code>impact-map.md</code> artefact &mdash; four flat tables (Goals, Actors, Impacts, Deliverables) linked by parent-ID columns. Adzic&rsquo;s impact-mapping model with Cagan&rsquo;s outcome-first framing. Goals pass an ambiguity scan (denylist of aspirational verbs) and a foreign-key validator across all four levels. Downstream <code>/gvm-requirements</code> Phase 5 (IM-4 gate) refuses to finalise any requirement that doesn&rsquo;t trace to a leaf Deliverable.</td>
+    </tr>
+    <tr>
+      <td><code>/gvm-requirements</code></td>
+      <td>Expert-guided conversation that produces structured, prioritised requirements. Driven by an expert panel including Gause &amp; Weinberg (context-free questioning), Cooper (personas), Cohn (user stories), Christensen (jobs-to-be-done), and Wiegers (requirement classification).</td>
+    </tr>
+    <tr>
+      <td><code>/gvm-test-cases</code></td>
+      <td>Generates acceptance tests from requirements using Beizer and Copeland's test design techniques. Covers boundary analysis, equivalence partitioning, and state transitions. <em>Prerequisite: <code>requirements/requirements.md</code></em></td>
+    </tr>
+    <tr>
+      <td><code>/gvm-tech-spec</code></td>
+      <td>Produces focused specification documents with adaptive decomposition based on complexity. Architecture decisions are grounded in Clements and Fairbanks. <em>Prerequisites: <code>requirements/requirements.md</code> and <code>test-cases/test-cases.md</code></em></td>
+    </tr>
+    <tr>
+      <td><code>/gvm-design-review</code></td>
+      <td>Design validation &mdash; Reviews data models, UI/UX, and API contracts against requirements before build. <em>Prerequisite: <code>specs/</code> directory with at least one spec</em></td>
+    </tr>
+    <tr>
+      <td><code>/gvm-walking-skeleton</code></td>
+      <td>Discovery + scaffolding skill that produces a runnable skeleton exercising every external boundary (HTTP, DB, cloud SDK, filesystem, subprocess, email) through real or sandbox calls, plus a project-root <code>boundaries.md</code> registry. Surfaces integration failure modes (auth, CORS, rate limits, connection strings) at hour 1 instead of month 6. Downstream <code>/gvm-build</code> Hard Gate WS-5 refuses chunks if the skeleton is red in CI; <code>/gvm-test</code> VV-4(d) audits sandbox-divergence notes against the registry. <em>Prerequisite: <code>specs/cross-cutting.md</code>, <code>requirements/requirements.md</code>, <code>impact-map.md</code></em></td>
+    </tr>
+    <tr>
+      <td><code>/gvm-build</code></td>
+      <td>Executes the implementation guide chunk by chunk with strict TDD. Each chunk produces code, tests, and a handover file for session resilience. Hard Gates 6 + 7 enforce the wiring matrix: refuse to start a phase if the impl guide lacks a wiring matrix (entry point &rarr; consumed modules &rarr; wiring chunk); at phase completion, mechanically grep the entry-point file for both an import and a call site of every named module. <em>Prerequisites: <code>specs/implementation-guide.md</code> with a wiring matrix, readable spec files, and dependency handovers for each chunk</em></td>
+    </tr>
+    <tr>
+      <td><code>/gvm-test</code></td>
+      <td>Verifies the completed build works as a product: integration seam audit, acceptance test verification, startup verification, smoke testing, and stub vs implemented audit. Three-verdict taxonomy (Ship-ready / Demo-ready / Not shippable). <em>Prerequisites: all build chunks complete, <code>/gvm-code-review</code> run</em></td>
+    </tr>
+    <tr>
+      <td><code>/gvm-code-review</code></td>
+      <td>Dispatches parallel expert panels as subagents to review implementation code for quality, security, and spec adherence. <em>Prerequisites: <code>specs/</code> directory with at least one spec, and an initialised git repository</em></td>
+    </tr>
+    <tr>
+      <td><code>/gvm-explore-test</code></td>
+      <td>Practitioner-driven exploratory testing. Writes a YAML charter (mission, tour, scope, duration), times the session, captures defects through AskUserQuestion-driven prompts (severity, Given/When/Then, reproduction). Severity is the practitioner&rsquo;s call &mdash; the skill never auto-classifies. Produces paired <code>test/explore-NNN.md</code> + <code>.html</code> that <code>/gvm-test</code> reads via VV-4(d) on its next invocation; open Critical findings refuse Ship-ready.</td>
+    </tr>
+    <tr>
+      <td><code>/gvm-doc-review</code></td>
+      <td>Cross-cutting quality audit that scores documents against expert criteria. Works on requirements, test cases, specs, user documentation, presentations, strategy documents, newsletters, and training materials. Presents a multi-select when multiple types are detected.</td>
+    </tr>
+    <tr>
+      <td><code>/gvm-doc-write</code></td>
+      <td>Expert-grounded document creation and revision. Operates in two modes: <strong>pipeline docs</strong> (after <code>/gvm-test</code>, generates README, user guides, API docs) and <strong>standalone</strong> (any point, creates presentations, strategy documents, newsletters, training materials, status reports, whitepapers, and any prose document). Revise mode fixes issues in existing documents using the experts who diagnosed them. Content-driven expert loading and factual claims verification.</td>
+    </tr>
+    <tr>
+      <td><code>/gvm-status</code></td>
+      <td>Read-only diagnostic that shows pipeline progress, detects staleness when upstream artefacts have changed, and summarises expert engagement for the current project. Produces no output files.</td>
+    </tr>
+    <tr>
+      <td><code>/gvm-deploy</code></td>
+      <td>Release preparation: version bump (pre-1.0 vs post-1.0 decision tables), release notes, documentation accuracy check, changelog finalisation, git tag. Reads <code>/gvm-test</code> verdict and refuses to release on Not-shippable. Does NOT execute deployment &mdash; that is organisation-specific.</td>
+    </tr>
+    <tr>
+      <td><code>/gvm-experts</code></td>
+      <td>Score, rescore, and manage experts in the GVM roster. Score on first contact (frequency &times; influence &times; precision &times; transferability), persist to the matching reference file, and surface coverage gaps. Independent verification path for experts touching safety-critical or regulated domains.</td>
+    </tr>
+    <tr>
+      <td><code>/gvm-analysis</code></td>
+      <td>Privacy-preserving exploratory data analysis. Claude orchestrates a Python engine that reads a CSV / TSV / xlsx / parquet / JSON file, produces real per-column statistics with bootstrap CIs, outliers, time-series, drivers (when target supplied), and a privacy-safe duplicates summary. Raw rows never enter Claude&rsquo;s context &mdash; the engine writes aggregates only into <code>findings.json</code>; the renderer emits a self-contained HTML hub. Standalone skill (not part of the build pipeline).</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="quickstart-greenfield">Quick Start: Greenfield Project</h2>
+
+<p>
+  Starting a new project from scratch. This walkthrough assumes the plugin is installed.
+</p>
+
+<h3 id="step-1-init">Step 1 &mdash; Calibrate experts (recommended, not required)</h3>
+
+<p>
+  Run <code>/gvm-init</code>. It asks one question &mdash; your business domain &mdash; then selects industry domain experts, scores all unscored experts, and writes a calibration report.
+</p>
+
+<div class="callout">
+  <div class="callout-label">When init matters</div>
+  <p>Init is recommended for specialised domains (financial services, healthcare, regulated industries) where industry experts should be loaded before requirements start. For general-purpose software, skip it and go straight to <code>/gvm-requirements</code> &mdash; the pipeline discovers and scores experts automatically.</p>
+</div>
+
+<p>
+  On completion, init writes a calibration report to <code>init/init-001.html</code> and <code>init/init-001.md</code> with six sections: executive summary, Tier 1 decisions, Tier 2b coverage, expert roster summary table, activation log status, and next steps. Stack specialists and component-level domains are not configured here &mdash; they are handled by <code>/gvm-tech-spec</code> and <code>/gvm-requirements</code> respectively, where that information is available.
+</p>
+
+<h3 id="step-2-requirements">Step 2 &mdash; Gather requirements</h3>
+
+<p>
+  Run <code>/gvm-requirements</code> with your project idea. Describe what you want to build. The skill runs an elicitation conversation grounded in Wiegers' methodology, then produces a structured requirements document with MoSCoW priorities.
+</p>
+
+<h3 id="step-3-tests">Step 3 &mdash; Generate test cases</h3>
+
+<p>
+  Run <code>/gvm-test-cases</code>. It reads your requirements document and generates acceptance tests. Review the output &mdash; the test cases become the contract that the build phase must satisfy.
+</p>
+
+<h3 id="step-4-spec">Step 4 &mdash; Write the spec</h3>
+
+<p>
+  Run <code>/gvm-tech-spec</code>. It reads requirements and test cases, then produces one or more specification documents depending on project complexity. The spec includes an implementation guide that the build phase consumes.
+</p>
+
+<h3 id="step-5-design-review">Step 5 &mdash; Design review</h3>
+
+<p>
+  Run <code>/gvm-design-review</code>. It reads the spec and validates data models, UI/UX, and API contracts against requirements before any code is written. Fix findings before proceeding.
+</p>
+
+<h3 id="step-6-build">Step 6 &mdash; Build</h3>
+
+<p>
+  Run <code>/gvm-build</code>. It reads the implementation guide from the spec and executes it chunk by chunk, writing code and tests for each chunk. Each chunk produces a handover file so you can resume across sessions.
+</p>
+
+<h3 id="step-7-review">Step 7 &mdash; Review and verify</h3>
+
+<p>
+  Run <code>/gvm-code-review</code> for a full codebase review. Fix any findings. Then run <code>/gvm-test</code> to verify the build works as a product &mdash; integration seam audit, acceptance test verification, startup verification, smoke testing, and a stub vs implemented audit.
+</p>
+
+<h3 id="step-8-docs">Step 8 &mdash; Documentation</h3>
+
+<p>
+  Run <code>/gvm-doc-write</code> in pipeline docs mode to generate user-facing documentation (README, user guides, API docs) grounded in the verified build. Then run <code>/gvm-doc-review</code> to audit the documentation quality.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Optional quality gate</div>
+  <p>Run <code>/gvm-doc-review</code> after any document-producing phase (requirements, test cases, specs) to audit quality before proceeding. This is not mandatory but catches issues early. After <code>/gvm-test</code>, the documentation phase (<code>/gvm-doc-write</code> &rarr; <code>/gvm-doc-review</code>) is the final pipeline step.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="quickstart-existing">Quick Start: Existing Codebase</h2>
+
+<p>
+  Working with code that already exists. The site survey replaces <code>/gvm-init</code> as your entry point.
+</p>
+
+<h3 id="survey-run">Step 1 &mdash; Run the survey</h3>
+
+<p>
+  Run <code>/gvm-site-survey</code> from your project directory. The survey explores the codebase, scores it across multiple health dimensions (coherence, currency, testability, modularity, documentation, dependency health), and produces a diagnosis.
+</p>
+
+<h3 id="survey-review">Step 2 &mdash; Review the diagnosis</h3>
+
+<p>
+  The survey classifies the codebase into one of five diagnostic scenarios: Coherent, Coherent but Outdated, Fractured, Mid-migration, or Incoherent. Each diagnosis comes with a recommended pipeline entry point.
+</p>
+
+<h3 id="survey-follow">Step 3 &mdash; Follow the recommended route</h3>
+
+<p>
+  The survey tells you where to enter the pipeline based on both the codebase state and the nature of your intended work. A new user-facing feature on a coherent codebase might route directly to <code>/gvm-requirements</code>. Technical remediation on a fractured codebase might route to <code>/gvm-tech-spec</code>. If the survey found existing documentation &mdash; requirements, test plans, architecture docs in any format &mdash; it will recommend feeding them as seed input to the corresponding pipeline phase, accelerating the process without skipping the GVM quality checks. Follow the recommendation and continue through the pipeline from that point.
+</p>
+
+<span class="sidenote">
+  The site survey selects experts based on what it finds in the codebase &mdash; the technology stack, architectural patterns, and problem areas. You do not need to run <code>/gvm-init</code> separately.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="walkthrough">Example: A Project from Start to Finish</h2>
+
+<p>
+  A concrete walkthrough of a greenfield project &mdash; a neighbourhood comparison tool &mdash;
+  showing what you type, what GVM produces, and what happens at each phase.
+</p>
+
+<h3 id="wt-requirements">1. Requirements</h3>
+
+<pre><code>You: /gvm-requirements
+
+I want to build a tool that helps people compare neighbourhoods
+when they're thinking about moving. It should look at schools,
+commute times, and housing prices, and produce a report they
+can share with their partner.</code></pre>
+
+<p>
+  GVM loads the requirements expert panel (Wiegers, Patton, Cooper, Christensen/Moesta)
+  and begins an elicitation conversation. It asks one question at a time:
+</p>
+
+<ul>
+  <li>&ldquo;Who is the primary user? A first-time buyer, someone relocating for work, a family upsizing?&rdquo;</li>
+  <li>&ldquo;When you say &lsquo;compare neighbourhoods&rsquo;, do you mean side-by-side comparison of specific areas, or discovery of areas that match criteria?&rdquo;</li>
+  <li>&ldquo;What data sources are available? Government APIs, estate agent listings, school league tables?&rdquo;</li>
+</ul>
+
+<p>
+  After 10&ndash;15 questions, it writes the requirements document with MoSCoW priorities.
+</p>
+
+<p><strong>Output:</strong> <code>requirements/requirements.html</code> + <code>requirements/requirements.md</code></p>
+
+<h3 id="wt-test-cases">2. Test Cases</h3>
+
+<pre><code>You: /gvm-test-cases</code></pre>
+
+<p>
+  GVM reads the requirements document, runs a health report (catching untestable or
+  ambiguous requirements), then generates Given/When/Then test cases per domain.
+  For a MUST requirement like &ldquo;users can compare up to 3 neighbourhoods side by side&rdquo;,
+  it generates boundary tests (0 areas, 1 area, 3 areas, 4 areas) using Copeland&rsquo;s
+  boundary value analysis.
+</p>
+
+<p><strong>Output:</strong> <code>test-cases/test-cases.html</code> + <code>test-cases/test-cases.md</code></p>
+
+<h3 id="wt-tech-spec">3. Tech Spec</h3>
+
+<pre><code>You: /gvm-tech-spec</code></pre>
+
+<p>
+  GVM reads requirements and test cases, assesses complexity, and asks about the tech stack.
+  For this project it might produce 4 specs: cross-cutting conventions, a data integration
+  domain spec, a comparison engine domain spec, and an implementation guide with 8 build
+  chunks across 3 phases. Stack specialists (e.g., Vanderkam for TypeScript, Winand for SQL)
+  activate at this point.
+</p>
+
+<p><strong>Output:</strong> <code>specs/cross-cutting.md</code>, <code>specs/data-integration.md</code>, <code>specs/comparison-engine.md</code>, <code>specs/implementation-guide.md</code> (+ paired HTML)</p>
+
+<h3 id="wt-build">4. Build</h3>
+
+<pre><code>You: /gvm-build</code></pre>
+
+<p>
+  GVM reads the implementation guide and presents the dependency graph. It builds one chunk
+  at a time with strict TDD &mdash; failing test first, minimal code to pass, review against
+  expert principles, commit. Each chunk produces a handover file recording what was built.
+  After 2&ndash;3 chunks it recommends <code>/compact</code> to manage context. If chunks can
+  run in parallel, it offers to dispatch them to separate git worktrees.
+</p>
+
+<p><strong>Output:</strong> Working code, <code>build/prompts/P1-C01.md</code> through <code>P3-C02.md</code>, <code>build/handovers/</code> for each</p>
+
+<h3 id="wt-code-review">5. Code Review</h3>
+
+<pre><code>You: /gvm-code-review</code></pre>
+
+<p>
+  GVM dispatches parallel defect-class panels as subagents &mdash; each scanning for a specific
+  class of defect (references, contracts, logic, naming) rather than a broad area of expertise.
+  This orthogonal partitioning, grounded in Basili&rsquo;s Perspective-Based Reading research,
+  catches more issues on the first pass because panels cannot miss the same defects. Findings come
+  back with structured format: expert, severity, file:line, issue, fix. You fix the findings,
+  re-run on changed files until clean.
+</p>
+
+<p><strong>Output:</strong> <code>code-review/code-review-001.html</code> (HTML-only — per shared rule 13 exception, review reports do not produce paired MD)</p>
+
+<h3 id="wt-test">6. Build Verification</h3>
+
+<pre><code>You: /gvm-test</code></pre>
+
+<p>
+  GVM verifies the reviewed code works as a product: greps for integration seams (TODO,
+  NotImplementedError), starts the infrastructure, runs every acceptance test case from
+  <code>test-cases.md</code> against the built code, walks through the UI, and produces an
+  honest stub vs implemented audit. The audit might show:
+</p>
+
+<pre><code>Requirement Coverage: 12 IMPLEMENTED / 2 PARTIAL / 1 STUB / 0 NOT IMPLEMENTED
+Test Cases: 45 PASS / 3 FAIL / 1 BLOCKED / 2 STUB</code></pre>
+
+<p>
+  You decide whether to fix the remaining items or ship with documented limitations.
+</p>
+
+<p><strong>Output:</strong> <code>test/test-001.html</code> (HTML-only — per shared rule 13 exception, review/verification reports do not produce paired MD)</p>
+
+<div class="callout">
+  <div class="callout-label">At any point</div>
+  <p>Run <code>/gvm-status</code> to see where you are. Run <code>/gvm-doc-review</code> to audit the quality of any document before proceeding to the next phase. After <code>/gvm-test</code>, run <code>/gvm-doc-write</code> for pipeline documentation, then <code>/gvm-doc-review</code> as the final quality gate.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="expert-grounding">How Expert Grounding Works</h2>
+
+<p>
+  GVM uses a three-tier expert model. Each tier activates at different points in the pipeline:
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Expert tiers</caption>
+  <thead>
+    <tr><th>Tier</th><th>Name</th><th>When active</th><th>Examples</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Tier 1</strong></td>
+      <td>Process experts</td>
+      <td>Always &mdash; they govern the methodology for each phase</td>
+      <td>Wiegers (requirements), Copeland (test design), Clements &amp; Fairbanks (architecture)</td>
+    </tr>
+    <tr>
+      <td><strong>Tier 2a</strong></td>
+      <td>Software-domain specialists</td>
+      <td>When specific software domains are encountered (data modelling, UX, resilience, etc.)</td>
+      <td>Cooper/Krug (frontend), Kleppmann (data systems), Nygard (resilience)</td>
+    </tr>
+    <tr>
+      <td><strong>Tier 2b</strong></td>
+      <td>Industry-domain specialists</td>
+      <td>When the application operates in a regulated or specialised industry</td>
+      <td>Industry-specific experts (model risk, credit risk, operational risk, etc.)</td>
+    </tr>
+    <tr>
+      <td><strong>Tier 3</strong></td>
+      <td>Stack specialists</td>
+      <td>After technology choices are made</td>
+      <td>Ramalho (Python), Vanderkam (TypeScript), Winand (SQL)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Experts are defined in reference files stored within the plugin. When a pipeline phase activates, it loads the relevant reference files into context. The AI then applies those experts' frameworks rather than drawing from undifferentiated training data. Every pipeline artefact (requirements, test cases, specs) includes an Expert Panel table near the top showing which experts were active and what each governed &mdash; so you know which frameworks shaped the decisions.
+</p>
+
+<h3 id="shared-rules">Shared rules</h3>
+
+<p>
+  Every GVM skill loads <code>shared-rules.md</code> at startup. The load-bearing rules are: expert activation and discovery, pipeline artefact contracts, hallucination prevention, dual review from round 3+, and expert panel attribution in output. Secondary rules govern when-not-to-ground guidance, what to surface vs keep invisible, automatic scoring, industry domain loading, and incremental writing for large outputs. The single shared file is what keeps every skill behaving the same way.
+</p>
+
+<p>
+  The roster is not fixed. You can swap experts during <code>/gvm-init</code>, add industry domain files for your specific field, and extend the stack specialist list as new technologies are adopted. The <a href="../skills/gvm-experts/docs/user-guide.html">expert management guide</a> covers scoring and roster management in detail.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="file-locations">Where Things Live</h2>
+
+<p>
+  GVM stores files in two locations. Understanding the split avoids confusion about where to find things and what belongs where.
+</p>
+
+<table>
+  <caption>Table 4 &mdash; Project vs shared files</caption>
+  <thead>
+    <tr><th>Location</th><th>What lives here</th><th>Scope</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Your project directory</strong><br><code>requirements/</code>, <code>test-cases/</code>, <code>specs/</code>, <code>build/</code>, <code>code-review/</code>, etc.</td>
+      <td>All pipeline output &mdash; requirements documents, test cases, specs, build handovers, review reports, site survey reports</td>
+      <td>One project. Lives in your repo. Committed to git. Visible to your team.</td>
+    </tr>
+    <tr>
+      <td><strong><code>~/.claude/skills/gvm-*/</code></strong></td>
+      <td>The plugin itself &mdash; skill definitions (SKILL.md), expert reference files, design templates, shared rules, scoring methodology, pipeline contracts</td>
+      <td>All projects. Shared across every project that uses GVM on this machine.</td>
+    </tr>
+    <tr>
+      <td><strong><code>~/.claude/gvm/</code></strong></td>
+      <td>Shared runtime data &mdash; activation log (<code>expert-activations.csv</code>), discovered experts (<code>discovered-experts.jsonl</code>), rescore log (<code>rescore-log.jsonl</code>), plugin user guide (<code>docs/plugin-guide.html</code>)</td>
+      <td>All projects. Shared across every project that uses GVM on this machine.</td>
+    </tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  The activation log (<code>~/.claude/gvm/expert-activations.csv</code>) tracks entries per project using a project name column. <code>/gvm-status</code> filters it to show only your current project.
+</span>
+
+<h3 id="why-split">Why the split</h3>
+
+<p>
+  Pipeline output is project-specific &mdash; your requirements are not another project&rsquo;s requirements. It belongs in the project directory where it can be committed, reviewed, and shared with collaborators.
+</p>
+
+<p>
+  Expert references and skill definitions are shared resources &mdash; the same Wiegers methodology applies to every requirements phase, the same Tufte design system applies to every document. Duplicating these per project would create maintenance burden and version drift.
+</p>
+
+<p>
+  This is also why expert discovery persists to the central roster, not to project-local files. An expert discovered during one project may seem specific to that project at the time, but the same domain knowledge often surfaces again in a different context. If the expert is already scored and in the roster, the next project picks them up automatically. If they were stored locally, you would have to remember they exist and manually transfer them &mdash; or rediscover them from scratch.
+</p>
+
+<h3 id="practical-implications">What this means in practice</h3>
+
+<ul>
+  <li><strong>To see your project&rsquo;s GVM output:</strong> look in your project directory &mdash; <code>requirements/</code>, <code>test-cases/</code>, <code>specs/</code>, <code>build/</code>, etc.</li>
+  <li><strong>To customise experts:</strong> edit files in <code>~/.claude/skills/gvm-design-system/references/</code> or use <code>/gvm-experts</code> to score and manage them.</li>
+  <li><strong>To see expert engagement for your project:</strong> run <code>/gvm-status</code> &mdash; it reads the shared activation log and filters to your project.</li>
+  <li><strong>To share GVM output with your team:</strong> commit the project-level directories. The shared plugin files are not needed &mdash; each team member installs the plugin independently.</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<!-- ───────────────────────────────────────── -->
+<h2 id="when-not-to-ground">When NOT to Ground</h2>
+
+<p>
+  Not every action needs expert grounding. Expert activation is for decisions &mdash; architectural choices, design trade-offs, technique selection, quality judgements. The following do not benefit from it:
+</p>
+
+<ul>
+  <li>Inline bug fixes</li>
+  <li>Simple renames and refactors</li>
+  <li>Formatting corrections</li>
+  <li>Dependency updates</li>
+  <li>Routine housekeeping</li>
+</ul>
+
+<p>
+  If the task does not involve a judgement call, just do it. The overhead of loading experts, citing frameworks, and tracking activations is only worth paying when the task involves a decision that benefits from authoritative grounding.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="ts-command">A /gvm-* command is not recognised</h3>
+<p>The plugin is not loaded. Run <code>/gvm-status</code> as a test. If that is not recognised either, verify that <code>plugin.json</code> is at the expected path and restart Claude Code.</p>
+
+<h3 id="ts-prerequisite">A skill says a prerequisite file is missing</h3>
+<p>Pipeline skills check for upstream artefacts before starting. The error message tells you which upstream command to run. This is intentional &mdash; the pipeline is sequential and each phase depends on the previous one&rsquo;s output.</p>
+
+<h3 id="ts-partial">A skill was interrupted mid-way through</h3>
+<ul>
+  <li><strong>Document-producing skills</strong> &mdash; check for partial output files. Re-run the skill; it will detect existing output and offer to continue or start fresh.</li>
+  <li><strong>Build skill</strong> &mdash; designed for interruption. It reads <code>build/handovers/</code> to determine progress and continues from the next unfinished chunk.</li>
+  <li><strong>Init or site survey</strong> &mdash; re-run. Both detect prior state and offer options.</li>
+</ul>
+
+<h3 id="ts-stale">Downstream artefacts are stale after upstream changes</h3>
+<p>Run <code>/gvm-status</code> to check for staleness. If flagged, re-run the downstream skill &mdash; it will detect the newer upstream file and offer to regenerate.</p>
+
+<h3 id="ts-reference">A reference file is missing or corrupted</h3>
+<p>Reinstall the plugin to restore reference files to their default state. Custom industry domain files in <code>references/industry/</code> are preserved.</p>
+
+<div class="callout">
+  <div class="callout-label">Reference files are shared</div>
+  <p>Files in <code>~/.claude/skills/</code> are shared across all projects on this machine. If you corrupt or delete a reference file, every project is affected.</p>
+</div>
+
+<h3 id="ts-experts">Experts are not being cited in output</h3>
+<p>Check that <code>shared-rules.md</code> and the expert reference files exist in <code>~/.claude/skills/gvm-design-system/references/</code>. Run <code>/gvm-status</code> to check expert engagement.</p>
+
+<h3 id="ts-scoring">Expert scores seem wrong</h3>
+<p>Run <code>/gvm-experts</code> and select &ldquo;Rescore.&rdquo; Scoring uses independent verification, so occasional disagreements are expected. Rescoring with a fresh assessment resolves persistent issues.</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="customising">Customising the Expert Roster</h2>
+
+<h3 id="industry-domains">Adding industry domain experts</h3>
+
+<p>
+  Industry domain files live in <code>references/industry/</code> within the design system skill. GVM ships with files for market risk, credit risk, model risk, and operational risk. To add a new domain:
+</p>
+
+<p>
+  <strong>Recommended: let <code>/gvm-init</code> or <code>/gvm-site-survey</code> do it.</strong> Both commands delegate to the centralised Expert Discovery and Persistence Process in the design system. In the init flow (step 2), describe your business domain. In a site survey, expert discovery runs automatically after diagnosis. Either way, the AI will identify authoritative experts from its training data, present them with scores and evidence, and persist approved experts to the reference files &mdash; all in the correct format.
+</p>
+
+<p>
+  <strong>Manual alternative:</strong> Create a new file at <code>~/.claude/skills/gvm-design-system/references/industry/{your-domain}.md</code>, following the structure of the existing files. Make it verbose and self-contained. Then run <code>/gvm-experts</code> and select &ldquo;Score experts in a reference file&rdquo; to score the entries.
+</p>
+
+<span class="sidenote">
+  Whether created by <code>/gvm-init</code> or manually, industry files are append-only. Experts discovered during projects are added, never removed. The roster grows as your understanding of the domain deepens.
+</span>
+
+<h3 id="scoring-brief">How scoring works</h3>
+
+<p>
+  Every expert and work carries a classification: Canonical (4.5+ average), Established (3.5&ndash;4.4), Recognised (2.5&ndash;3.4), Emerging (1.5&ndash;2.4), or Provisional (below 1.5). Scores are assessed across five dimensions for experts (authority, publication, breadth, adoption, currency) and four for works (specificity, depth, currency, influence).
+</p>
+
+<p>
+  Scoring uses independent verification: a second agent assesses the same expert without seeing the first agent's scores. If the two assessments converge, the averaged scores are used. If they diverge, the user decides. Over time, utilisation data from the activation log provides feedback on whether classifications align with actual usage.
+</p>
+
+<p>
+  The <a href="../skills/gvm-experts/docs/user-guide.html">expert management guide</a> covers the full scoring methodology, utilisation feedback, and divergence criteria.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="expert-sources">Tier 1 Expert Sources</h2>
+
+<p>
+  The default Tier 1 experts whose frameworks are applied automatically by each pipeline phase. These are listed here once rather than in each skill guide. Industry domain (Tier 2b) and stack (Tier 3) experts vary by project and are configured during <code>/gvm-init</code> or <code>/gvm-site-survey</code>.
+</p>
+
+<table class="no-stripe">
+  <caption>Table 5 &mdash; Tier 1 experts by pipeline phase</caption>
+  <thead>
+    <tr><th>Expert</th><th>Work</th></tr>
+  </thead>
+  <tbody>
+    <tr class="group-header"><td colspan="2">Requirements</td></tr>
+    <tr><td>Karl Wiegers &amp; Joy Beatty</td><td><em>Software Requirements</em> (3rd ed.)</td></tr>
+    <tr><td>Donald Gause &amp; Gerald Weinberg</td><td><em>Exploring Requirements: Quality Before Design</em></td></tr>
+    <tr><td>Jeff Patton</td><td><em>User Story Mapping</em></td></tr>
+    <tr><td>Alan Cooper</td><td><em>About Face</em> (4th ed.)</td></tr>
+    <tr><td>Clayton Christensen</td><td><em>Competing Against Luck</em></td></tr>
+    <tr><td>Bob Moesta</td><td><em>Demand-Side Sales 101</em></td></tr>
+    <tr><td>Suzanne &amp; James Robertson</td><td><em>Mastering the Requirements Process</em> (3rd ed.)</td></tr>
+    <tr class="group-header"><td colspan="2">Test Cases</td></tr>
+    <tr><td>Lee Copeland</td><td><em>A Practitioner&rsquo;s Guide to Software Test Design</em></td></tr>
+    <tr><td>Boris Beizer</td><td><em>Software Testing Techniques</em> (2nd ed.)</td></tr>
+    <tr><td>Dan North</td><td>&ldquo;Introducing BDD&rdquo; (2006)</td></tr>
+    <tr><td>Gojko Adzic</td><td><em>Specification by Example</em></td></tr>
+    <tr><td>Cem Kaner et al.</td><td><em>Testing Computer Software</em> (2nd ed.)</td></tr>
+    <tr><td>Cem Kaner, James Bach &amp; Bret Pettichord</td><td><em>Lessons Learned in Software Testing</em></td></tr>
+    <tr class="group-header"><td colspan="2">Tech Spec</td></tr>
+    <tr><td>Paul Clements et al.</td><td><em>Documenting Software Architectures</em> (2nd ed.)</td></tr>
+    <tr><td>Simon Brown</td><td><em>Software Architecture for Developers</em></td></tr>
+    <tr><td>George Fairbanks</td><td><em>Just Enough Software Architecture</em></td></tr>
+    <tr><td>Michael Keeling</td><td><em>Design It!</em></td></tr>
+    <tr><td>Len Bass, Paul Clements &amp; Rick Kazman</td><td><em>Software Architecture in Practice</em> (4th ed.)</td></tr>
+    <tr><td>Frederick Brooks</td><td><em>The Mythical Man-Month</em>; <em>The Design of Design</em></td></tr>
+    <tr><td>Martin Fowler</td><td><em>Patterns of Enterprise Application Architecture</em></td></tr>
+    <tr class="group-header"><td colspan="2">Build</td></tr>
+    <tr><td>Steve McConnell</td><td><em>Code Complete</em> (2nd ed.)</td></tr>
+    <tr><td>Robert C. Martin</td><td><em>Clean Code</em></td></tr>
+    <tr><td>Kent Beck</td><td><em>Test-Driven Development by Example</em></td></tr>
+    <tr class="group-header"><td colspan="2">Site Survey</td></tr>
+    <tr><td>Martin Fowler</td><td><em>Refactoring</em> (2nd ed.)</td></tr>
+    <tr><td>Michael Feathers</td><td><em>Working Effectively with Legacy Code</em></td></tr>
+    <tr><td>Martin Kleppmann</td><td><em>Designing Data-Intensive Applications</em></td></tr>
+    <tr><td>Sam Newman</td><td><em>Building Microservices</em> (2nd ed.)</td></tr>
+    <tr class="group-header"><td colspan="2">Design System</td></tr>
+    <tr><td>Edward Tufte</td><td><em>The Visual Display of Quantitative Information</em>; <em>Envisioning Information</em></td></tr>
+    <tr><td>Stephen Few</td><td><em>Show Me the Numbers</em>; <em>Information Dashboard Design</em></td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  Code review and doc review draw from the same experts as the phases they review &mdash; the spec experts review specs, the requirements experts review requirements. They do not introduce additional Tier 1 experts.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="skill-guides">Individual Skill Guides</h2>
+
+<p>
+  Each skill has its own detailed user guide covering usage, output format, and expert activation:
+</p>
+
+<table>
+  <caption>Table 6 &mdash; Skill user guides</caption>
+  <thead>
+    <tr><th>Skill</th><th>Guide</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>/gvm-init</code></td><td><a href="../skills/gvm-init/docs/user-guide.html">Init User Guide</a></td></tr>
+    <tr><td><code>/gvm-site-survey</code></td><td><a href="../skills/gvm-site-survey/docs/user-guide.html">Site Survey User Guide</a></td></tr>
+    <tr><td><code>/gvm-impact-map</code></td><td><a href="../skills/gvm-impact-map/docs/user-guide.html">Impact Map User Guide</a></td></tr>
+    <tr><td><code>/gvm-requirements</code></td><td><a href="../skills/gvm-requirements/docs/user-guide.html">Requirements User Guide</a></td></tr>
+    <tr><td><code>/gvm-test-cases</code></td><td><a href="../skills/gvm-test-cases/docs/user-guide.html">Test Cases User Guide</a></td></tr>
+    <tr><td><code>/gvm-tech-spec</code></td><td><a href="../skills/gvm-tech-spec/docs/user-guide.html">Tech Spec User Guide</a></td></tr>
+    <tr><td><code>/gvm-design-review</code></td><td><a href="../skills/gvm-design-review/docs/user-guide.html">Design Review User Guide</a></td></tr>
+    <tr><td><code>/gvm-walking-skeleton</code></td><td><a href="../skills/gvm-walking-skeleton/docs/user-guide.html">Walking Skeleton User Guide</a></td></tr>
+    <tr><td><code>/gvm-build</code></td><td><a href="../skills/gvm-build/docs/user-guide.html">Build User Guide</a></td></tr>
+    <tr><td><code>/gvm-code-review</code></td><td><a href="../skills/gvm-code-review/docs/user-guide.html">Code Review User Guide</a></td></tr>
+    <tr><td><code>/gvm-test</code></td><td><a href="../skills/gvm-test/docs/user-guide.html">Build Verification User Guide</a></td></tr>
+    <tr><td><code>/gvm-explore-test</code></td><td><a href="../skills/gvm-explore-test/docs/user-guide.html">Explore Test User Guide</a></td></tr>
+    <tr><td><code>/gvm-doc-write</code></td><td><a href="../skills/gvm-doc-write/docs/user-guide.html">Document Write User Guide</a></td></tr>
+    <tr><td><code>/gvm-doc-review</code></td><td><a href="../skills/gvm-doc-review/docs/user-guide.html">Document Review User Guide</a></td></tr>
+    <tr><td><code>/gvm-deploy</code></td><td><a href="../skills/gvm-deploy/docs/user-guide.html">Deploy User Guide</a></td></tr>
+    <tr><td><code>/gvm-status</code></td><td><a href="../skills/gvm-status/docs/user-guide.html">Status User Guide</a></td></tr>
+    <tr><td><code>/gvm-experts</code></td><td><a href="../skills/gvm-experts/docs/user-guide.html">Expert Management User Guide</a></td></tr>
+    <tr><td><code>/gvm-analysis</code></td><td><a href="../skills/gvm-analysis/docs/user-guide.html">Analysis User Guide</a></td></tr>
+    <tr><td>Design System</td><td><a href="../skills/gvm-design-system/docs/user-guide.html">Design System User Guide</a></td></tr>
+  </tbody>
+</table>
+
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

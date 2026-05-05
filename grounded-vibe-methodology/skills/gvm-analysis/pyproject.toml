@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gvm_analysis"
+version = "0.1.0"
+description = "Grounded data analysis skill — the /gvm-analysis GVM skill."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary" }
+authors = [{ name = "Grounded Vibe Methodology" }]
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "scipy>=1.17",
+    "scikit-learn>=1.3",
+    "statsmodels>=0.14",
+    "openpyxl>=3.1",
+    "matplotlib>=3.7",
+    "pyyaml>=6.0",
+    "jinja2>=3.1",
+    "pymannkendall>=1.4",
+    "packaging>=23.0",
+    "pyarrow>=14.0",
+    "rapidfuzz>=3.0",
+    "squarify>=0.4",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4",
+    "hypothesis>=6.80",
+    "playwright>=1.40",
+    "html5lib>=1.1",
+]
+full = [
+    "shap>=0.44",
+    "pmdarima>=2.0",
+    "lttbc>=0.2",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gvm_analysis*"]
+exclude = ["tests*", "scripts*", "templates*", "docs*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+pythonpath = ["."]
+addopts = "-ra --strict-markers"
+markers = [
+    "slow: long-running tests (synthesise large fixtures or run heavy pipelines); excluded from the default fast suite via env-var gating.",
+    "perf: NFR-2 performance-budget tests; gated by GVM_RUN_PERF_TESTS=1.",
+    "wcag: NFR-7 accessibility-audit tests (Playwright + axe-core); gated by GVM_RUN_WCAG_TESTS=1.",
+]

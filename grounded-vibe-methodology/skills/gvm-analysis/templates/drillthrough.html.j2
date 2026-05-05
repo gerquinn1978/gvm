@@ -1,0 +1,38 @@
+{#-
+  Drillthrough outer layout (P6-C05 / ADR-301).
+
+  One complete HTML file per findings.drillthroughs[] entry. Shared CSS
+  shell via _css.html.j2; back-link to report.html (relative); GVM
+  attribution as last element child of <main>.
+
+  Context contract: every key from the hub context PLUS `drillthrough`
+  (single entry) and `dt_kind` (string). The matching
+  `_drillthrough_<kind>.html.j2` partial renders the body.
+-#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ dt_title }}</title>
+  {% include '_css.html.j2' %}
+  {% include '_css_overrides.html.j2' %}
+</head>
+<body>
+  <nav class="drillthrough-back" aria-label="Drillthrough navigation">
+    <a href="report.html">&larr; Back to hub</a>
+  </nav>
+  <main>
+    <h1>{{ dt_title }}</h1>
+    {% if dt_kind == 'column' %}
+      {% include '_drillthrough_column.html.j2' %}
+    {% elif dt_kind == 'outlier' %}
+      {% include '_drillthrough_outlier.html.j2' %}
+    {% elif dt_kind == 'driver' %}
+      {% include '_drillthrough_driver.html.j2' %}
+    {% endif %}
+    {% include '_provenance.html.j2' %}
+    <p class="gvm-attribution">Developed using the Grounded Vibe Methodology</p>
+  </main>
+  {% include '_interactivity.js.j2' %}
+</body>
+</html>

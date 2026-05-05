@@ -1,0 +1,28 @@
+# HS-2 expiry CI job (cross-cutting ADR-008).
+#
+# Sample GitHub Actions workflow that fails the build when any STUBS.md entry
+# has today > expiry. Same helper script (`_expiry_check.py`) is invoked from
+# the skill's Hard Gate code path — one implementation, two entry points.
+#
+# Drop into `.github/workflows/stubs-expiry.yml` (or merge as a job in an
+# existing workflow). The `schedule` trigger is intentional — a stub expiring
+# on a quiet branch must surface even when no commits land.
+
+name: stubs-expiry-check
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 7 * * *"  # daily at 07:00 UTC
+
+jobs:
+  expiry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify no expired stubs
+        run: |
+          python3 grounded-vibe-methodology/skills/gvm-design-system/scripts/_expiry_check.py STUBS.md

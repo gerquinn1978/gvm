@@ -1,0 +1,57 @@
+{#-
+  Time-series section partial (P6-C04c).
+
+  Plain-language summary of cadence, trend direction, and seasonality.
+  Statistical method names (Mann-Kendall, STL) live in sidenotes per
+  ADR-305 + TC-NFR-4-02.
+-#}
+{% set ts = time_series %}
+<p>Cadence: {{ ts.cadence }}. Time column: <code>{{ ts.time_column }}</code>.</p>
+
+{% if ts.trend %}
+<p>
+  Trend: {{ ts.trend.trend_label }}
+  {% if ts.trend.significant %}(statistically significant){% else %}(not significant){% endif %}.
+  {% set trend_key = 'mann_kendall_trend' if ts.trend.method == 'mann-kendall' else none %}
+  {% if trend_key and trend_key in methodology_by_key %}
+  {% set entry = methodology_by_key[trend_key] %}
+  <aside class="sidenote">
+    {{ entry.display_name }} ({{ entry.parameters }}). Citation: {{ entry.expert_citation }}.
+  </aside>
+  {% endif %}
+</p>
+{% endif %}
+
+{% if ts.seasonality %}
+<p>
+  Seasonality:
+  {% if ts.seasonality.significant %}
+    detected at strength {{ ts.seasonality.strength | round(2) }} (period {{ ts.seasonality.period }}).
+  {% else %}
+    not detected (strength {{ ts.seasonality.strength | round(2) }}).
+  {% endif %}
+  {% set season_key = 'stl_seasonality' if ts.seasonality.method == 'stl' else none %}
+  {% if season_key and season_key in methodology_by_key %}
+  {% set entry = methodology_by_key[season_key] %}
+  <aside class="sidenote">
+    {{ entry.display_name }} ({{ entry.parameters }}). Citation: {{ entry.expert_citation }}.
+  </aside>
+  {% endif %}
+</p>
+{% endif %}
+
+{# P19-C03: time-series chart figures (line + decomposition). Guarded so
+   absent `charts` block or null paths degrade silently to text-only. #}
+{% set ts_charts = ts.get('charts') or {} %}
+{% if ts_charts.get('line') %}
+<figure class="time-series-chart">
+  <img src="{{ ts_charts.line }}" alt="Time-series line plot for {{ ts.time_column }}">
+  <figcaption>Time-series &mdash; <code>{{ ts.time_column }}</code></figcaption>
+</figure>
+{% endif %}
+{% if ts_charts.get('decomposition') %}
+<figure class="time-series-chart">
+  <img src="{{ ts_charts.decomposition }}" alt="Seasonal decomposition for {{ ts.time_column }}">
+  <figcaption>Seasonal decomposition &mdash; <code>{{ ts.time_column }}</code></figcaption>
+</figure>
+{% endif %}

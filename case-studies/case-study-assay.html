@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building a Production Tool with GVM — The Assay Case Study</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+      color: #111;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      font-style: italic;
+      margin-top: 3rem;
+      margin-bottom: 1rem;
+      color: #111;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3rem;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 0.6rem;
+      color: #333;
+    }
+
+    p, li {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 0.8rem;
+      max-width: 640px;
+    }
+
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+
+    .subtitle {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #555;
+      margin-bottom: 2.5rem;
+      max-width: 640px;
+    }
+
+    .date {
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: 0.2rem;
+    }
+
+    .author {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    nav.toc {
+      position: fixed;
+      top: 2rem;
+      left: 2rem;
+      width: 220px;
+      max-height: calc(100vh - 4rem);
+      overflow-y: auto;
+      background: #fffff8;
+      border-right: 2px solid #ddd;
+      padding: 1rem 1rem 1rem 0;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      z-index: 100;
+    }
+
+    nav.toc .toc-title {
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #999;
+      margin-bottom: 0.6rem;
+    }
+
+    nav.toc a {
+      color: #555;
+      text-decoration: none;
+      display: block;
+      padding: 0.15rem 0;
+      transition: color 0.15s;
+    }
+
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+
+    main { margin-left: 260px; }
+
+    .sidenote {
+      float: right;
+      clear: right;
+      width: 220px;
+      margin-right: -260px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #666;
+      padding-left: 1rem;
+      border-left: 2px solid #e0e0e0;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      width: auto;
+      min-width: 480px;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 1rem 0.5rem 0;
+      border-bottom: 2px solid #333;
+      color: #111;
+    }
+
+    tbody td {
+      padding: 0.45rem 1rem 0.45rem 0;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+
+    caption {
+      font-style: italic;
+      font-size: 0.88rem;
+      color: #666;
+      text-align: left;
+      margin-bottom: 0.4rem;
+    }
+
+    td.num, th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    blockquote {
+      border-left: 3px solid #999;
+      padding: 0.4rem 1rem;
+      margin: 1.2rem 0;
+      max-width: 640px;
+      font-style: italic;
+      color: #444;
+    }
+
+    a { color: #a00000; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .callout {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .callout.key-finding {
+      background: #fdf0ef;
+      border-left: 3px solid #a00000;
+    }
+
+    .callout.key-finding .callout-label {
+      color: #a00000;
+    }
+
+    .callout-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .req {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 0.8rem 1rem;
+      margin: 1rem 0 1.2rem;
+      max-width: 640px;
+    }
+
+    .req-id {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.2rem;
+    }
+
+    .req p { margin-bottom: 0.3rem; }
+
+    .priority {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.1rem 0.45rem;
+      border-radius: 2px;
+      vertical-align: middle;
+      margin-left: 0.4rem;
+    }
+
+    .priority.must { background: #111; color: #fff; }
+
+    @media (max-width: 1200px) {
+      nav.toc {
+        position: static;
+        width: 100%;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+        padding: 1rem 0;
+        margin-bottom: 2rem;
+      }
+      main { margin-left: 0; }
+      .sidenote {
+        float: none;
+        width: 100%;
+        margin: 0.8rem 0;
+        padding: 0.6rem 0 0.6rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <h1>Building a Production Tool with GVM</h1>
+    <p class="subtitle">A case study: how the Grounded Vibe Methodology built Assay, a blind-review experiment runner for LLM research &mdash; from requirements to release, with every artefact traced.</p>
+    <p class="author" style="font-size: 0.9rem; color: #666;">Conor Brennan &amp; Gerard Quinn</p>
+    <p class="date" style="margin-bottom: 2rem;">April 2026</p>
+
+    <div class="callout">
+      <div class="callout-label">This document in context</div>
+      <p>This case study complements the GVM whitepapers. Read <em>The Grounded Vibe Methodology</em> for the full thesis and experiment. Read <em>Well-Engineered Software Needs an End-to-End Pipeline</em> for the structural decisions and durable artefacts that distinguish the pipeline. Read <em>Grounding Produces Measurably Better Output</em> for the experiment that Assay was built to run. The blog post <em>AI Can Build Fully Engineered Software</em> provides a short introduction.</p>
+    </div>
+
+    <h2 id="problem">The problem</h2>
+
+    <p>We needed to test whether expert grounding &mdash; citing specific authorities in prompts &mdash; measurably improves AI output quality. The experiment required generating hundreds of artefacts across multiple LLM providers, reviewing each one blind (the reviewer cannot know which prompt produced it), extracting scores into structured data for statistical analysis, and doing all of this without a single methodological shortcut that would invalidate the results.</p>
+
+    <p>This is not a coding problem. It is a logistics and integrity problem. The blind-review constraint alone introduces shuffle mappings, anonymised IDs, and a separation between generation and review that must survive process crashes, budget exhaustion, and rate limiting. Add three providers (Anthropic, OpenAI, Google), concurrent API dispatch, cost tracking, and an audit trail, and you have a system where a single implementation error can silently corrupt an entire experiment.</p>
+
+    <p>We built Assay using the Grounded Vibe Methodology &mdash; the same methodology the experiment was designed to validate. This is the case study of that build.</p>
+
+    <h2 id="what-was-built">What was built</h2>
+
+    <p>Assay is a command-line tool that runs controlled experiments on LLM output. A researcher defines an experiment in YAML &mdash; producer groups with different prompts, review configurations with scoring rubrics, budget limits, concurrency settings &mdash; and Assay handles the rest.</p>
+
+    <p>Three commands cover the full workflow:</p>
+
+    <ul>
+      <li><code>assay generate</code> &mdash; dispatches prompts to LLM providers, stores artefacts, tracks cost, and persists state atomically so a crashed or paused run resumes exactly where it stopped.</li>
+      <li><code>assay review</code> &mdash; shuffles artefacts into anonymised order, sends each to reviewers with only the rubric and the content (no group label, no index, no filename), so a reviewer cannot see which group produced an artefact (blindness), enforced at the protocol level.</li>
+      <li><code>assay extract</code> &mdash; parses review output into CSV scores with a separate group-mapping file for post-hoc unblinding.</li>
+    </ul>
+
+    <p>The tool supports Anthropic Claude, OpenAI GPT, and Google Gemini. It handles concurrent dispatch with per-provider semaphores, exponential backoff with interruptible sleep, budget enforcement that can abort mid-stream, and an append-only JSONL audit trail that records every API call with prompt hashes and blindness verification flags.</p>
+
+    <span class="sidenote">Assay was the tool used to run the three-model experiment reported in the companion paper <em>Grounding Produces Measurably Better Output</em>: 180 dashboards, 1,080 blind reviews, three models.</span>
+
+    <p>The final release ships with 38 requirements implemented (all MUST priorities met), 207 passing tests, 97 acceptance test cases verified, and zero critical or important code review findings.</p>
+
+    <h2 id="pipeline-in-practice">The pipeline in practice</h2>
+
+    <p>GVM structures a build as a sequence of phases, each producing artefacts that the next phase consumes. Here is how those phases played out for Assay.</p>
+
+    <h3 id="requirements">Requirements</h3>
+
+    <p>The pipeline begins with <code>/gvm-requirements</code>, which produces a structured requirements document grounded in Wiegers' elicitation framework and Patton's story mapping. For Assay, this yielded 38 requirements across seven domains: experiment definition, experiment execution, cost management, data output, audit trail, security, and logging &amp; progress.</p>
+
+    <p>Every requirement carries a MoSCoW priority and a unique ID that traces forward through every subsequent phase. When a test case references <code>TC-EP-5-01</code>, you can trace it back to requirement <code>EP-5</code> (reviewer blindness) without ambiguity. Here is what a GVM requirement looks like:</p>
+
+    <div class="req">
+      <div class="req-id">EP-5 <span class="priority must">Must</span></div>
+      <p>The review phase must not include any group identifier, group label, producer prompt, or other metadata that would reveal which group an artefact belongs to in the reviewer's prompt context. Reviewers see only the artefact content and the review rubric.</p>
+    </div>
+
+    <p>The language is specific enough to test directly: either the reviewer prompt contains group identifiers or it does not. This requirement produced three test cases (blindness verification, shuffle mapping isolation, and unblinding separation) and drove the architectural decision to anonymise artefacts at the protocol level rather than relying on prompt engineering.</p>
+
+    <h3 id="test-cases">Test cases before architecture</h3>
+
+    <p>The test cases phase runs <em>before</em> the tech spec &mdash; not after. This is deliberate. If a requirement cannot be expressed as a concrete test with given/when/then conditions and property-based invariants, the requirement is the problem, and the cheapest time to discover that is before any architecture exists.</p>
+
+    <p>For Assay, <code>/gvm-test-cases</code> produced 97 acceptance test cases. These became the acceptance criteria for the build: every chunk of implementation had to pass its traced test cases before proceeding.</p>
+
+    <h3 id="tech-spec">Tech spec and architecture decisions</h3>
+
+    <p>The tech spec phase produced two spec documents and nine Architecture Decision Records (ADRs). The ADRs record not just what was decided but why, and what alternatives were rejected. When the code review later questioned the state persistence approach, the answer was already documented in ADR-004 (JSON with atomic temp-write-rename, chosen over SQLite for portability and crash safety).</p>
+
+    <div class="callout">
+      <div class="callout-label">ADR traceability in practice</div>
+      <p>Docstrings in the production code reference their ADRs directly: the <code>state.py</code> module cites ADR-004 and ADR-006. A reviewer reading the code can trace any design decision to its rationale without leaving the codebase.</p>
+    </div>
+
+    <h3 id="build">Build: five phases, fourteen planned chunks plus a hardening tail</h3>
+
+    <p>The build phase decomposes the spec into ordered chunks &mdash; each small enough to implement in a single session, each producing a testable increment. Assay's build ran across five phases. The first four planned fourteen chunks; the fifth phase added a hardening tail of three or more chunks that surfaced as the system stabilised:</p>
+
+    <table>
+      <caption>Table 1 &mdash; Build phases and their deliverables</caption>
+      <thead>
+        <tr><th>Phase</th><th>Chunks</th><th>Deliverable</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>P1: Foundation</td><td class="num">4</td><td>Models, config, provider adapters, CLI scaffold</td></tr>
+        <tr><td>P2: Engine Core</td><td class="num">5</td><td>Generator, state persistence, pause/resume, cost tracking, retry</td></tr>
+        <tr><td>P3: Review &amp; Extract</td><td class="num">4</td><td>Reviewer with blindness, extractor, audit trail, progress reporting</td></tr>
+        <tr><td>P4: Integration</td><td class="num">1</td><td>End-to-end wiring, zero deferred seams</td></tr>
+        <tr><td>P5: Hardening</td><td class="num">3+</td><td>Streaming, security fixes, dispatcher extraction</td></tr>
+      </tbody>
+    </table>
+
+    <p>Each chunk follows a strict loop: generate the implementation prompt from the spec, write the code, run the tests, verify the chunk's acceptance criteria pass, and produce a handover document that gives the next session everything it needs to continue &mdash; even if the context window is exhausted.</p>
+
+    <h3 id="expert-grounding">Expert grounding across phases</h3>
+
+    <p>GVM activates named experts at every phase. For Assay, the expert roster shifted as the pipeline progressed &mdash; the requirements phase needed different authorities than the build phase, and the review phase different authorities again.</p>
+
+    <table>
+      <caption>Table 2 &mdash; Expert panels by pipeline phase</caption>
+      <thead>
+        <tr><th>Phase</th><th>Key experts</th><th>What they governed</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Requirements</td><td>Wiegers, Patton, Cooper, Robertson</td><td>Elicitation methodology, persona-grounded requirements, MoSCoW prioritisation</td></tr>
+        <tr><td>Test cases</td><td>Copeland, Beizer, North, Kaner</td><td>Technique selection (BVA, equivalence partitioning), BDD structure, exploratory scenarios</td></tr>
+        <tr><td>Tech spec</td><td>Clements, Brown, Fairbanks, Keeling, Ramalho</td><td>C4 architecture, risk-proportional depth, ADR format, Python idioms</td></tr>
+        <tr><td>Build</td><td>Framework docs, SDK references</td><td>Procedural knowledge &mdash; how to use the APIs correctly (expert grounding during construction is undemonstrated; see <em>What we got wrong</em> in the blog post)</td></tr>
+        <tr><td>Code review</td><td>Fowler, Ramalho, Beck, Metz, OWASP</td><td>Design patterns, Pythonic idioms, test quality, object design, security &mdash; where expert grounding is demonstrably effective</td></tr>
+      </tbody>
+    </table>
+
+    <p>The experts shaped the code through the spec and review phases, not through construction. The patterns in Assay trace to experts who defined the architecture (tech spec) or enforced quality standards (code review). Construction is grounded in framework documentation &mdash; procedural knowledge about how to use the APIs correctly &mdash; not expert principles. This separation is a finding from the methodology itself (see the blog post, <em>What we got wrong</em>).</p>
+
+    <p>Specific patterns trace to specific phases:</p>
+
+    <ul>
+      <li><strong>Protocol-based provider abstraction</strong> (spec: Ramalho, <em>Fluent Python</em>; Fowler, <em>Enterprise Patterns</em>) &mdash; instead of an inheritance hierarchy, each provider satisfies a Python <code>Protocol</code>. Adding a new provider means implementing two methods. The spec phase defined this pattern from Ramalho's structural typing guidance and Fowler's plugin architecture principles.</li>
+      <li><strong>Atomic writes everywhere</strong> (spec: Keeling, <em>Design It!</em>) &mdash; state files, artefacts, and reviews all use write-to-temp-then-rename. The pattern was specified in ADR-004 because the spec phase experts made crash safety a first-class architectural concern.</li>
+      <li><strong>Frozen dataclasses with <code>MappingProxyType</code></strong> (spec: Ramalho, <em>Fluent Python</em>) &mdash; all configuration models are immutable value objects. Concurrency-shared dictionaries are wrapped in <code>MappingProxyType</code> to prevent accidental mutation. Specified during the tech spec phase as a concurrency safety measure.</li>
+      <li><strong>Shared dispatcher extraction</strong> (review: Hunt &amp; Thomas, DRY principle) &mdash; the generator and reviewer initially had separate dispatch implementations. The code review flagged this as recurring duplication, and the build responded by extracting a shared <code>Dispatcher</code> class. This pattern was driven by the review phase, not the original spec.</li>
+      <li><strong>Registry-based factory</strong> (spec: Fowler, <em>Enterprise Patterns</em>) &mdash; providers register in a dictionary rather than a conditional chain. Defined in the spec as the provider discovery mechanism.</li>
+    </ul>
+
+    <div class="callout key-finding">
+      <div class="callout-label">The grounding thesis, demonstrated</div>
+      <p>These are not abstract principles applied after the fact. Every pattern listed above is visible in the production code, and each traces to a named expert whose work was cited during the phase that produced it. Protocol-based abstraction exists because Ramalho was active during the spec phase. Atomic writes exist because Keeling was active during architecture decisions. The code is the evidence. If you read the Assay source and then read the expert panel table, the connection is not inferred &mdash; it is structural. This is what expert grounding produces: not vague "best practices," but specific, identifiable patterns that would not be there without the citation.</p>
+    </div>
+
+    <h3 id="doc-and-release">Documentation, review, and release</h3>
+
+    <p>After the build and code review, three final phases completed the pipeline:</p>
+
+    <p><code>/gvm-doc-write</code> produced an operations guide covering experiment workflow, configuration patterns, troubleshooting, and output interpretation. <code>/gvm-doc-review</code> scored it 6.0/10 and found three accuracy issues &mdash; including a wrong claim about how the Google provider handles system prompts, and a code recipe that would raise a <code>FileNotFoundError</code> because <code>pd.read_csv()</code> does not support glob patterns. The review caught factual errors in the documentation that would have sent users down wrong paths.</p>
+
+    <p><code>/gvm-deploy</code> aggregated all review verdicts (code review: Ship; doc review: 6.0/10 with important findings), verified that the README matched the implemented features, proposed version <code>v0.1.0</code> based on semver analysis, generated release notes and a changelog, and created an annotated git tag. The release gate enforced everything upstream: if any review had blocked, the release would have blocked.</p>
+
+    <h2 id="what-reviews-caught">What the reviews caught</h2>
+
+    <p>Assay went through seven rounds of code review. The review history is the strongest evidence that the pipeline's structure adds value &mdash; because the reviews caught failures that no other part of the process would have.</p>
+
+    <h3 id="review-trajectory">The trajectory</h3>
+
+    <table>
+      <caption>Table 3 &mdash; Code review findings across seven rounds</caption>
+      <thead>
+        <tr><th>Round</th><th class="num">Critical</th><th class="num">Important</th><th class="num">Minor</th><th class="num">Total</th><th>Verdict</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>R1</td><td class="num">7</td><td class="num">15</td><td class="num">10</td><td class="num">38</td><td>&mdash;</td></tr>
+        <tr><td>R2</td><td class="num">2</td><td class="num">9</td><td class="num">11</td><td class="num">27</td><td>&mdash;</td></tr>
+        <tr><td>R3 (dual)</td><td class="num">0</td><td class="num">8</td><td class="num">14</td><td class="num">32</td><td>&mdash;</td></tr>
+        <tr><td>R4 (dual)</td><td class="num">0</td><td class="num">2</td><td class="num">10</td><td class="num">19</td><td>Ship with caveats</td></tr>
+        <tr><td>R5 (dual)</td><td class="num">0</td><td class="num">8</td><td class="num">19</td><td class="num">30</td><td>&mdash;</td></tr>
+        <tr><td>R6 (dual)</td><td class="num">0</td><td class="num">5</td><td class="num">12</td><td class="num">19</td><td>&mdash;</td></tr>
+        <tr><td>R7 (dual)</td><td class="num">1</td><td class="num">5</td><td class="num">14</td><td class="num">20</td><td>Ship (post-fix)</td></tr>
+      </tbody>
+    </table>
+
+    <p>Two patterns stand out. First, critical findings dropped from seven to zero by round 3 and stayed there &mdash; except for a single critical in round 7 that the blind reviewer caught. Second, total findings did not converge smoothly to zero. They spiked in round 5 because the streaming implementation introduced new surface area. The review system adapted to new code rather than assuming old verdicts still held.</p>
+
+    <h3 id="hallucination-catch">The hallucination the review caught</h3>
+
+    <p>In round 1, the Anthropic provider adapter used <code>await client.messages.create()</code> with streaming enabled. Correct syntax. Plausible parameters. The code compiled. Tests passed with a mocked client. But the correct call is a context manager (<code>async with client.messages.stream()</code>), not an <code>await</code>. The AI hallucinated the API, and it would have failed the first time it ran against the real SDK.</p>
+
+    <span class="sidenote">This specific example appears in the blog post <em>AI Can Build Fully Engineered Software</em> because it illustrates the core problem: plausible, compilable, test-passing code that is wrong.</span>
+
+    <p>The code review phase caught it. TDD did not &mdash; because the mocked client accepted the hallucinated call signature. The unit tests were correct tests of wrong code. Only a reviewer grounded in the Anthropic SDK's actual interface could see that the call pattern was fabricated.</p>
+
+    <h3 id="blind-review-value">The blind reviewer's catch</h3>
+
+    <p>From round 3 onwards, GVM runs dual review: a calibrated reviewer (with full project history, resolved findings, anchor examples) and an uncalibrated blind reviewer (same criteria, same expert references, no history). Round 3 is the threshold because round 1 establishes the first scoring anchor, round 2 establishes a pattern of expectations, and by round 3 anchoring bias has had enough history to create systematic blind spots &mdash; the point at which rater drift becomes detectable in assessment research. The blind reviewer exists to catch what calibration bias causes the calibrated reviewer to miss.</p>
+
+    <p>In round 7, the calibrated panel was ready to ship. The blind reviewer found one critical issue: an <code>await</code> on an async generator that should have been iterated directly. The calibrated panel had seen similar patterns resolve correctly in prior rounds and did not flag it. The blind reviewer, seeing the codebase fresh, caught it.</p>
+
+    <div class="callout">
+      <div class="callout-label">Why this matters</div>
+      <p>Without dual review, round 7 would have shipped with a critical bug. The calibrated reviewer's familiarity with the codebase &mdash; normally an advantage &mdash; became a blind spot. The mechanism that corrected for this bias was structural, not a matter of reviewer skill. It was built into the process.</p>
+    </div>
+
+    <h3 id="build-checks">Build check promotion</h3>
+
+    <p>Three findings recurred across five or more consecutive rounds, indicating systemic patterns rather than one-off mistakes:</p>
+
+    <ul>
+      <li><strong>BC-001:</strong> Provider names defined in two places (registry and validation list). Resolved in round 7 by exporting a single <code>VALID_PROVIDERS</code> frozenset from the factory module.</li>
+      <li><strong>BC-002:</strong> Token summation duplicated across phases. Resolved by unifying via a <code>CostTracker.total_tokens</code> property.</li>
+      <li><strong>BC-003:</strong> Resource-owning classes not using context managers. <code>AuditLogger</code> added <code>__enter__</code>/<code>__exit__</code>, but callers continued using bare instantiation. Still monitored.</li>
+    </ul>
+
+    <p>When a finding recurs in three or more consecutive rounds, GVM promotes it to a build check &mdash; a concrete instruction that gets loaded into subsequent build prompts under "Known Patterns to Avoid." The build system learns from its own review history. This is the feedback loop from review to construction that most AI development processes lack.</p>
+
+    <p>Build checks are tiered at promotion time. All three of Assay's checks are <strong>tier 1</strong> &mdash; general engineering practice (DRY, resource lifecycle, single source of truth) that applies to any project. Tier 1 checks are permanent. <strong>Tier 2</strong> checks &mdash; tied to a specific library or domain convention &mdash; are flagged for retirement after three quiet rounds, but the user decides whether to remove them.</p>
+
+    <h2 id="numbers">What the numbers show</h2>
+
+    <table>
+      <caption>Table 4 &mdash; Assay at release (v0.1.0)</caption>
+      <thead>
+        <tr><th>Metric</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Requirements</td><td>38 implemented (all MUST met)</td></tr>
+        <tr><td>Source code</td><td>~4,800 lines (20 modules)</td></tr>
+        <tr><td>Test code</td><td>~3,000 lines (14 test files)</td></tr>
+        <tr><td>Unit + integration tests</td><td class="num">207 passing, 0 failures</td></tr>
+        <tr><td>Acceptance test cases</td><td class="num">97 passing, 0 failures</td></tr>
+        <tr><td>Code review rounds</td><td class="num">7</td></tr>
+        <tr><td>Critical findings fixed</td><td class="num">10 (0 remaining)</td></tr>
+        <tr><td>Important findings fixed</td><td class="num">52 (0 remaining)</td></tr>
+        <tr><td>Build checks promoted</td><td class="num">3</td></tr>
+        <tr><td>Architecture decisions recorded</td><td class="num">9 (ADR-001 through ADR-009)</td></tr>
+        <tr><td>Site survey score</td><td>5.0/5 across all dimensions</td></tr>
+        <tr><td>Elapsed time</td><td>~35 hours (first commit to release tag)</td></tr>
+      </tbody>
+    </table>
+
+    <p>Thirty-five hours from first commit to tagged release, for a tool with nearly 8,000 lines of production and test code, 38 requirements, and seven rounds of review. The pipeline overhead &mdash; structured requirements, test cases before architecture, ADRs, calibrated review &mdash; is real. But the overhead catches hallucinated APIs, prevents regressions, and produces a codebase that a site survey scores 5.0/5 across every dimension. The question is not whether the pipeline costs time. The question is whether the alternative costs more.</p>
+
+    <p>The site survey &mdash; an independent assessment of codebase health across coherence, currency, testability, modularity, documentation, and dependency health &mdash; scored 5.0 in every dimension. The assessment noted consistent patterns throughout (Protocol abstractions, async-first design, atomic writes everywhere) and called the codebase "one consistent pattern throughout."</p>
+
+    <h2 id="surprises">What surprised us</h2>
+
+    <h3 id="review-spikes">Review findings do not converge linearly</h3>
+
+    <p>The expectation was a steady decline: each round fixes findings, the next round finds fewer. Instead, findings spiked in round 5 (from 19 to 30) because the streaming implementation introduced new code paths that the prior reviews had never seen. The review system correctly treated new code as new surface area requiring fresh scrutiny.</p>
+
+    <p>This matters for teams adopting GVM. If your review counts spike after a feature addition, the process is working &mdash; it means the reviews are actually re-evaluating the codebase rather than rubber-stamping prior verdicts.</p>
+
+    <h3 id="dispatcher-extraction">The build improved its own architecture</h3>
+
+    <p>The generator and reviewer phases shared identical dispatch logic: <code>TaskGroup</code> + <code>Semaphore</code> + pause/stop/budget/retry. The code review flagged the duplication as a recurring finding. By the time it was promoted to build check BC-002, the fix was clear: extract a shared <code>Dispatcher</code> class that both phases use with different callbacks. This eliminated roughly 150 lines of duplicated code and created a single place to maintain the concurrency and retry logic.</p>
+
+    <p>The review system drove this architectural improvement, not upfront design. The original spec had separate implementations for each phase &mdash; a reasonable choice at the time. The reviews identified the emerging duplication pattern and the build responded. This is what iterative convergence looks like in practice.</p>
+
+    <h3 id="test-coverage-gap">Mocked tests can pass with hallucinated code</h3>
+
+    <p>The Anthropic streaming hallucination passed all unit tests because the mocked client accepted whatever call signature it was given. The tests were structurally correct &mdash; they verified the right behaviour &mdash; but they tested against a mock that didn't enforce the real SDK's interface.</p>
+
+    <p>The lesson: mocked tests verify your logic, not your integration. For API boundaries where the AI is likely to hallucinate the call pattern, you need either integration tests against the real SDK or a review phase that checks the actual API surface. Assay uses both: provider tests verify against current SDK interfaces, and the code review explicitly checks API usage patterns.</p>
+
+    <h2 id="result">The result</h2>
+
+    <p>Assay shipped as v0.1.0 on 4 April 2026. It has since been used to run the three-model experiment that produced the results reported in <em>Grounding Produces Measurably Better Output</em>: 180 dashboards generated across Claude, GPT, and Gemini, with 1,080 blind reviews and statistical analysis showing significant quality improvements from expert grounding (p&nbsp;&lt;&nbsp;0.001, all pairwise comparisons).</p>
+
+    <p>The tool that was built to test the methodology was itself built by the methodology. A process that produces traceable, reviewed, tested artefacts should be able to build any software system &mdash; including the tool that validates its own claims.</p>
+
+    <h2 id="practitioner-lessons">What we learned from building Assay with GVM</h2>
+
+    <p><strong>Let the test cases phase challenge your requirements.</strong> The test cases phase is not just about generating tests &mdash; it is a quality gate on the requirements themselves. If you cannot express a requirement as a concrete test, the requirement is ambiguous. We discovered this for two SHOULD requirements that were initially marked PARTIAL because their acceptance criteria were imprecise. The test cases phase would have caught this earlier if we had been more rigorous about flagging untestable language.</p>
+
+    <p><strong>Expect review counts to fluctuate, not decline.</strong> New code introduces new findings. A spike after a feature addition is the system working, not failing. The trajectory that matters is critical findings &mdash; those should drop to zero and stay there.</p>
+
+    <p><strong>ADRs pay off during review, not during design.</strong> Writing ADRs feels like overhead during the spec phase. Their value becomes clear during code review, when a reviewer questions a design choice and the answer is already documented with alternatives considered and rationale given. For Assay, ADR-004 (state persistence strategy) and ADR-007 (signal handling approach) were referenced multiple times during review rounds.</p>
+
+    <p><strong>The build check mechanism needs time to mature.</strong> Build checks only trigger after three consecutive rounds of the same finding. For Assay, this meant the first two rounds could not benefit from build checks at all. On larger projects with more review rounds, the feedback loop from review to construction becomes more valuable over time. The methodology gets better the longer you use it.</p>
+
+    <p><strong>Dual review earns its cost from round 3.</strong> The blind reviewer adds one parallel review per round. For rounds 1 and 2, this overhead is not justified &mdash; there is not enough calibration history to create meaningful bias. From round 3 onwards, the blind reviewer caught findings in every round that the calibrated panel missed, including the only critical finding in round 7. The cost is one extra review; the return is catching what your experienced reviewers have been trained to overlook.</p>
+
+    <h2 id="try-it">Try it</h2>
+
+    <p>GVM is available now.</p>
+
+    <div class="callout">
+      <p><code>git clone &lt;repository-url&gt;</code><br>
+      <code>claude plugin add grounded_vibe_methodology/grounded-vibe-methodology</code></p>
+      <p>Run <code>/gvm-status</code> in Claude Code to verify. Start a project with <code>/gvm-requirements</code>.</p>
+    </div>
+
+    <p><strong>Repository:</strong> Link available on the project website.</p>
+
+  </main>
+
+  <script>
+  (function () {
+    const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+    const links = [];
+
+    headings.forEach(function (h) {
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      toc.appendChild(a);
+      links.push({ el: a, target: h });
+    });
+
+    function onScroll() {
+      let current = links[0];
+      for (let i = 0; i < links.length; i++) {
+        if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+      }
+      links.forEach(function (l) { l.el.classList.remove('active'); });
+      if (current) {
+        current.el.classList.add('active');
+        const tocEl = document.getElementById('toc');
+        const elTop = current.el.offsetTop - tocEl.offsetTop;
+        const elBot = elTop + current.el.offsetHeight;
+        if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+          tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+        }
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
+</body>
+</html>

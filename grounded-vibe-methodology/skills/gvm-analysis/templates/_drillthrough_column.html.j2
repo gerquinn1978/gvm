@@ -1,0 +1,96 @@
+{#-
+  Per-column drillthrough (P6-C05).
+
+  Data shape (ADR-201 drillthroughs[].data for kind=column):
+    column_name, stats, missingness, type_drift, rounding_signal,
+    histogram_svg_path, boxplot_svg_path, methodology_ref.
+-#}
+{% set d = drillthrough.data %}
+{% if d.stats %}
+<section class="drillthrough-stats">
+  <h2>Summary statistics</h2>
+  <dl>
+    <dt>Median</dt>
+    <dd>{{ d.stats.robust.median | round(3) }}</dd>
+    <dt>95% interval</dt>
+    <dd>
+      {% if d.stats.ci_95 and d.stats.ci_95.median %}
+        <span class="ci">[{{ d.stats.ci_95.median[0] | round(3) }}, {{ d.stats.ci_95.median[1] | round(3) }}]</span>
+        <aside class="sidenote">
+          Bootstrap confidence interval (BCa), Efron &amp; Tibshirani,
+          <em>An Introduction to the Bootstrap</em> &sect;14. Interval at
+          95% under repeated sampling.
+        </aside>
+      {% else %}
+        <span class="ci-suppressed" title="CIs not computed at this sample size">
+          CI n/a &mdash; {{ d.stats.tier }}
+        </span>
+        <aside class="sidenote">
+          Interval suppressed for tier {{ d.stats.tier }} per AN-12.
+          Harrell, <em>Regression Modeling Strategies</em> &mdash; bootstrap
+          CIs not meaningful below n=30.
+        </aside>
+      {% endif %}
+    </dd>
+  </dl>
+</section>
+{% endif %}
+
+{% if d.missingness %}
+<section class="drillthrough-missingness">
+  <h2>Missingness</h2>
+  <p>
+    {% if d.missingness.label == 'MCAR' %}
+      Likely random.
+    {% elif d.missingness.label == 'MAR' %}
+      Partially related to other columns.
+    {% elif d.missingness.label == 'possibly MNAR' %}
+      Possibly systematic.
+    {% else %}
+      Indeterminate.
+    {% endif %}
+    <aside class="sidenote">
+      Classification: {{ d.missingness.label }}. Basis: {{ d.missingness.basis }} (confidence: {{ d.missingness.confidence }}).
+    </aside>
+  </p>
+</section>
+{% endif %}
+
+{% if d.type_drift %}
+<section class="drillthrough-type-drift">
+  <h2>Type drift</h2>
+  <p>{{ d.type_drift.kind }} &mdash; {{ d.type_drift.recommendation }}</p>
+</section>
+{% endif %}
+
+{% if d.rounding_signal %}
+<section class="drillthrough-rounding">
+  <h2>Rounding signal</h2>
+  <p>{{ d.rounding_signal.note }}</p>
+</section>
+{% endif %}
+
+{# ADR-306b post-R4 fix MEDIUM-T22: surface columns[].formula in the
+   per-column drillthrough as a sidenote, complementing the provenance
+   footer's report-level formula listing. #}
+{% if 'formula' in d and d.formula %}
+<aside class="sidenote drillthrough-formula">Formula: <code>{{ d.formula }}</code></aside>
+{% endif %}
+
+{% if d.histogram_svg_path or d.boxplot_svg_path %}
+<section class="drillthrough-charts">
+  <h2>Distribution charts</h2>
+  {% if d.histogram_svg_path %}
+  <figure>
+    <img src="{{ d.histogram_svg_path }}" alt="Histogram of {{ d.column_name }}">
+    <figcaption>Histogram</figcaption>
+  </figure>
+  {% endif %}
+  {% if d.boxplot_svg_path %}
+  <figure>
+    <img src="{{ d.boxplot_svg_path }}" alt="Boxplot of {{ d.column_name }}">
+    <figcaption>Boxplot</figcaption>
+  </figure>
+  {% endif %}
+</section>
+{% endif %}

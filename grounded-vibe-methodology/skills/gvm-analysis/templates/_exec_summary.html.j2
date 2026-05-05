@@ -1,0 +1,30 @@
+{#-
+  Executive summary partial (P6-C04b / ADR-306).
+
+  Consumes the bare name `comprehension_questions` (ADR-307b). The
+  renderer asserts `len(comprehension_questions) == 3` and runs the
+  JARGON_FORBIDDEN scan on every question body before this partial
+  is rendered; no defensive guard is needed here.
+
+  Per ADR-306 the answer sits behind a <details> disclosure — jargon
+  is permitted in answers (the disclosure pattern keeps the main flow
+  plain-language while still surfacing statistical detail).
+
+  NFR-4 / TC-NFR-4-01: block present, count=3, aria-labelledby wired
+  to the heading.
+-#}
+<p class="exec-summary-lede">The executive summary layer carries the report&rsquo;s plain-language findings; statistical detail sits behind sidenotes and the methodology appendix.</p>
+<aside class="comprehension-questions" aria-labelledby="cq-heading">
+  <h3 id="cq-heading">Headline findings &mdash; can you answer these?</h3>
+  <ol>
+    {% for cq in comprehension_questions %}
+    <li>
+      <p class="cq-question">{{ cq.question }}</p>
+      <details>
+        <summary>Reveal answer</summary>
+        <p class="cq-answer">{{ cq.answer }}</p>
+      </details>
+    </li>
+    {% endfor %}
+  </ol>
+</aside>

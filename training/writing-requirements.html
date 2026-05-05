@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Requirements That Pass</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 260px; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .cmd-block {
+      font-family: "Menlo", "Consolas", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.8rem 1rem;
+      margin: 1rem 0 1.5rem;
+      max-width: 640px;
+      line-height: 1.6;
+    }
+
+    .callout {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .callout-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .callout.warning {
+      border-left-color: #c0392b;
+      background: #fdf5f4;
+    }
+
+    .callout.warning .callout-label { color: #c0392b; }
+
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      width: auto;
+      min-width: 480px;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 1rem 0.5rem 0;
+      border-bottom: 2px solid #333;
+      color: #111;
+    }
+
+    tbody td {
+      padding: 0.45rem 1rem 0.45rem 0;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+
+    .practice {
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .practice-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #27ae60;
+      margin-bottom: 0.3rem;
+    }
+
+    .sidenote {
+      float: right;
+      clear: right;
+      width: 220px;
+      margin-right: -260px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #666;
+      padding-left: 1rem;
+      border-left: 2px solid #e0e0e0;
+    }
+
+    /* Requirement comparison blocks */
+    .req-pair {
+      max-width: 640px;
+      margin: 1.5rem 0;
+    }
+
+    .req-before, .req-after {
+      padding: 0.8rem 1rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .req-before {
+      background: #fdf5f4;
+      border-left: 3px solid #c0392b;
+    }
+
+    .req-after {
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+    }
+
+    .req-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+
+    .req-before .req-label { color: #c0392b; }
+    .req-after .req-label { color: #27ae60; }
+
+    details {
+      max-width: 640px;
+      margin: 0.8rem 0 1.2rem;
+      border: 1px solid #ddd;
+      background: #f9f9f4;
+    }
+
+    details summary {
+      padding: 0.7rem 1rem;
+      cursor: pointer;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #333;
+      user-select: none;
+    }
+
+    details summary:hover { background: #f0f0e8; }
+
+    details[open] summary {
+      border-bottom: 1px solid #ddd;
+    }
+
+    .answer-content {
+      padding: 1rem 1.2rem;
+    }
+
+    .answer-content p, .answer-content li { max-width: none; }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <p class="date">May 2026</p>
+    <h1>Writing Requirements That Pass</h1>
+    <p class="subtitle">Acceptance-criteria-first requirements that survive <code>/gvm-test-cases</code> Phase 4.</p>
+
+    <h2 id="the-contract">The contract between the two skills</h2>
+
+    <p><code>/gvm-requirements</code> produces a structured document: requirements grouped by domain, each with a unique ID, a MoSCoW priority (Must / Should / Could / Won't), and whatever acceptance criteria you gave it. <code>/gvm-test-cases</code> reads that document and turns each requirement into test cases &mdash; selecting the technique that fits the requirement shape. Most go to standard Given/When/Then example-based scenarios. Reversible, idempotent, or algebraic operations get tagged <code>[PROPERTY]</code> and use property-based testing (MacIver / Hypothesis-style generators) instead. Requirements that cross an external system boundary get tagged <code>[CONTRACT]</code> or <code>[COLLABORATION]</code> &mdash; the distinction the EBT lint enforces. (EBT here is <em>External-Boundary-Test</em>, not <em>Example-Based-Test</em>; example-based is the industry term for the Given/When/Then style above, contrasted with property-based.) Mutation testing comes later, in <code>/gvm-test</code>, applied to critical-path code only &mdash; it scores how well the test suite kills synthetic faults and surfaces gaps the example-based and property-based tests missed.</p>
+
+    <p>That second step is not automatic. Before generating any test case, <code>/gvm-test-cases</code> runs a <strong>requirements health report</strong> (Phase 1). It reads every requirement and flags those it cannot turn into a concrete, verifiable test. Common flags: vague language with no measurable outcome, missing boundaries, no stated failure behaviour, internal state claims with nothing observable from outside.</p>
+
+    <p>Flagged requirements stop the pipeline. You are asked to fix them or explicitly acknowledge the gap. Either way, the health report is written to disk &mdash; you cannot silently proceed past a vague requirement.</p>
+
+    <span class="sidenote">The health report is saved to <code>test-cases/requirements-health-report.html</code> and the corresponding <code>.md</code>. Acknowledged decisions are persisted to <code>requirements-health-report-decisions.md</code> so they are not re-surfaced on subsequent runs.</span>
+
+    <p>The most common early failure is arriving at Phase 4 of <code>/gvm-test-cases</code> with MUST-priority requirements that have no example-based test. Phase 4 runs the EBT-1 audit: it checks every MUST requirement for at least one test in the required shape (concrete input, a positive assertion about the output, and a counterexample the output must not contain). A requirement with vague acceptance criteria produces tests that cannot satisfy that shape. The pipeline blocks.</p>
+
+    <p>The fix is not in <code>/gvm-test-cases</code>. It is in the requirement itself, written before you ever run the test-cases skill. This training covers how to write requirements that clear Phase 4 on the first run.</p>
+
+    <h2 id="anatomy">Anatomy of a good requirement</h2>
+
+    <p>A well-formed requirement gives <code>/gvm-test-cases</code> everything it needs to produce a concrete test: something to set up (the precondition), something to do (the action and its inputs), and something to verify (the measurable outcome). That maps directly onto Given/When/Then.</p>
+
+    <table>
+      <thead>
+        <tr><th>Element</th><th>What it provides</th><th>Test-case mapping</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>ID</strong> (e.g., <code>AU-1</code>)</td><td>Traceability across the pipeline</td><td>Test ID prefix: <code>TC-AU-1-01</code></td></tr>
+        <tr><td><strong>MoSCoW priority</strong></td><td>Signals which tests are mandatory</td><td>MUST requirements require EBT-1 example tests; Could/Won't are auto-skipped for deepening</td></tr>
+        <tr><td><strong>User-visible behaviour</strong></td><td>What the system does, not how</td><td>The &ldquo;When&rdquo; clause</td></tr>
+        <tr><td><strong>Acceptance criteria</strong></td><td>Exact conditions for pass/fail</td><td>The &ldquo;Then&rdquo; clauses; boundary values for equivalence partitioning</td></tr>
+        <tr><td><strong>Failure behaviour</strong></td><td>What happens when things go wrong</td><td>Negative test cases and error path tests</td></tr>
+        <tr><td><strong>Named external boundaries</strong></td><td>Which system or service is on the other side</td><td>CONTRACT vs COLLABORATION tagging in Phase 4</td></tr>
+      </tbody>
+    </table>
+
+    <p>The traceability tag (<code>[impact-deliverable: D-N]</code>) connects the requirement back up to the impact map. If you ran <code>/gvm-impact-map</code>, this is set automatically. If you did not, the trace is left as <code>not-yet-traced</code> &mdash; not a hard failure, but a gap that Phase 4 will count and report.</p>
+
+    <h2 id="acceptance-criteria-first">The acceptance-criteria-first principle</h2>
+
+    <p>A requirement is not done until you can state how you would verify it. If you cannot describe the test, the requirement is incomplete &mdash; not vague in a fixable-later sense, but structurally broken.</p>
+
+    <p>The practical discipline: before you confirm a requirement in <code>/gvm-requirements</code>, ask yourself whether you could write the Given/When/Then right now, with real values. If the answer is no, the requirement needs more work. Common blockers:</p>
+
+    <ul>
+      <li>The action is described but the expected output is not quantified ("the system returns results quickly").</li>
+      <li>The happy path is described but error cases are absent.</li>
+      <li>The behaviour depends on an external system, but that system is not named.</li>
+      <li>A boundary condition exists (maximum, timeout, rate limit) but its value is not specified.</li>
+    </ul>
+
+    <span class="sidenote">The whitepaper makes this structural argument in section 5.3: &ldquo;test case generation is a quality gate on requirements, not a downstream activity. Before any architecture is designed, every requirement must be expressible as a concrete test with given/when/then conditions, boundary values, and expected outcomes.&rdquo;</span>
+
+    <p>The EBT-1 audit in Phase 4 operationalises this principle mechanically. For every MUST requirement, it checks for an example test with three mandatory elements: a concrete input value on an <code>Input:</code> line, a <code>MUST contain</code> assertion, and a <code>MUST NOT contain</code> counterexample. A test that says &ldquo;the response is successful&rdquo; without naming a token or phrase the output must contain will fail the audit. That failure traces back to a requirement that did not specify a verifiable output.</p>
+
+    <p>Writing acceptance criteria first is not extra work. It is the moment where vagueness is cheapest to eliminate: before any architecture, any code, any specification. A fix at this stage is editing a sentence. The same fix discovered during build is a rework cycle.</p>
+
+    <h2 id="failure-modes">Five common failure modes</h2>
+
+    <h3 id="vague-verbs">1. Vague verbs</h3>
+
+    <p>Words like &ldquo;handle,&rdquo; &ldquo;support,&rdquo; &ldquo;manage,&rdquo; and &ldquo;gracefully&rdquo; describe intent without describing behaviour. <code>/gvm-test-cases</code> flags these as untestable because there is no measurable outcome to verify.</p>
+
+    <div class="req-pair">
+      <div class="req-before">
+        <div class="req-label">Before</div>
+        <strong>ER-3 (Must):</strong> The system shall handle errors from the payment gateway gracefully, so users are not left in an uncertain state.
+      </div>
+      <div class="req-after">
+        <div class="req-label">After</div>
+        <strong>ER-3 (Must):</strong> When the payment gateway returns a 5xx response, the system shall display the message "Payment could not be completed &mdash; please try again" and preserve the user's cart contents. The transaction shall not be recorded as pending or complete. The error response code from the gateway shall be logged with a correlation ID.<br><br>
+        <em>Acceptance criteria:</em> (1) Cart contents unchanged after gateway 500. (2) No order record created. (3) Error log entry contains gateway response code and correlation ID.
+      </div>
+    </div>
+
+    <p>The after version gives <code>/gvm-test-cases</code> enough to write distinct test cases: a happy path test for the normal flow, a negative test for the 5xx path, boundary tests for the cart preservation, and a log-content test. The before version produces a single vague test that no reviewer could call pass or fail.</p>
+
+    <h3 id="missing-boundaries">2. Missing boundaries</h3>
+
+    <p>Requirements that describe a behaviour without specifying its limits cannot be boundary-value tested. Every numerical, temporal, or volume constraint needs a value &mdash; not a placeholder.</p>
+
+    <div class="req-pair">
+      <div class="req-before">
+        <div class="req-label">Before</div>
+        <strong>SR-2 (Must):</strong> The search API shall return results within an acceptable time and limit the number of results to prevent overload.
+      </div>
+      <div class="req-after">
+        <div class="req-label">After</div>
+        <strong>SR-2 (Must):</strong> The search API shall return a response within 2 seconds for queries returning up to 1,000 results. Results are capped at 1,000 per response; a <code>next_cursor</code> field is included when more results exist. Queries returning zero results shall respond within 500 ms.<br><br>
+        <em>Acceptance criteria:</em> (1) Response time &le; 2 s at 1,000 results. (2) Response time &le; 500 ms at 0 results. (3) Result set exactly 1,000 when &gt; 1,000 match. (4) <code>next_cursor</code> present when truncated, absent when not.
+      </div>
+    </div>
+
+    <p>The after version produces four distinct boundary-value tests. Beizer's boundary analysis &mdash; which <code>/gvm-test-cases</code> applies during deepening &mdash; needs the exact limit values (1,000 and 1,001) to write useful tests. "Limit the number of results to prevent overload" is not a number the test can use.</p>
+
+    <h3 id="implementation-leakage">3. Implementation leakage</h3>
+
+    <p>A requirement that names a technology, library, or internal component is a specification fragment, not a requirement. It constrains the architecture in the requirements document, where it does not belong, and it often leaves the actual user-visible behaviour unstated.</p>
+
+    <div class="req-pair">
+      <div class="req-before">
+        <div class="req-label">Before</div>
+        <strong>ST-1 (Must):</strong> User sessions shall be stored in Redis with a 30-minute TTL so that session data persists across requests.
+      </div>
+      <div class="req-after">
+        <div class="req-label">After</div>
+        <strong>ST-1 (Must):</strong> An authenticated user's session shall remain active for 30 minutes from their last request. After 30 minutes of inactivity, any request shall redirect the user to the login page. A user who makes a request within 29 minutes of their last action shall not be asked to log in again.<br><br>
+        <em>Acceptance criteria:</em> (1) Request at 29 min succeeds without re-authentication. (2) Request at 31 min redirects to /login. (3) Each successful request resets the 30-minute timer.
+      </div>
+    </div>
+
+    <p>The after version says nothing about Redis. The technology decision belongs in the tech spec. The requirement states what the user experiences: a 30-minute inactivity window, a clean redirect on expiry, and a rolling timer. Those three criteria produce three tests. The before version produces a test that checks Redis TTL configuration &mdash; which is an implementation test, not an acceptance test, and belongs in the build phase.</p>
+
+    <div class="callout">
+      <div class="callout-label">External constraints are a third category</div>
+      <p>Naming a vendor or external system is not always leakage. When the choice is an organisational or environmental constraint &mdash; procurement has signed the contract, compliance dictates the provider, the integration already exists and is out of scope to replace &mdash; the vendor is a given, not a decision. It is neither a requirement nor a spec choice; it is a constraint the team works within.</p>
+      <p>In that case, naming it in the requirement is correct: "shall send the notification via the SendGrid transactional email API" is fine when SendGrid is the mandated provider. It tells the test author what the external boundary actually is. Where possible, cite the constraint briefly &mdash; "(per the existing SendGrid contract)" or "(mandated by the procurement standard)" &mdash; so a future reader can tell the constraint from a preference.</p>
+      <p>The leakage test is: <em>could the developer have chosen something else?</em> If yes, it belongs in the spec. If no, it is a constraint and belongs wherever it makes the requirement testable.</p>
+    </div>
+
+    <h3 id="untestable-observability">4. Untestable observability</h3>
+
+    <p>A requirement that claims something about internal system state, without identifying an externally observable signal, cannot be verified by an acceptance test. "The system shall be resilient" or "the circuit breaker shall open" are internal-state claims unless the requirement also names what a caller or user can observe.</p>
+
+    <div class="req-pair">
+      <div class="req-before">
+        <div class="req-label">Before</div>
+        <strong>RS-4 (Must):</strong> The system shall be resilient to upstream service failures by implementing a circuit breaker that opens after repeated failures.
+      </div>
+      <div class="req-after">
+        <div class="req-label">After</div>
+        <strong>RS-4 (Must):</strong> When the upstream pricing service has returned errors on 5 consecutive requests, subsequent calls shall return a cached price (if available, up to 60 seconds old) without contacting the pricing service. If no cached price is available, the response shall include <code>"price_status": "unavailable"</code> and HTTP 200. The pricing service shall be retried after 30 seconds.<br><br>
+        <em>Acceptance criteria:</em> (1) On 5th consecutive error, 6th request uses cached price without calling upstream. (2) With no cache, response body contains <code>"price_status": "unavailable"</code> with HTTP 200. (3) Pricing service receives a retry request after 30 s.
+      </div>
+    </div>
+
+    <p>Every criterion in the after version is observable: the response body, the HTTP status code, and the timing of the retry call. The word &ldquo;circuit breaker&rdquo; does not appear &mdash; that is an implementation pattern, not an acceptance criterion. A test can verify all three criteria without knowing what the implementation looks like internally.</p>
+
+    <h3 id="hidden-contracts">5. Hidden contracts</h3>
+
+    <p>This failure mode is the one most likely to trip Phase 4 of <code>/gvm-test-cases</code>. A hidden contract is a requirement that implies an interaction with an external system but does not name that system. Phase 4 runs a contract/collaboration lint that classifies tests as <code>[CONTRACT]</code> (real external boundary, mocked at the boundary only) or <code>[COLLABORATION]</code> (internal call, stub allowed). When the requirement doesn't name the boundary, the test writer cannot make this classification &mdash; and the lint flags the violation.</p>
+
+    <div class="req-pair">
+      <div class="req-before">
+        <div class="req-label">Before</div>
+        <strong>NT-2 (Must):</strong> When an order ships, the customer shall receive a notification.
+      </div>
+      <div class="req-after">
+        <div class="req-label">After</div>
+        <strong>NT-2 (Must):</strong> When an order transitions to &ldquo;shipped&rdquo; status, the system shall deliver a notification to the customer's registered email address via the SendGrid transactional email API. The notification shall include the order ID, the tracking number, and the carrier name. If the SendGrid API returns a non-2xx response, the event shall be queued for retry up to 3 times.<br><br>
+        <em>Acceptance criteria:</em> (1) On order status = &ldquo;shipped,&rdquo; SendGrid API receives a call containing order ID, tracking number, and carrier name. (2) On SendGrid 5xx, the event is retried up to 3 times before being marked as failed. (3) Customer receives email at the registered address.
+      </div>
+    </div>
+
+    <span class="sidenote">CONTRACT tests exercise a real production call all the way to the external boundary, with mocks only at that boundary (e.g. a fake HTTP server standing in for SendGrid). COLLABORATION tests verify that a caller invokes a collaborator with the right arguments &mdash; stubs and mocks are allowed inside the call chain. Mixing them is the violation the lint catches.</span>
+
+    <p>The after version names the external boundary (SendGrid), the protocol (transactional email API), the fields the call must contain, and the retry behaviour on failure. <code>/gvm-test-cases</code> can now emit a <code>[CONTRACT]</code>-tagged test that stands up a fake HTTP server at the SendGrid boundary and verifies the outbound call's content &mdash; without patching HTTP transport inside the consumer, which would be a Rainsberger violation.</p>
+
+    <span class="sidenote">Naming SendGrid here is fine because it is an environmental constraint, not a developer's preference (see the callout under <a href="#implementation-leakage">Implementation leakage</a>). If the provider were still an open choice, the requirement would say "the configured transactional email provider" and the spec would pick the vendor.</span>
+
+    <p>The rule of thumb: if your requirement implies a call leaves your system's boundary, name the service it calls. If you cannot name it yet, that is a design gap that belongs in open questions, not silently absorbed into the requirement text.</p>
+
+    <h2 id="moscow">The MoSCoW discipline</h2>
+
+    <p>MoSCoW is not a filing system. Each priority level changes how <code>/gvm-test-cases</code> behaves.</p>
+
+    <table>
+      <thead>
+        <tr><th>Priority</th><th>What it means</th><th>Test-cases behaviour</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Must</strong></td><td>The product does not ship without this.</td><td>EBT-1 audit runs: every MUST needs an example test with concrete input, MUST contain, and MUST NOT contain assertions. Phase 4 blocks until satisfied or explicitly exempted.</td></tr>
+        <tr><td><strong>Should</strong></td><td>High value; included unless there is a strong reason to omit.</td><td>Full test generation. Deepening offered. Priority inherited by happy-path tests.</td></tr>
+        <tr><td><strong>Could</strong></td><td>Nice to have; included if effort permits.</td><td>Test generation proceeds. Deepening auto-skipped. Edge-case tests deprioritized one level.</td></tr>
+        <tr><td><strong>Won't</strong></td><td>Explicitly out of scope for this round.</td><td>No test generation. The requirement is indexed but excluded from coverage calculations. Prevents scope creep by naming what is deferred.</td></tr>
+      </tbody>
+    </table>
+
+    <p>Won't is the most misused priority. Many practitioners omit it entirely, treating the absence of a requirement as implicit exclusion. This creates two problems: the scope boundary is invisible to the team, and future requirements rounds have no record of what was deliberately deferred. A Won't requirement with a brief rationale ("deferred to round 2: depends on partner API not yet available") is a decision, documented.</p>
+
+    <div class="callout">
+      <div class="callout-label">The Must trap</div>
+      <p>Over-assigning Must is the other failure mode. If everything is Must, the priority carries no information and the EBT-1 audit becomes a tax on every requirement. Reserve Must for genuine ship-blockers. When in doubt between Must and Should, ask: "Would we delay the release for this?" If no, it is a Should.</p>
+    </div>
+
+    <h2 id="exercises">Practice exercises</h2>
+
+    <p>Each exercise presents a vague requirement as you might write it in an early session. Rewrite it so that <code>/gvm-test-cases</code> can generate concrete tests in Phase 1 and clear the EBT-1 audit in Phase 4. Open the answer key after you have attempted a rewrite.</p>
+
+    <h3 id="exercise-1">Exercise 1</h3>
+
+    <div class="practice">
+      <div class="practice-label">Exercise</div>
+      <p><strong>Original requirement (Must):</strong> The API shall authenticate requests securely and reject unauthorised callers.</p>
+      <p>Identify the failure modes present. Rewrite the requirement with explicit acceptance criteria that would let <code>/gvm-test-cases</code> produce at least three distinct test cases, one of which names a specific HTTP response for the rejection case.</p>
+    </div>
+
+    <details>
+      <summary>Answer key &mdash; Exercise 1</summary>
+      <div class="answer-content">
+        <p><strong>Failure modes present:</strong></p>
+        <ul>
+          <li><strong>Vague verb</strong> &mdash; "authenticate securely" is not a behaviour.</li>
+          <li><strong>Missing boundary</strong> &mdash; no token type, no header name, no rejection status code.</li>
+          <li><strong>Hidden contract</strong> &mdash; if validation delegates to an external identity provider, that boundary is unnamed.</li>
+        </ul>
+        <p><strong>Rewritten requirement:</strong></p>
+        <p><strong>AU-2 (Must):</strong> Every request to the API shall include a valid Bearer token in the <code>Authorization</code> header. Tokens are validated against the Auth0 tenant at <code>https://auth.example.com</code>. A request with a missing or malformed token shall receive HTTP 401 with body <code>{"error":"unauthorized"}</code>. A request with a valid but expired token shall receive HTTP 401 with body <code>{"error":"token_expired"}</code>. A request with a valid, unexpired token shall proceed to the requested resource.</p>
+        <p><strong>Acceptance criteria:</strong> (1) Valid unexpired token &rarr; HTTP 200 (or resource-appropriate status). (2) Missing Authorization header &rarr; HTTP 401, body <code>{"error":"unauthorized"}</code>. (3) Expired token &rarr; HTTP 401, body <code>{"error":"token_expired"}</code>. (4) Auth0 validation endpoint called with each request's token.</p>
+        <p><strong>Why this clears Phase 4:</strong> Criterion 4 names Auth0 as the external boundary, enabling a <code>[CONTRACT]</code>-tagged test. Criteria 2 and 3 provide the MUST NOT contain counterexamples (e.g., the response must NOT contain <code>"error":"token_expired"</code> on a valid token). The EBT-1 audit can find a concrete input and both assertion types for each test.</p>
+      </div>
+    </details>
+
+    <h3 id="exercise-2">Exercise 2</h3>
+
+    <div class="practice">
+      <div class="practice-label">Exercise</div>
+      <p><strong>Original requirement (Must):</strong> The file upload feature shall handle large files and provide feedback to the user.</p>
+      <p>This requirement has at least three failure modes. Name them. Then rewrite the requirement so that boundary-value testing is possible and the success/failure paths are each verifiable.</p>
+    </div>
+
+    <details>
+      <summary>Answer key &mdash; Exercise 2</summary>
+      <div class="answer-content">
+        <p><strong>Failure modes present:</strong></p>
+        <ul>
+          <li><strong>Missing boundary</strong> &mdash; "large files" is not a size. No maximum specified.</li>
+          <li><strong>Vague verb</strong> &mdash; "handle" does not describe a behaviour. Rejected? Streamed? Queued?</li>
+          <li><strong>Untestable observability</strong> &mdash; "provide feedback" is not observable without specifying what feedback, when, and through what channel.</li>
+        </ul>
+        <p><strong>Rewritten requirement:</strong></p>
+        <p><strong>UP-1 (Must):</strong> Users may upload files up to 50 MB. During upload, the UI shall display a progress indicator showing percentage complete, updated at least every 500 ms. On successful upload, the UI shall display the message "Upload complete" and the file shall be available for processing within 5 seconds. Files exceeding 50 MB shall be rejected before transmission begins, with the message "File too large &mdash; maximum 50 MB" displayed inline. Supported formats: PDF, PNG, JPEG. Files of other formats shall be rejected with "Unsupported file type."</p>
+        <p><strong>Acceptance criteria:</strong> (1) 49.9 MB file uploads successfully; "Upload complete" shown. (2) 50.1 MB file rejected before upload begins; "File too large" message shown. (3) Progress indicator visible and updates during a 10+ MB upload. (4) File available for processing within 5 s of upload completion. (5) <code>.docx</code> file rejected; "Unsupported file type" shown.</p>
+        <p><strong>Why this clears Phase 4:</strong> The 50 MB boundary enables Beizer boundary-value tests at exactly 50 MB, 50 MB - 1 byte, and 50 MB + 1 byte. Each acceptance criterion pairs a concrete input with a verifiable output, satisfying the MUST contain / MUST NOT contain shape for EBT-1.</p>
+      </div>
+    </details>
+
+    <h3 id="exercise-3">Exercise 3</h3>
+
+    <div class="practice">
+      <div class="practice-label">Exercise</div>
+      <p><strong>Original requirement (Must):</strong> The system shall send order confirmation emails to customers after a successful purchase.</p>
+      <p>This requirement looks reasonable at first glance. Identify why it will still trip Phase 4's contract lint. Rewrite it to be lint-clean.</p>
+    </div>
+
+    <details>
+      <summary>Answer key &mdash; Exercise 3</summary>
+      <div class="answer-content">
+        <p><strong>Why it trips the lint:</strong> The requirement implies an outbound call to an external email service, but does not name that service. When <code>/gvm-test-cases</code> generates a test, it cannot determine whether to tag it <code>[CONTRACT]</code> (real external boundary, mock only at the boundary) or <code>[COLLABORATION]</code> (internal call). The contract/collaboration lint in Phase 4 (ADR-503) flags tests where it cannot classify the boundary from the requirement. In practice, the generated test will likely patch HTTP transport inside the consumer code &mdash; a Rainsberger violation that the lint catches.</p>
+        <p><strong>Rewritten requirement:</strong></p>
+        <p><strong>EM-1 (Must):</strong> When an order is recorded as paid (payment status = <code>CAPTURED</code>), the system shall send a transactional email via the Mailgun API to the customer's registered email address. The email shall contain the order ID, an itemised list of purchased products with quantities and prices, and the total amount charged. If the Mailgun API returns a non-2xx response, the event shall be queued and retried up to 3 times at 5-minute intervals before being marked as failed.</p>
+        <p><strong>Acceptance criteria:</strong> (1) On payment status = <code>CAPTURED</code>, Mailgun API receives a call containing order ID, item list, and total. (2) Customer's registered email is the recipient address. (3) On Mailgun 500, the event is retried after 5 minutes; after 3 failures the event is marked failed and not retried. (4) No email is sent if payment status is not <code>CAPTURED</code>.</p>
+        <p><strong>Why this clears the lint:</strong> Mailgun is named as the external boundary. <code>/gvm-test-cases</code> can emit a <code>[CONTRACT]</code>-tagged test that stands up a fake HTTP endpoint at the Mailgun boundary and verifies the outbound call's content, without patching <code>requests</code> or <code>httpx</code> inside the consumer &mdash; which is the Rainsberger violation the lint prevents. Criterion 4 enables a <code>[COLLABORATION]</code>-tagged test for the internal gate condition.</p>
+      </div>
+    </details>
+
+    <h2 id="phase4-lint">The Phase 4 lint: what it catches and how to avoid it</h2>
+
+    <p>Phase 4 of <code>/gvm-test-cases</code> runs two lints against the generated test suite. Both trace back to how requirements describe external boundaries.</p>
+
+    <p><strong>The Rainsberger violation</strong> occurs when a test patches HTTP transport directly inside the consumer's code (e.g., mocking <code>requests.get</code>, stubbing <code>axios</code>, or intercepting <code>httpx</code> at the call site). This happens because the requirement named a behaviour without naming the boundary &mdash; so the test writer had no real external endpoint to test against and substituted a transport patch instead. The fix is to name the external boundary in the requirement, so the test can stand up a fake server at that boundary rather than patching transport.</p>
+
+    <p><strong>The Metz violation</strong> occurs when a test tagged <code>[CONTRACT]</code> (real external boundary) contains a mock for an internal production class. The two concepts are mixed: a contract test is supposed to exercise the real call chain all the way to the external boundary, mocking only at that boundary. An internal mock stops the chain short. This typically happens when the requirement conflates an internal collaboration with an external contract &mdash; naming a class or component rather than an external system.</p>
+
+    <p>At the requirements level, both violations have the same root cause: the requirement does not clearly distinguish between what happens inside your system and what happens at a real external boundary. The rule is straightforward:</p>
+
+    <ul>
+      <li>If the behaviour involves calling a service, API, database, message bus, or file system outside your codebase, name it in the requirement.</li>
+      <li>Do not name internal classes, modules, or components in requirements. That is architecture, not behaviour.</li>
+      <li>When a requirement implies both (internal routing logic + external call), split the acceptance criteria: one for the internal gate condition, one for the external call's content.</li>
+    </ul>
+
+    <div class="callout warning">
+      <div class="callout-label">Mock budget</div>
+      <p>The contract/collaboration lint enforces a mock budget at the architectural level: each test is allowed to mock either at the external boundary (CONTRACT) or at an internal seam (COLLABORATION), not both. Requirements that muddy this line produce tests that the lint cannot classify &mdash; and a test the lint cannot classify is a test that cannot be trusted to remain valid as the implementation evolves.</p>
+    </div>
+
+    <h2 id="takeaways">Takeaways</h2>
+
+    <p>Requirements that clear <code>/gvm-test-cases</code> Phase 4 on the first run share four properties. Check each one before confirming a requirement:</p>
+
+    <ol>
+      <li><strong>Concrete verbs with measurable outcomes.</strong> The requirement states what the system does and what an observer can verify. "The system displays error message X" is testable. "The system handles the error gracefully" is not.</li>
+      <li><strong>Explicit boundaries.</strong> Every numerical constraint has a value. Every time limit has a duration. Every volume cap has a number. Vague qualifiers ("large," "fast," "many") are placeholders, not requirements.</li>
+      <li><strong>Named external systems.</strong> If the behaviour involves an external service, API, or data store, the requirement names it. This is what enables <code>[CONTRACT]</code> tagging and prevents the Rainsberger and Metz violations in Phase 4.</li>
+      <li><strong>Both paths described.</strong> The happy path and the failure path are stated. A requirement that only describes the success case will produce one test. Phase 4 expects at least a positive and a negative assertion for every MUST requirement.</li>
+    </ol>
+
+    <p>If you can write the Given/When/Then in your head before confirming the requirement, it will pass Phase 4. If you cannot, it will not.</p>
+
+  </main>
+
+  <script>
+  (function () {
+    const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+    const links = [];
+    headings.forEach(function (h) {
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      toc.appendChild(a);
+      links.push({ el: a, target: h });
+    });
+    function onScroll() {
+      let current = links[0];
+      for (let i = 0; i < links.length; i++) {
+        if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+      }
+      links.forEach(function (l) { l.el.classList.remove('active'); });
+      if (current) {
+        current.el.classList.add('active');
+        const tocEl = document.getElementById('toc');
+        const elTop = current.el.offsetTop - tocEl.offsetTop;
+        const elBot = elTop + current.el.offsetHeight;
+        if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+          tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
+</body>
+</html>

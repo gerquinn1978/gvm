@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expert Grounding Workshop</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 260px; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .callout {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .callout-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .callout.key-finding {
+      background: #fdf0ef;
+      border-left: 3px solid #a00000;
+    }
+
+    .callout.key-finding .callout-label {
+      color: #a00000;
+    }
+
+    .practice {
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .practice-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #27ae60;
+      margin-bottom: 0.3rem;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .comparison-box {
+      background: #f7f7f0;
+      padding: 0.8rem 1rem;
+      border-top: 2px solid #999;
+    }
+
+    .comparison-box.grounded {
+      border-top-color: #27ae60;
+    }
+
+    .comparison-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.4rem;
+    }
+
+    .comparison-box.grounded .comparison-label {
+      color: #27ae60;
+    }
+
+    .comparison-box p {
+      font-size: 0.92rem;
+      margin-bottom: 0.3rem;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      width: auto;
+      min-width: 480px;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 1rem 0.5rem 0;
+      border-bottom: 2px solid #333;
+      color: #111;
+    }
+
+    tbody td {
+      padding: 0.45rem 1rem 0.45rem 0;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+
+    .sidenote {
+      float: right;
+      clear: right;
+      width: 220px;
+      margin-right: -260px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #666;
+      padding-left: 1rem;
+      border-left: 2px solid #e0e0e0;
+    }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .comparison { grid-template-columns: 1fr; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <p class="date">April 2026</p>
+    <h1>Expert Grounding Workshop</h1>
+    <p class="subtitle">Why citing specific experts produces different output than asking for "best practices" &mdash; and how to apply this in your own work.</p>
+
+    <h2 id="learning-objectives">What you will be able to do</h2>
+
+    <ol>
+      <li>Explain why a citation acts as a retrieval key into the model's training data</li>
+      <li>Write a grounded prompt that activates specific expert knowledge</li>
+      <li>Choose which experts to cite for a given task</li>
+      <li>Recognise the difference between grounded and ungrounded output</li>
+      <li>Understand where grounding works (review) and where it doesn't (construction)</li>
+    </ol>
+
+    <h2 id="the-problem">The problem with "write good code"</h2>
+
+    <p>When you tell an AI "write good code," it draws from everything in its training data &mdash; a broad, undifferentiated blend of Stack Overflow answers, blog posts, documentation, textbooks, and production code of varying quality. The output is plausible. It compiles. It might even work. But it converges on the average of everything the model has seen, not on any specific standard of quality.</p>
+
+    <p>When you tell it "apply Fowler's refactoring principles from <em>Refactoring</em>, 2nd edition," something different happens. The citation shifts the model toward a focused application of a specific body of published work. The output reflects Fowler's principles &mdash; extract method, replace conditional with polymorphism, remove feature envy &mdash; because the citation activates the model's knowledge of that specific work.</p>
+
+    <div class="comparison">
+      <div class="comparison-box">
+        <div class="comparison-label">Ungrounded</div>
+        <p>"Write a well-structured dashboard for market risk data."</p>
+      </div>
+      <div class="comparison-box grounded">
+        <div class="comparison-label">Grounded</div>
+        <p>"Apply Tufte's principles from <em>The Visual Display of Quantitative Information</em> and Few's from <em>Show Me the Numbers</em>."</p>
+      </div>
+    </div>
+
+    <p>The ungrounded prompt produces a dashboard with decorative gradients, pie charts, and generic layouts. The grounded prompt produces a dashboard with high data density, appropriate chart types, and no decoration. The difference is measurable &mdash; in a controlled experiment across three model families, the effect was statistically significant with large effect sizes (p&nbsp;&lt;&nbsp;0.001, all pairwise comparisons).</p>
+
+    <h2 id="mechanism">How citations work</h2>
+
+    <p>The citation acts as a retrieval key. Large language models organise knowledge internally in ways that respond to specific names and titles. When you write "Tufte" in a prompt, the model does not search a database &mdash; it shifts its attention toward the regions of its parameter space that encode Tufte's principles. The more specific the citation (chapter, edition, specific principle), the more focused the activation.</p>
+
+    <p>This is not RAG (retrieval-augmented generation). Nothing is retrieved from an external source. The knowledge is already in the model's parameters from training. The citation tells the model <em>which</em> knowledge to prioritise.</p>
+
+    <div class="callout">
+      <div class="callout-label">The analogy</div>
+      <p>Telling a student to "do research" produces generic output. Telling them to "read Chapter 16 of Wiegers' <em>Software Requirements</em> and apply his elicitation framework" produces focused output. The student's library already contains the book. The citation tells them which shelf to go to.</p>
+    </div>
+
+    <h3 id="specificity">Specificity is the mechanism</h3>
+
+    <p>Not all citations are equally effective. The experiment found that:</p>
+
+    <ul>
+      <li><strong>Specific principles work.</strong> "Tufte's data-ink ratio" and "Few's bullet graphs instead of gauges" produce measurable improvement.</li>
+      <li><strong>Book-level citations are weaker.</strong> "Jorion, <em>Value at Risk</em>" (cited at book level, no specific principles) produced no measurable effect on domain dimensions.</li>
+      <li><strong>Chapter-level citations are strongest.</strong> "Wiegers' elicitation framework from Chapter 16 of <em>Software Requirements</em>" is more effective than "Wiegers' <em>Software Requirements</em>."</li>
+    </ul>
+
+    <p>The rule: cite the specific principle, not just the authority. The model needs the retrieval key, not just the author's name.</p>
+
+    <div class="practice">
+      <div class="practice-label">Practice 1: Ground a prompt</div>
+      <p>Take this ungrounded prompt: "Review this Python code for quality issues."</p>
+      <p>Rewrite it with specific expert citations. Which experts would you cite? What specific principles would you include? Write your grounded version before reading on.</p>
+      <p><strong>One possible answer:</strong> "Review this Python code applying Ramalho's idioms from <em>Fluent Python</em> (2nd ed.) &mdash; Protocol-based abstractions over inheritance, frozen dataclasses for value objects, <code>MappingProxyType</code> for shared state. Apply Beck's test quality principles from <em>Test-Driven Development</em> &mdash; one assertion per test, behaviour-focused test names. Apply Hunt &amp; Thomas's DRY principle: flag duplicated logic across modules."</p>
+    </div>
+
+    <h2 id="where-grounding-works">Where grounding works &mdash; and where it doesn't</h2>
+
+    <p>This is a finding we discovered through testing, not one we predicted.</p>
+
+    <p><strong>Expert grounding during design is demonstrably effective.</strong> An architect grounded in Fairbanks produces risk-driven decomposition &mdash; thorough where the project is risky, light where it isn't &mdash; instead of the uniform-depth spec that everything-equally-detailed produces. An architect grounded in Bass, Clements &amp; Kazman writes quality-attribute scenarios with measurable response measures, not bullet-list non-functionals. A spec author grounded in Keeling produces ADRs that capture the decision, the alternatives rejected, and the reason &mdash; not just the chosen option. The output is structurally different from what the same model produces ungrounded.</p>
+
+    <p><strong>Expert grounding during review is demonstrably effective.</strong> A reviewer grounded in Tufte and Few sees chartjunk that an ungrounded reviewer misses. A reviewer grounded in Fowler and Ramalho catches design patterns that an ungrounded reviewer accepts. The experimental evidence for review specifically is strong &mdash; reproduced across three model families.</p>
+
+    <p><strong>Expert grounding during code construction is undemonstrated.</strong> Citing Fowler during code generation does not reliably produce Fowler-quality code. Code construction is largely procedural &mdash; what matters is the exact framework API, the correct method signature, the right import path. Citing an expert who wrote about <em>quality</em> does not substitute for documentation that tells the model <em>how to call this specific library</em>. This is the declarative/procedural distinction the next subsection unpacks.</p>
+
+    <div class="callout key-finding">
+      <div class="callout-label">The separation</div>
+      <p>Construction is grounded in framework documentation &mdash; procedural knowledge about how to use the tools. Design and review are grounded in expert principles &mdash; declarative knowledge about what quality looks like. The expert patterns you see in the code exist because the spec defined them (grounded design) and the review enforced them (grounded review), not because experts were cited during code generation.</p>
+    </div>
+
+    <span class="sidenote">This separation was discovered during the Assay case study. The Anthropic SDK streaming hallucination compiled and passed tests &mdash; but the code review, grounded in the actual SDK interface, caught it. See <em>Building a Production Tool with GVM</em> for the full story.</span>
+
+    <h2 id="choosing-experts">Choosing which experts to cite</h2>
+
+    <p>GVM organises experts into tiers based on how they're used:</p>
+
+    <table>
+      <thead>
+        <tr><th>Tier</th><th>When loaded</th><th>Examples</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Tier 1</strong> &mdash; Process</td><td>Every project, every phase</td><td>Wiegers (requirements), Copeland (test design), Beck (TDD)</td></tr>
+        <tr><td><strong>Tier 2a</strong> &mdash; Architecture</td><td>When the domain matches</td><td>Fowler (enterprise patterns), Kleppmann (data-intensive systems), Tufte (data visualisation)</td></tr>
+        <tr><td><strong>Tier 2b</strong> &mdash; Industry</td><td>When the business domain matches</td><td>Jorion (market risk), Hull (derivatives), HIPAA experts (healthcare)</td></tr>
+        <tr><td><strong>Tier 3</strong> &mdash; Stack</td><td>When the technology stack matches</td><td>Ramalho (Python), Percival &amp; Gregory (Python architecture), Hevery (Angular)</td></tr>
+      </tbody>
+    </table>
+
+    <p>GVM loads the right experts automatically based on your project's domain and stack. You don't need to remember which experts to cite &mdash; the pipeline handles it. But understanding the tiers helps you know why certain experts appear in your review reports.</p>
+
+    <h3 id="discovering">When no expert covers your domain</h3>
+
+    <p>If your project involves a domain that the built-in roster doesn't cover, GVM flags it: "No authoritative specialist identified for [domain]." You can then run <code>/gvm-experts</code> or <code>/gvm-init</code> to discover and score relevant experts. Discovered experts are persisted and available to all future projects.</p>
+
+    <div class="practice">
+      <div class="practice-label">Practice 2: Identify the expert gap</div>
+      <p>You're building a mobile health app that tracks medication adherence. Which GVM tiers would you expect to be covered by the built-in roster? Which might have gaps?</p>
+      <p><strong>Answer:</strong> Tier 1 (process) is always covered. Tier 2a (architecture) is covered for general patterns. Tier 3 (stack) is covered if you're using a supported framework. Tier 2b (industry) is the likely gap &mdash; healthcare/pharma domain expertise, medication safety regulations, HIPAA compliance. You would run <code>/gvm-init</code> to discover healthcare domain experts.</p>
+    </div>
+
+    <h2 id="the-reviewer-problem">Ungrounded reviewers can't see grounded quality</h2>
+
+    <p>The experiment's most surprising finding was not that grounded output is better. It was that ungrounded reviewers <em>can't tell</em>.</p>
+
+    <p>In the controlled experiment, dashboards produced with Tufte/Few grounding scored <em>below</em> ungrounded dashboards when evaluated by reviewers without the expert framework. The grounded output was measurably better by expert standards, but reviewers who lacked those standards rated it worse.</p>
+
+    <p>This has practical consequences. If you use an AI to review AI output without grounding the reviewer, the review is confidently approving code that a grounded reviewer would reject. You can't see what you don't have a framework to see.</p>
+
+    <div class="practice">
+      <div class="practice-label">Practice 3: See the difference</div>
+      <p>Ask Claude to generate two versions of a data table:</p>
+      <ol>
+        <li>"Create an HTML table showing quarterly revenue by region."</li>
+        <li>"Create an HTML table showing quarterly revenue by region. Apply Few's principles from <em>Show Me the Numbers</em>: right-align numeric columns, use tabular-nums for digit alignment, top and bottom rules only (no vertical gridlines), subtle zebra striping for row tracking, left-align text. Apply Tufte: maximise data-ink ratio, no decorative borders or backgrounds."</li>
+      </ol>
+      <p>Compare the two outputs. The differences are visible &mdash; but only if you know what to look for. That is the grounding effect.</p>
+    </div>
+
+    <h2 id="grounding-outside-pipeline">Grounding outside the pipeline</h2>
+
+    <p>Citation-based grounding isn't pipeline-bound. The same mechanism that activates Beck during code review activates Tukey for an exploratory data analysis, or Hull for a market risk discussion, or Doumont for a presentation. Anywhere a knowledge-dependent decision is made, citing the right expert focuses the output.</p>
+
+    <p>The clearest example is <code>/gvm-analysis</code>. It performs privacy-preserving exploratory data analysis: a Python engine reads your data and Claude orchestrates the analysis using grounded experts (McKinney for pandas idioms, Tukey for exploratory technique, Cleveland for visualisation, plus industry-domain experts where applicable) &mdash; <em>without ever seeing the raw rows</em>. The data stays in the engine; the model reasons with the right frameworks about what the engine reports.</p>
+
+    <p>This is the proof that grounding is about activating reasoning frameworks, not about giving the model access to data. The same logic applies to <code>/gvm-doc-write</code> standalone mode: presentations grounded in Tufte and Doumont, strategy documents grounded in Rumelt and Christensen, training materials grounded in Mayer and Bloom &mdash; the experts change with the document type, the activation mechanism stays the same.</p>
+
+    <h3 id="declarative-vs-procedural">Where citation grounding earns its place</h3>
+
+    <p>A useful distinction: <em>declarative knowledge</em> (what good code looks like, what a sound argument is, what a clear visualisation shows) responds well to expert grounding &mdash; the citation activates the framework that defines "good." <em>Procedural knowledge</em> (how to call this specific API, what the exact field name is) responds better to direct framework documentation &mdash; the citation can't substitute for the actual interface specification.</p>
+
+    <p>GVM's pipeline implements the split. The build prompt loads framework documentation for construction (procedural). Expert principles get applied during design (where the question is "is this the right structure?") and during the code-review loop after construction (where the question is "does this meet quality standards?"). When you're deciding whether to add a citation, ask which kind of knowledge the task needs.</p>
+
+    <h2 id="summary">Key takeaways</h2>
+
+    <ul>
+      <li><strong>Citations are retrieval keys</strong> &mdash; they activate specific knowledge the model already has.</li>
+      <li><strong>Specificity matters</strong> &mdash; cite the principle, not just the author. Chapter-level beats book-level.</li>
+      <li><strong>Grounding fits declarative tasks; framework documentation fits procedural tasks</strong> &mdash; expert principles define what quality looks like; API and library documentation define how to call the tools. GVM's pipeline splits the two: framework docs for construction, expert principles for design and review.</li>
+      <li><strong>Ungrounded reviewers miss grounded quality</strong> &mdash; the reviewer needs the same framework as the producer to see the improvement.</li>
+      <li><strong>Grounding is not pipeline-bound</strong> &mdash; <code>/gvm-analysis</code>, <code>/gvm-doc-write</code> standalone mode, and the standalone modes of the other skills all use the same activation mechanism for non-pipeline work.</li>
+      <li><strong>GVM handles expert loading automatically</strong> &mdash; the pipeline activates the right experts at each phase. You benefit from the grounding without managing it manually.</li>
+    </ul>
+
+  </main>
+
+  <script>
+  (function () {
+    const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+    const links = [];
+    headings.forEach(function (h) {
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      toc.appendChild(a);
+      links.push({ el: a, target: h });
+    });
+    function onScroll() {
+      let current = links[0];
+      for (let i = 0; i < links.length; i++) {
+        if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+      }
+      links.forEach(function (l) { l.el.classList.remove('active'); });
+      if (current) {
+        current.el.classList.add('active');
+        const tocEl = document.getElementById('toc');
+        const elTop = current.el.offsetTop - tocEl.offsetTop;
+        const elBot = elTop + current.el.offsetHeight;
+        if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+          tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
+</body>
+</html>

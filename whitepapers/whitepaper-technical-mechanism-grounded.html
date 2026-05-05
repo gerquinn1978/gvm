@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Citation-Based Activation Works &mdash; Grounded Draft</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+body { font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif; color: #111; background: #fffff8; line-height: 1.6; padding: 2rem 1rem 6rem; max-width: 800px; margin: 0 auto; }
+h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; }
+ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+li { margin-bottom: 0.4rem; }
+.subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 0.5rem; }
+.date { font-size: 0.9rem; color: #888; margin-bottom: 2.5rem; }
+code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+pre code { background: none; padding: 0; }
+.sidenote { float: right; clear: right; width: 200px; margin-right: -240px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: 100%; }
+thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; }
+tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+tbody tr:last-child td { border-bottom: 2px solid #333; }
+caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+.callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; }
+.callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+.callout p { margin-bottom: 0.3rem; }
+.math { font-family: "Menlo", "Consolas", monospace; font-size: 0.92rem; background: #f7f7f0; padding: 0.8rem 1rem; margin: 1rem 0 1.5rem; border-left: 3px solid #669; }
+hr { border: 0; border-top: 1px solid #ccc; margin: 2rem 0; }
+@media (max-width: 1000px) { .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; } }
+  </style>
+</head>
+<body>
+
+<h1>Why Citation-Based Activation Works</h1>
+<p class="subtitle">The transformer architecture routes different input tokens through different computational pathways. Citations exploit this to steer output toward specific methodologies.</p>
+<p class="author" style="font-size: 0.9rem; color: #666;">Conor Brennan &amp; Gerard Quinn</p>
+<p class="date" style="margin-bottom: 2rem;">April 2026</p>
+
+<div style="background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1.5rem 0; max-width: 640px; font-size: 0.92rem;">
+  <strong>This paper in context.</strong> This paper explains why citation-based activation works at the transformer architecture level. For the methodology it supports, see <em>The Grounded Vibe Methodology</em>. For the experimental evidence, see <em>Grounding Produces Measurably Better Output</em>. For a case study showing grounding patterns visible in production code, see <em>Building a Production Tool with GVM</em>.
+</div>
+
+<!-- ═══════════════════════════════════════════
+     EXECUTIVE SUMMARY
+     ═══════════════════════════════════════════ -->
+
+<h2>The Short Version</h2>
+
+<p>
+  When you tell an LLM to &ldquo;use Wiegers&rsquo; methodology for requirements elicitation,&rdquo; does it do anything different from &ldquo;write good requirements&rdquo;? The transformer architecture guarantees that different tokens produce different computations. Whether those different computations produce <em>usefully</em> different output is an empirical question &mdash; but the mechanism is real, and preliminary experiments point in the right direction.
+</p>
+
+<p>
+  Five findings from the machine learning literature explain the mechanism:
+</p>
+
+<ol>
+  <li><strong>Prompt tokens shift attention weights</strong> &mdash; the attention equation routes computation based on input (Vaswani et al., 2017)</li>
+  <li><strong>LLMs already learn from context</strong> &mdash; citations use the same conditioning channel as few-shot learning (Brown et al., 2020)</li>
+  <li><strong>Different tokens activate different circuits</strong> &mdash; circuit analysis shows token-specific computational pathways (Elhage et al., 2021)</li>
+  <li><strong>Context density amplifies activation</strong> &mdash; induction heads match patterns proportional to what&rsquo;s in the context window (Olsson et al., 2022)</li>
+  <li><strong>Widely-referenced experts likely activate more reliably</strong> &mdash; a plausible inference from how training data shapes learned patterns (Kaplan et al., 2020)</li>
+</ol>
+
+<p>
+  A preliminary experiment (60 market risk dashboards, 360 independent reviews) found a statistically significant dose-response: more grounding produced progressively better output when measured against the cited experts&rsquo; published standards (F&nbsp;=&nbsp;19.96, p&nbsp;&lt;&nbsp;0.001). The experiment has limitations &mdash; same-model evaluation, single task type &mdash; but it is consistent with the mechanism described here.
+</p>
+
+<hr/>
+
+<!-- ═══════════════════════════════════════════
+     THE QUESTION
+     ═══════════════════════════════════════════ -->
+
+<h2>The Sceptic&rsquo;s Question</h2>
+
+<p>
+  A reasonable person encountering citation-based activation for the first time will ask: &ldquo;Is this just prompt engineering with extra steps? Does naming an expert actually change what the model does, or does it just <em>feel</em> like it does?&rdquo;
+</p>
+
+<p>
+  This is the right question. The answer requires looking inside the model &mdash; not at the output, but at the mechanism that produces it. Five papers, published between 2017 and 2022, collectively describe that mechanism. A sixth piece of evidence &mdash; our own experiment &mdash; provides preliminary empirical support. Each section below walks through one contribution.
+</p>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1: Attention (Vaswani)
+     ═══════════════════════════════════════════ -->
+
+<h2>1. Prompt Tokens Shift Attention Weights &mdash; That&rsquo;s the Mechanism</h2>
+
+<p>
+  Vaswani et al.&rsquo;s self-attention equation defines how every transformer processes input:
+</p>
+
+<div class="math">
+  Attention(Q, K, V) = softmax(QK<sup>T</sup> / &radic;d<sub>k</sub>)V
+</div>
+
+<span class="sidenote">
+  Vaswani et al., &ldquo;Attention Is All You Need,&rdquo; <em>NIPS</em> (2017). The paper that replaced recurrence with attention as the foundation of sequence modelling.
+</span>
+
+<p>
+  Queries (Q), keys (K), and values (V) are derived from the input tokens. The dot product QK<sup>T</sup> computes how much each token matters to every other token. The softmax normalises these into attention weights. Different tokens in the prompt produce different weights, which produce different output.
+</p>
+
+<p>
+  When a prompt contains &ldquo;Wiegers&rdquo; and &ldquo;Software Requirements,&rdquo; those tokens participate in the QK<sup>T</sup> computation at every layer. They shift the attention weights, which shifts which learned patterns contribute to the output. That different tokens produce different computations is a consequence of the architecture. Whether those computations steer output in a <em>useful</em> direction is the empirical question addressed later in this paper.
+</p>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2: In-context learning (Brown)
+     ═══════════════════════════════════════════ -->
+
+<h2>2. LLMs Already Learn from Context &mdash; Citations Use the Same Channel</h2>
+
+<p>
+  Brown et al. showed that GPT-3 could perform tasks specified entirely through the prompt &mdash; translation, question answering, arithmetic &mdash; without any parameter updates. The model learned the task from examples in the context window.
+</p>
+
+<span class="sidenote">
+  Brown et al., &ldquo;Language Models are Few-Shot Learners,&rdquo; <em>NeurIPS</em> (2020). Established in-context learning as a fundamental LLM capability.
+</span>
+
+<p>
+  If a model can learn a <em>new task</em> from prompt context, it is reasonable to expect it can be steered toward a <em>specific methodology</em> by providing that methodology&rsquo;s key concepts. Citation-based activation uses the same conditioning channel as few-shot learning &mdash; tokens in the context window that shape the output distribution &mdash; but the conditioning signal is expert names, work titles, and technique descriptions rather than input-output examples. These are different types of conditioning signals, and the degree to which name-based citations produce the same quality of steering as worked examples is not established by Brown et al. The mechanism is the same; the efficacy of this particular application of it is what needs testing.
+</p>
+
+<p>
+  Brown et al. also showed a consistent pattern: more specific context produces more accurate output. Few-shot outperformed zero-shot. Task-specific prompts outperformed generic ones. This is consistent with the observation that &ldquo;Wiegers, <em>Software Requirements</em> 3rd ed., context-free questions&rdquo; produces more focused output than &ldquo;write good requirements&rdquo; &mdash; though it does not directly predict it, because citation-based prompts are structurally different from few-shot examples.
+</p>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3: Circuits (Elhage)
+     ═══════════════════════════════════════════ -->
+
+<h2>3. Circuit Analysis Shows Token-Specific Computational Pathways</h2>
+
+<p>
+  Consider two prompts: one cites &ldquo;Wiegers&rdquo; for requirements elicitation, the other cites &ldquo;Copeland&rdquo; for boundary value analysis. Both are software engineering tasks. Both produce text. The attention equation guarantees that different input tokens produce different attention patterns. But do those different patterns activate meaningfully different knowledge?
+</p>
+
+<span class="sidenote">
+  Elhage et al., &ldquo;A Mathematical Framework for Transformer Circuits,&rdquo; Anthropic (2021). A foundational work in mechanistic interpretability of transformers. Note: circuit-level findings are from small (1&ndash;2 layer) models. Extrapolation to production-scale LLMs is a reasonable hypothesis, not a confirmed result.
+</span>
+
+<p>
+  Elhage et al. provided a rigorous description of how transformer components compose into interpretable circuits in small models. They showed that attention heads perform specific, identifiable operations &mdash; copying tokens, matching patterns, routing information. Their circuit analysis suggests that different tokens activate different computational pathways, which is consistent with the hypothesis that different citations produce different activations. The caveat: these findings come from 1&ndash;2 layer transformers. Whether the same circuit-level specificity holds in production-scale models (100B+ parameters) is plausible but not confirmed.
+</p>
+
+<p>
+  Separately, Elhage et al. formalised <strong>superposition</strong> in a later paper (&ldquo;Toy Models of Superposition,&rdquo; 2022): the model encodes more features than it has dimensions, with features overlapping in parameter space. This offers a possible explanation for how citations activate specific knowledge despite the model having no discrete &ldquo;Wiegers module&rdquo; &mdash; the knowledge is distributed across parameters, and the citation tokens may help resolve the superposition toward relevant features. But superposition also means features interfere with each other, so citation tokens could activate unintended features alongside the intended ones. The mechanism cuts both ways.
+</p>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4: Induction heads (Olsson)
+     ═══════════════════════════════════════════ -->
+
+<h2>4. Reference Files Give Induction Heads More to Match Against</h2>
+
+<p>
+  Olsson et al. identified a specific circuit &mdash; the induction head &mdash; and presented evidence that it is a key mechanism for in-context learning. Induction heads look for sequences in the current context that match patterns seen earlier in the context, and use those matches to predict what comes next.
+</p>
+
+<span class="sidenote">
+  Olsson et al., &ldquo;In-context Learning and Induction Heads,&rdquo; Anthropic (2022). Presented evidence that induction heads are a key mechanism underlying in-context learning. The paper studied models up to ~13B parameters.
+</span>
+
+<p>
+  This is consistent with the observation that GVM reference files &mdash; verbose documents loaded into context before generation &mdash; produce stronger activation than bare citations. A reference file containing &ldquo;Wiegers &mdash; context-free questions, requirements classification (business, user, functional), ambiguity indicators, MoSCoW prioritisation&rdquo; gives the induction heads more terms to potentially match against. A bare citation (&ldquo;use Wiegers&rdquo;) gives them fewer.
+</p>
+
+<p>
+  The inference that more context terms means proportionally stronger activation is plausible but simplified. Induction heads match specific sequential patterns, not arbitrary keywords. Whether additional terminology in a reference file creates matchable patterns for a given generation task depends on the specific content and the task. The relationship is likely positive but not guaranteed to be linear.
+</p>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5: Scaling laws (Kaplan) — reframed as hypothesis
+     ═══════════════════════════════════════════ -->
+
+<h2>5. Widely-Referenced Experts Likely Activate More Reliably</h2>
+
+<span class="sidenote">
+  Kaplan et al., &ldquo;Scaling Laws for Neural Language Models,&rdquo; arXiv:2001.08361 (2020). Established power-law relationships between total training data, model size, and aggregate model performance. Note: the paper studied aggregate scaling, not per-topic performance.
+</span>
+
+<p>
+  Kaplan et al. established power-law relationships between training data volume, model size, and overall model capability. Their work studied aggregate performance (cross-entropy loss across all tasks), not per-topic performance. They did not measure whether a model performs better on topic X when it has seen more training data about topic X specifically.
+</p>
+
+<p>
+  However, GVM practitioners observe a pattern that is consistent with the intuition behind scaling laws: citing a widely-referenced expert like Wiegers (whose work appears across textbooks, courses, blog posts, and professional discussions) seems to produce more reliable activation than citing an emerging expert with a single niche publication. The plausible explanation is that more frequent exposure during training creates stronger, more robust learned patterns. But we do not know what is in any model&rsquo;s training corpus, and Kaplan et al.&rsquo;s results do not directly establish per-topic scaling. This section presents a hypothesis consistent with the scaling literature, not a finding derived from it.
+</p>
+
+<p>
+  GVM&rsquo;s expert scoring system reflects this hypothesis. The &ldquo;Authority&rdquo; and &ldquo;Adoption&rdquo; dimensions measure how widely an expert&rsquo;s work is referenced &mdash; an indirect proxy for likely training data frequency. A Canonical expert (score 4.5+) is, under this hypothesis, more likely to have robust representation in the model&rsquo;s parameters than a Provisional one (below 1.5). The scoring system operationalises a reasonable bet, not a proven law.
+</p>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 6: Multi-expert panels
+     ═══════════════════════════════════════════ -->
+
+<h2>6. Panels Constrain the Output Under Multiple Expert Influences Simultaneously</h2>
+
+<p>
+  When GVM assembles a panel of 3&ndash;7 experts, each name creates a separate set of attention patterns via multi-head attention. The model has multiple attention heads per layer, and different heads can attend to different expert citations simultaneously.
+</p>
+
+<p>
+  The output at each generation step is conditioned on the joint presence of all cited experts:
+</p>
+
+<div class="math">
+  P(y<sub>t</sub> | y<sub>&lt;t</sub>, expert<sub>1</sub>, expert<sub>2</sub>, ..., expert<sub>n</sub>)
+</div>
+
+<p>
+  This is not an average of individual expert-conditioned distributions. It is a single distribution conditioned on all experts simultaneously. The softmax normalises across all tokens, including all expert citations, producing weights that reflect the joint influence of the entire panel.
+</p>
+
+<p>
+  The practical consequence: panel output is <strong>jointly constrained</strong> by all cited experts &mdash; text that scores high under the joint distribution, meaning it tends to be consistent with Wiegers&rsquo; structure, Patton&rsquo;s workflow narratives, Cooper&rsquo;s personas, and Christensen&rsquo;s jobs-to-be-done simultaneously. This is more constrained (and therefore more specific) than any single expert&rsquo;s conditioning alone. Note that joint conditioning can also produce text that no single expert would generate individually &mdash; it is a confluence of influences, not a strict intersection where only shared content survives.
+</p>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 7: Preliminary experiment
+     ═══════════════════════════════════════════ -->
+
+<h2>7. Preliminary Evidence: The Dashboard Experiment</h2>
+
+<p>
+  The mechanism sections above explain <em>why</em> citation-based activation should work. This section describes a preliminary experiment that tested <em>whether</em> it does.
+</p>
+
+<p>
+  Sixty market risk dashboards were generated under three grounding conditions:
+</p>
+
+<ul>
+  <li><strong>Group 1</strong> (20 dashboards) &mdash; ungrounded. Task prompt only.</li>
+  <li><strong>Group 2</strong> (20 dashboards) &mdash; design-grounded. Task plus Tufte and Few with specific principles.</li>
+  <li><strong>Group 3</strong> (20 dashboards) &mdash; fully grounded. Design experts plus domain experts (Jorion, Hull) and writing experts (Doumont, Zinsser).</li>
+</ul>
+
+<p>
+  Dashboards were shuffled into random order and stripped of group identifiers. All 60 were then blind-reviewed twice &mdash; once by ungrounded reviewers using their own criteria, once by expert-grounded reviewers using criteria derived from the cited experts&rsquo; published principles. No reviewer saw more than one dashboard, and no reviewer knew which grounding condition had produced the dashboard under review. The same dashboards, two different measurement instruments, 360 total reviews.
+</p>
+
+<h3>The result</h3>
+
+<p>
+  Under ungrounded review, Group 2 scored <em>below</em> Group 1 (7.37 vs 7.59). Design-only grounding appeared to make things worse. Under expert-grounded review, the ranking corrected to a clean dose-response: G1 (6.83) &lt; G2 (7.22) &lt; G3 (7.65). The interaction was statistically significant (F&nbsp;=&nbsp;19.96, p&nbsp;&lt;&nbsp;0.001).
+</p>
+
+<p>
+  The largest effects were on the dimensions most directly addressed by the grounding experts: chartjunk absence (Tufte, d&nbsp;=&nbsp;3.67 for G1&nbsp;vs&nbsp;G2), data-ink ratio (Tufte, d&nbsp;=&nbsp;3.87), and message-driven structure (Doumont, d&nbsp;=&nbsp;7.4 for G1&nbsp;vs&nbsp;G3). Dimensions where the grounding was less specific (domain metrics from Jorion and Hull) showed no significant group differences.
+</p>
+
+<h3>What this experiment does and does not establish</h3>
+
+<p>
+  <strong>It establishes:</strong> Under expert-grounded review criteria, grounded output scores significantly higher than ungrounded output, with a dose-response pattern. The improvement is concentrated on the dimensions directly addressed by the grounding experts.
+</p>
+
+<p>
+  <strong>It does not establish:</strong> The experiment used same-model evaluation (Claude generated the dashboards and reviewed them). The human confirmation of review criteria partially breaks this loop, but full validation requires human reviewers or cross-model replication. It covers one task type (market risk dashboards). The effect may differ for other document types. See <em>Grounding Produces Measurably Better Output</em> for detailed limitations and per-dimension results.
+</p>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 8: Boundaries
+     ═══════════════════════════════════════════ -->
+
+<hr/>
+
+<h2>What Remains Open</h2>
+
+<p>
+  The mechanism is described. Preliminary evidence is encouraging. Four questions remain:
+</p>
+
+<ol>
+  <li><strong>How large is the effect with human evaluators?</strong> The dashboard experiment used AI reviewers. Human expert reviewers may confirm, amplify, or contradict the findings. Until replicated with human evaluation, the results demonstrate that grounding changes what the model produces in ways that expert-informed evaluation recognises as improvement.</li>
+  <li><strong>What is the optimal panel?</strong> The attention mechanism explains why panels work, but not how to select the best one. How many experts? Which combinations? When do additional experts produce diminishing returns or conflicting signals?</li>
+  <li><strong>Does it transfer across models?</strong> Preliminary cross-model results are reported in <em>Grounding Produces Measurably Better Output</em> for Claude Opus 4.6, GPT-5.4, and Gemini 3.1 Pro &mdash; the dose-response pattern and ranking reversal appear in all three. The mechanism is architecture-dependent (Vaswani et al.&rsquo;s attention equation applies to all transformers), so cross-architecture portability is theoretically expected. Same-model evaluation remains a confound (the same model generates and scores the output); cross-model review is acknowledged in the experiment paper as the largest remaining experimental gap.</li>
+  <li><strong>Does the effect depend on task type?</strong> The dashboard experiment tested a task that is primarily evaluative and structural &mdash; designing a layout, selecting visualisations, applying data presentation principles. This is an alignment-dependent task where the expert&rsquo;s framework defines what &ldquo;good&rdquo; looks like. Code generation is a different class of task: pretraining-dependent, requiring precise recall of framework-specific APIs and method signatures. Observations from a production build (see <em>The Grounded Vibe Methodology</em>, Section 9.1) found that expert grounding did not prevent either framework-specific errors or principle violations during code construction, while the same experts grounding the review phase caught those issues immediately. The PRISM study (Hu, Rostami &amp; Thomason, USC, March 2026) provides a possible mechanism: personas improve alignment-dependent tasks but damage accuracy on pretraining-dependent tasks. However, the production observation lacks a control group &mdash; we do not know whether an ungrounded build would have produced more or fewer issues. Whether citation-based activation is effective, inert, or counterproductive during code generation is an open empirical question that the current evidence does not resolve. The preliminary hypothesis is that expert grounding is effective for <em>declarative</em> tasks (evaluation, review, document structure, requirements, test design) and undemonstrated for <em>procedural</em> tasks (code construction, API usage). If confirmed, this would be a boundary condition on the mechanism, not a refutation of it &mdash; the attention-shifting effect is real regardless, but the downstream impact on output quality may depend on whether the task benefits from the shifted distribution.</li>
+</ol>
+
+<div class="callout">
+  <div class="callout-label">The grounded position</div>
+  <p>The transformer architecture provides a mechanistic explanation for why citation-based activation should work. Brown et al.&rsquo;s in-context learning results demonstrate the prerequisite capability. Elhage et al. and Olsson et al. describe the internal machinery, with the caveat that circuit-level findings come from smaller models. A preliminary experiment with 60 dashboards and 360 reviews found a statistically significant dose-response under expert-grounded evaluation. What remains is replication with human reviewers, testing across task types &mdash; particularly the open question of whether the effect differs between evaluative and construction tasks &mdash; cross-model portability, and identifying the boundary conditions.</p>
+</div>
+
+<hr/>
+
+<h2>Expert Sources</h2>
+
+<table>
+  <caption>Works cited in this paper, in order of argument</caption>
+  <thead>
+    <tr><th>Authors</th><th>Work</th><th>Contribution to the argument</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Vaswani et al.</td><td>&ldquo;Attention Is All You Need&rdquo; (NIPS 2017)</td><td>The attention equation that defines how prompt tokens influence output</td></tr>
+    <tr><td>Brown et al.</td><td>&ldquo;Language Models are Few-Shot Learners&rdquo; (NeurIPS 2020)</td><td>Empirical evidence that prompt context steers output without parameter updates</td></tr>
+    <tr><td>Elhage et al.</td><td>&ldquo;A Mathematical Framework for Transformer Circuits&rdquo; (Anthropic, 2021)</td><td>Circuit analysis showing token-specific computational pathways in small models</td></tr>
+    <tr><td>Elhage et al.</td><td>&ldquo;Toy Models of Superposition&rdquo; (Anthropic, 2022)</td><td>How models encode more features than dimensions, and how tokens resolve superposition</td></tr>
+    <tr><td>Olsson et al.</td><td>&ldquo;In-context Learning and Induction Heads&rdquo; (Anthropic, 2022)</td><td>Evidence that induction heads are a key mechanism for in-context pattern matching</td></tr>
+    <tr><td>Kaplan et al.</td><td>&ldquo;Scaling Laws for Neural Language Models&rdquo; (OpenAI, 2020)</td><td>Aggregate scaling laws that motivate the hypothesis about per-topic activation reliability</td></tr>
+    <tr><td>Hu, Rostami &amp; Thomason</td><td>&ldquo;Expert Personas Improve LLM Alignment but Damage Accuracy: Bootstrapping Intent-Based Persona Routing with PRISM&rdquo; (USC, March 2026)</td><td>Evidence that expert personas improve alignment-dependent tasks but damage accuracy on pretraining-dependent tasks &mdash; a possible boundary condition on citation-based activation</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+{#-
+  Per-outlier drillthrough (P6-C05).
+
+  Data shape (ADR-201 drillthroughs[].data for kind=outlier):
+    row_index, column, value, method_flags, context_window_stats,
+    row_excerpt: null  (always null in v1; TC-AN-27-02 privacy boundary).
+
+  `row_excerpt` is never rendered. The template surfaces an explicit
+  "row contents not included" notice so the analyst knows the design
+  choice is intentional.
+-#}
+{% set d = drillthrough.data %}
+<p>
+  Row <code>{{ d.row_index }}</code> in column <code>{{ d.column }}</code>;
+  value {{ d.value }}.
+</p>
+
+<p>
+  Row contents are not included in this drillthrough. Only aggregate
+  summaries and the flagged value are surfaced (privacy boundary, AN-4).
+</p>
+
+{% if d.method_flags %}
+<section class="drillthrough-methods">
+  <h2>Flagged by</h2>
+  <ul>
+  {% for flag in d.method_flags %}
+    <li>
+      {% if flag in methodology_by_key %}
+        {% set entry = methodology_by_key[flag] %}
+        {{ entry.display_name }}
+        <aside class="sidenote">
+          Parameters: {{ entry.parameters }}. Citation: {{ entry.expert_citation }}.
+        </aside>
+      {% else %}
+        {{ flag }}
+      {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if d.context_window_stats %}
+<section class="drillthrough-context">
+  <h2>Context window statistics</h2>
+  <dl>
+  {% for label, value in d.context_window_stats.items() %}
+    <dt>{{ label }}</dt>
+    <dd>{{ value }}</dd>
+  {% endfor %}
+  </dl>
+</section>
+{% endif %}

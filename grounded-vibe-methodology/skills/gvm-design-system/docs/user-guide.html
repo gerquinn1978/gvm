@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design System — User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">March 2026</p>
+<h1>Design System</h1>
+<p class="subtitle">
+  The shared foundation for all GVM skills &mdash; design templates, expert reference files,
+  shared rules, and pipeline contracts.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  The design system is the central shared resource for the Grounded Vibe Methodology. It is a passive store &mdash; other skills load its files at runtime, but it is not invoked directly by users. It provides six categories of reference files:
+</p>
+
+<ul>
+  <li><strong>Design templates</strong> &mdash; <code>tufte-html-reference.md</code> (core Tufte/Few patterns) plus three companion files for skill-specific components: <code>tufte-review-components.md</code> (verdict box, score card, issue blocks), <code>tufte-spec-components.md</code> (ADR and component-detail CSS), and <code>tufte-slide-template.md</code> (self-contained slide deck). Each companion is loaded only when that output type is being produced</li>
+  <li><strong>Shared rules</strong> (<code>shared-rules.md</code>) &mdash; cross-cutting rules loaded by every skill at startup: expert activation logging, expert discovery, industry domain loading, when-not-to-ground guidance, automatic scoring, pipeline contracts, what to surface vs keep invisible, and hallucination prevention</li>
+  <li><strong>Expert reference files</strong> &mdash; Tier 1 architecture specialists, Tier 2a per-domain specialist files (in <code>references/domain/</code>), Tier 3 per-stack specialist files (in <code>references/stack/</code>), and Tier 2b industry domain files</li>
+  <li><strong>Expert scoring</strong> (<code>expert-scoring.md</code>) &mdash; the full scoring methodology loaded on demand by <code>/gvm-experts</code></li>
+  <li><strong>Pipeline contracts</strong> (<code>pipeline-contracts.md</code>) &mdash; structural contracts between pipeline phases: required sections, ID formats, and structural elements that downstream consumers depend on</li>
+  <li><strong>Roster assembly</strong> (<code>roster-assembly.md</code>) &mdash; parameterised expert roster assembly process used by <code>/gvm-init</code> and <code>/gvm-site-survey</code></li>
+</ul>
+
+<span class="sidenote">
+  For expert scoring and roster management, use <code>/gvm-experts</code>. That skill provides
+  the user-facing interface; the design system provides the storage.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="for-skill-authors">For Skill Authors</h2>
+
+<p>
+  If you are writing or modifying a GVM skill, you need two things from the design system:
+</p>
+
+<ol>
+  <li><strong>At skill startup</strong>, load <code>~/.claude/skills/gvm-design-system/references/shared-rules.md</code>. This gives you the cross-cutting rules (expert logging, discovery, scoring, when-not-to-ground). Every skill does this.</li>
+  <li><strong>Before the first document write</strong>, load the core files: <code>~/.claude/skills/gvm-design-system/references/tufte-html-reference.md</code> (core HTML/CSS patterns) and <code>~/.claude/skills/gvm-design-system/references/writing-reference.md</code> (prose quality standards). Then — only if applicable to your output type — load one of the Tufte companion files: <code>tufte-review-components.md</code> (review reports), <code>tufte-spec-components.md</code> (tech specs with ADRs), or <code>tufte-slide-template.md</code> (presentations — self-contained; load <em>instead of</em> the core file).</li>
+  <li><strong>Before any review or scoring activity</strong>, also load <code>~/.claude/skills/gvm-design-system/references/review-reference.md</code> (assessment methodology: rubric design, reviewer calibration, measurement reliability).</li>
+</ol>
+
+<p>
+  Everything else in this guide is reference material for understanding what the design system contains and why.
+</p>
+
+<p>
+  The file tree below shows all reference files and their purposes:
+</p>
+
+<pre><code>~/.claude/skills/gvm-design-system/references/
+├── tufte-html-reference.md     — Core HTML/CSS design templates (Tufte, Few)
+├── tufte-review-components.md  — Review-specific CSS (verdict, score card, issues) — load only for reviews
+├── tufte-spec-components.md    — Tech-spec CSS (ADR, component-detail) — load only for /gvm-tech-spec
+├── tufte-slide-template.md     — Self-contained slide deck — load only for presentations
+├── writing-reference.md       — writing quality standards (Doumont, Williams, Zinsser, Orwell)
+├── writing-expert-scoring.md  — scoring record for writing experts (loaded on demand by /gvm-experts)
+├── review-reference.md        — review and assessment standards (Deming, Cronbach, Gilb, Fagan)
+├── shared-rules.md            — cross-cutting rules (loaded at startup by all skills)
+├── expert-scoring.md          — scoring methodology (loaded on demand)
+├── pipeline-contracts.md      — structural contracts between pipeline phases
+├── roster-assembly.md         — parameterised expert roster assembly process
+├── source-verification.md     — verification protocol for externally-supplied documents
+├── architecture-specialists.md — Tier 1 process experts
+├── domain/                    — Tier 2a per-domain specialist files (loaded selectively)
+│   ├── data-modelling.md
+│   ├── ux-interaction.md
+│   ├── integration.md
+│   └── ...
+├── stack/                     — Tier 3 per-stack specialist files (loaded selectively)
+│   ├── react.md
+│   ├── python.md
+│   ├── typescript.md
+│   └── ...
+├── industry/                  — Tier 2b industry domain experts
+│   ├── market-risk.md
+│   ├── credit-risk.md
+│   ├── model-risk.md
+│   └── operational-risk.md
+└── scripts/                   — cross-platform helper utilities (Python 3)
+    └── log-expert.py          — expert activation CSV logger (used by shared rule 1)</code></pre>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="philosophy">Visual Design Philosophy</h2>
+
+<p>
+  The HTML/CSS design templates are grounded in two information design experts:
+</p>
+
+<h3 id="tufte">Edward Tufte</h3>
+
+<ul>
+  <li><strong>Data-ink ratio</strong> &mdash; maximise the share of ink devoted to data. Every pixel should convey information.</li>
+  <li><strong>Remove chartjunk</strong> &mdash; no decorative borders, gradients, drop shadows, or ornamental rules.</li>
+  <li><strong>Small multiples</strong> &mdash; use the same visual format repeated for comparison.</li>
+  <li><strong>Layered information</strong> &mdash; documents should work at multiple zoom levels.</li>
+  <li><strong>Let whitespace do the structural work</strong> &mdash; space communicates grouping and hierarchy.</li>
+</ul>
+
+<h3 id="few">Stephen Few</h3>
+
+<ul>
+  <li><strong>Tables over charts when precision matters</strong> &mdash; if users need exact values, use a table.</li>
+  <li><strong>Subtle zebra striping</strong> &mdash; alternate row backgrounds for tracking, not decoration.</li>
+  <li><strong>Minimal gridlines</strong> &mdash; top and bottom rules only. No internal borders.</li>
+  <li><strong>Left-align text, right-align numbers</strong> &mdash; follows natural reading patterns.</li>
+  <li><strong>Caption tables descriptively</strong> &mdash; every table has a numbered caption.</li>
+</ul>
+
+<span class="sidenote">
+  The result is documents that look nothing like typical AI output. No rounded cards,
+  no gradient headers, no icon grids. Just clean typography, generous whitespace, and
+  information density where it matters.
+</span>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="components">Components</h2>
+
+<p>
+  The design system provides the following HTML/CSS components. Each is available
+  in every document that loads the reference.
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Available components</caption>
+  <thead>
+    <tr><th>Component</th><th>Purpose</th><th>When to use</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Floating TOC</strong></td><td>Fixed left-side navigation with scroll tracking</td><td>Every document</td></tr>
+    <tr><td><strong>Sidenotes</strong></td><td>Marginal annotations on the right</td><td>Context, caveats, cross-references, expert citations</td></tr>
+    <tr><td><strong>Tables</strong></td><td>Few-styled data tables with zebra striping</td><td>Structured data, comparison, criteria lists</td></tr>
+    <tr><td><strong>Callout blocks</strong></td><td>Highlighted information blocks with label</td><td>Important notes, best practices, warnings</td></tr>
+    <tr><td><strong>Priority chips</strong></td><td>Coloured inline badges</td><td>MoSCoW priorities on requirements</td></tr>
+    <tr><td><strong>Phase indicators</strong></td><td>Small numbered badges</td><td>Pipeline phases, process steps</td></tr>
+    <tr><td><strong>Requirement blocks</strong></td><td>Structured requirement with ID and priority</td><td>Requirements documents</td></tr>
+    <tr><td><strong>Issue blocks</strong></td><td>Severity-coded finding blocks</td><td>Review reports, code review output</td></tr>
+    <tr><td><strong>Details toggles</strong></td><td>Expandable sections for layered reading</td><td>Tech specs (detailed sections collapsed by default)</td></tr>
+  </tbody>
+</table>
+
+<h3 id="sidenote-example">Sidenotes</h3>
+
+<p>
+  Sidenotes float in the right margin, providing context without interrupting the
+  main text flow. They are the Tufte equivalent of footnotes, but visible alongside
+  the text they annotate.
+</p>
+
+<pre><code>&lt;span class="sidenote"&gt;
+  This appears in the right margin alongside the paragraph it annotates.
+&lt;/span&gt;</code></pre>
+
+<h3 id="table-example">Tables</h3>
+
+<p>
+  Tables follow Few&rsquo;s principles: minimal gridlines (top and bottom rules only),
+  zebra striping on even rows, left-aligned text, right-aligned numbers, and a
+  descriptive italic caption.
+</p>
+
+<h3 id="priority-chips">Priority chips</h3>
+
+<p>
+  Inline badges for MoSCoW priorities:
+  <span class="priority must">MUST</span>
+  <span class="priority should">SHOULD</span>
+  <span class="priority could">COULD</span>
+  <span class="priority wont">WON'T</span>
+</p>
+
+<h3 id="callouts">Callout blocks</h3>
+
+<div class="callout">
+  <div class="callout-label">Example callout</div>
+  <p>Callout blocks use a left border with a label in small caps. Use them for important notes, best practices, or warnings that need visual emphasis.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="typography">Typography</h2>
+
+<table>
+  <caption>Table 2 &mdash; Type scale</caption>
+  <thead>
+    <tr><th>Element</th><th>Size</th><th>Weight</th><th>Style</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>h1</code></td><td>2.4rem</td><td>400</td><td>Normal, tight letter-spacing</td></tr>
+    <tr><td><code>h2</code></td><td>1.5rem</td><td>400</td><td>Italic, bottom border</td></tr>
+    <tr><td><code>h3</code></td><td>1.15rem</td><td>600</td><td>Normal</td></tr>
+    <tr><td>Body text</td><td>1rem</td><td>400</td><td>1.7 line height</td></tr>
+    <tr><td>Sidenotes</td><td>0.82rem</td><td>400</td><td>1.5 line height, #666 colour</td></tr>
+    <tr><td>Captions</td><td>0.88rem</td><td>400</td><td>Italic, #666 colour</td></tr>
+    <tr><td>Code</td><td>0.88rem</td><td>400</td><td>Monospace, #f0f0e8 background</td></tr>
+  </tbody>
+</table>
+
+<span class="sidenote">
+  The font stack begins with ET Book (Tufte&rsquo;s preferred typeface) and falls back
+  through Palatino to Georgia. All are serif faces suited to sustained reading.
+</span>
+
+<p>
+  The background is <code>#fffff8</code> &mdash; a warm off-white that reduces eye
+  strain compared to pure white. Body text is <code>#111</code>, not pure black,
+  for slightly softer contrast.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="layout">Layout</h2>
+
+<p>
+  The layout uses a three-column structure:
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Layout structure</caption>
+  <thead>
+    <tr><th>Column</th><th>Width</th><th>Position</th><th>Content</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>TOC</td><td>200px</td><td>Fixed left</td><td>Navigation with scroll-tracking highlights</td></tr>
+    <tr><td>Main content</td><td>Fluid (max 1480px)</td><td>Centre, 240px left margin</td><td>Document body</td></tr>
+    <tr><td>Sidenotes</td><td>200px</td><td>Right margin (-260px offset)</td><td>Annotations, citations, cross-references</td></tr>
+  </tbody>
+</table>
+
+<h3 id="responsive">Responsive behaviour</h3>
+
+<p>
+  Below 1200px viewport width, the layout collapses to single-column:
+</p>
+
+<ul>
+  <li>The TOC becomes a static block at the top of the page</li>
+  <li>Sidenotes reflow inline below their associated paragraph</li>
+  <li>All content fills the full viewport width</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">The TOC script</div>
+  <p>Every document includes a JavaScript snippet at the bottom that auto-generates the TOC from <code>h2</code> and <code>h3</code> elements and highlights the current section on scroll. This is part of the design system &mdash; skills do not need to build TOC entries manually.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="usage">Which Skills Use This</h2>
+
+<p>
+  Every GVM skill loads <code>shared-rules.md</code> at startup for cross-cutting rules. Skills that produce HTML output also load the design templates. The table below shows the document-producing skills and their output locations:
+</p>
+
+<table>
+  <caption>Table 4 &mdash; Skills that use the design system</caption>
+  <thead>
+    <tr><th>Skill</th><th>Output</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>/gvm-init</code></td><td>init/init-001.html</td></tr>
+    <tr><td><code>/gvm-requirements</code></td><td>requirements/requirements.html</td></tr>
+    <tr><td><code>/gvm-test-cases</code></td><td>test-cases/test-cases.html</td></tr>
+    <tr><td><code>/gvm-tech-spec</code></td><td>specs/*.html</td></tr>
+    <tr><td><code>/gvm-doc-review</code></td><td>doc-review/{document-name}-review-YYYY-MM-DD.html</td></tr>
+    <tr><td><code>/gvm-code-review</code></td><td>code-review/code-review-001.html + .md</td></tr>
+    <tr><td><code>/gvm-site-survey</code></td><td>site-survey/site-survey-001.html + .md</td></tr>
+    <tr><td><code>/gvm-design-review</code></td><td>design-review/design-review-001.html + .md</td></tr>
+    <tr><td><code>/gvm-test</code></td><td>test/test-001.html + .md</td></tr>
+    <tr><td><code>/gvm-doc-write</code></td><td>presentations/*.html, strategy/*.html (+ .md), newsletters/*.html (+ .md), training/*.html (+ .md), status-reports/*.html (+ .md), other documents as appropriate</td></tr>
+  </tbody>
+</table>
+
+<p>
+  At startup, every skill loads:
+</p>
+
+<pre><code>~/.claude/skills/gvm-design-system/references/shared-rules.md</code></pre>
+
+<p>
+  Before the first HTML write, document-producing skills also load:
+</p>
+
+<pre><code>~/.claude/skills/gvm-design-system/references/tufte-html-reference.md</code></pre>
+
+<span class="sidenote">
+  Each reference file only needs to be loaded once per session. After the first read,
+  the content stays in context.
+</span>
+
+<h3 id="build-check-promotion">Build Check Promotion (Shared Rule 21)</h3>
+
+<p>
+  Shared rule 21 defines a cross-cutting mechanism for self-improving builds. When review skills
+  (<code>/gvm-code-review</code>, <code>/gvm-doc-review</code>, <code>/gvm-design-review</code>)
+  find recurring issues (3+ consecutive rounds or regressions), they promote those findings to
+  <code>reviews/build-checks.md</code>. This file is a pipeline artefact loaded by
+  <code>/gvm-build</code> during prompt generation, injecting &ldquo;Known Patterns to Avoid&rdquo;
+  into chunk prompts. Checks are tiered: <strong>tier 1</strong> (general practice &mdash; DRY, resource lifecycle, single source of truth) are permanent and never retired. <strong>Tier 2</strong> (project-specific &mdash; tied to a particular library or domain convention) are flagged for retirement after 3 quiet rounds, but you decide whether to retire them.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="expert-management">Expert Scoring &amp; Management</h2>
+
+<p>
+  Expert scoring, rescoring, discovery, and utilisation analysis are handled by
+  <code>/gvm-experts</code>. The design system stores the reference files and scoring
+  methodology; <code>/gvm-experts</code> provides the user-facing interface. See the
+  <a href="../../gvm-experts/docs/user-guide.html">Expert Management User Guide</a>
+  for details on scoring dimensions, classification bands, utilisation feedback,
+  and divergence criteria.
+</p>
+
+<p>
+  Pipeline skills score unscored experts automatically when they load reference files
+  (shared rule 9). User data &mdash; the activation log, discovered experts, and rescore
+  history &mdash; is stored in <code>~/.claude/gvm/</code>, separate from the plugin install
+  path at <code>~/.claude/skills/gvm-design-system/references/</code>. This means user data
+  survives plugin updates. <code>/gvm-status</code> summarises expert engagement per project.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="tips">Tips</h2>
+
+<ul>
+  <li><strong>Load it once, use it everywhere.</strong> The design reference only needs to be read once per session. All subsequent HTML writes use the patterns from context.</li>
+  <li><strong>Sidenotes are for context, not content.</strong> If the information is essential to understanding the document, it belongs in the main text. Sidenotes are for caveats, citations, cross-references, and secondary observations.</li>
+  <li><strong>Caption every table.</strong> Use numbered captions (Table 1, Table 2) with descriptive text. This follows Few&rsquo;s principle that tables should be self-explanatory.</li>
+  <li><strong>Prefer tables over prose for structured data.</strong> If you are listing items with attributes, a table communicates more efficiently than a paragraph.</li>
+  <li><strong>Use the priority chips.</strong> Every requirement should have a visible MoSCoW priority chip. This is the design system&rsquo;s way of making priority scannable.</li>
+  <li><strong>Let whitespace breathe.</strong> Tufte&rsquo;s key insight is that whitespace is structural, not wasted. Do not fill every margin with content.</li>
+  <li><strong>No decorative elements.</strong> No rounded corners on content blocks, no gradient headers, no icon grids, no shadows. Every visual element must convey information.</li>
+</ul>
+
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

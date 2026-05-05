@@ -1,0 +1,44 @@
+{#-
+  Drivers section partial (P6-C04c).
+
+  Target + top-K features from `drivers.agreement` (already ranked by the
+  engine). Every feature row carries a sidenote citing the method via the
+  registry; causation disclaimer appears once, also as a sidenote.
+-#}
+<p>Target: <code>{{ drivers.target }}</code>. Top {{ drivers.K }} features.</p>
+<p>
+  Association, not causation.
+  <aside class="sidenote">{{ drivers.causation_disclaimer }}</aside>
+</p>
+{% if drivers.agreement %}
+<ul class="drivers-list">
+  {% for row in drivers.agreement %}
+  <li>
+    <code>{{ row.feature }}</code> &mdash; {{ row.label }}.
+    {% if row.methodology_ref and row.methodology_ref in methodology_by_key %}
+    {% set entry = methodology_by_key[row.methodology_ref] %}
+    <aside class="sidenote">
+      {{ entry.display_name }} ({{ entry.parameters }}). Citation: {{ entry.expert_citation }}.
+    </aside>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No driver agreement found.</p>
+{% endif %}
+
+{# P19-C03: partial-dependence chart per top-K feature. Engine populates
+   `drivers.entries` from `agreement.top_k_features` (P19-C02 wiring). #}
+{% set driver_entries = drivers.get('entries') or [] %}
+{% if driver_entries %}
+{% for entry in driver_entries %}
+  {% set partial_dependence_chart = entry.get('partial_dependence_chart') %}
+  {% if partial_dependence_chart %}
+<figure class="driver-chart">
+  <img src="{{ partial_dependence_chart }}" alt="Partial dependence for {{ entry.feature }}">
+  <figcaption>Partial dependence &mdash; <code>{{ entry.feature }}</code></figcaption>
+</figure>
+  {% endif %}
+{% endfor %}
+{% endif %}

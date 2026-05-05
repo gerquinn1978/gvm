@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-experts &mdash; User Guide</title>
+  <style>
+    /* ── GVM Documentation CSS ──
+       Canonical stylesheet for all GVM user guide HTML files.
+       Kept inline in each HTML file for self-contained portability.
+       When updating, apply the same block to all docs/*.html files. */
+    
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+    
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+    
+    /* ── Floating TOC (Left Side) ── */
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    nav.toc .toc-h3:hover { color: #555; }
+    main { margin-left: 240px; }
+    
+    /* ── Sidenotes (Right Margin) ── */
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+    
+    /* ── Tables ── */
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    
+    /* ── Group header rows (tables with phase/category grouping) ── */
+    .group-header td { font-weight: 600; font-size: 0.82rem; color: #555; letter-spacing: 0.03em; padding-top: 1.2rem; border-bottom: 1px solid #ccc; background: transparent !important; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+    
+    /* ── Callout Blocks ── */
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+    
+    /* ── Pipeline diagram ── */
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+    
+    /* ── Priority chips ── */
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+    .priority.wont { background: #bdc3c7; color: #333; }
+    
+    /* ── Phase indicators ── */
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+    
+    /* ── Issue blocks (doc-review, code-review) ── */
+    .issue { border-left: 3px solid; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    .issue.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+    .issue-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .issue-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .issue-location { font-size: 0.78rem; color: #999; font-style: italic; }
+    
+    /* ── Score card (doc-review) ── */
+    .score-card { background: #f7f7f0; border: 2px solid #333; padding: 1.5rem 2rem; margin: 2rem 0; max-width: 640px; text-align: center; }
+    .overall-score { font-size: 2.4rem; font-weight: 400; color: #111; margin-bottom: 0.8rem; }
+    .score-breakdown { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+    .score-item { font-size: 0.88rem; color: #555; }
+    
+    /* ── Scenario blocks (site-survey) ── */
+    .scenario { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.15rem 0.5rem; border-radius: 2px; vertical-align: middle; }
+    .scenario.coherent { background: #27ae60; color: #fff; }
+    .scenario.outdated { background: #e67e22; color: #fff; }
+    .scenario.fractured { background: #e74c3c; color: #fff; }
+    .scenario.migration { background: #8e44ad; color: #fff; }
+    .scenario.incoherent { background: #c0392b; color: #fff; }
+    .scenario-block { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 800px; }
+    .scenario-title { font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+    .scenario-detail { font-size: 0.92rem; color: #555; margin-bottom: 0.3rem; }
+    .scenario-evidence { font-size: 0.82rem; color: #888; font-style: italic; }
+    
+    /* ── Component demo blocks (design-system guide) ── */
+    .demo { border: 1px solid #ddd; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; background: #fff; }
+    .demo-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 0.6rem; }
+    
+    /* ── Tier labels ── */
+    .tier { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; background: #669; color: #fff; }
+    
+    /* ── Suggestion blocks ── */
+    .suggestion { background: #f0f7f0; border-left: 3px solid #27ae60; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Rule blocks ── */
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+    
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">March 2026</p>
+<h1>/gvm-experts</h1>
+<p class="subtitle">
+  Score, rescore, discover, and manage experts in the GVM roster.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="overview">Overview</h2>
+
+<p>
+  <code>/gvm-experts</code> is the user-facing command for expert roster management. It provides
+  six operations for working with the expert reference files that all GVM pipeline skills depend on.
+</p>
+
+<span class="sidenote">
+  The expert reference files (the roster) live in the plugin install path
+  (<code>~/.claude/skills/gvm-design-system/references/</code>). User data &mdash; the activation
+  log, discovered experts, and rescore history &mdash; lives separately in
+  <code>~/.claude/gvm/</code>, so it survives plugin updates. This skill is the interface for
+  working with both.
+</span>
+
+<p>
+  Most pipeline skills score experts automatically when they encounter unscored entries (per shared
+  rule 9). Use <code>/gvm-experts</code> when you want to explicitly review, rescore, or add experts
+  outside of a pipeline phase.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="operations">Operations</h2>
+
+<p>
+  When you run <code>/gvm-experts</code>, you are presented with six options:
+</p>
+
+<table>
+  <caption>Table 1 &mdash; Expert management operations</caption>
+  <thead>
+    <tr><th>Operation</th><th>What it does</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Score experts in a reference file</strong></td><td>Select a file and score all unscored experts using independent verification</td></tr>
+    <tr><td><strong>Rescore a specific expert</strong></td><td>Re-evaluate a single expert&rsquo;s scores with fresh assessment</td></tr>
+    <tr><td><strong>Rescore all experts in a file</strong></td><td>Re-evaluate every expert in a selected file sequentially</td></tr>
+    <tr><td><strong>Score all unscored experts</strong></td><td>Iterates through unscored experts across all reference files, or industry domain files only &mdash; you choose the scope at invocation</td></tr>
+    <tr><td><strong>Add a new expert</strong></td><td>Add an expert to a reference file using the Expert Discovery and Persistence Process</td></tr>
+    <tr><td><strong>Review utilisation data</strong></td><td>Analyse the activation log &mdash; which experts are loaded vs cited, divergence signals, tier breakdown</td></tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="when-to-use">When to Use</h2>
+
+<ul>
+  <li>When you disagree with an expert&rsquo;s classification &mdash; rescore them</li>
+  <li>When adding a domain you haven&rsquo;t used before &mdash; add experts manually</li>
+  <li>Periodically &mdash; review utilisation data to check whether your roster matches actual usage</li>
+</ul>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="scoring">How Scoring Works</h2>
+
+<p>
+  Every expert is scored on five dimensions (Authority, Publication, Breadth, Adoption, Currency)
+  and every work on four (Specificity, Depth, Currency, Influence). Scores determine classification:
+  Canonical (4.5+), Established (3.5&ndash;4.4), Recognised (2.5&ndash;3.4), Emerging (1.5&ndash;2.4),
+  or Provisional (below 1.5).
+</p>
+
+<p>
+  Scoring uses <strong>independent verification</strong>: a second agent assesses the same expert
+  without seeing the first agent&rsquo;s scores. If the two assessments converge, the averaged scores
+  are used. If they diverge, you decide.
+</p>
+
+<div class="callout">
+  <div class="callout-label">Automatic scoring</div>
+  <p>Pipeline skills score unscored experts automatically when they load reference files (shared rule 9). You do not need to run <code>/gvm-experts</code> before every pipeline phase. Use it when you want to review scores, rescore after new information, or add experts manually.</p>
+</div>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="example">Example: Scoring an Expert</h2>
+
+<p>
+  Here is what it looks like to score a single expert using &ldquo;Rescore a specific expert&rdquo;:
+</p>
+
+<pre><code>You: /gvm-experts
+     Rescore a specific expert — Martin Fowler
+
+GVM scores Fowler across 5 dimensions, then dispatches a second
+agent for independent verification.
+
+Agent 1 scores:
+  Authority: 5   Publication: 5   Breadth: 5   Adoption: 5   Currency: 4
+  → Average: 4.8 → Canonical
+
+Agent 2 scores (independent):
+  Authority: 5   Publication: 5   Breadth: 5   Adoption: 5   Currency: 4
+  → Average: 4.8 → Canonical
+
+Convergence: both agents agree. Averaged scores persisted.
+
+Work: "Refactoring" (2nd ed.)
+  Specificity: 4   Depth: 5   Currency: 4   Influence: 5
+  → Average: 4.5 → Canonical
+
+Work: "Patterns of Enterprise Application Architecture"
+  Specificity: 4   Depth: 5   Currency: 3   Influence: 5
+  → Average: 4.25 → Established
+
+Scores written to architecture-specialists.md.</code></pre>
+
+<span class="sidenote">
+  If the two agents diverge (e.g., one scores Currency as 3 and the other as 5),
+  both assessments are presented and you decide which to use.
+</span>
+
+<h3 id="example-utilisation">Example: Utilisation Review</h3>
+
+<pre><code>You: /gvm-experts
+     Review utilisation data
+
+Project: example-app (3 pipeline phases completed)
+
+Expert Engagement:
+  18 loaded across 3 phases, 11 cited in output
+
+Tier Breakdown:
+  Tier 1: 6 loaded, 5 cited (83%)
+  Tier 2a: 5 loaded, 3 cited (60%)
+  Tier 2b: 4 loaded, 2 cited (50%)
+  Discovered: 3 loaded, 1 cited (33%)
+
+Divergence Signals:
+  ▲ Wiegers — cited 8/8 times loaded (100%). Upward signal.
+  ▼ Newman — cited 1/5 times loaded (20%). Downward signal.
+     Sample size: 5 (preliminary — directional only)
+
+Top 5 Cited:
+  Wiegers (8), Copeland (5), Bass (4), Kleppmann (3), Fairbanks (3)</code></pre>
+
+<p>
+  Newman&rsquo;s low cite rate might mean the project doesn&rsquo;t involve service boundaries,
+  or it might mean the expert is loaded unnecessarily. You decide whether to investigate
+  or wait for more data (the sample size is preliminary at n=5).
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="utilisation">Utilisation Feedback</h2>
+
+<p>
+  The activation log (<code>~/.claude/gvm/expert-activations.csv</code>) tracks which experts are loaded into context and which are actually cited
+  in output. Over time, this data reveals whether classifications match actual usage:
+</p>
+
+<ul>
+  <li><strong>&gt;80% cite rate</strong> &mdash; upward signal. The expert is used more than their classification suggests.</li>
+  <li><strong>&lt;40% cite rate</strong> &mdash; downward signal. The expert is used less than expected.</li>
+</ul>
+
+<p>
+  The &ldquo;Review utilisation data&rdquo; operation surfaces these signals. Utilisation data is a signal, not a verdict. You decide whether to act on it.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="output">Output</h2>
+
+<p>
+  <code>/gvm-experts</code> writes to two separate locations depending on the type of data:
+</p>
+
+<table>
+  <caption>Table 2 &mdash; Output paths</caption>
+  <thead>
+    <tr><th>Data</th><th>Path</th><th>Survives plugin update?</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Expert roster (architecture, domain, stack specialists)</td><td><code>~/.claude/skills/gvm-design-system/references/</code></td><td>No &mdash; managed by plugin</td></tr>
+    <tr><td>Activation log</td><td><code>~/.claude/gvm/expert-activations.csv</code></td><td>Yes</td></tr>
+    <tr><td>Discovered experts</td><td><code>~/.claude/gvm/discovered-experts.jsonl</code></td><td>Yes</td></tr>
+    <tr><td>Rescore history</td><td><code>~/.claude/gvm/rescore-log.jsonl</code></td><td>Yes</td></tr>
+  </tbody>
+</table>
+
+<p>
+  User data lives in <code>~/.claude/gvm/</code> and is never overwritten by a plugin update.
+  The plugin install path (<code>~/.claude/skills/gvm-design-system/references/</code>) contains
+  the canonical roster files &mdash; these are updated when you rescore or add experts through
+  this skill.
+</p>
+
+<!-- ───────────────────────────────────────── -->
+<h2 id="pipeline">Pipeline Position</h2>
+
+<p>
+  <code>/gvm-experts</code> sits outside the sequential pipeline. It is available at any time &mdash; before, during, or after a pipeline run. It manages the expert roster that other skills consume, but no pipeline phase depends on it being run explicitly. Expert scoring happens automatically via shared rule 9 whenever unscored experts are encountered.
+</p>
+
+</main>
+
+<!-- ── TOC script ── -->
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

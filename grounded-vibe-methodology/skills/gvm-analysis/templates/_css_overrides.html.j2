@@ -1,0 +1,43 @@
+{#-
+  Skill-scoped CSS overrides (post-R17 F-10, F-11).
+
+  Loaded AFTER _css.html.j2 so the tufte CSS shell stays pristine and
+  auto-regenerable by scripts/_refresh_css.py. Only place project-specific
+  component rules that the generic Tufte reference does not cover.
+
+  Components:
+    - td .sidenote    — sidenote rendered inside a table cell: disable
+                        the default float-right because table cells do
+                        not participate in the page-margin float model.
+    - .chart-tooltip  — positioned tooltip <div> created at runtime by
+                        _interactivity.js.j2; needs a baseline chrome.
+-#}
+<style>
+/* F-10: sidenote inside a table cell — float-right is meaningless in <td>
+   (tables do not contribute to the block float model), so fall back to
+   an inline note block with smaller, dimmed text. */
+td .sidenote,
+th .sidenote {
+  float: none;
+  clear: none;
+  width: auto;
+  margin: 0.25rem 0 0 0;
+  font-size: 0.85em;
+  color: #555;
+  display: block;
+}
+
+/* F-11: chart tooltip created by _interactivity.js. Positioning is set
+   inline by the JS (absolute, top/left), so this rule owns chrome only. */
+.chart-tooltip {
+  background: #fffff8;
+  border: 1px solid #999;
+  border-radius: 2px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+  color: #111;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-width: 20rem;
+}
+</style>

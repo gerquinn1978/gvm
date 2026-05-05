@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Grounded Vibe Methodology — Whitepaper</title>
+  <style>
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  color: #111;
+  background: #fffff8;
+  line-height: 1.6;
+  padding: 2rem 1rem 6rem;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+/* ── Typography ── */
+h1 {
+  font-size: 2.4rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+  color: #111;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  font-style: italic;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  color: #111;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.3rem;
+}
+
+h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.6rem;
+  color: #333;
+}
+
+p, li {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 0.8rem;
+  max-width: 800px;
+}
+
+ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+li { margin-bottom: 0.4rem; }
+
+.subtitle {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 0.5rem;
+  max-width: 800px;
+}
+
+.author {
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 0.2rem;
+}
+
+.date {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 2.5rem;
+}
+
+/* ── Abstract ── */
+.abstract {
+  background: #f7f7f0;
+  border-left: 3px solid #999;
+  padding: 1rem 1.2rem;
+  margin: 0 0 2.5rem;
+  max-width: 800px;
+}
+
+.abstract-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin-bottom: 0.4rem;
+}
+
+.abstract p {
+  font-size: 0.95rem;
+  margin-bottom: 0.6rem;
+}
+
+.keywords {
+  font-size: 0.88rem;
+  color: #666;
+  font-style: italic;
+}
+
+/* ── Floating TOC ── */
+nav.toc {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  width: 220px;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  background: #fffff8;
+  border-right: 2px solid #ddd;
+  padding: 1rem 1rem 1rem 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  z-index: 100;
+}
+
+nav.toc .toc-title {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #999;
+  margin-bottom: 0.6rem;
+}
+
+nav.toc a {
+  color: #555;
+  text-decoration: none;
+  display: block;
+  padding: 0.15rem 0;
+  transition: color 0.15s;
+}
+
+nav.toc a:hover { color: #111; }
+nav.toc a.active { color: #111; font-weight: 600; }
+nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+
+main { margin-left: 260px; }
+
+/* ── Sidenotes ── */
+.sidenote {
+  float: right;
+  clear: right;
+  width: 220px;
+  margin-right: -260px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #666;
+  padding-left: 1rem;
+  border-left: 2px solid #e0e0e0;
+}
+
+/* ── Tables ── */
+table {
+  border-collapse: collapse;
+  margin: 1.5rem 0 2rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  width: auto;
+  min-width: 560px;
+}
+
+thead th {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.5rem 1rem 0.5rem 0;
+  border-bottom: 2px solid #333;
+  color: #111;
+}
+
+tbody td {
+  padding: 0.45rem 1rem 0.45rem 0;
+  border-bottom: 1px solid #e8e8e8;
+  vertical-align: top;
+}
+
+tbody tr:last-child td { border-bottom: 2px solid #333; }
+tbody tr:nth-child(even) { background: #f9f9f4; }
+
+caption {
+  font-style: italic;
+  font-size: 0.88rem;
+  color: #666;
+  text-align: left;
+  margin-bottom: 0.4rem;
+}
+
+/* ── Principle blocks ── */
+.principle {
+  background: #f7f7f0;
+  border-left: 3px solid #669;
+  padding: 0.8rem 1rem;
+  margin: 1rem 0 1.2rem;
+  max-width: 800px;
+}
+
+.principle-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.4rem;
+}
+
+.principle p { margin-bottom: 0.4rem; }
+
+.callout {
+  background: #fffaf0;
+  border-left: 3px solid #b07030;
+  padding: 0.8rem 1.2rem;
+  margin: 1.2rem 0 1.4rem;
+  max-width: 800px;
+}
+
+.callout-label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+
+.callout p { margin-bottom: 0.5rem; }
+
+/* ── Comparison blocks ── */
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  max-width: 800px;
+}
+
+.comparison-side { padding: 1rem; }
+
+.comparison-side.before {
+  background: #fff0f0;
+  border-left: 3px solid #c0392b;
+}
+
+.comparison-side.after {
+  background: #f0fff0;
+  border-left: 3px solid #27ae60;
+}
+
+.comparison-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  margin-bottom: 0.4rem;
+}
+
+/* ── Pipeline ── */
+.pipeline {
+  margin: 2rem 0 2.5rem;
+  max-width: 800px;
+}
+
+.pipeline-phase {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 0;
+}
+
+.pipeline-step {
+  background: #f7f7f0;
+  border: 1px solid #ccc;
+  padding: 0.6rem 1rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #333;
+  width: 140px;
+  min-width: 140px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pipeline-detail {
+  padding: 0.5rem 1rem;
+  font-size: 0.82rem;
+  color: #666;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.pipeline-detail .experts {
+  font-style: italic;
+  color: #888;
+  font-size: 0.78rem;
+}
+
+.pipeline-connector {
+  display: flex;
+  align-items: center;
+  margin-left: 62px;
+  height: 24px;
+}
+
+.pipeline-down {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.pipeline-feedback {
+  color: #c0392b;
+  font-size: 0.78rem;
+  margin-left: 1rem;
+  font-style: italic;
+}
+
+.pipeline-review {
+  margin-left: 160px;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.pipeline-review-box {
+  background: #fff8f0;
+  border: 1px dashed #e8a850;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.78rem;
+  color: #888;
+  display: inline-block;
+}
+
+.pipeline-precondition {
+  margin-bottom: 0;
+}
+
+.pipeline-precondition-box {
+  background: #f0f4ff;
+  border: 2px dashed #7799cc;
+  padding: 0.7rem 1.2rem;
+  font-size: 0.88rem;
+  color: #555;
+  max-width: 580px;
+  text-align: center;
+}
+
+.pipeline-precondition-box strong {
+  color: #333;
+}
+
+.pipeline-precondition-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7799cc;
+  margin-bottom: 0.3rem;
+}
+
+/* ── Expert list ── */
+.expert-list {
+  max-width: 800px;
+}
+
+.expert-list li {
+  margin-bottom: 0.3rem;
+}
+
+.expert-list .expert-name {
+  font-weight: 600;
+}
+
+.expert-list .expert-work {
+  font-style: italic;
+}
+
+.expert-list .expert-role {
+  color: #666;
+  font-size: 0.92rem;
+}
+
+/* ── Blockquote for pitch ── */
+.pitch {
+  border-left: 3px solid #669;
+  padding-left: 1rem;
+  margin: 1rem 0 1.2rem;
+  max-width: 800px;
+  font-style: italic;
+  color: #444;
+}
+
+.pitch p { margin-bottom: 0.4rem; }
+
+/* ── Code ── */
+code {
+  font-family: "Menlo", "Consolas", "Monaco", monospace;
+  font-size: 0.88rem;
+  background: #f0f0e8;
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+}
+
+/* ── References section ── */
+.references {
+  max-width: 800px;
+}
+
+.references p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+  padding-left: 2rem;
+  text-indent: -2rem;
+}
+
+/* ── Section numbering ── */
+.section-num {
+  color: #888;
+  font-style: normal;
+  margin-right: 0.3rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  nav.toc {
+    position: static;
+    width: 100%;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+  }
+  main { margin-left: 0; }
+  .sidenote {
+    float: none;
+    width: 100%;
+    margin: 0.8rem 0;
+    padding: 0.6rem 0 0.6rem 1rem;
+  }
+  .comparison { grid-template-columns: 1fr; }
+  table { min-width: auto; overflow-x: auto; display: block; }
+}
+
+@media print {
+  nav.toc { display: none; }
+  main { margin-left: 0; }
+  .sidenote {
+    float: none;
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.4rem 0 0.4rem 1rem;
+    page-break-inside: avoid;
+  }
+  h2 { page-break-after: avoid; }
+  .principle, .abstract, .comparison { page-break-inside: avoid; }
+}
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <h1>The Grounded Vibe Methodology</h1>
+    <p class="subtitle">Citation-Based Knowledge Activation for AI-Assisted Software Development</p>
+    <div style="background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1.5rem 0; max-width: 640px; font-size: 0.92rem;">
+      <strong>This paper in context.</strong> This is the full methodology paper. For focused reading: <em>Well-Engineered Software Needs an End-to-End Pipeline</em> extracts the structural argument. <em>Grounding Produces Measurably Better Output</em> contains the complete experimental data. <em>Why Citation-Based Activation Works</em> explains the transformer-level mechanism. <em>Verifying AI-Generated Code</em> covers the testing and verification architecture. <em>Building a Production Tool with GVM</em> is a case study showing the methodology applied end-to-end on a real project.
+    </div>
+    <p class="author" style="font-size: 0.9rem; color: #666;">Conor Brennan &amp; Gerard Quinn</p>
+
+    <p class="date" style="margin-bottom: 2rem;">April 2026</p>
+
+    <div class="abstract">
+      <div class="abstract-label">Abstract</div>
+      <p>Naming a specific expert and a specific published work in an AI prompt shifts the output from an undifferentiated blend of training data to a focused application of that expert&rsquo;s framework. A controlled experiment &mdash; 180 artefacts, 1,080 blind reviews, two independent review instruments, reproduced across Claude, GPT, and Gemini &mdash; shows that this citation-based grounding produces measurably better output (p&nbsp;&lt;&nbsp;0.001; under same-model evaluation &mdash; cross-model replication is open work, see &sect;7.4) and that ungrounded evaluation cannot detect the improvement. The <strong>Grounded Vibe Methodology (GVM)</strong> builds a tool-agnostic development process around this mechanism: a three-tier expert model, conditional activation, multi-expert panels, and a phased pipeline from requirements through deployment. This paper presents the mechanism, the methodology, the experimental evidence, and the case that experts whose works power AI-assisted development should be recognised and compensated.</p>
+      <p class="keywords"><strong>Keywords:</strong> AI-assisted development, software methodology, prompt engineering, knowledge activation, expert systems, attribution, large language models</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="introduction"><span class="section-num">1.</span> Vibe Coding Has a Ceiling &mdash; Grounding Removes It</h2>
+    <!-- ============================================================ -->
+
+    <p><strong>The problem:</strong> left to its own defaults, AI-assisted development does not know what &ldquo;good&rdquo; looks like &mdash; and it does not know what is worth building in the first place. A bare prompt &mdash; &ldquo;design this system&rdquo; &mdash; generates from the broad distribution of everything the model encountered during training: a blend of patterns from thousands of sources, competent but undifferentiated. Telling the AI it is &ldquo;an expert TypeScript programmer&rdquo; narrows the output, but the model is still drawing on a broad blend of what &ldquo;expert TypeScript&rdquo; means across its training data. It knows what <em>common</em> practice looks like, not what the best practitioners in the field have specifically defined as good. As AI-assisted development matures beyond the loose practices known as &ldquo;vibe coding&rdquo; (Karpathy, 2025), this gap between common and good becomes the ceiling.</p>
+
+    <p>Two failure modes form the ceiling &mdash; and AI-assisted development is unusually good at hitting both. Brooks called the first of these &mdash; <em>deciding precisely what to build</em> &mdash; the hardest single part of building a software system, the one whose mistakes most cripple the result. The second is the one Beck (<em>Test-Driven Development</em>), Fowler (<em>Refactoring</em>), Freeman &amp; Pryce (<em>Growing Object-Oriented Software, Guided by Tests</em>), and the testing canon address: building it correctly once you have decided. AI agents are compliant: they will confidently and fluently produce something for any prompt. Without grounding they routinely produce well-tested scaffolding for a product no real user can use, and they routinely produce sloppy implementations of products that would have been useful. Both failures pass casual inspection. Both can ship.</p>
+
+    <span class="sidenote">The name &ldquo;Grounded Vibe Methodology&rdquo; is a deliberate riff on vibe coding. Keep the vibes &mdash; but ground them in the canon.</span>
+
+    <span class="sidenote">In AI/ML, &ldquo;grounding&rdquo; typically refers to connecting model outputs to verifiable external facts (e.g., RAG, tool use). This paper uses the term differently: grounding here means focusing AI output through citation of specific experts and works, activating targeted knowledge rather than verifying factual claims. The distinction is deliberate &mdash; citation-based grounding is a complementary mechanism, not a replacement for factual grounding.</span>
+
+    <p><strong>The solution:</strong> name the expert who defined what good is &mdash; for both. The citation acts as a retrieval key (Section 3), activating the specific framework rather than the general blend. The <strong>Grounded Vibe Methodology (GVM)</strong> builds a systematic development process around this mechanism &mdash; retaining what works about vibe coding (natural language, conversational flow, low barrier to entry) while anchoring every phase to <strong>named experts and their published works</strong>. Adzic, Cagan, and Patton ground the discovery work that decides what is worth building. Beck, Fagan, Freeman &amp; Pryce, Bach &amp; Bolton, and Reinertsen ground the construction and verification work that turns the decision into something that holds up under real use.</p>
+
+    <p>While this paper focuses on software development &mdash; where the methodology originated and where the reference implementation is most mature &mdash; the underlying mechanism is domain-agnostic. Any discipline with a body of authoritative published work (law, medicine, engineering, finance, education) can be grounded in the same way. The practitioner&rsquo;s role shifts from doing everything yourself to assembling the right experts for the problem and evaluating between their approaches &mdash; which is what the best engineers have always done, now made systematic.</p>
+
+    <p>GVM is designed for projects where quality matters &mdash; production systems, regulated industries, software that people depend on. It is not designed for throwaway scripts or weekend prototypes. The setup cost is real: curating expert panels, assembling reference files, running a phased pipeline. That cost is justified when the alternative is shipping code grounded in an undifferentiated blend of training data to users who trust it. For serious software engineering, GVM offers something that vibe coding alone cannot: the published authorities in requirements, testing, architecture, security, and domain modelling are present in the team &mdash; activated by citation, available on demand, and applied with the depth of their original published works.</p>
+
+    <div class="principle">
+      <div class="principle-name">Design Principles</div>
+      <p style="font-size: 0.92rem; color: #555; font-style: italic;">These six principles are introduced now as a roadmap; each is defined in detail in the sections that follow (the three-tier expert model in &sect;4 grounds &ldquo;conditional activation&rdquo; and &ldquo;reference files&rdquo;; the discovery protocol in &sect;4.5 grounds &ldquo;self-improving roster&rdquo;).</p>
+      <p><strong>Named Experts, Not Abstract Personas</strong> &mdash; every discipline is guided by named authorities with specific published works, not abstract roles.</p>
+      <p><strong>Multi-Expert Panels</strong> &mdash; panels of 3&ndash;7 experts per discipline whose competing frameworks force principled trade-offs.</p>
+      <p><strong>Conditional Activation</strong> &mdash; specialists activate based on domain signals, not by default, keeping context focused.</p>
+      <p><strong>Curated Reference Files</strong> &mdash; expert knowledge is codified in phase-keyed reference files structured to maximise the citation-as-retrieval-key effect.</p>
+      <p><strong>Self-Improving Expert Roster</strong> &mdash; the roster extends through use via discovery protocols and refines through utilisation-driven divergence analysis.</p>
+      <p><strong>Builds on Published Canon</strong> &mdash; GVM does not replace established methodologies; it activates their frameworks through AI via citation.</p>
+    </div>
+
+    <h3 id="contributions"><span class="section-num">1.1</span> Four Contributions</h3>
+
+    <ol>
+      <li><strong>A mechanism</strong> &mdash; citation-based knowledge activation &mdash; that measurably improves AI output quality by targeting specific bodies of knowledge within a model&rsquo;s training data (Section 3).</li>
+      <li><strong>A methodology</strong> &mdash; a three-tier expert model with conditional activation, multi-expert panels, and a phased development pipeline (Sections 4&ndash;5).</li>
+      <li><strong>A reference implementation</strong> &mdash; a working system of AI development skills, reference files, and design templates, currently implemented in Claude Code but designed to be portable across AI development tools (Section 6).</li>
+      <li><strong>An attribution argument</strong> &mdash; the case that experts whose published works power AI-assisted development should be recognised and compensated, with citation logging as the technical precondition (Section 8).</li>
+    </ol>
+
+    <!-- ============================================================ -->
+    <h2 id="related-work"><span class="section-num">2.</span> Adjacent Approaches Lack Citation-Based Grounding</h2>
+    <!-- ============================================================ -->
+
+    <p>GVM draws on and extends several adjacent movements in AI-assisted software development.</p>
+
+    <h3 id="sdd"><span class="section-num">2.1</span> SDD Structures What to Build, Not How to Reason About It</h3>
+
+    <p>Spec-Driven Development, championed by Thoughtworks (Technology Radar), with related tooling emerging from GitHub (Copilot Workspace) and AWS (Kiro, an AI-assisted IDE that uses spec-driven workflows), focuses on writing structured specifications before code generation. GVM shares SDD&rsquo;s pipeline structure and extends it with a grounding layer. SDD tells the AI <em>what</em> to build; GVM also tells it <em>how to reason</em> about the work.</p>
+
+    <div class="comparison">
+      <div class="comparison-side before">
+        <div class="comparison-label">SDD Approach</div>
+        <p>&ldquo;Implement caching for the data layer.&rdquo;</p>
+        <p style="font-size: 0.88rem; color: #888;">Produces a caching implementation with reasonable defaults. No framework for reasoning about consistency vs. staleness.</p>
+      </div>
+      <div class="comparison-side after">
+        <div class="comparison-label">GVM Approach</div>
+        <p>&ldquo;Implement caching per Kleppmann&rsquo;s cache-aside pattern (<em>DDIA</em>, on caching, replication, and read/write trade-offs) with TTLs (time-to-live) calibrated to data volatility.&rdquo;</p>
+        <p style="font-size: 0.88rem; color: #888;">Activates Kleppmann&rsquo;s specific framework. Structured reasoning about consistency trade-offs. Principled TTL (time-to-live) decisions.</p>
+      </div>
+    </div>
+
+    <p>The difference is substantive. An ungrounded caching instruction might produce a working implementation with reasonable defaults. A grounded instruction &mdash; one rooted in Kleppmann&rsquo;s framework &mdash; produces an implementation where:</p>
+
+    <ul>
+      <li>the TTL (time-to-live) for property listings differs from the TTL for school ratings, because the framework distinguishes data that changes daily from data that changes annually;</li>
+      <li>the invalidation strategy accounts for eventual consistency, which the source chapter addresses explicitly; and</li>
+      <li>the caching layer matches the application&rsquo;s read/write ratio, using the framework&rsquo;s decision tree for cache-aside vs.&nbsp;read-through vs.&nbsp;write-behind.</li>
+    </ul>
+
+    <p>The same prompting effort; noticeably deeper output.</p>
+
+    <h3 id="bmad"><span class="section-num">2.2</span> BMAD Simulates Roles but Does Not Ground Them in Published Frameworks</h3>
+
+    <p>The Breakthrough Method for Agile AI-Driven Development simulates a full agile team through role-based agent orchestration &mdash; Analyst, Architect, Developer, QA. It is the most complete open methodology available, with quality gates, ATDD workflows, a course-correction workflow for mid-sprint changes, and brownfield support for existing codebases. GVM shares the multi-role concept and takes it further: where BMAD assigns roles like &ldquo;Architect,&rdquo; GVM assigns <strong>named experts with cited works</strong> &mdash; Clements + Brown + Fairbanks + Keeling + Brooks, each bringing a distinct, documented framework. The roles become specific people with specific bodies of knowledge.</p>
+
+    <h3 id="role-prompting"><span class="section-num">2.3</span> Role Prompting Activates One Persona; GVM Assembles Competing Panels</h3>
+
+    <span class="sidenote">Salewski et al. (NeurIPS 2023, &ldquo;In-Context Impersonation Reveals Large Language Models&rsquo; Strengths and Biases&rdquo;) and Kong et al. (2024, &ldquo;Better Zero-Shot Reasoning with Role-Play Prompting&rdquo;) document role prompting&rsquo;s measurable effect on output &mdash; GVM goes further by assembling panels rather than single personas.</span>
+
+    <p>The most common technique for improving AI output is role prompting: &ldquo;Act as a senior TypeScript developer&rdquo; or &ldquo;You are Kent Beck.&rdquo; Role prompting activates a single perspective. GVM extends this to dynamically assembled, multi-expert panels with curated reference materials loaded at the phase where they are needed.</p>
+
+    <h3 id="rag"><span class="section-num">2.4</span> RAG Retrieves Documents Probabilistically; GVM Activates Frameworks Through Phase-Keyed Rules</h3>
+
+    <p>RAG systems retrieve relevant documents and inject them into context before generation. GVM&rsquo;s reference files serve a similar purpose but the activation mechanism is different: <strong>rule-based, phase-keyed activation</strong> rather than probabilistic semantic retrieval. Moreover, GVM&rsquo;s reference files are curated extracts &mdash; specific techniques with citations &mdash; not raw documents.</p>
+
+    <h3 id="comparison-summary"><span class="section-num">2.5</span> How GVM Differs in Outline</h3>
+
+    <p>GVM differs from the four adjacent approaches on one organising axis: it grounds <em>both</em> halves of the problem that Section&nbsp;1 named &mdash; deciding what is worth building, and building it correctly. SDD, Role Prompting, and RAG address only the construction half. BMAD partially addresses the discovery half through its Analyst role, but without a structural outcome artefact that every requirement traces to or a release-time gate that distinguishes &ldquo;tests pass&rdquo; from &ldquo;a real user can use it.&rdquo;</p>
+
+    <p>GVM grounds the discovery half through a pre-requirements outcome artefact that every requirement must trace back to, and through structured exploratory testing of the running product before release. It grounds the construction half through citation-activated expert panels, parallel defect-class review, and a release verdict that distinguishes &ldquo;a real user can use it&rdquo; from &ldquo;tests pass.&rdquo;</p>
+
+    <p>The four adjacent approaches each address a real problem in AI-assisted development &mdash; the AI&rsquo;s undifferentiated persona (Role Prompting), the looseness of unstructured prompts (SDD), the absence of multiple perspectives (BMAD), and the lack of grounded context (RAG). GVM addresses the same problems through different mechanisms: named published works rather than persona descriptions; phased artefacts decomposed by failure mode rather than by document type; concurrent expert panels partitioned by non-overlapping defect class rather than by simulated job role; rule-based, phase-keyed reference extracts rather than probabilistic semantic retrieval.</p>
+
+    <p>The detailed side-by-side comparison appears as Tables 4 and 5 in Section&nbsp;5.14, after the GVM pipeline has been introduced and the comparison can be made against concrete machinery.</p>
+
+    <!-- ============================================================ -->
+    <h2 id="mechanism"><span class="section-num">3.</span> How Citations Work: Retrieval Keys, Panels, Conditional Activation, and Local Knowledge</h2>
+    <!-- ============================================================ -->
+
+    <h3 id="observation"><span class="section-num">3.1</span> Ungrounded Prompts Produce Unfocused Output</h3>
+
+    <p>Large language models are trained on vast corpora that include material referencing and building upon the major works of software engineering. When a prompt uses broad language (&ldquo;write good tests&rdquo;), the model generates from the broad distribution of testing-related content in its training data. The output is reasonable &mdash; a mixture of techniques from many sources &mdash; but no single framework is applied with its full depth.</p>
+
+    <p>When a prompt names a specific author and a specific work (&ldquo;Apply Beizer&rsquo;s boundary value analysis from <em>Software Testing Techniques</em>: test min, min&minus;1, min+1, max&minus;1, max, max+1&rdquo;), the citation acts as a <strong>retrieval key</strong>. It activates the model&rsquo;s knowledge of that specific work, including the surrounding context of equivalence partitioning, error guessing, and cause-effect graphing.</p>
+
+    <h3 id="why-citations-work"><span class="section-num">3.2</span> Why Citations Work as Retrieval Keys</h3>
+
+    <p>During pre-training, the model processes texts where specific techniques co-occur with specific author names, book titles, and technical terminology. These associations are encoded in the model&rsquo;s attention patterns.</p>
+
+    <span class="sidenote">The effect is analogous to how a search engine returns more focused results for &ldquo;Knuth stable sort&rdquo; than for &ldquo;how to sort&rdquo; &mdash; specificity activates a more focused region of the knowledge space.</span>
+
+    <p>When a prompt includes &ldquo;Beizer&rdquo; alongside &ldquo;boundary value,&rdquo; the working hypothesis is that the model&rsquo;s attention mechanism &mdash; the transformer attention introduced by Vaswani et al. (2017) and elaborated in subsequent interpretability work &mdash; activates representations associated with Beizer&rsquo;s specific formulation: the six-value boundary test and the distinction between on-point and off-point testing. Without the citation, the model might produce a three-value test (min, max, middle) representing a blend of multiple sources.</p>
+
+    <p>The mechanism described here is the working hypothesis the methodology is built on. Direct interpretability evidence is treated in the companion paper <em>Why Citation-Based Activation Works</em>; the experimental evidence in &sect;7 demonstrates the quality effect of grounding rather than directly testing the retrieval-key mechanism.</p>
+
+    <h3 id="compression"><span class="section-num">3.3</span> One Sentence Activates an Entire Body of Work</h3>
+
+    <p>Citations are not just retrieval keys &mdash; they are <strong>extreme compression</strong>. A single sentence like &ldquo;apply Tufte and Few&rsquo;s principles when designing this dashboard&rdquo; encapsulates an entire body of work: data-ink ratio maximisation, chartjunk elimination, small multiples, table design with minimal gridlines, right-aligned numbers, subtle zebra striping, sparklines for inline trends, and dozens of other specific techniques drawn from multiple books spanning decades of research.</p>
+
+    <svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" style="max-width: 960px; margin: 2rem 0 2.5rem; display: block;">
+      <rect width="1200" height="420" fill="#fffff8"/>
+
+      <!-- LEFT: Expert Works (bookshelf) -->
+      <text x="120" y="28" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="15" fill="#888" font-style="italic">Expert Works</text>
+
+      <!-- Books -->
+      <rect x="15" y="44" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="120" y="63" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">Software Testing Techniques</text>
+      <text x="120" y="78" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Beizer &mdash; 550 pages</text>
+
+      <rect x="15" y="90" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="120" y="109" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">Visual Display of Quant. Info</text>
+      <text x="120" y="124" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Tufte &mdash; 197 pages</text>
+
+      <rect x="15" y="136" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="120" y="155" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">Show Me the Numbers</text>
+      <text x="120" y="170" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Few &mdash; 351 pages</text>
+
+      <rect x="15" y="182" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="120" y="201" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">Just Enough Architecture</text>
+      <text x="120" y="216" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Fairbanks &mdash; 376 pages</text>
+
+      <rect x="15" y="228" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="120" y="247" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">Designing Data-Intensive Apps</text>
+      <text x="120" y="262" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Kleppmann &mdash; 614 pages</text>
+
+      <rect x="15" y="274" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="120" y="293" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">The Mythical Man-Month</text>
+      <text x="120" y="308" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Brooks &mdash; 322 pages</text>
+
+      <!-- Total -->
+      <text x="120" y="345" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="14" fill="#888" font-weight="600">~2,410 pages</text>
+
+      <!-- ARROW: absorbed -->
+      <line x1="240" y1="195" x2="330" y2="195" stroke="#bbb" stroke-width="2" marker-end="url(#arrowGrey)"/>
+      <text x="285" y="180" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="11" fill="#999">absorbed</text>
+      <text x="285" y="193" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="11" fill="#999">during</text>
+      <text x="285" y="206" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="11" fill="#999">training</text>
+
+      <!-- CENTRE: AI Model -->
+      <rect x="345" y="145" width="165" height="100" rx="5" fill="#f0f0e8" stroke="#999" stroke-width="2"/>
+      <text x="428" y="185" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333" font-weight="600">AI Model</text>
+      <text x="428" y="207" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="12" fill="#888">Knowledge encoded</text>
+      <text x="428" y="222" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="12" fill="#888">in parameters</text>
+
+      <!-- ARROW: activated by -->
+      <line x1="525" y1="195" x2="615" y2="195" stroke="#669" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+      <text x="570" y="183" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="12" fill="#669" font-weight="600">activated by</text>
+
+      <!-- The Citation -->
+      <rect x="630" y="140" width="220" height="110" rx="5" fill="#fff" stroke="#669" stroke-width="2.5"/>
+      <text x="740" y="166" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="12" fill="#669" font-weight="600" letter-spacing="0.05em">ONE SENTENCE</text>
+      <text x="740" y="192" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#333" font-style="italic">&ldquo;Apply Tufte and Few&rsquo;s</text>
+      <text x="740" y="210" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#333" font-style="italic">principles when designing</text>
+      <text x="740" y="228" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#333" font-style="italic">this dashboard.&rdquo;</text>
+
+      <!-- ARROW: produces -->
+      <line x1="865" y1="195" x2="930" y2="195" stroke="#27ae60" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+      <text x="898" y="183" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="11" fill="#27ae60" font-weight="600">produces</text>
+
+      <!-- Focused Output -->
+      <rect x="945" y="110" width="240" height="175" rx="5" fill="#f0fff0" stroke="#27ae60" stroke-width="2"/>
+      <text x="1065" y="137" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#27ae60" font-weight="600">FOCUSED OUTPUT</text>
+      <text x="965" y="162" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Data-ink ratio maximised</text>
+      <text x="965" y="180" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; No chartjunk</text>
+      <text x="965" y="198" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Small multiples</text>
+      <text x="965" y="216" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Minimal gridlines</text>
+      <text x="965" y="234" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Right-aligned numbers</text>
+      <text x="965" y="252" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Zebra striping</text>
+      <text x="965" y="270" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Sparklines &bull; + more</text>
+
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arrowGrey" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
+          <path d="M0,0 L10,4 L0,8" fill="none" stroke="#bbb" stroke-width="1.5"/>
+        </marker>
+        <marker id="arrowBlue" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
+          <path d="M0,0 L10,4 L0,8" fill="none" stroke="#669" stroke-width="2"/>
+        </marker>
+        <marker id="arrowGreen" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
+          <path d="M0,0 L10,4 L0,8" fill="none" stroke="#27ae60" stroke-width="2"/>
+        </marker>
+      </defs>
+
+      <!-- Caption -->
+      <text x="600" y="400" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="14" fill="#888" font-style="italic">Figure 1 &mdash; The compression mechanism: ~2,410 pages of expert knowledge activated by a single sentence</text>
+    </svg>
+
+    <span class="sidenote">A useful intuition: the cost of writing the book is the expert&rsquo;s; the cost of training on it is the model provider&rsquo;s; the cost of activating it is one sentence on the practitioner&rsquo;s side. The asymmetry is the source of the compensation question raised in &sect;8.</span>
+
+    <p>To specify those same principles explicitly would require thousands of words. The reference implementation&rsquo;s Tufte/Few design reference file runs to several hundred lines, and it is a <em>summary</em>. The original works run to thousands of pages.</p>
+
+    <p>This compression extends to every expert in the roster. &ldquo;Use Kleppmann&rsquo;s cache-aside pattern with TTLs calibrated to data volatility&rdquo; compresses multiple chapters on distributed systems consistency into a single instruction &mdash; the same instruction that, in the SDD comparison above, produced an implementation with TTLs calibrated to data volatility, invalidation strategies accounting for eventual consistency, and caching layers designed for the application&rsquo;s specific read/write ratio.</p>
+
+    <p>This compression benefit applies regardless of the practitioner&rsquo;s own expertise. A developer who has internalised Tufte&rsquo;s work still faces a transfer problem: decomposing that knowledge into explicit written instructions every time they want an AI to follow the same principles. Citation-based activation eliminates this cost. The reference files are an optimisation; the citation is the mechanism.</p>
+
+    <p>This mechanism is not infallible. The AI may still hallucinate details, misattribute techniques, or blend an expert&rsquo;s ideas with those of others. Citation-based activation does not guarantee fidelity to the source. It significantly <em>focuses</em> the output toward the cited framework, producing results observably closer to the expert&rsquo;s published methodology than unprompted output. The practitioner&rsquo;s judgement remains essential &mdash; but applied to focused output rather than unfocused output. And because the AI is already working within the cited expert&rsquo;s framework, course corrections are refinements (&ldquo;use Beizer&rsquo;s cause-effect graphing here, not boundary analysis&rdquo;) rather than wholesale redirects.</p>
+
+    <h3 id="panels"><span class="section-num">3.4</span> Panels of Competing Experts Produce Better Output</h3>
+
+    <p>A single citation improves focus but provides only one perspective. GVM extends the mechanism to <strong>panels of 3&ndash;7 experts per discipline</strong> whose philosophies create productive tension.</p>
+
+    <p>Consider the architecture phase. GVM assembles a panel:</p>
+
+    <ul class="expert-list">
+      <li><span class="expert-name">Fairbanks</span> (<span class="expert-work">Just Enough Software Architecture</span>): <span class="expert-role">Spec only the risky parts. Low-risk components get light treatment.</span></li>
+      <li><span class="expert-name">Brooks</span> (<span class="expert-work">The Mythical Man-Month</span>): <span class="expert-role">Maintain conceptual integrity across the entire system.</span></li>
+      <li><span class="expert-name">Keeling</span> (<span class="expert-work">Design It!</span>): <span class="expert-role">Capture every significant decision in an ADR (Architecture Decision Record) with context and rationale.</span></li>
+      <li><span class="expert-name">Brown</span> (<span class="expert-work">Software Architecture for Developers</span>): <span class="expert-role">Describe at the right zoom level using the C4 model (Context, Containers, Components, Code).</span></li>
+    </ul>
+
+    <p>Fairbanks and Brooks pull in different directions. Fairbanks says &ldquo;don&rsquo;t over-specify the easy parts&rdquo;; Brooks says &ldquo;maintain consistency everywhere.&rdquo; The tension is productive &mdash; it forces the methodology to find the right balance for each project rather than defaulting to either extreme.</p>
+
+    <p>Consider a concrete case: a low-risk utility module in a larger system &mdash; say, a configuration loader. Fairbanks alone would say &ldquo;two sentences, it&rsquo;s a solved problem, move on.&rdquo; Brooks alone would insist on full documentation to maintain conceptual integrity. The panel&rsquo;s resolution: a light specification (Fairbanks wins on depth) that explicitly cross-references the system&rsquo;s naming conventions, error handling patterns, and logging format (Brooks wins on consistency). The result &mdash; a brief spec that connects to the whole &mdash; is better than either expert would produce alone. This is not additive; it is a genuine trade-off where the panel&rsquo;s competing priorities force a principled compromise.</p>
+
+    <h3 id="conditional-activation"><span class="section-num">3.5</span> Experts Activate Only When Their Domain Appears</h3>
+
+    <p>Not every expert is needed for every task. GVM addresses this through <strong>conditional activation</strong> &mdash; experts activate based on domain signals in the work. When a specification involves frontend interaction design, Cooper and Krug activate. When it involves data persistence, Kleppmann activates. The activation is announced transparently to the practitioner.</p>
+
+    <h3 id="local-knowledge"><span class="section-num">3.6</span> Internal Standards Require Verbatim Files, Not Citations</h3>
+
+    <p>Citation-based activation works because the LLM was trained on material that references and builds upon the cited expert&rsquo;s published work. The name is a compression key that unlocks knowledge already present in the model&rsquo;s weights. But every organisation also has knowledge the model has never seen: internal coding standards, architectural decision records, house style guides, domain-specific conventions, regulatory interpretations, and design patterns agreed by a particular team. No citation key can activate knowledge that was never in the training data.</p>
+
+    <span class="sidenote">This mirrors how a new team member works: you can tell a senior engineer &ldquo;we follow Fowler&rsquo;s patterns&rdquo; and they know what you mean. But you cannot tell them &ldquo;we follow the Risk IT conventions&rdquo; without handing them the document.</span>
+
+    <p>GVM accommodates this through the same reference file mechanism it uses for expert knowledge, with one important difference in content density. Published experts can be activated with a citation &mdash; &ldquo;apply Fowler&rsquo;s repository pattern&rdquo; &mdash; because the model already knows the detail behind the reference. Organisational standards must be provided <strong>verbatim</strong> as reference files, because the model has no prior exposure to draw on. The reference file for an internal coding standard needs to contain the full text of the standard, not just its title. The reference file for an agreed architectural pattern needs to describe the pattern completely, not merely name it.</p>
+
+    <p>In practice, this means an organisation adopting GVM would maintain two categories of reference file: <strong>expert references</strong> (citation-dense, terse &mdash; the model fills in the detail) and <strong>organisational references</strong> (verbose, self-contained &mdash; the model has nothing to fill in). Both are loaded through the same mechanism and at the same pipeline phases. Both ground the AI&rsquo;s output. The difference is purely in how much context each reference needs to carry. The methodology blends naturally with localised knowledge bases &mdash; an organisation&rsquo;s coding standards, design practices, or compliance frameworks sit alongside Fowler and Kleppmann in the reference file set, and the AI applies both with equal weight.</p>
+
+    <h3 id="technical-mechanism"><span class="section-num">3.7</span> Where the Full Transformer-Level Mechanism Is Documented</h3>
+
+    <p>The mechanism by which citation activates focused regions of the model&rsquo;s parameters &mdash; including how attention heads route token sequences to specialised representations during inference &mdash; is treated in the companion paper <em>Why Citation-Based Activation Works</em>. That paper draws on transformer interpretability research (Elhage et al., 2021; Olsson et al., 2022; and the broader Anthropic and OpenAI interpretability programmes) to explain the activation pathway in detail.</p>
+    <!-- ============================================================ -->
+    <h2 id="expert-model"><span class="section-num">4.</span> Expertise Activates in Three Tiers by Scope</h2>
+    <!-- ============================================================ -->
+
+    <p>GVM organises expertise into three tiers, each activating at different phases and with different scopes.</p>
+
+    <h3 id="tier-1"><span class="section-num">4.1</span> Tier 1 &mdash; Process Experts (Always Active)</h3>
+
+    <p>Process experts govern the overall methodology for each development phase. They are always loaded when their phase is active.</p>
+
+    <table>
+      <caption>Table 1 &mdash; Tier 1 expert panels by development phase</caption>
+      <thead>
+        <tr><th>Phase</th><th>Expert Panel</th><th>Techniques / Governance</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Requirements</td><td>Wiegers, Gause &amp; Weinberg, Patton, Cooper, Christensen/Moesta</td><td>Classification, questioning, journey mapping, personas, job framing</td></tr>
+        <tr><td>Test Cases</td><td>Copeland, Beizer, North, Kaner</td><td>Technique selection, thoroughness, BDD format, risk-based prioritisation</td></tr>
+        <tr><td>Specification</td><td>Clements, Brown, Fairbanks, Keeling, Bass/Clements/Kazman, Brooks</td><td>Decomposition, C4, risk-driven depth, ADRs, quality attributes, integrity</td></tr>
+        <tr><td>Review</td><td>All of the above</td><td>Quality criteria drawn from each phase&rsquo;s panel</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="tier-2"><span class="section-num">4.2</span> Tier 2 &mdash; Domain Specialists in Two Sub-tiers (Conditional)</h3>
+
+    <p>Domain specialists activate when specific domains are encountered. Activation is announced transparently. Tier 2 splits into two sub-tiers that share an activation model but differ in scope: <strong>Tier 2a</strong> covers software domains (frontend, data, integration, dimensional modelling) and ships with the methodology; <strong>Tier 2b</strong> covers the application&rsquo;s business domain (market risk, credit risk, healthcare, regulated industries) and is curated per application. Both are introduced below.</p>
+
+    <table>
+      <caption>Table 2 &mdash; Tier 2 domain specialists</caption>
+      <thead>
+        <tr><th>Specialist</th><th>Source</th><th>Activation Signal</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Cooper &amp; Krug</td><td><em>About Face</em>; <em>Don&rsquo;t Make Me Think</em></td><td>Frontend interaction, forms, navigation</td></tr>
+        <tr><td>Tufte &amp; Few</td><td><em>Visual Display of Quantitative Information</em>; <em>Show Me the Numbers</em></td><td>Data-heavy UI, dashboards, comparison tables</td></tr>
+        <tr><td>Muller-Brockmann &amp; Bringhurst</td><td><em>Grid Systems</em>; <em>Elements of Typographic Style</em></td><td>Designed output, layout, typography</td></tr>
+        <tr><td>Hohpe &amp; Woolf</td><td><em>Enterprise Integration Patterns</em></td><td>Service integration, message passing</td></tr>
+        <tr><td>Kleppmann</td><td><em>Designing Data-Intensive Applications</em></td><td>Data model, storage, caching, consistency</td></tr>
+        <tr><td>Nygard</td><td><em>Release It!</em> (2nd ed.)</td><td>Resilience, circuit breakers, degradation</td></tr>
+        <tr><td>Newman</td><td><em>Building Microservices</em> (2nd ed.)</td><td>Service boundaries, API design</td></tr>
+        <tr><td>Kimball</td><td><em>The Data Warehouse Toolkit</em> (3rd ed.)</td><td>Dimensional modelling, warehousing</td></tr>
+      </tbody>
+    </table>
+
+    <p>The specialists above &mdash; Cooper, Kleppmann, Nygard, and others &mdash; address <em>software</em> domains: how to build frontends, how to model data, how to design resilient systems. We designate these <strong>Tier 2a</strong>. They are included in the reference implementation as standard, are relatively stable across projects, and activate based on technical signals in the work.</p>
+
+    <p>But every application also exists within a <strong>business domain</strong> &mdash; and that domain has its own canon of authoritative experts whose frameworks should govern how requirements are written, how tests are designed, and how the final product is evaluated. Domain specialists are not interchangeable, and general software engineering expertise cannot substitute for them: a market risk application needs Hull and Jorion; a credit risk application needs Altman and Duffie; an operational risk system needs Chapelle and Girling.</p>
+
+    <span class="sidenote">Tier 2b does not require a fourth tier because the relationship to the pipeline is the same as Tier 2a &mdash; conditional activation based on domain signals. The difference is in <em>which</em> domain (business vs. software), <em>when</em> they activate (cross-cutting vs. specification-focused), and <em>how</em> they are maintained (per-application vs. per-methodology).</span>
+
+    <p>We designate these <strong>Tier 2b &mdash; Industry Domain Specialists</strong>. They differ from Tier 2a in three ways:</p>
+
+    <ul>
+      <li><strong>Volatile</strong> &mdash; curated per application, potentially per sub-domain within an industry. A market risk VaR system and a market risk P&amp;L attribution system may need different sub-specialists even within the same risk type.</li>
+      <li><strong>Cross-cutting activation</strong> &mdash; Tier 2a specialists activate primarily during specification. Tier 2b specialists activate across <em>multiple phases</em>: requirements (domain correctness), test cases (domain-specific edge cases and scenarios), review (domain accuracy audit), and as an ad-hoc domain review at any pipeline stage.</li>
+      <li><strong>Append-only curation</strong> &mdash; Tier 2a reference files version with GVM. Tier 2b reference files version with the practitioner&rsquo;s <em>practice</em> &mdash; they grow as domain understanding deepens across projects, and experts are never removed. A market risk reference file used across five projects accumulates a richer expert panel than one used for one.</li>
+    </ul>
+    <p>The reference implementation stores Tier 2b files in the shared design system alongside Tier 2a references, organised by industry sub-domain (e.g., <code>industry/market-risk.md</code>, <code>industry/credit-risk.md</code>). Because the AI was trained on material that engages with these experts&rsquo; works, the citation-as-retrieval-key mechanism works as effectively for Hull&rsquo;s derivatives framework as it does for Fowler&rsquo;s refactoring patterns. (These specialists are illustrative examples drawn from the reference implementation&rsquo;s industry domain files; specific edition citations are maintained in those reference files rather than this whitepaper&rsquo;s References section.)</p>
+
+    <p>Tier 2b accumulates value across projects in a way that takes more discussion than the tier introduction warrants; &sect;4.6 picks this up.</p>
+
+    <h3 id="tier-3"><span class="section-num">4.3</span> Tier 3 &mdash; Stack Specialists (After Technology Choice)</h3>
+
+    <p>Stack specialists activate after technology choices have been made. They bring language-specific, framework-specific, and platform-specific expertise.</p>
+
+    <span class="sidenote">The Tier 3 roster is intentionally large and extensible. New specialists are added as new stacks are encountered, following a standardised format that preserves the citation-as-retrieval-key mechanism.</span>
+
+    <table>
+      <caption>Table 3 &mdash; Example Tier 3 specialists</caption>
+      <thead>
+        <tr><th>Stack</th><th>Specialists</th><th>Source Works</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Python</td><td>Ramalho, Percival &amp; Gregory, Ramirez</td><td><em>Fluent Python</em>; <em>Architecture Patterns with Python</em>; FastAPI docs</td></tr>
+        <tr><td>TypeScript/React</td><td>Abramov / React Team, Dodds, Vanderkam</td><td>react.dev; Testing Library; <em>Effective TypeScript</em></td></tr>
+        <tr><td>Databases</td><td>Winand, Leach, Ben-Gan, Schwartz, Celko</td><td><em>SQL Performance Explained</em>; PostgreSQL patterns; <em>T-SQL Fundamentals</em>; etc.</td></tr>
+        <tr><td>Data Processing</td><td>McKinney, Beauchemin, Kimball</td><td><em>Python for Data Analysis</em>; Airflow; <em>Data Warehouse Toolkit</em></td></tr>
+        <tr><td>Infrastructure</td><td>Majors, Hightower</td><td><em>Observability Engineering</em>; <em>Kubernetes Up and Running</em></td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size: 0.88rem; color: #888; max-width: 800px;">Table 3 is an illustrative roster of stack specialists used in the reference implementation. Per-stack reference files maintain full citations; the names here are pointers, not whitepaper bibliography entries.</p>
+
+    <h3 id="expert-scoring"><span class="section-num">4.4</span> Scoring Ensures Not All Citations Carry Equal Weight</h3>
+
+    <p>Not all experts carry equal authority, and not all published works carry equal weight. A methodology that treats every citation as equivalent &mdash; Tufte on data visualisation alongside an author of a single conference paper &mdash; undermines the grounding it claims to provide. GVM addresses this with two scoring scales: one for the <strong>expert</strong> (the person and their standing in the field) and one for each <strong>work</strong> (the specific publication being cited). Both use a 1&ndash;5 scale across multiple dimensions &mdash; Authority, Publication quality, Breadth, Adoption, and Currency for experts; Specificity, Depth, Currency, and Influence for works. Each scale produces a classification from Canonical (the undisputed authorities whose frameworks <em>are</em> the domain) down through Established, Recognised, Emerging, to Provisional (discovered during a session but not yet verified). An Established expert may have both a Canonical work and a Recognised work &mdash; the scores are independent. See <a href="#appendix-a">Appendix A</a> for the full scoring dimensions, classification bands, and a worked example.</p>
+
+    <span class="sidenote">This mirrors model validation practice in financial services (SR 11-7), where the validator must be independent of the developer. The principle is the same: when a system scores its own outputs, independent verification is not optional.</span>
+
+    <p>Because the AI is scoring its own confidence in its own citations, two safeguards prevent self-serving assessments. First, any dimension scored 4 or 5 must include verifiable evidence &mdash; specific indicators the practitioner can check independently. Second, an independent AI agent, dispatched separately with no access to the original scores, produces its own assessment. When the two sets of scores converge, confidence is high; when they diverge, the divergence is flagged explicitly and the practitioner decides. See <a href="#appendix-a">Appendix A</a> for the convergence/divergence rules and verification detail.</p>
+
+    <span class="sidenote">Divergence thresholds are gated by sample size using confidence interval behaviour for binomial proportions (Agresti &amp; Coull, 1998). An expert with a cite rate above 80% but classified as Recognised may be underclassified. Below 40% but classified as Established may be overclassified.</span>
+
+    <h3 id="expert-discovery"><span class="section-num">4.5</span> The Roster Grows Through Use, Not Maintenance</h3>
+
+    <span class="sidenote">The discovery process applies the same independent verification as initial scoring &mdash; a second agent independently assesses each candidate. This eliminates the most dangerous failure mode: confidently wrong citations entering the roster unchecked.</span>
+
+    <p>When a domain is encountered with no matching specialist, the AI identifies the gap, researches candidate experts with published work, scores them using independent verification (Section 4.4), and presents the candidates to the practitioner. Experts who pass verification are added to the roster permanently. The roster grows with use rather than requiring centralised maintenance.</p>
+
+    <p>Classification informs trust, not selection. A Canonical and a Recognised expert on the same topic are not competing &mdash; they are layering. When experts genuinely conflict, both positions are presented with their classifications as context, and the practitioner decides. Relevance to the task determines which experts are loaded; classification helps the practitioner weigh the advice they receive.</p>
+
+    <h3 id="domain-calibration"><span class="section-num">4.6</span> Tier 2b Files Compound Value Across Projects</h3>
+
+    <p>The Tier 2b mechanism described in 4.2 has a property that emerges only across multiple projects: the same domain file gets reused. The market risk reference file built for one trading system serves the next; the regulatory-compliance file written for one fintech serves the next. Each subsequent project deepens the file rather than starting fresh. A financial services application and an aviation safety system share programming languages but almost nothing else in how they approach requirements, testing, and verification &mdash; so each domain accumulates its own panel over time, and the library grows with the practitioner&rsquo;s experience, not just with GVM itself.</p>
+
+    <!-- ============================================================ -->
+    <h2 id="pipeline"><span class="section-num">5.</span> A Phased Pipeline Activates the Right Experts at Each Stage</h2>
+    <!-- ============================================================ -->
+
+    <p>GVM defines a phased development pipeline. Each phase feeds the next, with feedback arrows that allow iteration &mdash; issues discovered downstream trigger revisions upstream.</p>
+
+    <p>The pipeline is organised around the two failure modes named in Section 1. <em>Discovery</em> phases (<code>/gvm-impact-map</code>, <code>/gvm-requirements</code>, <code>/gvm-test-cases</code>) decide what is worth building and prove that every requirement traces to an actor outcome and is expressible as a concrete test.</p>
+
+    <p><em>Construction</em> phases (<code>/gvm-tech-spec</code>, <code>/gvm-design-review</code>, <code>/gvm-walking-skeleton</code>, <code>/gvm-build</code>) turn the decision into running code, with MVP-1 ordering (first-slice ordering &mdash; see &sect;5.13) forcing the first slice through every external boundary.</p>
+
+    <p><em>Verification</em> phases (<code>/gvm-code-review</code>, <code>/gvm-test</code>, <code>/gvm-explore-test</code>) check both halves &mdash; that the implementation matches the specification, and that a real user can actually use the result.</p>
+
+    <p><em>Release</em> phases (<code>/gvm-doc-write</code>, <code>/gvm-doc-review</code>, <code>/gvm-deploy</code>) gate the artefact against the verdicts the verification phases produced. A pipeline that only covered construction and verification would catch the second failure mode and miss the first. A pipeline that only covered discovery would catch the first and miss the second. GVM&rsquo;s phase set covers both.</p>
+
+    <p>Entry into the pipeline is flexible. The pipeline supports three entry points. Most greenfield projects start at <code>/gvm-impact-map</code> to anchor the work in actor outcomes; projects with discovery already done can skip directly to <code>/gvm-requirements</code>. Specialised domains (financial services, healthcare, regulated industries) benefit from running <code>/gvm-init</code> first to load industry experts. Existing codebases begin with <code>/gvm-site-survey</code>, which diagnoses the codebase and routes to the appropriate downstream phase.</p>
+
+    <h3 id="pipeline-phases"><span class="section-num">5.1</span> Fourteen Phases from Project Initiation to Release</h3>
+
+    <div class="pipeline">
+
+      <div class="pipeline-precondition">
+        <div class="pipeline-precondition-box">
+          <div class="pipeline-precondition-label">Before the Pipeline (Optional)</div>
+          <strong>/gvm-init</strong> (specialised domains) &mdash; For financial services, healthcare, regulated industries. Loads industry experts before requirements start. Optionally produces an Application Brief &mdash; a structured project justification (Rumelt, Osterwalder) for organisations that gate project starts. The brief feeds into requirements as seed input. For general-purpose software, start at /gvm-requirements directly &mdash; the pipeline discovers experts automatically.<br><br>
+          <strong>/gvm-site-survey</strong> (existing codebases) &mdash; Score the codebase across multiple health dimensions. Diagnose architectural state. Select experts. Route to the appropriate pipeline phase.
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-impact-map</div>
+        <div class="pipeline-detail">
+          Optional discovery phase. Produces a four-level Goal &rarr; Actor &rarr; Impact &rarr; Deliverable map (Adzic) that downstream requirements gate against (IM-4 traceability &mdash; no requirement may finalise unless it traces to a leaf Deliverable).<br>
+          <span class="experts">Adzic (impact mapping), Cagan (outcome-first discovery), Rumelt (diagnosis discipline), Ries (lean experimentation underpins outcome-first impact mapping)</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; orphan deliverables surface missing goals or actors</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-requirements</div>
+        <div class="pipeline-detail">
+          Elicit, structure, and prioritise requirements through expert-guided conversation.<br>
+          <span class="experts">Wiegers, Gause &amp; Weinberg, Patton, Cooper, Christensen/Moesta</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; health report issues trigger requirement fixes</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-test-cases</div>
+        <div class="pipeline-detail">
+          Generate acceptance tests from requirements. Health report gates quality before generation.<br>
+          <span class="experts">Copeland, Beizer, North (BDD), Kaner</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; untestable requirements fed back for revision</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-tech-spec</div>
+        <div class="pipeline-detail">
+          Focused spec documents with adaptive decomposition. ADRs, implementation guide.<br>
+          <span class="experts">Clements, Brown, Fairbanks, Keeling, Bass/Clements/Kazman, Brooks + Tier 2 &amp; 3</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; spec gaps reveal missing requirements or tests</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-design-review</div>
+        <div class="pipeline-detail">
+          Validates designs against requirements. Data model, UI/UX, API contract, and performance panels dispatched in parallel.<br>
+          <span class="experts">Fagan (inspection methodology), Laitenberger et al. (perspective-based reading), Cain et al. (multiple-target search), Drew/V&otilde;/Wolfe (inattentional blindness), Brooks (conceptual integrity); plus per-domain experts loaded conditionally from the project&rsquo;s domain reference files</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; design gaps feed back to tech-spec for revision</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-walking-skeleton</div>
+        <div class="pipeline-detail">
+          Optional. Registers external boundaries (process, network, persistence, third-party) so the first build chunk can touch every one of them. Mechanical enabler of MVP-1.<br>
+          <span class="experts">Cockburn (walking skeleton), Reinertsen (deferred integration risk), Freeman &amp; Pryce (end-to-end first)</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; missing boundaries reveal spec gaps</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-build</div>
+        <div class="pipeline-detail">
+          Implement from specs. Phased, chunked, context-aware. Unit tests co-located (test-driven development). Hard Gate 9 enforces MVP-1 ordering on chunk sequencing. Expert grounding splits between a <em>Framework Reference</em> (procedural patterns, loaded into the build prompt for construction-time use) and <em>Review Criteria</em> (expert principles, applied during the post-build code-review loop rather than during construction itself); see &sect;9.1 for the rationale.<br>
+          <span class="experts">Tier 3 stack specialists + domain specialists as needed</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; implementation reveals spec ambiguities</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-code-review</div>
+        <div class="pipeline-detail">
+          Parallel defect-class panels review implementation code through non-overlapping scanning mandates.<br>
+          <span class="experts">References, contracts, logic, and naming panels dispatched as concurrent subagents</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; review findings may require implementation changes or spec clarifications</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-test</div>
+        <div class="pipeline-detail">
+          Build verification: integration seam audit, full code review + fix loop, startup verification, smoke testing, stub vs implemented audit, and documentation check.<br>
+          <span class="experts">Requires /gvm-code-review to have run first; Kaner, Nygard + stack specialists</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; failures may reveal build defects, spec gaps, or missing requirements</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-explore-test</div>
+        <div class="pipeline-detail">
+          Optional. Practitioner-driven exploratory testing session against the built code. Timeboxed charter, defect capture in Given/When/Then form. Output is read by /gvm-test as VV-4(d) (Critical defect blocks Ship-ready).<br>
+          <span class="experts">Bach &amp; Bolton (rapid software testing), Hendrickson (Explore It!), Whittaker (tour heuristics)</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; Critical defects block doc-write until resolved</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-doc-write</div>
+        <div class="pipeline-detail">
+          Pipeline documentation: README, CHANGELOG, user guides, API docs &mdash; grounded in build artefacts and test results, not plans.<br>
+          <span class="experts">Doumont, Zinsser, Redish + domain specialists for content</span>
+        </div>
+      </div>
+
+      <div class="pipeline-connector">
+        <span class="pipeline-down">&darr;</span>
+        <span class="pipeline-feedback">&uarr; documentation inaccuracies block the release</span>
+      </div>
+
+      <div class="pipeline-phase">
+        <div class="pipeline-step">/gvm-deploy</div>
+        <div class="pipeline-detail">
+          Release preparation: aggregates review verdicts, checks documentation accuracy against the build, bumps version, generates release notes and changelog, creates git tag. Does not deploy &mdash; deployment is organisation-specific.<br>
+          <span class="experts">No expert panel &mdash; this is a process gate, not a design phase</span>
+        </div>
+      </div>
+
+      <div class="pipeline-review">
+        <div class="pipeline-review-box">/gvm-doc-review is a cross-cutting review tool, not a pipeline phase: it can audit any phase&rsquo;s documents (requirements, test cases, specs, build summaries, whitepapers) and is therefore shown as an overlay rather than a numbered step. Scores 0&ndash;10, prioritised issues (Critical / Important / Minor).</div>
+      </div>
+
+    </div>
+
+    <h3 id="feedback-arrows"><span class="section-num">5.2</span> Downstream Issues Feed Back Upstream by Design</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses both failure modes (building the right thing; building it correctly).</p>
+
+    <p>The pipeline is not a rigid waterfall. Feedback flows upstream: test case generation reveals untestable requirements; specification writing reveals missing tests; design review reveals spec gaps or requirement coverage failures; implementation exposes spec ambiguities; production issues feed back to any phase. The feedback arrows are not failure &mdash; they are the methodology working as designed.</p>
+
+    <h3 id="test-first-gate"><span class="section-num">5.3</span> Test Cases Before Specs &mdash; Requirements Must Prove They Are Testable</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses both failure modes &mdash; primarily failure mode 1 (forcing requirements to be expressible as concrete tests catches vague/contradictory requirements) and indirectly failure mode 2 (untestable requirements often signal implementation ambiguity).</p>
+
+    <span class="sidenote">This matters for AI-assisted development specifically because LLMs are compliant. Ask one to implement a vague requirement and it will produce something &mdash; confidently, fluently, and wrong in ways that are hard to detect. The test-first gate catches vagueness at the cheapest point: before any code exists.</span>
+
+    <p>The pipeline generates test cases after requirements and before the technical specification. This ordering is deliberate: test case generation is a <strong>quality gate on requirements</strong>, not a downstream activity. Before any architecture is designed, every requirement must be expressible as a concrete test with given/when/then conditions, boundary values, and expected outcomes.</p>
+
+    <p>The test-cases phase produces a health report that identifies untestable, inconsistent, and contradictory requirements. These are resolved or explicitly acknowledged before the pipeline proceeds. By the time the tech spec begins, every requirement has been validated through testability. The spec inherits clean inputs.</p>
+
+    <p>The pipeline now has two quality gates before implementation begins. Test cases validate that requirements are testable and complete. Design review &mdash; running after the tech spec &mdash; validates that the proposed data model, UI/UX, API contracts, and performance characteristics actually cover the requirements before any code is written. Both gates are cheaper to pass than to skip and discover the gap during build.</p>
+
+    <h3 id="when-not"><span class="section-num">5.4</span> The Full Pipeline Is Not Always Warranted</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses both failure modes (building the right thing; building it correctly).</p>
+
+    <p>GVM&rsquo;s setup cost is front-loaded: curating reference files, assembling expert panels, and establishing the pipeline structure requires initial investment. However, once established, the per-project cost is low &mdash; the same reference files, pipeline structure, and core expert panels serve every subsequent project within that domain &mdash; and when the domain changes, the expert calibration step (Section 4.6) adjusts the roster rather than rebuilding from scratch. A practitioner who manually writes out Tufte&rsquo;s principles or Beizer&rsquo;s testing framework into every prompt is doing <em>more</em> recurring work than one who has set up GVM once.</p>
+
+    <p>That said, the full pipeline &mdash; requirements through deployment with multi-phase review &mdash; is not always warranted. For throwaway scripts, rapid prototypes, or well-understood CRUD applications with no novel components, the pipeline structure may exceed its benefit. Even here, though, the citation mechanism itself (without the full pipeline) costs nothing: &ldquo;apply Kleppmann&rsquo;s cache-aside pattern&rdquo; is a single sentence that activates a body of work whether or not you are running the full GVM pipeline. The methodology scales down as well as up.</p>
+
+    <h3 id="site-survey"><span class="section-num">5.5</span> Existing Codebases Get a Diagnostic Entry Point</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses failure mode 1 (building the right thing).</p>
+
+    <span class="sidenote">Existing codebases accumulate decisions over years, and the original rationale often leaves with the people who made those decisions. The grounded experts become a lens for recovering lost context and identifying design drift &mdash; not just a guide for extending the system, but an authoritative framework for diagnosing and repairing it.</span>
+
+    <p>Most software work happens within existing codebases, not greenfield projects. The site-survey phase has the AI explore an existing codebase, diagnose its architectural state, select the appropriate grounding experts, and recommend where to enter the pipeline. The expert roster emerges from what the codebase contains, not from a predetermined list.</p>
+
+    <p>The survey produces a multi-dimensional health scorecard rather than a single label. A codebase that scores high on coherence but low on currency gets different expert selection than one that scores low across the board. The routing recommendation depends on both the diagnosis and the nature of the intended work &mdash; user-facing features route through requirements elicitation; purely technical remediation can skip directly to specification, because the survey itself has defined what the codebase <em>is</em>, what it <em>should be</em>, and where the gaps are.</p>
+
+    <h3 id="code-review-phase"><span class="section-num">5.6</span> A Single Reviewer Misses What Multiple Perspectives Catch</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses failure mode 2 (building it correctly).</p>
+
+    <p>A single code review &mdash; whether human or AI &mdash; sees the codebase through one lens. A reviewer scanning broadly suffers from satisfaction-of-search bias &mdash; finding one defect reduces the likelihood of finding others nearby. GVM addresses this by dispatching multiple defect-class panels as concurrent subagents, each scanning for a specific class of defect: references and dependencies, contracts and interfaces, logic and completeness, naming and specification compliance.</p>
+    <span class="sidenote">The term <em>satisfaction-of-search</em> originated in radiology (Tuddenham 1962); Cain, Adamo &amp; Mitroff (2013) document the related multiple-target visual search effect; Drew, V&otilde; &amp; Wolfe (2013) document inattentional blindness (radiologists missed an unexpected gorilla in CT scans).</span>
+
+    <p>This non-overlapping partitioning is grounded in Perspective-Based Reading research (Laitenberger, Atkinson, Schlich &amp; El Emam, 2000): teams whose reviewers had non-overlapping scanning mandates detected 41% more unique defects than checklist-based teams, at 58% lower cost per defect. <span class="sidenote">The 41% / 58% figures are reported in Laitenberger et al.&rsquo;s comparison of Perspective-Based Reading against checklist-based reading; absolute magnitudes vary across the paper&rsquo;s experimental conditions.</span> Named experts are assigned to the panel whose defect class matches their primary framework &mdash; the experts are grounded, and the panels are non-overlapping. Each panel applies a liberal detection threshold on the first pass (Signal Detection Theory: lower the criterion to maximise recall, accept some false positives that the synthesis phase will filter; Green &amp; Swets, 1966), and each panel scans in two passes to counter satisfaction-of-search within its own mandate. Four reviews execute in the wall-clock time of one.</p>
+
+    <p>A critical design principle links diagnosis to remedy: <strong>the diagnosing expert&rsquo;s framework defines what &ldquo;right&rdquo; looks like</strong>, setting the acceptance criteria the fix must meet. A contracts concern surfaced by the contracts panel is evaluated against the same interface-alignment principles that identified it. For non-code artefacts (requirements, specifications, documentation) the expert&rsquo;s framework also guides the construction of the fix; for code construction specifically, evaluation and construction split &mdash; the fix is judged against the expert framework, but the code itself draws more heavily on procedural knowledge such as API documentation (Section 9.1).</p>
+
+    <h3 id="progressive-calibration"><span class="section-num">5.7</span> Without Memory, Every Review Starts from Zero</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses both failure modes (building the right thing; building it correctly).</p>
+
+    <span class="sidenote">This is Shewhart&rsquo;s measurement-system stabilisation, popularised by Deming, applied to AI review. The first measurement establishes a baseline. Subsequent measurements calibrate against it.</span>
+
+    <p>AI review tools treat each review cycle as independent. The tenth review of a codebase is no more informed than the first. GVM structures improvement by accumulating project-specific knowledge across rounds: score histories per dimension (so a practitioner can see whether security is improving or regressing), anchor examples from this project (grounding abstract rubric descriptions in concrete artefacts), and recurring findings tracked until resolved.</p>
+
+    <p>By round 3, the reviewer knows: &ldquo;The auth module scores 9 on security (good anchor). The search module scored 5 in rounds 1 and 2 (recurring finding). Input validation has been flagged twice.&rdquo; Reviews converge toward the project&rsquo;s actual quality profile rather than re-discovering the same issues each time.</p>
+
+    <p>Multiple review rounds are not repetition &mdash; they are iterative convergence. Each round catches different defects because it is reviewing a different artefact. Fixing round 1 findings changes the code, and the changed code exposes subtler problems that were masked by the noise of the original issues. The first round surfaces what is obviously wrong. The second round, operating on a cleaner codebase, catches what could not be seen while the obvious problems dominated attention. This is Fagan&rsquo;s observation from manual inspections: removing major defects in the first pass reveals minor defects that were previously invisible. The same principle applies when the reviewer is an LLM.</p>
+
+    <p>But calibration introduces its own bias. Areas that scored well receive less scrutiny. Resolved findings are trusted without re-verification. From round 3 onwards, a blind reviewer runs in parallel &mdash; same criteria, same experts, no calibration data. By round 3, anchoring bias (Tversky &amp; Kahneman, 1974) has typically produced blind spots in the calibrated reviewer. A reconciliation step filters the blind reviewer&rsquo;s output: genuinely new findings and regressions merge into the final report; rediscovered noise is discarded. The practitioner sees one report, not two. The calibration system corrects for its own blind spots.</p>
+
+    <p>Calibration also feeds forward into the build process. When a review finding recurs across three or more consecutive rounds, or regresses after being marked resolved, it is promoted to a <strong>build check</strong> &mdash; a concrete instruction that GVM loads into the build prompt to prevent the same defect class recurring, and re-evaluates during the code-review loop. Build checks are the methodology&rsquo;s memory of past defects. This creates a feedback path from review to build: the system learns from its own history rather than rediscovering the same defects each round.</p>
+
+    <p>Promoted checks are classified into two tiers. <strong>Permanent</strong> (general-engineering) checks trace to established principles in the expert literature &mdash; McConnell&rsquo;s prohibition on magic numbers, Hunt &amp; Thomas&rsquo;s fail-fast principle, Ross Anderson&rsquo;s defence in depth. These are engineering principles that the project&rsquo;s review history surfaced but that exist independently of the project. They never retire. The code may be clean <em>because</em> the check is enforced &mdash; removing it would reintroduce the class of defect the system learned to prevent. <strong>Retirable</strong> (project-specific) checks are project-specific patterns with no grounding in expert literature. After three consecutive rounds without being triggered, the practitioner is asked whether to keep or retire them. The system flags; the user decides.</p>
+
+    <p>The mechanism is grounded in Fagan&rsquo;s principle that inspection processes should improve from inspection data &mdash; extended in the checklist literature (Gilb &amp; Graham, 1993) to checklists that evolve from prior findings &mdash; and in Shewhart&rsquo;s distinction between chance-cause and assignable-cause variation, popularised by Deming as common-cause and special-cause. A recurring finding is common-cause variation, meaning the process must change, not just the output.</p>
+
+    <h3 id="hallucination"><span class="section-num">5.8</span> Hallucination Is the Central Reliability Problem &mdash; The Pipeline&rsquo;s Structure Addresses It</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses failure mode 2 (building it correctly).</p>
+
+    <span class="sidenote">The principle &mdash; treat the AI as a generator inside a verification loop, not as an oracle &mdash; aligns with the emerging consensus in hallucination research (Dhuliawala et al., ACL Findings 2024; Wang et al., ICLR 2023; Manakul et al., EMNLP 2023).</span>
+
+    <p>AI-generated code contains security vulnerabilities at rates around 40% (Pearce et al., 2022), and an average of 21.7% for open-source models of package recommendations point to libraries that do not exist (Spracklen et al., 2024). AI-drafted requirements assert domain facts that sound plausible but are wrong. No technique eliminates hallucination entirely (Dhuliawala et al., 2024). GVM does not claim to solve it. It reduces the surface area structurally.</p>
+
+    <p><strong>Structural defences already in the pipeline:</strong> Artefact contracts force structured output with specific IDs and traceability links &mdash; it is harder to hallucinate &ldquo;TC-RE-03-02 traces to requirement RE-03&rdquo; than to hallucinate vague prose. Strict TDD catches hallucinated API methods immediately. Parallel review panels (Section 5.6) are a form of self-consistency checking &mdash; hallucinated findings are unlikely to appear consistently across independent panels.</p>
+
+    <p><strong>Explicit verification for the gaps:</strong> Source verification dispatches an independent agent to confirm that cited experts and publications exist. Chain of Verification (Dhuliawala et al., 2024) applies during requirements drafting. Expert scoring uses independent verification with convergence/divergence flagging. The verification cost is proportional to risk: heaviest at upstream artefacts that downstream phases treat as ground truth.</p>
+
+    <h3 id="two-audiences"><span class="section-num">5.9</span> Documents Must Serve Both Human Reviewers and Downstream AI</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses failure mode 2 (building it correctly).</p>
+
+    <span class="sidenote">The reference implementation uses HTML for human review and Markdown for AI consumption, written from the same source of truth in a single pass. The specific formats are implementation decisions; the principle is methodological.</span>
+
+    <p>A pipeline that produces documents only humans can read stalls when AI needs to consume them downstream. A pipeline that produces documents only AI can parse loses the human oversight that makes the methodology trustworthy. Each phase therefore produces output designed for both audiences: one format optimised for human review (visual hierarchy, progressive disclosure, navigability) and one for machine consumption (flat, complete, parseable).</p>
+
+    <h3 id="change-management"><span class="section-num">5.10</span> Requirements Shift Mid-Build &mdash; An Unmanaged Pipeline Either Freezes or Corrupts</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses both failure modes (building the right thing; building it correctly).</p>
+
+    <span class="sidenote">The ceremony gradient follows Fairbanks: risk-proportional effort. Appending during active elicitation is low-risk. Starting a new round propagates through every downstream phase.</span>
+
+    <p>A pipeline that cannot handle change forces a choice: freeze requirements (unrealistic) or accept ad hoc mutations that silently invalidate downstream artefacts. GVM provides three change modes calibrated to scope: <strong>append</strong> (low ceremony, during elicitation), <strong>in-place update</strong> (medium ceremony, with changelog), and <strong>new round</strong> (high ceremony, previous round immutable). The pipeline detects staleness automatically and surfaces the specific IDs that changed.</p>
+
+    <p>A related principle prevents cascading corruption during build: <strong>discoveries go forward and up, never sideways</strong>. When building a chunk surfaces a spec gap, it records the finding in its handover rather than modifying upstream artefacts. The requirements phase owns the decision about how to integrate new scope. This prevents one AI agent&rsquo;s helpful fix from silently invalidating another agent&rsquo;s work.</p>
+
+    <h3 id="session-resilience"><span class="section-num">5.11</span> Context Exhaustion Breaks Multi-Session Builds &mdash; Persistence Artefacts Prevent It</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses failure mode 2 (building it correctly).</p>
+
+    <span class="sidenote">The same artefacts enable safe parallelism. Chunks with no mutual dependencies can be built simultaneously in isolated git worktrees, each with its own prompt and handover.</span>
+
+    <p>When an AI agent&rsquo;s context fills, it loses track of prior work. This is the primary failure mode of any AI-assisted build that spans more than one session. GVM addresses this through two persistence artefacts per chunk: a <strong>pre-build prompt</strong> (everything a fresh agent needs to execute the chunk) and a <strong>post-build handover</strong> (what was actually built, including deviations). When a session starts, the build phase reads the handover directory and knows which chunks are complete, in progress, or blocked. The handovers <em>are</em> the context.</p>
+
+    <h3 id="release-gate"><span class="section-num">5.12</span> Without a Structured Release Gate, Review Verdicts Are Advisory</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses both failure modes &mdash; closes both (building the right thing; building it correctly).</p>
+
+    <span class="sidenote">This is the difference between a quality system and a quality aspiration. If the final step does not enforce the preceding steps, those steps are suggestions. The release gate makes them structural.</span>
+
+    <p>A pipeline that produces review verdicts but does not check them before release is a pipeline whose reviews are optional in practice. The release phase (<code>/gvm-deploy</code>) aggregates every review verdict &mdash; code review, document review, design review &mdash; and blocks the release if any produced a &ldquo;not ready&rdquo; verdict. Caveats are surfaced for the practitioner&rsquo;s decision. The release also checks documentation accuracy against the current build: if the README or user guides describe features that were descoped, or omit features that were added, the tag is blocked until the documentation matches reality.</p>
+
+    <p>The skill does not deploy. Deployment is organisation-specific &mdash; CI/CD, containers, cloud providers, manual processes. The release phase produces a tagged commit with accurate release notes, a changelog, and verified documentation. What happens after the tag is pushed is outside the methodology&rsquo;s scope.</p>
+
+    <h3 id="mvp-1"><span class="section-num">5.13</span> MVP-1 Ordering &mdash; The First Slice Touches Every External Boundary</h3>
+    <p style="font-size: 0.88rem; color: #888; font-style: italic; margin-top: -0.4rem; margin-bottom: 1rem;">Addresses failure mode 2 (building it correctly).</p>
+
+    <p>Chunked builds have a default failure mode: the natural ordering of work is horizontal &mdash; build the database layer, then the service layer, then the API, then the UI. Each layer is internally coherent and independently testable, so an AI agent will produce them confidently. Integration risk accumulates silently. The system does not run end-to-end until the final layer lands, by which point the assumptions baked into earlier chunks have hardened and the integration defects are expensive to unwind. Reinertsen&rsquo;s small-batch and fast-feedback principles describe the dynamic: cost rises as the gap between &ldquo;component complete&rdquo; and &ldquo;system integrated&rdquo; widens.</p>
+
+    <p>GVM&rsquo;s answer is <strong>MVP-1</strong>: the first build chunk must produce a thin vertical slice that touches every external boundary the system will ever cross &mdash; process boundary, network boundary, persistence boundary, third-party integration. The slice does almost nothing functionally. It proves the wiring works. Subsequent chunks add behaviour through boundaries that are already exercised, so each chunk&rsquo;s integration risk is bounded by what the slice already validated.</p>
+
+    <p>MVP-1 is enforced at three points in the pipeline: <code>/gvm-tech-spec</code> Phase 5 checks that the chunk plan&rsquo;s first chunk is a thin vertical slice; <code>/gvm-build</code> Hard Gate 9 mirrors the check on the read side, refusing to begin a chunk whose ordering violates MVP-1 without a declared exemption; and <code>/gvm-design-review</code> Panel D Pass 3 flags designs whose structure makes MVP-1 mechanically impossible (for example, a design that requires the persistence layer to be complete before any other component compiles).</p>
+
+    <p>Four chunk shapes are exempt from MVP-1 ordering:</p>
+
+    <ul>
+      <li><strong>Library</strong> &mdash; no system to integrate.</li>
+      <li><strong>Refactor</strong> &mdash; existing system already integrated.</li>
+      <li><strong>Performance-driven</strong> &mdash; the single hot path is the system.</li>
+      <li><strong>Fully-specified</strong> &mdash; every boundary contract is frozen upstream and the chunk only fills in deterministic behaviour.</li>
+    </ul>
+
+    <p>An exempted chunk declares its category and rationale in its handover &mdash; the rationale is the audit trail.</p>
+
+    <span class="sidenote">Cockburn introduced the walking skeleton in <em>Crystal Clear</em> as the smallest possible end-to-end implementation that exercises every architectural element. Freeman &amp; Pryce&rsquo;s <em>Growing Object-Oriented Software, Guided by Tests</em> made the same case for test-driven systems: write the first end-to-end test before any unit. MVP-1 generalises both into a chunk-ordering rule that an AI builder can be held to mechanically.</span>
+
+    <p>The walking skeleton is the mechanical enabler of MVP-1, not a parallel mechanism. The optional <code>/gvm-walking-skeleton</code> phase produces a registry of every external boundary the system will cross, written before chunk planning begins. The chunk planner reads the registry; the first chunk&rsquo;s slice is constructed to touch every entry. Without the registry the planner has to infer boundaries from the spec, which works for systems with one or two boundaries but fails as the boundary count grows. The skill is opt-in: when a project has zero or one external boundary, the registry&rsquo;s cost exceeds its value, and the MVP-1 enforcement gates apply directly to the spec.</p>
+
+    <h3 id="comparison-tables"><span class="section-num">5.14</span> How GVM Compares to Adjacent Approaches</h3>
+
+    <p>Section 2.5 named GVM&rsquo;s structural difference from Role Prompting, SDD, BMAD, and RAG: GVM is organised around both axes, the four adjacent approaches address only the construction axis. With the pipeline now introduced, the comparison can be made concrete. Table 4 covers <em>building the right thing</em> &mdash; whether the approach grounds intent, traces deliverables to actor outcomes, prevents stub accumulation, and probes the running product for what real users would find wrong. Table 5 covers <em>building the thing right</em> &mdash; whether the approach structures the construction work, applies multiple expert perspectives, and handles the second pass when requirements shift. The cells in Table 4 say &ldquo;It doesn&rsquo;t&rdquo; for the four adjacent approaches because they do not claim to address that axis &mdash; the comparison surfaces the gap rather than penalising the approaches for missing a goal they never set.</p>
+
+    <p><strong>A note on experimental scope.</strong> The two tables below are descriptive comparisons against published documentation of each approach. The Section&nbsp;7 controlled experiment validated grounding levels <em>within</em> GVM (ungrounded vs design-grounded vs fully-grounded); it did not run head-to-head trials of GVM against Role Prompting, SDD, BMAD, or RAG. The comparative claims in Tables 4 and 5 are therefore structural rather than experimental: they describe what each approach does and does not address according to its own published material, and where the dual-axis gap lies. A head-to-head experiment across approaches remains open work.</p>
+
+    <table>
+      <caption>Table 4 &mdash; Building the right thing: discovery and intent grounding</caption>
+      <thead>
+        <tr><th>What a practitioner asks</th><th>Role Prompting</th><th>SDD</th><th>BMAD</th><th>RAG</th><th>GVM</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>How does it stop me from building features no real user actually needs?</td><td>It doesn&rsquo;t &mdash; persona only</td><td>It doesn&rsquo;t &mdash; the spec is treated as authoritative</td><td>Partially &mdash; an optional Analyst phase produces a Project Brief through brainstorming and research, but no outcome artefact is required and no structural gate refuses scopeless features</td><td>It doesn&rsquo;t &mdash; retrieval is execution-side</td><td><code>/gvm-impact-map</code> produces a goal &rarr; actor &rarr; impact &rarr; deliverable tree (Adzic) before requirements begin; <code>/gvm-requirements</code> refuses any requirement that does not trace to a leaf deliverable</td></tr>
+        <tr><td>At the end, how do I know it does what we set out to do?</td><td>I check by hand</td><td>I check the spec was implemented; the spec itself is unverified</td><td>I check the PO master checklist and the QA gate; intent traceability is to the PRD, not to a user outcome</td><td>I check by hand</td><td>Every deliverable traces back through impact &rarr; actor &rarr; goal; the release gate refuses any MUST requirement whose trace runs through a stub or unmet outcome</td></tr>
+        <tr><td>How does it surface problems automated tests can&rsquo;t catch?</td><td>It doesn&rsquo;t</td><td>It doesn&rsquo;t</td><td>Partially &mdash; the QA agent (Test Architect) designs tests, traceability matrices, and risk profiles, but does not run session-based exploratory probing of the running product</td><td>It doesn&rsquo;t</td><td><code>/gvm-explore-test</code> runs timeboxed charters (Bach &amp; Bolton, Hendrickson) with defect capture in Given/When/Then; Critical findings block release</td></tr>
+        <tr><td>How does it stop the build from quietly filling up with stubs that look like real implementations?</td><td>It doesn&rsquo;t</td><td>It doesn&rsquo;t &mdash; specs describe interfaces, not whether the implementation behind them is real</td><td>Partially &mdash; Epic 1 mandates a foundation slice (app setup, CI/CD, &ldquo;a health-check route or canary page&rdquo;) and the PO Master Checklist sequences dependencies, but the architecture template recommends WireMock-style stubbing of external APIs and there is no boundaries registry, no real-integration mandate, and no anti-stub gate</td><td>It doesn&rsquo;t</td><td><code>/gvm-walking-skeleton</code> registers every external boundary the system will cross; MVP-1 ordering forces the first build chunk through all of them in the real environment (Cockburn, Freeman &amp; Pryce); any remaining stub must be visibly labelled and registered</td></tr>
+        <tr><td>When the build is &ldquo;done,&rdquo; how does it tell me &ldquo;tests pass&rdquo; from &ldquo;a real user can use it&rdquo;?</td><td>It doesn&rsquo;t</td><td>It doesn&rsquo;t</td><td>The QA gate emits PASS / CONCERNS / FAIL / WAIVED quality-confidence states, advisory only; no separate gate for real-user usability vs tests-pass</td><td>It doesn&rsquo;t</td><td>The release verdict is Ship-ready / Demo-ready / Not shippable; stubs that surface to the UI block Ship-ready, and the verdict is mechanical, not advisory</td></tr>
+      </tbody>
+    </table>
+
+    <table>
+      <caption>Table 5 &mdash; Building the thing right: construction, verification, and quality grounding</caption>
+      <thead>
+        <tr><th>What a practitioner asks</th><th>Role Prompting</th><th>SDD</th><th>BMAD</th><th>RAG</th><th>GVM</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>How does it improve output quality?</td><td>Narrows the AI&rsquo;s persona</td><td>Structures what to build via specs</td><td>Simulates an agile team (Analyst, PM, UX Expert, Architect, PO, SM, Dev, QA/Test Architect)</td><td>Injects relevant documents into context</td><td>Activates specific published frameworks via citation</td></tr>
+        <tr><td>Does it structure the workflow?</td><td>No &mdash; prompt-level only</td><td>Yes &mdash; spec-driven pipeline</td><td>Yes &mdash; role-based agent pipeline</td><td>No &mdash; retrieval layer only</td><td>Yes &mdash; phased pipeline with quality gates</td></tr>
+        <tr><td>How much effort to start?</td><td>None</td><td>Low &mdash; write specs</td><td>Low &mdash; configure roles</td><td>Medium &mdash; build and index a corpus</td><td>Low for common software domains (experts ship pre-curated); higher for uncovered domains</td></tr>
+        <tr><td>How does it handle unfamiliar domains?</td><td>Change the role prompt</td><td>Write new specs</td><td>Add new roles</td><td>Index new documents</td><td>Expert discovery identifies and scores new authorities</td></tr>
+        <tr><td>What guides quality judgements?</td><td>The model&rsquo;s general training</td><td>The spec&rsquo;s acceptance criteria</td><td>Role-specific checklists</td><td>Retrieved documents</td><td>Named experts&rsquo; published frameworks</td></tr>
+        <tr><td>Can multiple perspectives review the same work?</td><td>One role at a time</td><td>Not built in</td><td>Sequential roles + quality gates</td><td>Not built in</td><td>Concurrent expert panels</td></tr>
+        <tr><td>Does it handle the second pass?</td><td>No</td><td>Manual</td><td>Course-correction workflow + brownfield support</td><td>No</td><td>Three change modes + staleness detection + existing codebase survey</td></tr>
+        <tr><td>What evidence of effectiveness exists?</td><td>Salewski et al. (NeurIPS 2023); Kong et al. (2024) &mdash; measurable effect on output</td><td>Industry adoption (Thoughtworks Technology Radar; AWS Kiro and GitHub Copilot Workspace use related spec-driven patterns)</td><td>Community adoption (active GitHub repo, V6 release)</td><td>Extensive academic literature</td><td>Controlled experiment (Section 7); reproduced across Claude, GPT, and Gemini</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ============================================================ -->
+    <h2 id="implementation"><span class="section-num">6.</span> The Reference Implementation Packages the Methodology Without Coupling It to a Single Tool</h2>
+    <!-- ============================================================ -->
+
+    <h3 id="tool-agnostic"><span class="section-num">6.1</span> The Methodology Travels as Text, Not Tooling</h3>
+
+    <span class="sidenote">The portability follows from the foundation: text files containing curated expert knowledge, with citations that activate knowledge already present in any sufficiently capable LLM. The tool provides the loading mechanism; the text provides the grounding.</span>
+
+    <p>GVM is a methodology, not a product. Its components &mdash; expert panels, curated reference files, phased pipelines, conditional activation &mdash; are patterns that can be implemented in any AI development environment that supports contextual instructions: Cursor rules files, GitHub Copilot workspace instructions, Aider conventions, custom agent frameworks, or IDE plugins. The reference implementation uses Claude Code, but the methodology travels as structured text.</p>
+
+    <p>Each pipeline phase bundles three components regardless of tool: a <strong>process definition</strong> (how the phase unfolds), <strong>curated expert references</strong> (the citation-rich knowledge files), and <strong>quality gates</strong> (checklists derived from the expert panel). The packaging varies; the components are constant.</p>
+
+    <p>Concretely, what travels and what requires adaptation: <strong>directly portable</strong> &mdash; the expert reference files (Markdown), the pipeline-phase definitions, the scoring rubrics, the build-check format. <strong>Requires per-tool adaptation</strong> &mdash; the conditional activation mechanism (depends on the host tool&rsquo;s skill or agent invocation model), the parallel panel dispatch (depends on the tool&rsquo;s subagent or multi-agent capability), and the calibration file location (depends on the tool&rsquo;s project-state conventions). The reference implementation in Claude Code uses the plugin/skill model; a port to Cursor would replace skill invocation with rules and chat hooks while keeping the reference files unchanged.</p>
+
+    <h3 id="pipeline-contracts"><span class="section-num">6.2</span> Phases Need Interface Contracts, Not Just Feedback Arrows</h3>
+
+    <span class="sidenote">This is Kleppmann&rsquo;s schema evolution and Newman&rsquo;s consumer-driven contracts applied to AI pipelines instead of microservices. The coupling problem is identical: when an upstream producer changes its output shape, every downstream consumer breaks. The solution is identical too: define the contract explicitly and check conformance at both ends.</span>
+
+    <p>When AI agents produce artefacts consumed by other AI agents, you need the same contract discipline you would apply to any distributed system. A requirements phase that produces IDs in one format and a test-cases phase that expects another format will fail silently &mdash; the downstream agent generates plausible output that traces to nothing.</p>
+
+    <p>GVM defines structural contracts between pipeline phases: exact ID formats, required sections, downstream consumer dependencies, and format-change consequences. The contracts specify that a requirements document must contain an ID index that test cases can search; that test case IDs must embed the requirement ID they trace to; that every spec section must reference the requirement IDs it addresses. These are not guidelines &mdash; they are the interface specification that makes the pipeline reliable.</p>
+
+    <p>The contracts also govern review artefacts &mdash; the calibration file that accumulates across review rounds has a defined schema, so that the tenth review round can read what the first round recorded. Without this, progressive calibration (Section 5.7) would degrade as format drift accumulated across rounds.</p>
+
+    <h3 id="context-window"><span class="section-num">6.3</span> Finite Context Forces Phased, Conditional Loading</h3>
+
+    <p>AI has a finite context window. Grounding depth competes with available working context. The methodology manages this tension through phased loading (reference files loaded at the phase where they are needed, not all at once) and conditional activation (only relevant experts consume context space). The rapid growth of context windows &mdash; from 4K to over 1M tokens in three years &mdash; makes this trade-off increasingly favourable.</p>
+
+    <h3 id="activation-tracking"><span class="section-num">6.4</span> Usage Logs Reveal Which Experts Earn Their Place</h3>
+
+    <span class="sidenote">The activation log also provides the raw data for the attribution and compensation proposal in Section 8. If expert usage is ever tied to remuneration, the log is the evidence base: who was cited, how often, in which projects, for which decisions.</span>
+
+    <p>Every expert activation is logged with two event types: <em>loaded</em> (read into context) and <em>cited</em> (explicitly named as the source of a decision in output). The loaded-to-cited ratio reveals whether an expert is earning their place or merely consuming context window. An expert loaded frequently but rarely cited may indicate a reference file that is too broad; one cited every time they are loaded is providing consistent value.</p>
+
+    <span class="sidenote">Divergence thresholds and the reclassification mechanism that consumes these logs are described in &sect;4.4.</span>
+
+    <p>Utilisation is the only dimension in the scoring model backed by empirical evidence rather than judgement. It is reported separately from assessed scores &mdash; a newly added expert should not be penalised before they have had the opportunity to be used. When an expert&rsquo;s cite rate diverges from their classification &mdash; frequently cited but classified low, or rarely cited but classified high &mdash; the system flags a potential misclassification. These are advisory flags, not automatic reclassification.</p>
+    <!-- ============================================================ -->
+    <h2 id="empirical"><span class="section-num">7.</span> Controlled Experiment: Grounding Produces Measurably Better Output</h2>
+    <!-- ============================================================ -->
+
+    <h3 id="exp-design"><span class="section-num">7.1</span> Design</h3>
+
+    <p>One hundred and eighty market risk dashboards were generated across three model families &mdash; Claude Opus 4.6, GPT-5.4, and Gemini 3.1 Pro &mdash; each producing 60 dashboards under three conditions: ungrounded (core task only), design-grounded (Tufte and Few principles), and fully grounded (design plus domain experts Jorion and Hull, plus writing experts Doumont and Zinsser). Dashboards were shuffled, stripped of group identifiers, and reviewed blind. Each dashboard was reviewed by three independent reviewers per instrument, with no reviewer seeing more than one dashboard.</p>
+
+    <p>Across all three models and both review instruments, this produces 1,080 blind reviews (60 dashboards &times; 3 reviewers per dashboard &times; 2 review instruments &times; 3 model families). The full experimental design, per-dimension scores, raw data, and per-model statistical breakdown are reported in the companion paper <em>Grounding Produces Measurably Better Output</em>; this section presents the headline results and the interpretation.</p>
+
+    <p>Each model&rsquo;s 60 dashboards were reviewed twice under different criteria:</p>
+
+    <ul>
+      <li><strong>Experiment A:</strong> 8 review dimensions derived from consensus of ungrounded agents. 180 reviews per model.</li>
+      <li><strong>Experiment B:</strong> 11 review dimensions derived from the cited experts&rsquo; published principles, confirmed by a human before use. 180 reviews per model.</li>
+    </ul>
+
+    <h3 id="exp-result"><span class="section-num">7.2</span> Result</h3>
+
+    <p>The group ranking reversed between experiments.</p>
+
+    <svg id="wp-ranking" role="img" aria-label="Ranking comparison across three models" width="620" height="340" viewBox="0 0 620 340" style="margin: 1rem 0 1.5rem; display: block;"></svg>
+
+    <p>The pattern reproduced identically across all three model families. Under ungrounded review, no model produced the predicted dose-response ordering &mdash; design-only grounding (Group 2) scored at or below ungrounded (Group 1). Under expert-grounded review, all three models produced G1&nbsp;&lt;&nbsp;G2&nbsp;&lt;&nbsp;G3 with large effect sizes and high statistical significance (p&nbsp;&lt;&nbsp;0.001 for all pairwise comparisons across all models). The ranking reversal between review conditions is not a property of any single model's training &mdash; it is a general property of how large language models respond to citation-based expert grounding &mdash; subject to the same-model evaluation and task-type limitations scoped in &sect;7.4.</p>
+
+    <h3 id="exp-interpretation"><span class="section-num">7.3</span> What This Means</h3>
+
+    <p>Ungrounded reviewers could not distinguish Group 2&rsquo;s Tufte/Few-aligned design from Group 1&rsquo;s ungrounded output. The improvements were real &mdash; expert reviewers confirmed enormous effects on chartjunk absence (d&nbsp;=&nbsp;3.67), data-ink ratio (d&nbsp;=&nbsp;3.87), and chart type appropriateness (d&nbsp;=&nbsp;2.27) &mdash; but invisible without the framework to evaluate them. <span class="sidenote">For context: Cohen&rsquo;s d&nbsp;=&nbsp;0.8 is conventionally &ldquo;large&rdquo;; values above 2 are exceptional.</span></p>
+
+    <p>This is the core claim of the methodology made concrete. Ungrounded AI does not know what &ldquo;good&rdquo; looks like because it lacks a framework for evaluating quality. The experts&rsquo; published works <em>are</em> the definition of good. Grounded output converges toward those standards. Only reviewers who know those standards can see the convergence.</p>
+
+    <p>The experiment demonstrates the <em>quality effect</em> of grounding levels at the artefact level. The retrieval-key <em>mechanism</em> &mdash; that citations activate focused regions of the model&rsquo;s knowledge &mdash; is supported by transformer interpretability research (cited &sect;3) but not directly tested by this experiment. The companion paper on the technical mechanism walks through that interpretability evidence in detail.</p>
+
+    <p>The two experiments together demonstrate both sides: Experiment A shows the problem (ungrounded evaluation cannot see design quality), Experiment B shows the solution (expert-grounded evaluation reveals progressive improvement with more grounding).</p>
+
+    <h3 id="exp-limits"><span class="section-num">7.4</span> Limitations of the Experiment</h3>
+
+    <p>The experiment has been reproduced across three model families &mdash; Claude Opus 4.6, GPT-5.4, and Gemini 3.1 Pro &mdash; with identical prompts and identical experimental design. The dose-response pattern (G1&nbsp;&lt;&nbsp;G2&nbsp;&lt;&nbsp;G3 under expert-grounded review) holds across all three, eliminating single-model training as a confound. Within each replication, the model reviews its own output; same-model evaluation remains the primary remaining threat. The experiment also validates the quality effect on the construction axis only; the discovery axis (impact mapping, traceability, exploratory testing effectiveness) requires separate experimental validation. The experiment covers one task type (market risk dashboards); generalisation requires replication across domains. Domain-specific grounding (Jorion, Hull) did not improve risk metric presentation, suggesting that book-level citations may be too broad for highly technical dimensions. The full experimental design, per-dimension scores, effect sizes, and statistical analysis are available in the companion report, <em>Grounding Produces Measurably Better Output</em>.</p>
+
+    <p><strong>Scope of the experimental claim.</strong> The experiment demonstrates the <em>quality effect</em> of grounding levels on one task type (data visualisation), under same-model evaluation, with no head-to-head comparison against the adjacent approaches discussed in &sect;2 and &sect;5.14. The wider claims of this paper &mdash; that citation acts as a retrieval key (the mechanism, &sect;3), that grounding generalises across discovery, construction, verification, and release (the methodology, &sect;5), that grounding generalises across domains beyond data visualisation (the implementation, &sect;6) &mdash; are <em>compatible with</em> this evidence but not <em>established by</em> it. The mechanism is supported by transformer interpretability research cited in &sect;3, treated in detail in the companion paper <em>Why Citation-Based Activation Works</em>, and presented in this paper as a working hypothesis. Generalisation across phases and domains rests on the methodology&rsquo;s structural argument and the case study (companion paper <em>Building a Production Tool with GVM</em>), not on this experiment. A reader who accepts the experimental result as evidence for the headline claim and treats the wider claims as the paper&rsquo;s informed working position &mdash; rather than as evidence-equivalent &mdash; will read the paper as it is intended.</p>
+
+    <!-- ============================================================ -->
+    <h2 id="attribution"><span class="section-num">8.</span> Citation Logging Creates the Precondition for Expert Compensation</h2>
+    <!-- ============================================================ -->
+
+    <p>The argument runs from &sect;6.4: every expert citation issued through GVM is loggable as a discrete event (loaded or cited). That log is the technical precondition for any compensation scheme. The remaining gap &mdash; between a log and a payment infrastructure &mdash; is engineering rather than architecture, but it is not solved by GVM and is treated below as an open direction rather than a closed contribution.</p>
+
+    <p>The methodology depends on a specific relationship: named experts produce published works, AI models absorb those works during training, and practitioners activate them through citations. This creates something that does not exist elsewhere in AI-assisted development &mdash; a traceable link between AI output quality and specific published works. That traceability has consequences beyond software methodology.</p>
+
+    <h3 id="attribution-problem"><span class="section-num">8.1</span> AI Uses Expert Knowledge Without Acknowledging It</h3>
+
+    <p>AI models already contain the full body of work from the experts GVM names. Practitioners who previously would have bought books, attended workshops, and studied frameworks now have that knowledge available through AI &mdash; often without any awareness of its provenance.</p>
+
+    <p>In fields where formal knowledge transfer matters &mdash; academic publishing, scientific research, legal precedent, engineering standards &mdash; chains of attribution connect new work to the foundations it builds on. Citation chains validate knowledge, route credit to its source, and point the next generation toward the original work. AI models are trained on published works but maintain no attribution chain back to their sources. Longpre et al. (2024) audited 1,800+ training datasets and found licence metadata absent or under-specified for over 70% of the audited datasets.</p>
+
+    <p>GVM makes attribution visible for the first time &mdash; naming the sources activates them explicitly rather than silently. Visibility is necessary for compensation; on its own it is not sufficient. The remaining steps &mdash; logging, aggregation, payment infrastructure &mdash; are tractable engineering once the attribution chain exists.</p>
+
+    <h3 id="streaming-royalty"><span class="section-num">8.2</span> Other Industries Have Solved Similar Problems</h3>
+
+    <span class="sidenote">The current AI landscape is dominated by litigation: NYT v. OpenAI, author class actions. A compensation framework offers a forward-looking alternative.</span>
+
+    <p>Today, experts whose frameworks are activated thousands of times daily across AI conversations see no compensation. The economic value flows to the AI provider and the end user, bypassing the expert entirely. A historical parallel is instructive: when Napster (1999) made copying recorded music free at the marginal level, the recording industry initially treated the disruption as theft. Compensation eventually arrived through licensing infrastructure (streaming services that pay per-play) rather than through enforcement. The parallel is imperfect &mdash; AI grounding does not redistribute a finished work, it activates the conceptual framework &mdash; but the structural question is the same: how does the value generated by widespread activation flow back to the creators of the activated knowledge?</p>
+
+    <h3 id="compensation-framework"><span class="section-num">8.3</span> Citation Logging Creates the Precondition for Payment</h3>
+
+    <p>GVM&rsquo;s explicit citation structure creates the technical precondition for a compensation framework. If the methodology logs which experts are activated for each task, usage can be measured. If usage can be measured, compensation can be calculated.</p>
+
+    <ol>
+      <li><strong>Usage tracking</strong> &mdash; Each invocation logs which experts and works were activated, at what tier, and for what task type.</li>
+      <li><strong>Attribution chain</strong> &mdash; Usage records link back to specific published works, creating a clear chain from AI output to source material.</li>
+      <li><strong>Royalty calculation</strong> &mdash; Compensation proportional to activation frequency, weighted by tier.</li>
+      <li><strong>Distribution mechanism</strong> &mdash; Payments flow through a collecting society model, similar to ASCAP/BMI in music or CLA/RRO in academic publishing.</li>
+    </ol>
+
+    <span class="sidenote">Today, the same expert knowledge flows through AI systems invisibly and without attribution. Citation-based activation makes it visible &mdash; and visibility is the first step toward fairness.</span>
+
+    <p>There is a virtuous cycle at work here. As practitioners discover that citing specific experts produces noticeably better output than unprompted generation, they naturally cite more, not less. More citation means more transparency about where the knowledge is coming from. More transparency means usage becomes trackable. And trackable usage is the technical precondition for compensation. The economic incentive (better output) and the ethical outcome (expert attribution) reinforce each other: practitioners cite because it works; the citations create the data trail that makes fair compensation possible.</p>
+
+    <p>The compensation argument depends on citation logging capturing real per-prompt usage. The reference implementation logs two events: <em>loaded</em> (a reference file is read into a skill&rsquo;s context, often through conditional activation) and <em>cited</em> (an expert is named explicitly in the model&rsquo;s output or an artefact). A pre-curated reference file can generate many <em>loaded</em> events without per-prompt <em>cited</em> events; the compensation case requires both signals, with weights calibrated to reflect that activation through file-loading is still attributable usage even when no per-prompt citation is issued.</p>
+    <!-- ============================================================ -->
+    <h2 id="limitations"><span class="section-num">9.</span> Limitations and Failure Modes</h2>
+    <!-- ============================================================ -->
+
+    <p><em>The preceding sections describe what works. This section describes what does not &mdash; and, where evidence is incomplete, what we do not yet know.</em></p>
+
+    <p>The limitations below group into <strong>methodology limitations</strong> (overhead, iteration, engagement required, expert overload), <strong>canon limitations</strong> (thin canons, curation cost), and <strong>experimental limitations</strong> (cross-model validation, single-task generalisation &mdash; see &sect;7.4 and &sect;9.1).</p>
+
+    <p>GVM&rsquo;s overhead is not always justified. For throwaway scripts, weekend prototypes, or tasks where the cost of poor quality is low, the setup cost of assembling expert panels and running a phased pipeline exceeds the value. The methodology is designed for production systems where quality matters &mdash; but practitioners must make that judgement themselves.</p>
+
+    <p><strong>The first pass is never perfect, and the methodology does not pretend otherwise.</strong> No methodology has produced a perfect requirements document, design, or implementation on first attempt. Brooks observed in 1975 that &ldquo;Hence plan to throw one away; you will, anyhow.&rdquo;<span class="sidenote">Brooks revisited the throwaway-prototype advice in the 1995 Anniversary Edition essay <em>No Silver Bullet &mdash; Refired</em>, suggesting incremental delivery instead.</span> Wiegers has been writing for thirty years about requirements as negotiated artefacts that converge, not discovered ones that arrive correct. Human teams iterate; AI-assisted teams iterate; the question for any methodology is not whether iteration is needed but how well its structure focuses each pass and how reliably each round catches what the previous round missed.</p>
+
+    <p>GVM&rsquo;s claim is the focus and the catch rate, not first-pass perfection. The expert panels narrow the design space so the first attempt is closer to the target than an unstructured prompt would produce. The parallel review panels, calibration history, and dual-reviewer convergence (Section 5.7) catch what construction missed. The Critical-blocks-release verdict gates (Section 5.14, Table 4) refuse to ship while the worst defects remain.</p>
+
+    <p>AI failure modes &mdash; hallucination, compliance bias, satisfaction-of-search &mdash; persist on every pass. The iterative review structure is the methodology&rsquo;s answer to them, not an admission that the structure failed. Expecting any single pass to produce a finished system would be a misreading of what the methodology is for.</p>
+
+    <p><strong>It is not a push-button pipeline.</strong> Every phase asks the practitioner questions, surfaces findings for triage, and pauses for approval before moving on. The impact map cannot be finalised without the practitioner naming actors and outcomes; review findings cannot be silently filtered or deferred (the user owns triage, by design); release verdicts cannot be overridden without an explicit, recorded waiver. A practitioner who treats GVM as &ldquo;run the pipeline and read the output&rdquo; will get coherent artefacts and a structurally clean build, but not a system that survives contact with real users &mdash; the structure produces consistency, not judgement. The methodology offers the opposite trade: stay engaged at every step, answer the questions honestly, triage every Critical and Important finding rather than skipping past them &mdash; and the result is a significantly better system at AI speed than either unstructured AI use or unaided human work would produce. The speed comes from the AI; the quality comes from the practitioner staying in the loop the structure keeps them in.</p>
+
+    <p><strong>Expert panels can produce worse output.</strong> When too many experts are loaded simultaneously, their competing frameworks create confusion rather than principled trade-offs. The reference implementation mitigates this with conditional activation (loading only the relevant experts per phase), but the risk remains for domains where the canon is thin and the available experts disagree on fundamentals.</p>
+
+    <p><strong>The canon is not uniformly deep.</strong> Established fields like requirements engineering and software testing have decades of published, peer-recognised work. Emerging domains &mdash; AI safety, MLOps, prompt engineering itself &mdash; have thinner canons. Expert discovery can identify candidates, but the grounding effect is weaker when the cited works are less deeply represented in the model&rsquo;s training data.</p>
+
+    <p><strong>Curation has a cost when the canon is missing.</strong> The reference implementation ships with pre-curated experts covering common software engineering domains. But projects that enter uncovered domains &mdash; a niche industry, an emerging technology &mdash; require assembling and scoring new experts. Role prompting requires no curation at all. This cost is amortised across future projects, but the initial effort is real.</p>
+
+    <p><strong>Cross-model validation.</strong> The experiment has been reproduced across Claude Opus 4.6, GPT-5.4, and Gemini 3.1 Pro with identical results. The dose-response pattern and ranking reversal hold across all three model families. Same-model evaluation (each model reviewing its own output) remains a limitation &mdash; cross-model review (Claude reviewing Gemini output and vice versa) has not been performed.</p>
+
+    <h3 id="construction-failure"><span class="section-num">9.1</span> Observed Failure: The Effectiveness of Expert Grounding During Code Construction Is Undemonstrated</h3>
+
+    <p>The methodology originally applied expert grounding uniformly across all pipeline phases, including construction. Build prompts included an Expert Panel section that framed the construction context with named experts and their principles. During use, a pattern emerged: issues that the expert-grounded review phase caught consistently were issues that the expert-grounded build phase should have prevented.</p>
+
+    <p>The evidence from the first real project built with the methodology is suggestive but not conclusive. The code review caught two classes of construction error that expert grounding did not prevent:</p>
+
+    <ul>
+      <li><strong>Framework-specific errors:</strong> an Anthropic SDK streaming call that used <code>await</code> where the SDK returns a context manager, and an <code>asyncio.Event</code> created outside a running event loop. These are procedural errors &mdash; the AI used the framework incorrectly. Expert grounding addresses principles, not API specifics, so the failure to prevent them is expected.</li>
+      <li><strong>Principle violations:</strong> content-retry logic copy-pasted across two modules when a shared helper already existed &mdash; a DRY violation that Hunt &amp; Thomas grounding should have prevented, but did not. The same violation was caught immediately by the independent review phase, which was grounded in the same experts.</li>
+    </ul>
+
+    <span class="sidenote">A related but distinct line of evidence comes from Hu, Rostami &amp; Thomason (USC, 2026; arXiv:2603.18507), which tested <em>expert-persona prompting</em> (&ldquo;act as a Safety Monitor&rdquo;) across multiple instruction-tuned and reasoning LLMs. Their finding is task-type asymmetric: naive expert personas damaged accuracy on discriminative tasks (MMLU 71.6% &rarr; 68.0% under the best persona variant) while improving alignment-dependent generative tasks (JailbreakBench refusal rates rose by 17.7 percentage points under a Safety Monitor persona). Their architectural fix &mdash; PRISM, <em>Persona Routing via Intent-based Self-Modeling</em> &mdash; gates the persona by task type. We flag the study because it raises the question of whether citation-based grounding (a different mechanism &mdash; named published works rather than role identity) might exhibit a similar task-type asymmetry. We do not claim it does; persona prompting and citation grounding share some attention-shifting effect but are not equivalent. The construction/review observation below stands on its own evidence (one project, four review rounds, no control group), not on transfer from PRISM.</span>
+
+    <p>There is no control group: the issues we observe are the ones that survived. A DRY violation in the build output could mean grounding was ineffective during construction &mdash; or that grounding prevented other violations we never see.</p>
+
+    <p>What can be stated with more confidence: <strong>expert grounding is demonstrably effective during design and review, and its effectiveness during code construction is undemonstrated.</strong> The design and review phases, grounded in the same experts, produce focused architectural decisions and catch issues that the construction phase did not prevent. Whether code construction would have been worse without grounding remains unknown. Our evidence is compatible with multiple explanations &mdash; active harm during construction, passive irrelevance, or partial effectiveness obscured by the issues that survived. The architectural correction described below treats the declarative/procedural distinction (next paragraph) as the load-bearing hypothesis, while acknowledging it has not been independently validated.</p>
+
+    <p>One useful framing is the distinction between <strong>declarative knowledge</strong> and <strong>procedural knowledge</strong>. Expert works are inherently declarative: they teach what good code looks like. API documentation is procedural: it specifies exact method signatures, parameter types, and edge cases. Code construction may respond better to procedural knowledge &mdash; how to use a specific framework correctly &mdash; while design and review respond to declarative knowledge &mdash; what the right structural choices are, and whether the result meets quality criteria. This hypothesis motivates the correction described below, but it has not been independently validated.</p>
+
+    <p><strong>The correction:</strong> the build prompt now separates construction grounding from review grounding. A Framework Reference section contains language documentation, framework API sections, and library-specific method signatures &mdash; procedural knowledge for code generation. A Review Criteria section contains expert principles &mdash; declarative knowledge applied during the code review loop after code is written, not during construction. Whether this separation improves construction quality is itself testable, and the methodology&rsquo;s review scoring system provides the measurement instrument to detect the effect across subsequent projects.</p>
+
+    <p><strong>Implication for fix grounding:</strong> the methodology includes a principle that the expert who identified a review finding should guide the fix (the principle that the expert who diagnosed the issue should also guide its fix &mdash; the diagnosing framework defines what &ldquo;right&rdquo; looks like, not just what&rsquo;s wrong). If expert grounding is less effective during code construction than during design and review, this principle may be partially weakened for code fixes specifically. When fixing a review finding, two things happen: understanding what is wrong (evaluation &mdash; the expert&rsquo;s framework defines what &ldquo;right&rdquo; looks like, and this is demonstrably effective) and writing the corrected code (construction &mdash; where the expert&rsquo;s framework may or may not improve the generated fix). The expert defines the acceptance criteria for the fix; whether the expert also improves the fix implementation is the unresolved question. This concern applies only to code construction. When the same principle is applied to fixing requirements, test cases, specifications, or documentation, the output is declarative &mdash; the expert&rsquo;s framework is directly applicable because the task is evaluation-adjacent, not construction. The principle remains valid for every non-code pipeline artefact.</p>
+
+    <p>This failure is instructive &mdash; it was not predictable from first principles. The assumption that more expert grounding is uniformly beneficial seemed reasonable until testing revealed otherwise. Methodologies that are not tested against real builds cannot discover this class of failure. The correction is implemented, but the diagnosis remains provisional &mdash; a pointer toward a question that requires controlled experimentation across more projects to answer definitively.</p>
+
+    <!-- ============================================================ -->
+    <h2 id="conclusion"><span class="section-num">10.</span> Conclusion</h2>
+    <!-- ============================================================ -->
+
+    <p>The Grounded Vibe Methodology combines the accessibility of vibe coding with the rigour of structured development by activating specific expertise through citations. The discovery canon (Adzic, Cagan, Patton, Ries, Brooks) decides what is worth building. The construction and verification canon (Beck, Fagan, Freeman &amp; Pryce, Bach &amp; Bolton, Reinertsen, McConnell) builds it correctly and proves it under real use.</p>
+
+    <p>The core insight: <strong>citations act as retrieval keys</strong>. When you name an expert, cite their book, and specify their technique, the AI shifts from a broad blend of training data to a focused application of a vetted methodology. A controlled experiment &mdash; reproduced across Claude, GPT, and Gemini with 180 artefacts and 1,080 blind reviews &mdash; provides evidence that this produces measurably better output (p&nbsp;&lt;&nbsp;0.001 across all three model families), and reveals that ungrounded evaluation cannot see the improvement, because evaluating quality requires the same frameworks that producing quality requires.</p>
+
+    <p>The methodology is implemented and extensible. The grounding effect has been validated across three model families. It builds on decades of published expertise rather than replacing it. The same principle should apply beyond software to any domain where authoritative knowledge exists in published form. Expansion into new domains, human expert validation, and engagement with standards bodies remain open work.</p>
+
+    <p>Section 1 named two failure modes: AI-assisted development can build the wrong thing, or build the right thing badly, and unaided AI is structurally good at hitting both. GVM&rsquo;s answer is to ground each axis in its own canon and gate each axis structurally. A methodology that grounds only one half ships well-engineered fakes or sloppy realities. GVM&rsquo;s phase set &mdash; discovery, construction, verification, release &mdash; is structured so that neither failure mode has a path to the release tag.</p>
+
+    <p>A larger question remains: if AI systems derive measurable value from specific experts&rsquo; published works, how should those experts be recognised and compensated? The citation chain that formal knowledge disciplines depend on has no equivalent in AI. GVM restores it. Whether the industry builds the compensation infrastructure to match is a separate question, but one that the methodology&rsquo;s activation logs make technically feasible for the first time.</p>
+
+    <!-- ============================================================ -->
+    <h2 id="appendix-a"><span class="section-num"></span> Appendix A &mdash; Expert Scoring Methodology</h2>
+    <!-- ============================================================ -->
+
+    <p>This appendix contains the full scoring definitions, classification bands, worked examples, and verification procedures summarised in Section 4.4 of the main body.</p>
+
+    <h3 id="appendix-expert-score"><span class="section-num">A.1</span> Expert Scoring Dimensions</h3>
+
+    <p>The expert score is assessed once per expert and persists in the reference file alongside the expert&rsquo;s entry. It reflects the person&rsquo;s standing in their domain, not the quality of any single work.</p>
+
+    <table>
+      <caption>Table A1 &mdash; Expert scoring dimensions</caption>
+      <thead>
+        <tr><th>Dimension</th><th>1 (Low)</th><th>5 (High)</th><th>What it measures</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Authority</strong></td><td>One of many voices in the area</td><td>The definitive name &mdash; the field references them</td><td>How central is this person to the domain</td></tr>
+        <tr><td><strong>Publication quality</strong></td><td>Blog posts, conference talks, self-published</td><td>Major publisher textbooks, peer-reviewed, multiple significant works</td><td>How rigorous and vetted is their body of published work</td></tr>
+        <tr><td><strong>Breadth</strong></td><td>Covers a narrow slice of the domain</td><td>Comprehensive coverage of the whole domain</td><td>Do they cover the whole domain or a narrow slice</td></tr>
+        <tr><td><strong>Adoption</strong></td><td>Theoretical, limited real-world use</td><td>Framework is industry standard practice</td><td>Is their work actually used in practice, not just published</td></tr>
+        <tr><td><strong>Currency</strong></td><td>No longer active in the field, work is dated</td><td>Still active, still influential, work remains current</td><td>Are they still active and relevant in the field</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="appendix-classification-bands"><span class="section-num">A.2</span> Classification Bands</h3>
+
+    <p>The expert score produces an overall classification:</p>
+
+    <ul>
+      <li><strong>Canonical</strong> (avg 4.5+) &mdash; undisputed authority. Their frameworks <em>are</em> the domain. Tufte on data visualisation, Hull on derivatives, Fowler on refactoring.</li>
+      <li><strong>Established</strong> (avg 3.5&ndash;4.4) &mdash; well-regarded, widely adopted. Strong case for inclusion in any project touching their domain.</li>
+      <li><strong>Recognised</strong> (avg 2.5&ndash;3.4) &mdash; known in the field, useful contribution, but not the definitive source.</li>
+      <li><strong>Emerging</strong> (avg 1.5&ndash;2.4) &mdash; newer area or newer contributor. Worth including but with lower confidence in the grounding.</li>
+      <li><strong>Provisional</strong> (below 1.5) &mdash; discovered during a session, not yet verified by the practitioner. The citation mechanism still works &mdash; the model was likely trained on material referencing their work &mdash; but the practitioner should verify the expert is real and authoritative before relying on the grounding for production decisions.</li>
+    </ul>
+
+    <h3 id="appendix-work-score"><span class="section-num">A.3</span> Work Scoring Dimensions</h3>
+
+    <p>The work score is assessed per published work. An expert may have multiple works with different scores &mdash; Hull&rsquo;s <em>Options, Futures, and Other Derivatives</em> scores differently from <em>Risk Management and Financial Institutions</em> depending on the task at hand.</p>
+
+    <span class="sidenote">Influence is the strongest signal of canonical status for a work. A book that other experts consistently reference in their own publications has been vetted by the field itself &mdash; not just by the publisher&rsquo;s editorial process but by the ongoing judgement of practitioners and academics who choose to build on it.</span>
+
+    <table>
+      <caption>Table A2 &mdash; Work scoring dimensions</caption>
+      <thead>
+        <tr><th>Dimension</th><th>1 (Low)</th><th>5 (High)</th><th>What it measures</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Specificity</strong></td><td>Adjacent to the domain needed</td><td>Directly addresses the exact area</td><td>How precisely does this work address the area needed</td></tr>
+        <tr><td><strong>Depth</strong></td><td>Surface-level overview</td><td>Comprehensive, rigorous treatment</td><td>How thoroughly does it cover the topic</td></tr>
+        <tr><td><strong>Currency</strong></td><td>Content is dated, field has moved past it</td><td>Current edition, reflects state of the art</td><td>Does the work reflect the current state of the field</td></tr>
+        <tr><td><strong>Influence</strong></td><td>Rarely referenced by others</td><td>Widely cited, appears in other experts&rsquo; bibliographies, shapes how the field talks about the topic</td><td>How widely is this work referenced and built upon by others</td></tr>
+      </tbody>
+    </table>
+
+    <p>The work score produces the same classification scale as the expert score: <strong>Canonical</strong> (avg 4.5+), <strong>Established</strong> (avg 3.5&ndash;4.4), <strong>Recognised</strong> (avg 2.5&ndash;3.4), <strong>Emerging</strong> (avg 1.5&ndash;2.4), and <strong>Provisional</strong> (below 1.5). An Established expert may have both a Canonical work and a Recognised work &mdash; the scores are independent.</p>
+
+    <h3 id="appendix-verification"><span class="section-num">A.4</span> Score Verification</h3>
+
+    <p>The AI is scoring its own confidence in its own citations. Without external validation, it could score a hallucinated expert as Canonical with perfect marks. Two safeguards address this:</p>
+
+    <p><strong>Evidence requirement.</strong> Any expert dimension scored 4 or 5 must include verifiable evidence. A claim of Authority: 5 must cite specific indicators &mdash; &ldquo;referenced in Hull, Jorion, and Alexander; foundational textbook in university curricula; cited in Basel Committee working papers.&rdquo; A claim of Influence: 5 for a work must name other works that reference it. If the AI cannot produce specific evidence for a high score, the score must be lowered. Scores of 1&ndash;3 do not require justification &mdash; they already express uncertainty. The practitioner can verify the cited evidence independently.</p>
+
+    <span class="sidenote">The independent review mirrors model validation practice in financial services (SR 11-7): the validator must be independent of the developer, with no access to the original model&rsquo;s internal workings. The same principle applies to expert scoring &mdash; the second agent provides effective challenge, not rubber-stamp confirmation.</span>
+
+    <p><strong>Independent agent review.</strong> When the discovery protocol proposes a new expert, an independent AI agent &mdash; dispatched separately, with no access to the original agent&rsquo;s scores or reasoning &mdash; is asked to independently assess the same expert and works. The independent agent produces its own scores and evidence. The two assessments are then compared:</p>
+
+    <ul>
+      <li><strong>Scores converge</strong> (within 1 point on each dimension) &mdash; high confidence in the assessment. Present the averaged scores to the practitioner.</li>
+      <li><strong>Scores diverge</strong> (2+ points on any dimension) &mdash; flag the divergence explicitly. Present both sets of scores with their evidence and let the practitioner decide. Divergence often indicates that the AI&rsquo;s training data is thin or conflicting for this expert &mdash; a useful signal in itself.</li>
+    </ul>
+    <h3 id="appendix-worked-example"><span class="section-num">A.5</span> Worked Example: Carol Alexander</h3>
+
+    <p>Both scores are recorded in the expert reference files and displayed when the self-improving expert roster discovers new experts. When a new expert is proposed, the discovery protocol presents both scores with evidence and the independent review result, giving the practitioner enough information to make an informed decision:</p>
+
+    <div class="callout">
+      <div class="callout-label">Example: discovered expert with verification</div>
+      <p><strong>Carol Alexander</strong> &mdash; <em>Market Risk Analysis</em> (4 vols, Wiley 2008&ndash;2009)</p>
+
+      <table>
+        <caption>Expert score</caption>
+        <thead>
+          <tr><th>Authority</th><th>Publication</th><th>Breadth</th><th>Adoption</th><th>Currency</th><th>Classification</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>4</td><td>5</td><td>4</td><td>4</td><td>3</td><td><strong>Established</strong></td></tr>
+        </tbody>
+      </table>
+
+      <p>Evidence: cited in Jorion&rsquo;s <em>Value at Risk</em> bibliography; adopted in CQF programme curriculum; 4-volume series with Wiley; GARCH framework widely used in industry risk engines.</p>
+
+      <table>
+        <caption>Work score &mdash; <em>Market Risk Analysis</em></caption>
+        <thead>
+          <tr><th>Specificity</th><th>Depth</th><th>Currency</th><th>Influence</th><th>Classification</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>5</td><td>5</td><td>3</td><td>4</td><td><strong>Established</strong></td></tr>
+        </tbody>
+      </table>
+
+      <p>Evidence: referenced in Dowd, Rebonato, and McNeil/Frey/Embrechts; used as set text at Imperial College and UCL quantitative finance programmes.</p>
+
+      <p><strong>Independent review:</strong> scores converge (within 1 point on all dimensions). High confidence.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="references"><span class="section-num"></span> References</h2>
+    <!-- ============================================================ -->
+
+    <div class="references">
+      <p>Adzic, G. (2012). <em>Impact Mapping: Making a Big Impact with Software Products and Projects</em>. Provoking Thoughts.</p>
+      <p>Agresti, A., &amp; Coull, B. A. (1998). Approximate is better than &ldquo;exact&rdquo; for interval estimation of binomial proportions. <em>The American Statistician</em>, 52(2), 119&ndash;126.</p>
+      <p>Alexander, C. (2008&ndash;2009). <em>Market Risk Analysis</em> (Vols. I&ndash;IV). Wiley.</p>
+      <p>Anderson, R. J. (2020). <em>Security Engineering</em> (3rd ed.). Wiley.</p>
+      <p>Bach, J., &amp; Bolton, M. (ongoing). Rapid Software Testing methodology. https://www.satisfice.com/rapid-testing-methodology</p>
+      <p>Bass, L., Clements, P., &amp; Kazman, R. (2021). <em>Software Architecture in Practice</em> (4th ed.). Addison-Wesley.</p>
+      <p>Beck, K. (2002). <em>Test-Driven Development: By Example</em>. Addison-Wesley.</p>
+      <p>Beizer, B. (1990). <em>Software Testing Techniques</em> (2nd ed.). Van Nostrand Reinhold.</p>
+      <p>Bringhurst, R. (2012). <em>The Elements of Typographic Style</em> (4th ed.). Hartley &amp; Marks.</p>
+      <p>Brooks, F. P. (1975). <em>The Mythical Man-Month: Essays on Software Engineering</em>. Addison-Wesley. Anniversary edition (1995) includes the &ldquo;No Silver Bullet &mdash; Refired&rdquo; essay that revisits the throwaway-prototype advice.</p>
+      <p>Brown, S. (2018). <em>Software Architecture for Developers</em>. Leanpub.</p>
+      <p>Cagan, M. (2017). <em>Inspired: How to Create Tech Products Customers Love</em> (2nd ed.). Wiley.</p>
+      <p>Cain, M. S., Adamo, S. H., &amp; Mitroff, S. R. (2013). A taxonomy of errors in multiple-target visual search. <em>Visual Cognition</em>, 21(7), 899&ndash;921.</p>
+      <p>Christensen, C. M. (2016). <em>Competing Against Luck</em>. Harper Business.</p>
+      <p>Clements, P. et al. (2010). <em>Documenting Software Architectures: Views and Beyond</em> (2nd ed.). Addison-Wesley.</p>
+      <p>Cockburn, A. (2004). <em>Crystal Clear: A Human-Powered Methodology for Small Teams</em>. Addison-Wesley.</p>
+      <p>Cooper, A. (2014). <em>About Face: The Essentials of Interaction Design</em> (4th ed.). Wiley.</p>
+      <p>Copeland, L. (2004). <em>A Practitioner&rsquo;s Guide to Software Test Design</em>. Artech House.</p>
+      <p>Deming, W. E. (1986). <em>Out of the Crisis</em>. MIT Press.</p>
+      <p>Dhuliawala, S. et al. (2024). Chain-of-Verification Reduces Hallucination in Large Language Models. <em>Findings of ACL 2024</em>.</p>
+      <p>Doumont, J.-L. (2009). <em>Trees, Maps, and Theorems: Effective Communication for Rational Minds</em>. Principiae.</p>
+      <p>Dowd, K. (2005). <em>Measuring Market Risk</em> (2nd ed.). Wiley.</p>
+      <p>Drew, T., V&otilde;, M. L.-H., &amp; Wolfe, J. M. (2013). The Invisible Gorilla Strikes Again: Sustained Inattentional Blindness in Expert Observers. <em>Psychological Science</em>, 24(9), 1848&ndash;1853.</p>
+      <p>Elhage, N. et al. (2021). A Mathematical Framework for Transformer Circuits. <em>Transformer Circuits Thread</em>, Anthropic.</p>
+      <p>Fagan, M. E. (1976). Design and code inspections to reduce errors in program development. <em>IBM Systems Journal</em>, 15(3), 182&ndash;211.</p>
+      <p>Fairbanks, G. (2010). <em>Just Enough Software Architecture: A Risk-Driven Approach</em>. Marshall &amp; Brainerd.</p>
+      <p>Few, S. (2012). <em>Show Me the Numbers</em> (2nd ed.). Analytics Press.</p>
+      <p>Fowler, M. (2018). <em>Refactoring: Improving the Design of Existing Code</em> (2nd ed.). Addison-Wesley.</p>
+      <p>Freeman, S., &amp; Pryce, N. (2009). <em>Growing Object-Oriented Software, Guided by Tests</em>. Addison-Wesley.</p>
+      <p>Gause, D. C., &amp; Weinberg, G. M. (1989). <em>Exploring Requirements: Quality Before Design</em>. Dorset House.</p>
+      <p>Gilb, T., &amp; Graham, D. (1993). <em>Software Inspection</em>. Addison-Wesley.</p>
+      <p>Green, D. M., &amp; Swets, J. A. (1966). <em>Signal Detection Theory and Psychophysics</em>. Wiley.</p>
+      <p>Hendrickson, E. (2013). <em>Explore It!: Reduce Risk and Increase Confidence with Exploratory Testing</em>. Pragmatic Bookshelf.</p>
+      <p>Hightower, K., Burns, B., &amp; Beda, J. (2022). <em>Kubernetes Up and Running</em> (3rd ed.). O&rsquo;Reilly.</p>
+      <p>Hohpe, G., &amp; Woolf, B. (2003). <em>Enterprise Integration Patterns</em>. Addison-Wesley.</p>
+      <p>Hu, Z., Rostami, M., &amp; Thomason, J. (2026). Expert Personas Improve LLM Alignment but Damage Accuracy: Bootstrapping Intent-Based Persona Routing with PRISM. <em>arXiv:2603.18507</em>. https://arxiv.org/abs/2603.18507</p>
+      <p>Hull, J. C. (2021). <em>Options, Futures, and Other Derivatives</em> (11th ed.). Pearson.</p>
+      <p>Hunt, A., &amp; Thomas, D. (2019). <em>The Pragmatic Programmer</em> (20th Anniversary ed.). Pragmatic Bookshelf.</p>
+      <p>Jorion, P. (2006). <em>Value at Risk: The New Benchmark for Managing Financial Risk</em> (3rd ed.). McGraw-Hill.</p>
+      <p>Kaner, C., Bach, J., &amp; Pettichord, B. (2002). <em>Lessons Learned in Software Testing</em>. Wiley.</p>
+      <p>Karpathy, A. (2025, February 2). <em>There&rsquo;s a new kind of coding I call &ldquo;vibe coding&rdquo;</em> [Post]. X. https://x.com/karpathy/status/1886192184808149383</p>
+      <p>Keeling, M. (2017). <em>Design It! From Programmer to Software Architect</em>. Pragmatic Bookshelf.</p>
+      <p>Kimball, R., &amp; Ross, M. (2013). <em>The Data Warehouse Toolkit</em> (3rd ed.). Wiley.</p>
+      <p>Kleppmann, M. (2017). <em>Designing Data-Intensive Applications</em>. O&rsquo;Reilly.</p>
+      <p>Kong, A. et al. (2024). Better Zero-Shot Reasoning with Role-Play Prompting. <em>NAACL 2024</em>.</p>
+      <p>Krug, S. (2014). <em>Don&rsquo;t Make Me Think, Revisited</em> (3rd ed.). New Riders.</p>
+      <p>Laitenberger, O., Atkinson, C., Schlich, M., &amp; El Emam, K. (2000). An experimental comparison of reading techniques for defect detection in UML design documents. <em>Journal of Systems and Software</em>, 53(2), 183&ndash;204.</p>
+      <p>Longpre, S. et al. (2024). A large-scale audit of dataset licensing and attribution in AI. <em>Nature Machine Intelligence</em>.</p>
+      <p>Majors, C., Fong-Jones, L., &amp; Miranda, G. (2022). <em>Observability Engineering</em>. O&rsquo;Reilly.</p>
+      <p>Manakul, P., Liusie, A., &amp; Gales, M. J. F. (2023). SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection for Generative Large Language Models. <em>EMNLP 2023</em>.</p>
+      <p>McConnell, S. (2004). <em>Code Complete</em> (2nd ed.). Microsoft Press.</p>
+      <p>McKinney, W. (2022). <em>Python for Data Analysis</em> (3rd ed.). O&rsquo;Reilly.</p>
+      <p>McNeil, A. J., Frey, R., &amp; Embrechts, P. (2015). <em>Quantitative Risk Management: Concepts, Techniques and Tools</em> (Revised ed.). Princeton University Press.</p>
+      <p>Moesta, B. (2020). <em>Demand-Side Sales 101</em>. Lioncrest.</p>
+      <p>Muller-Brockmann, J. (1981). <em>Grid Systems in Graphic Design</em>. Niggli.</p>
+      <p>Newman, S. (2021). <em>Building Microservices</em> (2nd ed.). O&rsquo;Reilly.</p>
+      <p>North, D. (2006). Introducing BDD. dannorth.net.</p>
+      <p>Nygard, M. (2018). <em>Release It! Design and Deploy Production-Ready Software</em> (2nd ed.). Pragmatic Bookshelf.</p>
+      <p>Olsson, C. et al. (2022). In-context Learning and Induction Heads. <em>Transformer Circuits Thread</em>, Anthropic.</p>
+      <p>Osterwalder, A., &amp; Pigneur, Y. (2010). <em>Business Model Generation</em>. Wiley.</p>
+      <p>Patton, J. (2014). <em>User Story Mapping</em>. O&rsquo;Reilly.</p>
+      <p>Pearce, H., Ahmad, B., Tan, B., Dolan-Gavitt, B., &amp; Karri, R. (2022). Asleep at the Keyboard? Assessing the Security of GitHub Copilot&rsquo;s Code Contributions. <em>IEEE Symposium on Security and Privacy</em>. arXiv:2108.09293.</p>
+      <p>Percival, H., &amp; Gregory, B. (2020). <em>Architecture Patterns with Python</em>. O&rsquo;Reilly.</p>
+      <p>Ramalho, L. (2022). <em>Fluent Python</em> (2nd ed.). O&rsquo;Reilly.</p>
+      <p>Rebonato, R. (2007). <em>Plight of the Fortune Tellers: Why We Need to Manage Financial Risk Differently</em>. Princeton University Press.</p>
+      <p>Redish, J. (2012). <em>Letting Go of the Words: Writing Web Content that Works</em> (2nd ed.). Morgan Kaufmann.</p>
+      <p>Reinertsen, D. G. (2009). <em>The Principles of Product Development Flow: Second Generation Lean Product Development</em>. Celeritas.</p>
+      <p>Ries, E. (2011). <em>The Lean Startup</em>. Crown Business.</p>
+      <p>Rumelt, R. (2011). <em>Good Strategy Bad Strategy: The Difference and Why It Matters</em>. Crown Business.</p>
+      <p>Salewski, L. et al. (2023). In-Context Impersonation Reveals Large Language Models&rsquo; Strengths and Biases. <em>NeurIPS 2023</em>.</p>
+      <p>Shewhart, W. A. (1931). <em>Economic Control of Quality of Manufactured Product</em>. D. Van Nostrand.</p>
+      <p>Spracklen, J., Wijewickrama, R., Sakib, A. H. M. N., Maiti, A., Viswanath, B., &amp; Jadliwala, M. (2024). We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs. <em>arXiv:2406.10279</em>. (To appear: USENIX Security 2025.)</p>
+      <p>Tuddenham, W. J. (1962). Visual search, image organization, and reader error in roentgen diagnosis. <em>Radiology</em>, 78(5), 694&ndash;704.</p>
+      <p>Tufte, E. (2001). <em>The Visual Display of Quantitative Information</em> (2nd ed.). Graphics Press.</p>
+      <p>Tversky, A., &amp; Kahneman, D. (1974). Judgment under uncertainty: Heuristics and biases. <em>Science</em>, 185(4157), 1124&ndash;1131.</p>
+      <p>Vanderkam, D. (2024). <em>Effective TypeScript</em> (2nd ed.). O&rsquo;Reilly.</p>
+      <p>Vaswani, A. et al. (2017). Attention Is All You Need. <em>NIPS</em>.</p>
+      <p>Wang, X. et al. (2023). Self-Consistency Improves Chain of Thought Reasoning in Language Models. <em>ICLR 2023</em>. arXiv:2203.11171.</p>
+      <p>Whittaker, J. A. (2009). <em>Exploratory Software Testing: Tips, Tricks, Tours, and Techniques to Guide Test Design</em>. Addison-Wesley.</p>
+      <p>Wiegers, K., &amp; Beatty, J. (2013). <em>Software Requirements</em> (3rd ed.). Microsoft Press.</p>
+      <p>Winand, M. (2012). <em>SQL Performance Explained</em>. Self-published.</p>
+      <p>Zinsser, W. (2006). <em>On Writing Well</em> (30th Anniversary ed.). HarperCollins.</p>
+
+      <h3 style="font-size: 1rem; margin-top: 1.5rem;">Companion papers</h3>
+      <p>Brennan, C., &amp; Quinn, G. (2026). <em>Why Citation-Based Activation Works</em>. Companion paper.</p>
+      <p>Brennan, C., &amp; Quinn, G. (2026). <em>Grounding Produces Measurably Better Output</em>. Companion paper (experimental evidence).</p>
+      <p>Brennan, C., &amp; Quinn, G. (2026). <em>Well-Engineered Software Needs an End-to-End Pipeline</em>. Companion paper (pipeline structure).</p>
+      <p>Brennan, C., &amp; Quinn, G. (2026). <em>Verifying AI-Generated Code</em>. Companion paper (verification architecture).</p>
+      <p>Brennan, C., &amp; Quinn, G. (2026). <em>Building a Production Tool with GVM</em>. Case study.</p>
+    </div>
+
+    <p style="margin-top: 3rem; font-size: 0.88rem; color: #888; font-style: italic;">The reference implementation is available as a set of Claude Code skills.</p>
+
+    <p style="font-size: 0.88rem; color: #888; font-style: italic;">This whitepaper was itself produced using the methodology it describes.</p>
+
+  </main>
+
+  <script>
+(function () {
+  var toc = document.getElementById('toc');
+  var headings = document.querySelectorAll('h2[id], h3[id]');
+  var links = [];
+
+  headings.forEach(function (h) {
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+
+  function onScroll() {
+    var current = links[0];
+    for (var i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) {
+      current.el.classList.add('active');
+      var tocEl = document.getElementById('toc');
+      var elTop = current.el.offsetTop - tocEl.offsetTop;
+      var elBot = elTop + current.el.offsetHeight;
+      if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+        tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+      }
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+// ── Section 7 ranking chart — three models (Tufte: minimal ink, Few: dot plot) ──
+(function() {
+  var svg = document.getElementById('wp-ranking');
+  if (!svg) return;
+  var NS = 'http://www.w3.org/2000/svg';
+  function mk(tag, attrs) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+  var colors = { g1: '#888', g2: '#b07030', g3: '#2266aa' };
+  var W = 620, H = 340, padL = 230, padR = 50, padT = 28, padB = 30;
+  var xMin = 6.0, xMax = 9.5;
+  function xS(v) { return padL + (v - xMin) / (xMax - xMin) * (W - padL - padR); }
+
+  var rows = [
+    { label: 'Claude Opus 4.6 — ungrounded', y: padT + 22, g1: 8.19, g2: 7.68, g3: 8.31 },
+    { label: 'Claude Opus 4.6 — expert', y: padT + 56, g1: 6.68, g2: 7.58, g3: 8.35 },
+    { label: 'Gemini 3.1 Pro — ungrounded', y: padT + 108, g1: 8.56, g2: 8.43, g3: 8.44 },
+    { label: 'Gemini 3.1 Pro — expert', y: padT + 142, g1: 8.16, g2: 8.71, g3: 9.27 },
+    { label: 'GPT-5.4 — ungrounded', y: padT + 194, g1: 7.69, g2: 7.47, g3: 7.74 },
+    { label: 'GPT-5.4 — expert', y: padT + 228, g1: 6.59, g2: 7.74, g3: 8.17 }
+  ];
+
+  // Separator lines between model groups
+  [padT + 82, padT + 168].forEach(function(sy) {
+    svg.appendChild(mk('line', { x1: padL, y1: sy, x2: W - padR, y2: sy, stroke: '#e0e0e0', 'stroke-width': '0.5', 'stroke-dasharray': '3,3' }));
+  });
+
+  // Grid
+  for (var v = 6.0; v <= 9.5; v += 0.5) {
+    svg.appendChild(mk('line', { x1: xS(v), y1: padT, x2: xS(v), y2: H - padB, stroke: '#e0e0e0', 'stroke-width': '0.5' }));
+    var t = mk('text', { x: xS(v), y: H - padB + 16, 'text-anchor': 'middle', fill: '#888', 'font-size': '10px', 'font-family': 'system-ui, sans-serif' });
+    t.textContent = v.toFixed(1); svg.appendChild(t);
+  }
+  svg.appendChild(mk('line', { x1: padL, y1: padT, x2: W - padR, y2: padT, stroke: '#333', 'stroke-width': '1.5' }));
+  svg.appendChild(mk('line', { x1: padL, y1: H - padB, x2: W - padR, y2: H - padB, stroke: '#333', 'stroke-width': '1.5' }));
+
+  rows.forEach(function(r) {
+    var isExpert = r.label.indexOf('expert') >= 0;
+    var lab = mk('text', { x: padL - 8, y: r.y + 4, 'text-anchor': 'end', fill: isExpert ? '#111' : '#888', 'font-size': '11px', 'font-weight': isExpert ? '600' : '400', 'font-family': '"ET Book", Palatino, Georgia, serif' });
+    lab.textContent = r.label; svg.appendChild(lab);
+    var vals = [r.g1, r.g2, r.g3];
+    svg.appendChild(mk('line', { x1: xS(Math.min.apply(null, vals)), y1: r.y, x2: xS(Math.max.apply(null, vals)), y2: r.y, stroke: '#ccc', 'stroke-width': '1' }));
+    svg.appendChild(mk('circle', { cx: xS(r.g1), cy: r.y, r: '5', fill: colors.g1 }));
+    svg.appendChild(mk('rect', { x: xS(r.g2) - 4.5, y: r.y - 4.5, width: '9', height: '9', fill: colors.g2 }));
+    svg.appendChild(mk('polygon', { points: xS(r.g3) + ',' + (r.y - 6) + ' ' + (xS(r.g3) + 5.5) + ',' + (r.y + 4) + ' ' + (xS(r.g3) - 5.5) + ',' + (r.y + 4), fill: colors.g3 }));
+  });
+
+  // Legend above first row
+  var ly = padT - 8;
+  var lx = W - padR - 220;
+  var items = [
+    { t: 'G1 (ungrounded)', c: colors.g1, dx: 0 },
+    { t: 'G2 (design)', c: colors.g2, dx: 110 },
+    { t: 'G3 (full)', c: colors.g3, dx: 200 }
+  ];
+  svg.appendChild(mk('circle', { cx: lx + items[0].dx, cy: ly - 3, r: '4', fill: colors.g1 }));
+  svg.appendChild(mk('rect', { x: lx + items[1].dx - 3.5, y: ly - 7, width: '7', height: '7', fill: colors.g2 }));
+  var tx3 = lx + items[2].dx;
+  svg.appendChild(mk('polygon', { points: tx3 + ',' + (ly - 8) + ' ' + (tx3 + 4.5) + ',' + ly + ' ' + (tx3 - 4.5) + ',' + ly, fill: colors.g3 }));
+  items.forEach(function(l) {
+    var t = mk('text', { x: lx + l.dx + 9, y: ly, 'text-anchor': 'start', fill: l.c, 'font-size': '10px', 'font-weight': '600', 'font-family': 'system-ui, sans-serif' });
+    t.textContent = l.t; svg.appendChild(t);
+  });
+})();
+  </script>
+</body>
+</html>

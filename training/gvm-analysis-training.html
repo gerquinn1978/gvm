@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-analysis Training</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 260px; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .callout {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .callout-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .callout.key-finding {
+      background: #fdf0ef;
+      border-left: 3px solid #a00000;
+    }
+
+    .callout.key-finding .callout-label {
+      color: #a00000;
+    }
+
+    .callout.privacy {
+      background: #f0f4fb;
+      border-left: 3px solid #1a5fa8;
+    }
+
+    .callout.privacy .callout-label {
+      color: #1a5fa8;
+    }
+
+    .practice {
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .practice-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #27ae60;
+      margin-bottom: 0.3rem;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .comparison-box {
+      background: #f7f7f0;
+      padding: 0.8rem 1rem;
+      border-top: 2px solid #999;
+    }
+
+    .comparison-box.grounded {
+      border-top-color: #27ae60;
+    }
+
+    .comparison-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.4rem;
+    }
+
+    .comparison-box.grounded .comparison-label {
+      color: #27ae60;
+    }
+
+    .comparison-box p {
+      font-size: 0.92rem;
+      margin-bottom: 0.3rem;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      width: auto;
+      min-width: 480px;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 1rem 0.5rem 0;
+      border-bottom: 2px solid #333;
+      color: #111;
+    }
+
+    tbody td {
+      padding: 0.45rem 1rem 0.45rem 0;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+
+    .sidenote {
+      float: right;
+      clear: right;
+      width: 220px;
+      margin-right: -260px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #666;
+      padding-left: 1rem;
+      border-left: 2px solid #e0e0e0;
+    }
+
+    .flow-steps {
+      counter-reset: flow;
+      list-style: none;
+      padding-left: 0;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .flow-steps li {
+      counter-increment: flow;
+      padding: 0.7rem 0.8rem 0.7rem 3rem;
+      margin-bottom: 0.5rem;
+      background: #f7f7f0;
+      position: relative;
+      border-left: 3px solid #ccc;
+    }
+
+    .flow-steps li::before {
+      content: counter(flow);
+      position: absolute;
+      left: 0.8rem;
+      top: 0.7rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #888;
+      font-family: "Menlo", "Consolas", monospace;
+    }
+
+    .flow-steps li.engine-step {
+      border-left-color: #1a5fa8;
+    }
+
+    .flow-steps li.model-step {
+      border-left-color: #a07000;
+    }
+
+    .flow-steps .step-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.1rem 0.4rem;
+      border-radius: 2px;
+      margin-right: 0.4rem;
+    }
+
+    .step-tag.engine {
+      background: #dde8f5;
+      color: #1a5fa8;
+    }
+
+    .step-tag.model {
+      background: #fdf3d8;
+      color: #a07000;
+    }
+
+    details {
+      max-width: 640px;
+      margin: 0.8rem 0;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.4rem 0;
+      color: #27ae60;
+    }
+
+    details summary:hover { color: #1a8a4a; }
+
+    details > div {
+      padding: 0.8rem 1rem;
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+      margin-top: 0.4rem;
+    }
+
+    details > div p { margin-bottom: 0.5rem; }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .comparison { grid-template-columns: 1fr; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <p class="date">May 2026</p>
+    <h1>/gvm-analysis Training</h1>
+    <p class="subtitle">Privacy-preserving exploratory data analysis &mdash; the model never sees your raw data.</p>
+
+    <h2 id="learning-objectives">What you will be able to do</h2>
+
+    <ol>
+      <li>Explain the privacy contract that makes <code>/gvm-analysis</code> structurally different from every other GVM skill</li>
+      <li>Trace the data flow: what enters the Python engine, what returns to the model</li>
+      <li>Identify which analytical questions are addressable and which are not</li>
+      <li>Run a first analysis session end-to-end</li>
+      <li>Recognise when <code>/gvm-analysis</code> is the right tool vs when you need a different approach</li>
+    </ol>
+
+    <h2 id="the-problem">Your data cannot leave the building</h2>
+
+    <p>You have a dataset. It contains customer PII (personally identifiable information), medical records, financial positions, or commercially sensitive transactions. You need exploratory data analysis &mdash; distributions, quality checks, outlier detection, trend signals &mdash; but the data cannot be pasted into a chat window, uploaded to a web service, or included in a prompt.</p>
+
+    <p>Every other AI-assisted analysis workflow breaks here. The model needs to see the data to reason about it. Or so it seems.</p>
+
+    <p><code>/gvm-analysis</code> is built on a different architecture. The model never sees your data. A Python engine runs locally on your machine, processes the file, and returns only aggregated, privacy-cleared results. The model reasons about those results &mdash; schemas, summary statistics, distribution shapes, quality flags &mdash; using grounded analytical frameworks. The raw rows stay in the engine throughout.</p>
+
+    <div class="callout privacy">
+      <div class="callout-label">The privacy contract</div>
+      <p>Raw rows never enter the model's context window. The Python engine is the only actor authorised to read the input file. Claude reads only <code>findings.json</code> &mdash; an aggregated, privacy-cleared output produced by the engine. This is not a convention or a preference; it is a hard architectural boundary enforced at every step of the process flow.</p>
+    </div>
+
+    <h2 id="what-makes-it-different">What makes this structurally different</h2>
+
+    <p>Every other GVM skill works by giving the model content to reason about: source code, requirements documents, test cases, review findings. The model reads the artefact; the model produces output about the artefact.</p>
+
+    <p><code>/gvm-analysis</code> inverts this. The model never reads the artefact. Instead:</p>
+
+    <ul>
+      <li>The <strong>Python engine</strong> reads the raw file. It computes distributions, detects outliers, runs data-quality checks, and optionally runs driver decomposition or time-series analysis.</li>
+      <li>The engine writes <strong><code>findings.json</code></strong>: an aggregated, privacy-cleared summary. No raw row values appear in this file.</li>
+      <li>The model reads <code>findings.json</code> only. It orchestrates the session, interprets the findings, and produces the report &mdash; but it has no path to the underlying data.</li>
+    </ul>
+
+    <p>The consequence: you can run AI-assisted EDA on data you could not ordinarily share with an AI. The model contributes its analytical reasoning and grounded expert knowledge. The engine contributes numerical computation on data the model is not permitted to see.</p>
+
+    <h2 id="data-flow">The data flow</h2>
+
+    <p>Here is what actually happens when you invoke <code>/gvm-analysis</code>:</p>
+
+    <ol class="flow-steps">
+      <li class="model-step"><span class="step-tag model">Model</span> You invoke <code>/gvm-analysis path/to/your/data.csv</code>. Claude asks you to select a mode (Explore, Decompose, Validate, or run everything) and confirm preferences. No data file is read at this stage.</li>
+      <li class="engine-step"><span class="step-tag engine">Engine</span> <code>scripts/domain_detect_cli.py</code> reads the file's <em>header row only</em> to identify column names and infer the business domain. It never reads row values.</li>
+      <li class="model-step"><span class="step-tag model">Model</span> Claude receives the detected domain and loads the matching industry expert reference, or proceeds in general-purpose mode if no domain matches.</li>
+      <li class="engine-step"><span class="step-tag engine">Engine</span> <code>scripts/analyse.py</code> runs the full analysis pass: data-quality checks, distribution profiling, outlier detection, and mode-specific analysis (driver decomposition for Decompose mode; differential against a baseline for Validate mode). All of this executes in the Python subprocess. The model receives no intermediate output.</li>
+      <li class="engine-step"><span class="step-tag engine">Engine</span> The engine writes <code>findings.json</code> to the output directory. This file contains aggregated statistics, quality flags, and headline findings &mdash; no raw row values.</li>
+      <li class="model-step"><span class="step-tag model">Model</span> Claude reads <code>findings.json</code>. This is the first and only time the model has any contact with information derived from your data.</li>
+      <li class="model-step"><span class="step-tag model">Model</span> Claude generates three comprehension questions grounded in the headline findings and writes them back into <code>findings.json</code> via a patching script. Column names are permitted; raw values are not.</li>
+      <li class="engine-step"><span class="step-tag engine">Engine</span> <code>scripts/render_report.py</code> reads <code>findings.json</code> and emits an HTML report hub.</li>
+      <li class="model-step"><span class="step-tag model">Model</span> Claude announces the report path and summarises the three-to-ten headline findings. The session ends.</li>
+    </ol>
+
+    <span class="sidenote">Blue steps run in the Python engine on your local machine. Amber steps run in the model. Your raw data touches only the blue steps.</span>
+
+    <p>The boundary holds across all branches: if the engine fails, Claude surfaces the error verbatim and stops &mdash; it does not open the input file to diagnose the failure. If you decline the forecast, Claude does not open the input file to provide an alternative. The boundary is unconditional.</p>
+
+    <h2 id="what-you-can-use-it-for">What you can use it for</h2>
+
+    <p>Any dataset where the constraint is "the model must not see raw rows" is a candidate for <code>/gvm-analysis</code>. Common cases:</p>
+
+    <ul>
+      <li><strong>Customer data</strong> &mdash; transaction histories, behavioural logs, CRM exports with names or account identifiers</li>
+      <li><strong>Financial data</strong> &mdash; position files, P&amp;L records, trade blotters with counterparty information</li>
+      <li><strong>Healthcare / clinical data</strong> &mdash; patient cohort exports, trial datasets, anything under HIPAA or equivalent</li>
+      <li><strong>HR and payroll data</strong> &mdash; compensation data, performance records</li>
+      <li><strong>Internal operational data</strong> &mdash; datasets that are commercially sensitive even if not personally identifiable</li>
+    </ul>
+
+    <p>The skill handles CSV, TSV, Excel (.xlsx), Parquet, and JSON inputs. For multi-sheet Excel files it prompts you to select which sheets to include.</p>
+
+    <h3 id="four-modes">Four analysis modes</h3>
+
+    <p>All four modes run the same full statistical pass (data-quality checks, distribution profiling, outlier detection). The mode selects the report emphasis and any additional engine behaviour:</p>
+
+    <table>
+      <thead>
+        <tr><th>Mode</th><th>Additional engine work</th><th>Report emphasis</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Explore</strong></td><td>None beyond the full pass</td><td>Top data-quality issues and striking distributions</td></tr>
+        <tr><td><strong>Decompose</strong></td><td>Driver decomposition on a target column you name</td><td>What drives variance in the target column</td></tr>
+        <tr><td><strong>Validate</strong></td><td>Full pass on current + baseline file; differential between the two</td><td>Divergences between the two datasets</td></tr>
+        <tr><td><strong>Not sure &mdash; run everything</strong></td><td>Full pass + driver decomposition on top 5 numeric columns by variance</td><td>Hub with all sections; navigate via the table of contents</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="what-you-cannot-use-it-for">What you cannot use it for</h2>
+
+    <p>The privacy contract has a cost. It constrains the class of analysis questions the model can answer directly.</p>
+
+    <p>The model cannot:</p>
+
+    <ul>
+      <li>Look at specific rows to understand what an outlier actually looks like</li>
+      <li>Pattern-match against raw string values (e.g., "find rows where the address field contains 'Ltd'")</li>
+      <li>Inspect individual records to understand a data-quality failure</li>
+      <li>Sample and display example rows for context</li>
+      <li>Reason about the semantic content of free-text fields</li>
+    </ul>
+
+    <p>What the engine <em>can</em> compute &mdash; and what the model sees in <code>findings.json</code> &mdash; is aggregated information: distributions, quantiles, null rates, cardinality, outlier counts (not outlier values), correlation coefficients, trend direction and significance, driver importance scores. The model reasons about the shape of the data, not its contents.</p>
+
+    <div class="callout key-finding">
+      <div class="callout-label">The cost of the privacy contract</div>
+      <p>If your analytical question requires the model to inspect individual rows or match against raw field values, <code>/gvm-analysis</code> cannot answer it directly. The question must be reframed as an aggregation the engine can compute. Section 7 &mdash; Limitations &mdash; covers this in detail and gives examples of reframes that work.</p>
+    </div>
+
+    <h2 id="walkthrough">Walkthrough: a first analysis session</h2>
+
+    <h3 id="step1-invoke">Invoke the skill</h3>
+
+    <p>Point <code>/gvm-analysis</code> at a file path. The skill accepts absolute or relative paths:</p>
+
+    <pre style="background:#f0f0e8; padding:0.8rem 1rem; font-family:Menlo,Consolas,Monaco,monospace; font-size:0.88rem; margin:1rem 0; max-width:640px; overflow-x:auto; line-height:1.5;">/gvm-analysis /data/customer_transactions_q1.csv</pre>
+
+    <p>You can pass flags to override auto-detection:</p>
+
+    <pre style="background:#f0f0e8; padding:0.8rem 1rem; font-family:Menlo,Consolas,Monaco,monospace; font-size:0.88rem; margin:1rem 0; max-width:640px; overflow-x:auto; line-height:1.5;">/gvm-analysis /data/customer_transactions_q1.csv --domain financial_services</pre>
+
+    <h3 id="step2-mode">Select a mode</h3>
+
+    <p>The skill's first action is to ask which mode you want. It will not run any analysis until you choose:</p>
+
+    <ul>
+      <li><strong>Explore</strong> &mdash; use this when you are new to the dataset and want a general profile</li>
+      <li><strong>Decompose</strong> &mdash; use this when you have a specific outcome column and want to understand what drives it</li>
+      <li><strong>Validate</strong> &mdash; use this when you have a new file and want to compare it against a known-good baseline</li>
+      <li><strong>Not sure &mdash; run everything</strong> &mdash; use this for a thorough first pass on an unfamiliar dataset</li>
+    </ul>
+
+    <h3 id="step3-preferences">Preferences</h3>
+
+    <p>If this is your first run, the skill will offer to customise analytical preferences (headline count, outlier methods, bootstrap confidence, data-quality check toggles) or use shipped defaults. Your choices are saved to <code>~/.claude/gvm/analysis/preferences.yaml</code> and reused on subsequent runs.</p>
+
+    <h3 id="step4-engine-runs">The engine profiles the data; the model sees the profile</h3>
+
+    <p>After mode selection and preferences confirmation, the engine runs. Depending on dataset size, this takes a few seconds to a few minutes. The model receives no intermediate output during this phase &mdash; it waits for the engine's exit code and then reads <code>findings.json</code>.</p>
+
+    <p>What the model sees in <code>findings.json</code>: column names and inferred types, per-column null rates, cardinality, distribution statistics (min, max, mean, median, quartiles, skew), flagged data-quality issues, detected outlier counts, correlation matrix, and headline findings ranked by analytical significance. No row values appear anywhere in this structure.</p>
+
+    <h3 id="step5-report">The report</h3>
+
+    <p>The renderer produces an HTML hub at <code>~/.claude/gvm/analysis/&lt;run-id&gt;/report.html</code>. The hub contains:</p>
+
+    <ul>
+      <li>A headline findings section (three to ten findings, ordered by significance)</li>
+      <li>Data-quality section with per-column diagnostics</li>
+      <li>Distribution section with summary statistics for every column</li>
+      <li>Mode-specific section (driver importance table for Decompose; delta section for Validate)</li>
+      <li>Forecast section, if you accepted the forecast offer</li>
+      <li>Three comprehension questions with answers, each anchored to a specific headline finding</li>
+      <li>A methodology appendix with provenance: engine version, mode, seed, sampling decisions, and expert references loaded</li>
+    </ul>
+
+    <p>The HTML file is self-contained. You can open it in a browser, share it with colleagues, or archive it. It contains no raw data from your input file.</p>
+
+    <h2 id="expert-grounding">Expert grounding</h2>
+
+    <p><code>/gvm-analysis</code> uses the same citation-as-retrieval-key mechanism as the rest of the GVM pipeline. The experts the model activates when interpreting <code>findings.json</code> and composing the report are grounded in the detection results from the domain detection step.</p>
+
+    <p>The general-purpose framework draws on the EDA canon. The engine itself cites these experts in the methodology appendix it produces &mdash; the citations are not decoration, they are the published source for the method actually run on your data. The principal experts:</p>
+
+    <ul>
+      <li><strong>John W. Tukey</strong>, <em>Exploratory Data Analysis</em> (Addison-Wesley, 1977) &mdash; outlier detection via interquartile-range fences (Q1 &minus; k&middot;IQR, Q3 + k&middot;IQR), rank-based correlation, partial rank correlation for confound control. Engine cites EDA Ch. 2 and Ch. 6 directly.</li>
+      <li><strong>William S. Cleveland</strong>, <em>Visualizing Data</em> (Hobart Press, 1993) and Cleveland, McRae &amp; Terpenning, <em>Journal of Official Statistics</em> (1990) &mdash; correlation methods for continuous near-normal data, STL (Seasonal-Trend decomposition using Loess).</li>
+      <li><strong>Rob J. Hyndman &amp; George Athanasopoulos</strong>, <em>Forecasting: Principles and Practice</em> (3rd ed., OTexts, 2021) &mdash; ARIMA (Auto-Regressive Integrated Moving Average), exponential smoothing, seasonality detection. Engine cites Ch. 5 and Ch. 9.</li>
+      <li><strong>Hyndman, Koehler, Ord &amp; Snyder</strong>, <em>Forecasting with Exponential Smoothing: The State Space Approach</em> (Springer, 2008) &mdash; the state-space framework for the exponential-smoothing forecast pass.</li>
+    </ul>
+
+    <p>In domain-matched mode, industry-specific expert references are loaded alongside the general experts &mdash; for example, a credit-risk dataset triggers the <code>credit_risk.md</code> industry reference, which includes domain-appropriate analytical standards.</p>
+
+    <p class="callout">This skill was itself built using GVM. The expert citations above were activated during its construction (per the methodology described in the GVM whitepaper) and persisted into the engine's <code>methodology.py</code> module so that every report carries the provenance of the methods it ran. When you read the methodology appendix in your own report, you are reading the same citations the model used to choose those methods in the first place.</p>
+
+    <p>The comprehension questions the model writes are required to use plain language only &mdash; no statistical method names, no jargon. Column names are permitted. Raw values are not. This is enforced by the patching script: questions that contain jargon are rejected and regenerated.</p>
+
+    <h2 id="limitations">Limitations</h2>
+
+    <h3 id="no-row-inspection">The model cannot inspect rows</h3>
+
+    <p>This is the central trade-off. When a traditional analyst spots an outlier, they look at the row: what values surround it? Is the date plausible? Does the name field suggest a test record? The model has none of this. It knows that an outlier exists at a given percentile in a given column. It does not know what that row contains.</p>
+
+    <p>For many analytical questions, this is sufficient. "How many outliers are there? Are they in the upper or lower tail? Do they correlate with outliers in other columns?" are all answerable from aggregated statistics. The question "what do these outliers have in common?" requires reframing &mdash; see the practice exercise below.</p>
+
+    <h3 id="no-text-content">Free-text column content is opaque</h3>
+
+    <p>If your dataset has a free-text notes or comments field, the model sees its cardinality and null rate but not its values. It cannot scan for patterns in the text, classify sentiments, or extract entities. The column appears in the schema; its contents do not.</p>
+
+    <h3 id="sampling">Sampling on large datasets</h3>
+
+    <p>For datasets with 10,000 or more rows, the skill offers a sampled run (reproducible via a fixed seed) or a full-data run. The model sees the choice and the sample size; it does not see which rows were selected. If you accept sampling, the methodology appendix records the sample size and seed for reproducibility.</p>
+
+    <h3 id="what-it-costs">Summary of the cost</h3>
+
+    <div class="comparison">
+      <div class="comparison-box">
+        <div class="comparison-label">Traditional EDA with AI</div>
+        <p>Model sees raw rows. Can inspect any value. Can pattern-match text. Can explain specific outliers. Requires sharing data with the model.</p>
+      </div>
+      <div class="comparison-box grounded">
+        <div class="comparison-label">/gvm-analysis</div>
+        <p>Model sees aggregated findings only. Cannot inspect rows. Can characterise distributions, quality issues, drivers, and trends. Data stays local.</p>
+      </div>
+    </div>
+
+    <h2 id="practice">Practice exercises</h2>
+
+    <div class="practice">
+      <div class="practice-label">Exercise 1: Is /gvm-analysis the right tool?</div>
+      <p>For each scenario below, decide whether <code>/gvm-analysis</code> is appropriate or whether you need a different approach. Write your answers before expanding the key.</p>
+      <ol>
+        <li>A dataset of 50,000 insurance claims with policyholder names, claim amounts, and claim outcomes. You need to understand the distribution of claim amounts and identify columns with high null rates.</li>
+        <li>A small dataset of 200 customer support tickets (free-text). You want the model to read the tickets, classify the issues, and surface recurring themes.</li>
+        <li>A financial positions file with counterparty names and notional values. You need to compare this month's file against last month's to find new positions and changed notionals.</li>
+        <li>A synthetic test dataset you generated yourself with no real PII. You want the model to look at a few example rows to verify your test data generator is producing plausible values.</li>
+      </ol>
+      <details>
+        <summary>Show answer key</summary>
+        <div>
+          <p><strong>1. Insurance claims &mdash; Yes.</strong> This is the target use case. The dataset is large and contains PII (policyholder names). The questions (distribution of claim amounts, null rates) are answerable from aggregated statistics. Use Explore or Decompose mode with claim outcome as the target column.</p>
+          <p><strong>2. Free-text tickets &mdash; No.</strong> The analytical question requires the model to read the ticket text, which is raw row content. The privacy contract prevents this. <code>/gvm-analysis</code> can tell you how many tickets there are, the null rate on the text field, and its cardinality &mdash; but not what the tickets say. Use a different workflow where sharing the text with the model is permissible.</p>
+          <p><strong>3. Financial positions for comparison &mdash; Yes.</strong> This is precisely what Validate mode is built for. Point the skill at the current file; it will ask for the baseline file. The differential section of the report will show added positions, removed positions, and changed values &mdash; all as aggregated statistics, without the model seeing counterparty names or notionals.</p>
+          <p><strong>4. Synthetic test data you want to visually verify &mdash; No.</strong> If your goal is for the model to inspect specific rows and confirm they look plausible, that requires row-level access. Since your data is synthetic and you have no privacy constraint, use a standard workflow where you paste or share example rows directly. <code>/gvm-analysis</code> adds overhead and removes the row-level access you actually need here.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Exercise 2: Reframe a row-level question as an aggregation</div>
+      <p>You are analysing a dataset of customer transactions. The engine has flagged an outlier cluster in the <code>transaction_amount</code> column &mdash; roughly 300 rows with values above the 99th percentile. You want to understand what these outliers have in common.</p>
+      <p>Your first instinct is to ask: "Can you show me those 300 rows so we can see what they share?" That question requires row-level access the model does not have.</p>
+      <p>Reframe this as one or more questions the engine <em>can</em> answer from aggregated statistics. Write your reframes before expanding the key.</p>
+      <details>
+        <summary>Show answer key</summary>
+        <div>
+          <p>The goal is to characterise the outlier cluster without inspecting individual rows. Here are effective reframes:</p>
+          <ul>
+            <li><strong>Column co-occurrence:</strong> "For transactions where <code>transaction_amount</code> exceeds the 99th percentile, what is the distribution of <code>transaction_type</code>? Of <code>merchant_category</code>? Do high-amount transactions cluster in specific categories?" &mdash; The engine can cross-tabulate the outlier slice against categorical columns and return counts. No individual row is surfaced.</li>
+            <li><strong>Temporal pattern:</strong> "Do the high-amount transactions concentrate in a particular date range or day of week?" &mdash; The engine can group by time bucket and return counts and mean amounts per bucket.</li>
+            <li><strong>Null pattern:</strong> "Do the high-amount rows have higher null rates in other columns than the rest of the dataset?" &mdash; The engine computes null rates for the outlier slice vs the full dataset.</li>
+            <li><strong>Bivariate correlation:</strong> "Is <code>transaction_amount</code> correlated with <code>account_age_days</code>? Does that correlation hold in the outlier slice?" &mdash; Correlation is a statistic; the engine returns a coefficient, not rows.</li>
+          </ul>
+          <p>The pattern: every reframe converts "what do these rows look like?" into "what do these rows aggregate to?" The model reasons about the aggregate; you investigate the rows yourself if needed, using your own tooling on data that never left your environment.</p>
+        </div>
+      </details>
+    </div>
+
+    <h2 id="takeaways">Key takeaways</h2>
+
+    <ul>
+      <li><strong>The privacy contract is structural, not configurable.</strong> Raw rows never enter the model's context window. This is enforced at every step, including error paths.</li>
+      <li><strong>The model reasons about the shape of the data, not its contents.</strong> Distributions, quality flags, outlier counts, driver importance scores, trend direction &mdash; these are the inputs to the model's reasoning.</li>
+      <li><strong>Four modes cover the main EDA use cases.</strong> Explore for general profiling, Decompose for driver analysis, Validate for dataset comparison, and run-everything for unfamiliar datasets.</li>
+      <li><strong>Row-level questions must be reframed as aggregations.</strong> The engine can answer them; the model cannot answer them directly. The reframe is usually straightforward.</li>
+      <li><strong>The output is self-contained HTML.</strong> The report hub includes findings, quality diagnostics, comprehension questions, and a methodology appendix. It contains no raw data from your input file and can be shared freely.</li>
+      <li><strong>Domain detection loads appropriate expert grounding automatically.</strong> The model's analytical interpretation of <code>findings.json</code> is calibrated to your data's business domain where one can be detected.</li>
+    </ul>
+
+  </main>
+
+  <script>
+  (function () {
+    const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+    const links = [];
+    headings.forEach(function (h) {
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      toc.appendChild(a);
+      links.push({ el: a, target: h });
+    });
+    function onScroll() {
+      let current = links[0];
+      for (let i = 0; i < links.length; i++) {
+        if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+      }
+      links.forEach(function (l) { l.el.classList.remove('active'); });
+      if (current) {
+        current.el.classList.add('active');
+        const tocEl = document.getElementById('toc');
+        const elTop = current.el.offsetTop - tocEl.offsetTop;
+        const elBot = elTop + current.el.offsetHeight;
+        if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+          tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
+</body>
+</html>

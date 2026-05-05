@@ -1,0 +1,70 @@
+{#-
+  Distributions section partial (P6-C04c).
+
+  Per-column summary of central tendency and a 95% CI — or the ADR-306b
+  "CI n/a — {tier}" warning chip when the engine suppressed the CI at
+  small n. Bootstrap/suppression citations live in sidenotes so the main
+  flow carries no forbidden jargon (TC-NFR-4-02).
+-#}
+{% set numeric_cols = columns | selectattr('stats') | list if columns else [] %}
+{% if numeric_cols %}
+<table class="distributions-table">
+  <thead>
+    <tr>
+      <th scope="col">Column</th>
+      <th scope="col">Median</th>
+      <th scope="col">95% interval</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for col in numeric_cols %}
+    <tr>
+      <td><code>{{ col.name }}</code></td>
+      <td>{{ col.stats.robust.median | round(3) }}</td>
+      <td>
+        {% if col.stats.ci_95 and col.stats.ci_95.median %}
+          <span class="ci">[{{ col.stats.ci_95.median[0] | round(3) }}, {{ col.stats.ci_95.median[1] | round(3) }}]</span>
+          <aside class="sidenote">
+            Bootstrap confidence interval (BCa), Efron &amp; Tibshirani,
+            <em>An Introduction to the Bootstrap</em> &sect;14. Interval at
+            95% under repeated sampling.
+          </aside>
+        {% else %}
+          <span class="ci-suppressed" title="CIs not computed at this sample size">
+            CI n/a &mdash; {{ col.stats.tier }}
+          </span>
+          <aside class="sidenote">
+            Interval suppressed for tier {{ col.stats.tier }} per AN-12.
+            Harrell, <em>Regression Modeling Strategies</em> &mdash; bootstrap
+            CIs not meaningful below n=30. The point estimate is shown
+            without an interval.
+          </aside>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No numeric columns in this dataset.</p>
+{% endif %}
+
+{# P19-C03: per-column chart figures (histogram + boxplot). Guarded so
+   absent `charts` block or null paths degrade silently to text-only. #}
+{% if numeric_cols %}
+{% for col in numeric_cols %}
+  {% set col_charts = col.get('charts') or {} %}
+  {% if col_charts.get('histogram') %}
+<figure class="distribution-chart">
+  <img src="{{ col_charts.histogram }}" alt="Histogram of {{ col.name }}">
+  <figcaption>Histogram &mdash; <code>{{ col.name }}</code></figcaption>
+</figure>
+  {% endif %}
+  {% if col_charts.get('boxplot') %}
+<figure class="distribution-chart">
+  <img src="{{ col_charts.boxplot }}" alt="Boxplot of {{ col.name }}">
+  <figcaption>Boxplot &mdash; <code>{{ col.name }}</code></figcaption>
+</figure>
+  {% endif %}
+{% endfor %}
+{% endif %}

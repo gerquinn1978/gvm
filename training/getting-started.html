@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getting Started with GVM</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 260px; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .cmd-block {
+      font-family: "Menlo", "Consolas", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.8rem 1rem;
+      margin: 1rem 0 1.5rem;
+      max-width: 640px;
+      line-height: 1.6;
+    }
+
+    .callout {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .callout-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      width: auto;
+      min-width: 480px;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 1rem 0.5rem 0;
+      border-bottom: 2px solid #333;
+      color: #111;
+    }
+
+    tbody td {
+      padding: 0.45rem 1rem 0.45rem 0;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+
+    .practice {
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .practice-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #27ae60;
+      margin-bottom: 0.3rem;
+    }
+
+    .sidenote {
+      float: right;
+      clear: right;
+      width: 220px;
+      margin-right: -260px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #666;
+      padding-left: 1rem;
+      border-left: 2px solid #e0e0e0;
+    }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <p class="date">April 2026</p>
+    <h1>Getting Started with GVM</h1>
+    <p class="subtitle">Install the plugin, run your first project through the pipeline, and understand what each phase produces.</p>
+
+    <h2 id="what-is-gvm">What GVM is</h2>
+
+    <p>The Grounded Vibe Methodology is a methodology for building well-engineered software with AI. The Claude Code plugin is its reference implementation, structuring AI-assisted development as a phased pipeline. Each phase activates named experts &mdash; published authorities whose cited works focus the AI's output. Instead of asking for "good code," you get code grounded in Fowler's refactoring principles or Ramalho's Python idioms. Instead of asking for "a good review," you get a review calibrated against Tufte's data-ink ratio or Beck's testing principles.</p>
+
+    <p>The pipeline runs from requirements through release. Each phase produces artefacts that the next phase consumes. Every artefact is traceable &mdash; you can follow a test case back to the requirement it verifies, and a code review finding back to the expert principle that identified it.</p>
+
+    <h2 id="install">Install and verify</h2>
+
+    <h3 id="install-steps">Installation</h3>
+
+    <div class="cmd-block">
+      git clone &lt;repository-url&gt;<br>
+      claude plugin add grounded_vibe_methodology/grounded-vibe-methodology
+    </div>
+
+    <h3 id="verify">Verify it works</h3>
+
+    <p>In Claude Code, run:</p>
+
+    <div class="cmd-block">/gvm-status</div>
+
+    <p>If it responds with the plugin version and available skills, you're ready. If not, check that the plugin path is correct and that Claude Code has restarted since installation.</p>
+
+    <h2 id="pipeline">The pipeline at a glance</h2>
+
+    <p>A full GVM project runs through these phases in order. You don't have to use all of them &mdash; start with requirements and add phases as your project needs them.</p>
+
+    <table>
+      <thead>
+        <tr><th>Phase</th><th>Command</th><th>What it produces</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Site survey (existing code)</td><td><code>/gvm-site-survey</code></td><td>Codebase assessment + recommended pipeline entry point</td></tr>
+        <tr><td>Init (specialised domains)</td><td><code>/gvm-init</code></td><td>Discovers and scores experts for finance, healthcare, regulated industries</td></tr>
+        <tr><td>Impact map</td><td><code>/gvm-impact-map</code></td><td>Outcome-first discovery: goals, actors, impacts, deliverables &mdash; before requirements exist</td></tr>
+        <tr><td>Requirements</td><td><code>/gvm-requirements</code></td><td>Structured requirements with MoSCoW priorities and unique IDs &mdash; every requirement traces back to an impact-map deliverable</td></tr>
+        <tr><td>Test cases</td><td><code>/gvm-test-cases</code></td><td>Acceptance test cases traced to requirements &mdash; before any architecture</td></tr>
+        <tr><td>Tech spec</td><td><code>/gvm-tech-spec</code></td><td>Architecture specs with ADRs and an implementation guide</td></tr>
+        <tr><td>Design review</td><td><code>/gvm-design-review</code></td><td>Validates designs against requirements before code is written</td></tr>
+        <tr><td>Walking skeleton</td><td><code>/gvm-walking-skeleton</code></td><td>Wires real (or sandbox) integration boundaries end-to-end before feature work begins. Build refuses to run features until the skeleton is green.</td></tr>
+        <tr><td>Build</td><td><code>/gvm-build</code></td><td>Implemented code in ordered chunks with TDD and handovers, applying MVP-1 ordering (first slice through every external boundary)</td></tr>
+        <tr><td>Code review</td><td><code>/gvm-code-review</code></td><td>Expert-grounded review with scored findings and a verdict</td></tr>
+        <tr><td>Test</td><td><code>/gvm-test</code></td><td>Integration verification, stub audit, acceptance test validation, startup verification</td></tr>
+        <tr><td>Exploratory testing</td><td><code>/gvm-explore-test</code></td><td>Timeboxed exploratory charter against the running product &mdash; catches what automated tests miss</td></tr>
+        <tr><td>Documentation</td><td><code>/gvm-doc-write</code></td><td>README, user guides, API docs grounded in what was built</td></tr>
+        <tr><td>Doc review</td><td><code>/gvm-doc-review</code></td><td>Quality gate on documentation accuracy and completeness</td></tr>
+        <tr><td>Release</td><td><code>/gvm-deploy</code></td><td>Version bump, release notes, changelog, git tag</td></tr>
+      </tbody>
+    </table>
+
+    <span class="sidenote">Several skills also work outside the pipeline as standalone tools. <code>/gvm-doc-write</code> creates any document type &mdash; presentations, strategy docs, newsletters, training materials, blog posts. <code>/gvm-doc-review</code> reviews any standalone document under the six-test gate. <code>/gvm-analysis</code> is privacy-preserving exploratory data analysis: it orchestrates a Python engine that reads your data; raw rows never enter the model's context. <code>/gvm-site-survey</code> assesses an existing codebase. <code>/gvm-experts</code> manages the expert roster. <code>/gvm-impact-map</code>, <code>/gvm-walking-skeleton</code>, and <code>/gvm-explore-test</code> can also run standalone outside a full pipeline.</span>
+
+    <h2 id="first-project">Your first project</h2>
+
+    <p>The walkthrough below covers the load-bearing phases. Optional/conditional phases (impact-map, walking-skeleton, exploratory testing, doc-write, doc-review) are described after the core walkthrough.</p>
+
+    <h3 id="step-impact-map">Step 0 (optional): Impact map</h3>
+
+    <div class="cmd-block">/gvm-impact-map</div>
+
+    <p>Before requirements, the impact map asks <em>why</em>. It produces four linked tables: goals (the business outcome), actors (who will achieve it), impacts (what behaviour change matters), deliverables (what gets built). Every requirement that follows must trace back to a deliverable. This catches scope drift early &mdash; if a requirement doesn't map to an impact-map deliverable, it's a new feature, not a clarification.</p>
+
+    <p>Optional but recommended for projects where outcomes are unclear or where multiple stakeholders disagree about what success means. Skip if you have a clear, agreed deliverable already.</p>
+
+    <h3 id="step-1">Step 1: Define requirements</h3>
+
+    <p>Start with a rough description of what you want to build. It can be a sentence, a paragraph, or a detailed brief.</p>
+
+    <div class="cmd-block">/gvm-requirements</div>
+
+    <p>The skill asks clarifying questions about your project &mdash; who uses it, what problem it solves, what constraints exist. It then produces a structured requirements document with:</p>
+
+    <ul>
+      <li>Requirements organised by domain, each with a unique ID (e.g., <code>AU-1</code> for authentication requirement 1)</li>
+      <li>MoSCoW priorities: Must, Should, Could, Won't</li>
+      <li>An index table for quick reference</li>
+    </ul>
+
+    <p>The output goes to <code>requirements/requirements.html</code> (for reading) and <code>requirements/requirements.md</code> (for downstream skills to consume).</p>
+
+    <div class="practice">
+      <div class="practice-label">Try it</div>
+      <p>Run <code>/gvm-requirements</code> with a simple project idea: "a CLI tool that converts CSV files to JSON." Follow the prompts. Open the HTML output in a browser. Notice the requirement IDs, priorities, and domain organisation.</p>
+    </div>
+
+    <h3 id="step-2">Step 2: Generate test cases</h3>
+
+    <div class="cmd-block">/gvm-test-cases</div>
+
+    <p>This runs <em>before</em> the tech spec &mdash; deliberately. If a requirement can't be expressed as a test, the requirement is ambiguous. The test cases phase catches this before any architecture exists.</p>
+
+    <p>Each test case traces to a requirement ID, uses given/when/then format, and includes property-based invariants where appropriate. The output goes to <code>test-cases/</code>.</p>
+
+    <h3 id="step-3">Step 3: Create the tech spec</h3>
+
+    <div class="cmd-block">/gvm-tech-spec</div>
+
+    <p>Reads your requirements and test cases, then produces architecture specs with:</p>
+
+    <ul>
+      <li>Component decomposition proportional to risk (Fairbanks: risk-driven architecture)</li>
+      <li>Architecture Decision Records (ADRs) that capture what was decided, why, and what was rejected</li>
+      <li>An implementation guide that breaks the build into ordered chunks</li>
+    </ul>
+
+    <h3 id="step-4">Step 4: Design review</h3>
+
+    <div class="cmd-block">/gvm-design-review</div>
+
+    <p>Validates your designs against requirements before code is written. Dispatches parallel expert panels per design domain &mdash; data models, UI layouts, API contracts &mdash; and checks that the spec actually covers what the requirements describe. Produces a verdict: <strong>Build from this</strong>, <strong>Build with caveats</strong>, or <strong>Do not build</strong>.</p>
+
+    <p>This step is optional but recommended for complex projects. Catching a data model gap before implementation is cheaper than discovering it during code review.</p>
+
+    <h3 id="step-walking-skeleton">Step 4.5 (recommended): Walking skeleton</h3>
+
+    <div class="cmd-block">/gvm-walking-skeleton</div>
+
+    <p>Cockburn's walking skeleton: a thin end-to-end execution thread that touches every external integration boundary &mdash; database, message bus, third-party APIs, file system, anything outside your code. Real calls or sandbox calls, not mocks. Produces <code>boundaries.md</code>, a registry the build phase reads to know which boundaries exist.</p>
+
+    <p>WS-5 is the load-bearing rule: <code>/gvm-build</code> refuses to run feature chunks until the walking skeleton is green. This catches integration problems while the cost of fixing them is one boundary, not a half-built feature set. If your project has any external integration at all, run this step.</p>
+
+    <h3 id="step-5">Step 5: Build</h3>
+
+    <div class="cmd-block">/gvm-build</div>
+
+    <p>Reads the implementation guide and works through chunks in order. Each chunk follows a TDD loop: write the test, write the code, verify the test passes. Multiple chunks can be completed in a single session, and chunks that don't depend on each other can be built in parallel. When the context window fills up, the skill produces a handover document that gives the next session everything it needs to continue.</p>
+
+    <div class="callout">
+      <div class="callout-label">Session resilience</div>
+      <p>If your context fills up mid-build, start a new session and run <code>/gvm-build</code> again. It reads the handover from the last completed chunk and picks up where you left off. No work is lost.</p>
+    </div>
+
+    <h3 id="step-6">Step 6: Code review</h3>
+
+    <div class="cmd-block">/gvm-code-review</div>
+
+    <p>Dispatches parallel expert panels to review your code. Each panel is grounded in specific published works. The review produces scored findings (critical, important, minor) and a verdict: <strong>Merge</strong>, <strong>Merge with caveats</strong>, or <strong>Do not merge</strong>.</p>
+
+    <p>Fix the findings, run <code>/gvm-code-review</code> again. The second review knows what the first review found &mdash; it tracks what was resolved and focuses on what changed. Reviews get more precise over time.</p>
+
+    <h3 id="step-7">Step 7: Test and verify</h3>
+
+    <div class="cmd-block">/gvm-test</div>
+
+    <p>Runs after code review passes. Performs integration seam audits (verifying all components are wired together), acceptance test validation against the test cases from step 2, stub audits (checking that no test stubs remain in production code), and startup verification. This is the final verification that what was built matches what was specified.</p>
+
+    <h3 id="step-explore-test">Step 7.5: Exploratory testing</h3>
+
+    <div class="cmd-block">/gvm-explore-test</div>
+
+    <p>A timeboxed exploratory charter against the running product, grounded in Bach &amp; Bolton's Rapid Software Testing and Hendrickson's <em>Explore It!</em>. Catches what automated tests cannot: workflows nobody specified, edge cases the test cases didn't anticipate, surprising user paths. Each defect found is logged in given/when/then form.</p>
+
+    <p>Recommended before doc-write so the documentation reflects what the product actually does, including any defects deferred for the next round.</p>
+
+    <h3 id="step-doc-write">Step 7.7: Documentation</h3>
+
+    <div class="cmd-block">/gvm-doc-write</div>
+
+    <p>Generates README, CHANGELOG, user guides, and API documentation grounded in build artefacts. The docs describe what was actually built, not what was planned. Also runs in standalone mode for non-pipeline documents (presentations, strategy, training, blog posts) &mdash; see the standalone-tool sidenote above.</p>
+
+    <h3 id="step-doc-review">Step 7.8: Doc review</h3>
+
+    <div class="cmd-block">/gvm-doc-review</div>
+
+    <p>Quality gate on the documentation. For pipeline docs (README, user guides), uses traceability and contract checks. For standalone documents (whitepapers, strategy), applies the six-test gate covered in the Review Calibration training. High-stakes documents can additionally run the Pre-Publication Integrity Pass &mdash; a mechanical scan that verifies every direct quotation, every statistic, every cited title against external sources.</p>
+
+    <h3 id="step-8">Step 8: Release</h3>
+
+    <div class="cmd-block">/gvm-deploy</div>
+
+    <p>Checks all review verdicts, verifies documentation matches the build, proposes a version number, generates release notes and a changelog, and creates a git tag. If any review said "not ready," the release is blocked.</p>
+
+    <h2 id="quick-reference">Quick reference</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>What it does</th><th>When to use it</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>/gvm-status</code></td><td>Shows pipeline state</td><td>Any time &mdash; where am I?</td></tr>
+        <tr><td><code>/gvm-site-survey</code></td><td>Assesses an existing codebase</td><td>Before working on unfamiliar code</td></tr>
+        <tr><td><code>/gvm-init</code></td><td>Initialises experts for a domain</td><td>Specialised domains (finance, healthcare)</td></tr>
+        <tr><td><code>/gvm-impact-map</code></td><td>Outcome-first discovery: goals, actors, impacts, deliverables</td><td>Before requirements when outcomes are unclear or contested</td></tr>
+        <tr><td><code>/gvm-requirements</code></td><td>Elicits and structures requirements</td><td>Starting a project or adding features</td></tr>
+        <tr><td><code>/gvm-test-cases</code></td><td>Generates test cases from requirements</td><td>After requirements, before spec</td></tr>
+        <tr><td><code>/gvm-tech-spec</code></td><td>Creates architecture specs</td><td>After test cases</td></tr>
+        <tr><td><code>/gvm-design-review</code></td><td>Validates designs against requirements</td><td>After spec, before build</td></tr>
+        <tr><td><code>/gvm-walking-skeleton</code></td><td>Wires real integration boundaries end-to-end before features</td><td>Any project with external integrations &mdash; before /gvm-build</td></tr>
+        <tr><td><code>/gvm-build</code></td><td>Implements code in chunks</td><td>After spec (after walking skeleton if present)</td></tr>
+        <tr><td><code>/gvm-code-review</code></td><td>Expert-grounded code review</td><td>After build or after fixes</td></tr>
+        <tr><td><code>/gvm-test</code></td><td>Integration and acceptance verification</td><td>After code review passes</td></tr>
+        <tr><td><code>/gvm-explore-test</code></td><td>Timeboxed exploratory testing charter</td><td>After /gvm-test, before doc-write</td></tr>
+        <tr><td><code>/gvm-doc-write</code></td><td>Creates or revises documents (pipeline + standalone)</td><td>After test, or any time for standalone docs</td></tr>
+        <tr><td><code>/gvm-doc-review</code></td><td>Reviews document quality (six-test gate for standalone)</td><td>After doc-write</td></tr>
+        <tr><td><code>/gvm-deploy</code></td><td>Prepares a release</td><td>When all reviews pass</td></tr>
+        <tr><td><code>/gvm-experts</code></td><td>Manages the expert roster</td><td>Scoring, rescoring, adding experts</td></tr>
+        <tr><td><code>/gvm-analysis</code></td><td>Privacy-preserving exploratory data analysis</td><td>Standalone &mdash; analysing a dataset without raw rows entering the model's context</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="what-next">What to learn next</h2>
+
+    <ul>
+      <li><strong>Expert Grounding Workshop</strong> &mdash; understand why citing specific experts produces different (and better) output than generic prompts</li>
+      <li><strong>Review Calibration Training</strong> &mdash; learn how progressive calibration, dual review, and build checks make reviews more precise over time</li>
+      <li><strong>The whitepapers</strong> &mdash; the full argument, experimental evidence, and structural decisions behind the methodology</li>
+    </ul>
+
+  </main>
+
+  <script>
+  (function () {
+    const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+    const links = [];
+    headings.forEach(function (h) {
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      toc.appendChild(a);
+      links.push({ el: a, target: h });
+    });
+    function onScroll() {
+      let current = links[0];
+      for (let i = 0; i < links.length; i++) {
+        if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+      }
+      links.forEach(function (l) { l.el.classList.remove('active'); });
+      if (current) {
+        current.el.classList.add('active');
+        const tocEl = document.getElementById('toc');
+        const elTop = current.el.offsetTop - tocEl.offsetTop;
+        const elBot = elTop + current.el.offsetHeight;
+        if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+          tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
+</body>
+</html>

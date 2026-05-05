@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/gvm-explore-test &mdash; User Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 1480px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 1480px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    code { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.88rem; background: #f0f0e8; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    pre { font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.85rem; background: #f0f0e8; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: 1480px; overflow-x: auto; line-height: 1.5; border-radius: 2px; }
+    pre code { background: none; padding: 0; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 200px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 0.8rem 0.8rem 0.8rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 240px; }
+
+    .sidenote { float: right; clear: right; width: 200px; margin-right: -260px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+
+    table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: auto; min-width: 480px; }
+    thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; color: #111; }
+    tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+    .no-stripe tbody tr:nth-child(even) { background: transparent; }
+
+    .callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; max-width: 1480px; }
+    .callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .callout p { margin-bottom: 0.3rem; }
+
+    .pipeline { background: #f7f7f0; padding: 1.2rem 1.5rem; margin: 1.5rem 0 2rem; max-width: 1480px; font-family: "Menlo", "Consolas", "Monaco", monospace; font-size: 0.84rem; line-height: 1.8; border-radius: 2px; }
+    .pipeline .label { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: block; font-family: "ET Book", Palatino, Georgia, serif; font-weight: 600; }
+
+    .phase { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.45rem; border-radius: 2px; vertical-align: middle; margin-left: 0.4rem; background: #111; color: #fff; }
+
+    .priority { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 2px; vertical-align: middle; }
+    .priority.must { background: #c0392b; color: #fff; }
+    .priority.should { background: #e67e22; color: #fff; }
+    .priority.could { background: #7f8c8d; color: #fff; }
+
+    .rule { background: #f7f7f0; border-left: 3px solid #669; padding: 0.8rem 1rem; margin: 0.8rem 0; max-width: 640px; }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+<p class="date">April 2026</p>
+<h1>/gvm-explore-test</h1>
+<p class="subtitle">
+  Practitioner-driven exploratory testing &mdash; runs a timeboxed charter against built code,
+  captures defects in Given/When/Then form, and produces an
+  <code>explore-NNN</code> session report that <code>/gvm-test</code> consumes for VV-4(d).
+</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>
+  <code>/gvm-explore-test</code> is the structural skill behind a human-driven exploratory
+  testing session. It writes a charter (YAML frontmatter), validates it, times the session,
+  captures defects through AskUserQuestion-driven prompts (severity, Given, When, Then,
+  reproduction), and on debrief writes paired <code>test/explore-NNN.md</code> and
+  <code>test/explore-NNN.html</code> files. The artefact is what
+  <code>/gvm-test</code> reads when evaluating the VV-4(d) gate
+  (Critical-blocks-Ship-ready).
+</p>
+
+<span class="sidenote">
+  Bach &amp; Bolton&rsquo;s <em>Rapid Software Testing</em>, Hendrickson&rsquo;s
+  <em>Explore It!</em>, Whittaker&rsquo;s tour catalogue. The skill is structural &mdash;
+  the charter, the GWT discipline, the artefact contract &mdash; not analytic substitution
+  for the human tester.
+</span>
+
+<p>
+  Run <code>/gvm-explore-test</code> after <code>/gvm-test</code> verifies the build and
+  before <code>/gvm-doc-write</code> produces release notes. The session is timeboxed (the
+  charter declares a duration). Severity is the practitioner&rsquo;s call &mdash; the skill
+  never auto-classifies.
+</p>
+
+<h2 id="when-to-use">When to Use</h2>
+
+<ul>
+  <li><strong>Pre-release exploratory tour</strong> &mdash; after structured tests pass, when the team needs human-driven testing against the built product to surface emergent behaviour structured tests miss.</li>
+  <li><strong>After a significant change to a critical user flow</strong> &mdash; an explicit charter against the changed flow catches integration surprises that unit and integration tests cannot frame.</li>
+  <li><strong>To document the team&rsquo;s testing intent</strong> &mdash; the charter is an artefact that says &ldquo;we explored these tours, in this timebox, and this is what we found&rdquo;. Useful for audits and post-incident reviews.</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">When to skip</div>
+  <p>If the change is small, scoped, and covered by structured tests, exploratory testing adds friction without proportional value. The skill is opt-in &mdash; <code>/gvm-test</code> VV-4(d) treats a missing charter as a no-op rather than a refusal.</p>
+</div>
+
+<h2 id="experts">Expert Panel</h2>
+
+<table>
+  <caption>Table 1 &mdash; Experts grounding /gvm-explore-test</caption>
+  <thead>
+    <tr><th>Expert</th><th>Work</th><th>Role in this skill</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>James Bach &amp; Michael Bolton</td><td><em>Rapid Software Testing</em></td><td>Cognitive-critique tradition; charter as the unit of testing; severity as a tester judgement, not a metric.</td></tr>
+    <tr><td>Elisabeth Hendrickson</td><td><em>Explore It!</em></td><td>Charter discipline + tour heuristics; the artefact format draws on her session sheets.</td></tr>
+    <tr><td>James Whittaker</td><td><em>Exploratory Software Testing</em></td><td>Tour catalogue (feature, data, money, interruption, configuration) &mdash; the five tours in the charter <code>tour:</code> enum.</td></tr>
+    <tr><td>Brian Marick</td><td><em>Everyday Scripting with Ruby</em></td><td>Lightweight tooling around exploratory work; the scripts here remain helpers, not frameworks.</td></tr>
+    <tr><td>Cem Kaner, James Bach, Bret Pettichord</td><td><em>Lessons Learned in Software Testing</em></td><td>&ldquo;Testing is not a phase&rdquo; / context-driven &mdash; the skill runs against built code, not against requirements.</td></tr>
+  </tbody>
+</table>
+
+<p>
+  Architecture experts (Brooks, Beck, McConnell, Martin, Fowler, Hunt &amp; Thomas) load
+  for self-review during the implementation chunks &mdash; not during the practitioner&rsquo;s
+  session itself.
+</p>
+
+<h2 id="process">The Five-Phase Flow</h2>
+
+<table class="no-stripe">
+  <caption>Table 2 &mdash; Phases</caption>
+  <thead>
+    <tr><th>Phase</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>0. Bootstrap</strong> <span class="phase">Pre-flight</span></td><td>Verify <code>~/.claude/gvm/</code> exists; load architecture and exploratory-testing experts.</td></tr>
+    <tr><td><strong>1. Charter</strong></td><td>Write stub at <code>test/explore-NNN.charter.yml</code>; practitioner fills in mission, tour, scope, duration; validator runs. On error the skill refuses to start the session.</td></tr>
+    <tr><td><strong>2. Session</strong></td><td>Practitioner explores the product against the charter. Wall-clock timer enforces stop-at-time. The skill stays out of the way &mdash; no auto-narration of what the practitioner should test.</td></tr>
+    <tr><td><strong>3. Defect intake</strong></td><td>For each finding, AskUserQuestion sequence: severity (Critical/Important/Minor/Observation), Given, When, Then, reproduction. Blank reproduction at &ge; Minor severity re-files as Observation.</td></tr>
+    <tr><td><strong>4. Debrief</strong></td><td>AskUserQuestion: overall assessment of the session against the mission. Captured into the artefact.</td></tr>
+    <tr><td><strong>5. Report write</strong></td><td>Paired MD + HTML at <code>test/explore-NNN.{md,html}</code>. Atomic write &mdash; either both exist or neither does. Every practitioner-supplied string HTML-escaped.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-label">Severity is the practitioner&rsquo;s call</div>
+  <p>The skill never up- or down-grades severity. The practitioner&rsquo;s classification flows verbatim into <code>/gvm-test</code> VV-4(d) (the verdict-evaluator&rsquo;s fourth criterion, branch d &mdash; explore-test artefacts), which uses Critical findings to refuse Ship-ready. If the practitioner says Important, the skill records Important &mdash; even if the LLM thinks the defect &ldquo;sounds like Critical&rdquo;. Authority lives with the human in the loop.</p>
+</div>
+
+<h2 id="charter">The Charter</h2>
+
+<p>
+  Phase 1 of the flow above writes a charter stub at <code>test/explore-NNN.charter.yml</code>;
+  the practitioner fills it in. The charter is YAML frontmatter; the validator checks every
+  field by name before the session is allowed to start.
+</p>
+
+<table>
+  <caption>Table 3 &mdash; Charter fields</caption>
+  <thead>
+    <tr><th>Field</th><th>Required</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>session_id</code></td><td>Yes</td><td>Stable identifier (<code>explore-NNN</code> with NNN zero-padded to three digits).</td></tr>
+    <tr><td><code>schema_version</code></td><td>Yes</td><td>Schema version of the charter format. Tracks evolutions.</td></tr>
+    <tr><td><code>runner</code></td><td>Yes</td><td>Practitioner running the session.</td></tr>
+    <tr><td><code>mission</code></td><td>Yes (ET-2)</td><td>The session&rsquo;s purpose &mdash; what are we trying to learn about the product?</td></tr>
+    <tr><td><code>tour</code></td><td>Yes (ET-2)</td><td>One of <code>feature</code> / <code>data</code> / <code>money</code> / <code>interruption</code> / <code>configuration</code> &mdash; Whittaker&rsquo;s catalogue.</td></tr>
+    <tr><td><code>scope</code></td><td>Yes (ET-2)</td><td>Which part of the product is in/out of bounds for this session.</td></tr>
+    <tr><td><code>duration</code></td><td>Yes (ET-2)</td><td>Timebox in minutes. The skill enforces stop-at-time.</td></tr>
+  </tbody>
+</table>
+
+<p>
+  &ldquo;ET-2&rdquo; identifies the four mandatory charter fields in the explore-test
+  contract; the validator names each by its ET-2 identifier in error reports.
+</p>
+
+<h2 id="hard-gates">Hard Gates</h2>
+<p>Non-negotiable steps. If any are skipped, the session output is invalid.</p>
+<ol>
+  <li><strong>Charter validated before the session starts.</strong> The skill writes a stub at <code>test/explore-NNN.charter.yml</code>, the practitioner fills it in, and the validator checks the four ET-2 fields plus <code>schema_version</code>, <code>session_id</code>, and <code>runner</code>. On any error the skill refuses to start the session and reports the offending field by name.</li>
+  <li><strong>Paired MD + HTML before debrief finalised.</strong> Both <code>test/explore-NNN.md</code> and <code>test/explore-NNN.html</code> exist atomically before the skill announces the charter closed.</li>
+  <li><strong>Defect without reproduction &rarr; observation.</strong> Every entry of severity &ge; Minor requires a reproduction path. A blank reproduction at the prompt re-files the entry as an Observation (no severity, separate ID space) &mdash; not rejected, not silently dropped.</li>
+  <li><strong>Severity is the practitioner&rsquo;s call.</strong> The skill never auto-assigns severity. The practitioner picks <span class="priority must">Critical</span> / <span class="priority should">Important</span> / <span class="priority could">Minor</span> / Observation through AskUserQuestion. LLM second-guessing is forbidden.</li>
+  <li><strong>Every practitioner-supplied string HTML-escaped in the report.</strong> The HTML renderer uses <code>html.escape()</code> on every field before substitution. No template-engine raw-string escape hatches.</li>
+</ol>
+
+<h2 id="defects">Defect &amp; Observation Format</h2>
+
+<p>
+  Every defect entry uses Given/When/Then to make reproduction unambiguous. Observations
+  carry no severity and no reproduction requirement &mdash; they capture context, surprise,
+  or incidental findings without forcing them into a defect frame.
+</p>
+
+<div class="rule">
+  <p><strong>Reproduction is the load-bearing field.</strong> A defect without a reproduction path can&rsquo;t be fixed; it can&rsquo;t even be confirmed. The skill enforces this by re-filing severity-bearing entries with blank reproduction as Observations &mdash; preserving the data without claiming it&rsquo;s actionable.</p>
+</div>
+
+<h2 id="downstream">How <code>/gvm-test</code> Consumes This</h2>
+
+<p>
+  The VV-4(d) gate in <code>/gvm-test</code> step 8 (Evaluate Verdict) reads the latest
+  <code>test/explore-NNN.md</code> charter via <code>_explore_parser.load(...)</code>. Open
+  Critical findings refuse Ship-ready; Important findings cap at Demo-ready; Minor and
+  Observation are surfaced but do not block. A missing charter is treated as a no-op
+  (the skill is opt-in).
+</p>
+
+<h2 id="output">Output</h2>
+
+<p>
+  Paired files per session, numbered:
+</p>
+
+<pre><code>test/explore-001.charter.yml   (input — practitioner fills in)
+test/explore-001.md             (output)
+test/explore-001.html           (output)
+test/explore-002.charter.yml
+test/explore-002.md
+test/explore-002.html
+...</code></pre>
+
+<p>
+  The MD version is what <code>/gvm-test</code> parses. The HTML is the presentation copy
+  with every practitioner string HTML-escaped at render time.
+</p>
+
+<h2 id="pipeline">Pipeline Position</h2>
+
+<div class="pipeline">
+  <span class="label">Greenfield</span>
+  /gvm-init &rarr; /gvm-impact-map &rarr; /gvm-requirements &rarr; /gvm-test-cases &rarr; /gvm-tech-spec &rarr; /gvm-design-review &rarr; /gvm-walking-skeleton &rarr; /gvm-build &rarr; /gvm-code-review &rarr; /gvm-test &rarr; <strong>/gvm-explore-test</strong> &rarr; /gvm-doc-write &rarr; /gvm-doc-review &rarr; /gvm-deploy
+</div>
+
+<p>
+  Sits after <code>/gvm-test</code> (the structured verification gate) and before
+  <code>/gvm-doc-write</code> (which reads the artefact for release-note input). Each
+  invocation produces a new numbered session; <code>/gvm-test</code> reads the most recent
+  charter on its next invocation to evaluate VV-4(d).
+</p>
+
+<h2 id="detail">For More Detail</h2>
+
+<p>
+  For the verification skill that consumes this artefact, see the
+  <a href="../../gvm-test/docs/user-guide.html">Test User Guide</a>. For the documentation
+  step that reads it for release notes, see the
+  <a href="../../gvm-doc-write/docs/user-guide.html">Doc-Write User Guide</a>.
+</p>
+
+</main>
+
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

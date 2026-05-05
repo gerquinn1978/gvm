@@ -1,0 +1,10 @@
+{
+  "name": "grounded-vibe-methodology",
+  "description": "The Grounded Vibe Methodology (GVM): a citation-based software development lifecycle that anchors AI output to named experts and their published works. Pipeline skills: /gvm-init, /gvm-site-survey, /gvm-impact-map, /gvm-requirements, /gvm-test-cases, /gvm-tech-spec, /gvm-design-review, /gvm-walking-skeleton, /gvm-build, /gvm-code-review, /gvm-test, /gvm-explore-test, /gvm-doc-write, /gvm-doc-review, /gvm-deploy. Standalone and shared: /gvm-analysis (privacy-preserving exploratory data analysis), /gvm-experts, /gvm-status, /gvm-design-system. Includes curated expert reference files, activation tracking, expert scoring, calibrated review with dual-review correction, outside-in TDD discipline, mock-budget enforcement, wiring-matrix audit, chunk-acceptance smoke gate, and a methodology changelog with defect-class citations.",
+  "version": "2.2.0",
+  "author": {
+    "name": "Conor Brennan & Gerard Quinn"
+  },
+  "license": "MIT",
+  "keywords": ["methodology", "sdlc", "requirements", "testing", "architecture", "expert-driven", "grounded-vibe", "citation-based", "code-review", "tdd", "atdd", "outside-in", "walking-skeleton", "exploratory-testing", "ai-assisted-development"]
+}

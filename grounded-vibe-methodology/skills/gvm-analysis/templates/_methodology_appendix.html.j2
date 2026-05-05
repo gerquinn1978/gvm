@@ -1,0 +1,24 @@
+{#-
+  Methodology appendix partial (P6-C04c / ADR-305).
+
+  Consolidates every method cited elsewhere in the report, alphabetical by
+  display_name. Source: `methodology_entries` in the renderer context,
+  populated via `aggregate_appendix(keys, prefs)` in build_template_context.
+
+  TC-AN-13-02: every method named in a sidenote appears here with its
+  expert citation.
+-#}
+{% if methodology_entries %}
+<dl class="methodology-appendix">
+  {% for entry in methodology_entries %}
+  <dt>{{ entry.display_name }}</dt>
+  <dd>
+    <p>{{ entry.appendix_text }}</p>
+    <p class="methodology-params"><em>Parameters:</em> {{ entry.parameters }}.</p>
+    <p class="methodology-citation"><em>Citation:</em> {{ entry.expert_citation }}.</p>
+  </dd>
+  {% endfor %}
+</dl>
+{% else %}
+<p>No methods used in this report.</p>
+{% endif %}

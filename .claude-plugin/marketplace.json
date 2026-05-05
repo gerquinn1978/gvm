@@ -1,0 +1,16 @@
+{
+  "name": "gvm-marketplace",
+  "description": "Grounded Vibe Methodology — expert-driven AI software development",
+  "owner": {
+    "name": "Conor Brennan & Gerard Quinn",
+    "url": "https://github.com/gerquinn1978/grounded_vibe_methodology"
+  },
+  "plugins": [
+    {
+      "name": "grounded-vibe-methodology",
+      "source": "./grounded-vibe-methodology",
+      "description": "The Grounded Vibe Methodology (GVM): a citation-based software development lifecycle that anchors AI output to named experts. End-to-end pipeline from impact mapping through release, with calibrated review, outside-in TDD discipline, walking-skeleton boundaries, exploratory testing, and a methodology audit trail. Includes /gvm-init, /gvm-site-survey, /gvm-impact-map, /gvm-requirements, /gvm-test-cases, /gvm-tech-spec, /gvm-design-review, /gvm-walking-skeleton, /gvm-build, /gvm-code-review, /gvm-test, /gvm-explore-test, /gvm-doc-write, /gvm-doc-review, /gvm-deploy, /gvm-analysis, /gvm-experts, /gvm-status, and /gvm-design-system.",
+      "version": "2.2.0"
+    }
+  ]
+}

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beyond the Pipeline — Grounded Vibe Methodology</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+body { font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif; color: #111; background: #fffff8; line-height: 1.6; padding: 2rem 1rem 6rem; max-width: 1480px; margin: 0 auto; }
+h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+li { margin-bottom: 0.4rem; }
+.subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 0.5rem; max-width: 640px; }
+.date { font-size: 0.9rem; color: #888; margin-bottom: 2.5rem; }
+.sidenote { float: right; clear: right; width: 200px; margin-right: -240px; font-size: 0.82rem; line-height: 1.5; color: #666; padding-left: 1rem; border-left: 2px solid #e0e0e0; }
+table { border-collapse: collapse; margin: 1.5rem 0 2rem; font-size: 0.92rem; line-height: 1.5; width: 100%; }
+thead th { text-align: left; font-weight: 600; padding: 0.5rem 1rem 0.5rem 0; border-bottom: 2px solid #333; }
+tbody td { padding: 0.45rem 1rem 0.45rem 0; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+tbody tr:last-child td { border-bottom: 2px solid #333; }
+caption { font-style: italic; font-size: 0.88rem; color: #666; text-align: left; margin-bottom: 0.4rem; }
+.callout { background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1rem 0 1.2rem; }
+.callout-label { font-size: 0.78rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+.callout p { margin-bottom: 0.3rem; }
+hr { border: 0; border-top: 1px solid #ccc; margin: 2rem 0; }
+a { color: #a00000; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "Menlo", "Consolas", monospace; font-size: 0.92em; background: #f0f0e8; padding: 0.05em 0.3em; border-radius: 2px; }
+.gvm-attribution { font-size: 0.75rem; color: #999; font-style: italic; text-align: center; margin-top: 3rem; margin-bottom: 0; max-width: none; }
+
+nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+nav.toc a:hover { color: #111; }
+nav.toc a.active { color: #111; font-weight: 600; }
+nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+main { margin-left: 260px; }
+
+@media (max-width: 1200px) {
+  nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+  main { margin-left: 0; }
+  .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+}
+@media print {
+  nav.toc { display: none; }
+  main { margin-left: 0; }
+  .sidenote { float: none; width: 100%; margin: 0.5rem 0; padding: 0.4rem 0 0.4rem 1rem; }
+  h2 { page-break-after: avoid; }
+}
+  </style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+</nav>
+
+<main>
+
+    <h1>Beyond the Pipeline</h1>
+    <p class="subtitle">Where the Grounded Vibe Methodology goes once the pipeline is working &mdash; and where it travels beyond software development entirely.</p>
+    <p class="author" style="font-size: 0.9rem; color: #666;">Conor Brennan &amp; Gerard Quinn</p>
+    <p class="date" style="margin-bottom: 2rem;">May 2026</p>
+
+    <div style="background: #f7f7f0; border-left: 3px solid #999; padding: 0.8rem 1rem; margin: 1.5rem 0; max-width: 640px; font-size: 0.92rem;">
+      <strong>This paper in context.</strong> This paper assumes the reader has met the pipeline. For the methodology, the expert model, and the citation mechanism, see <em>The Grounded Vibe Methodology</em>. For the structural decisions inside the pipeline, see <em>Well-Engineered Software Needs an End-to-End Pipeline</em>. For the experimental evidence behind grounding, see <em>Grounding Produces Measurably Better Output</em>. For a full end-to-end build, see the case study <em>Building a Production Tool with GVM</em>. This paper picks up where those leave off.
+    </div>
+
+    <h2 id="argument-in-brief">The Argument in Brief</h2>
+    <p>The main Grounded Vibe Methodology (GVM) whitepaper introduces the methodology through a phased software-development pipeline — impact map, requirements, test cases, technical specification, build, code review, test, documentation, deploy. The pipeline is concrete, demonstrable, and the most visible expression of GVM. It is not the methodology.</p>
+    <p>This paper argues that the working mechanism — naming a published expert as a citation activates that expert's framework in the model — is not pipeline-bound. The same mechanism powers standalone tools (the <code>/gvm-analysis</code> exploratory data-analysis skill is a worked example), a catalogue of standalone document types under <code>/gvm-doc-write</code> and <code>/gvm-doc-review</code> (strategy, governance, newsletters, presentations, training, blogs, whitepapers), industry-domain knowledge that compounds across projects (Tier 2b), and disciplines outside software entirely (legal drafting, clinical decision support, regulatory compliance, academic writing).</p>
+    <p>The paper closes with a reflexive case study: GVM applied to its own primary whitepaper across seven rounds of <code>/gvm-doc-review</code>. The case study is empirically rich because every defect, every calibration drift, and every methodology improvement — including the six-test Finding Quality Gate, the stopping rule, and the Pre-Publication Integrity Pass — was logged in the project's calibration file as it happened. The methodology had to evolve in flight to converge on its own paper.</p>
+    <p>The pipeline earns its own standing — the main whitepaper and the Assay case study do that work. This paper extends the picture: standalone tools, standalone document types, cross-project compounding, a reflexive case study, and worked sketches in non-software disciplines. It does not claim to capture the methodology's full reach. Any practice that can be cited and reviewed is in scope, and the catalogue will keep growing as practitioners apply it. What this paper does is widen the visible surface beyond the pipeline &mdash; and, in &sect;9, name the self-bounding mechanisms (the six-test gate, the stopping rule, the Integrity Pass, dual review, build-check promotion) that travel with the methodology across every instance the rest of the paper catalogues.</p>
+
+    <h2 id="pipeline-is-surface"><span class="section-num">1.</span> The Pipeline Is the Surface, Not the Limit</h2>
+
+    <p>The main whitepaper presents GVM through its pipeline because a pipeline is concrete. Phases have inputs, outputs, gates, and verdicts; a reader can follow the artefacts from impact map to release and verify each step against an expert citation. The pipeline is the methodology's most legible surface, and that legibility is the point of presenting it that way.</p>
+
+    <p>The legibility is also the trap. A reader who sees only the pipeline can reasonably conclude that GVM <em>is</em> the pipeline &mdash; that the methodology lives or dies with the specific skills, the build-handover format, the calibration file location, or the verdict vocabulary. Those are productive conventions, but they are not the foundational claim.</p>
+
+    <p>The central claim is the mechanism: <strong>naming a published expert and a specific work as a citation activates that work's framework in the model</strong>.<span class="sidenote">See <em>The Grounded Vibe Methodology</em> &sect;3 for the mechanism, and <em>Why Citation-Based Activation Works</em> for the transformer-level account.</span> The activation does not care whether the surrounding artefact is a requirements document, a strategy memo, a presentation outline, a clinical-decision draft, or a one-shot exploratory data analysis. Anywhere a practitioner makes a knowledge-dependent decision, the same naming gesture activates the same framework.</p>
+
+    <p>This paper documents what becomes visible once that distinction is drawn. The pipeline is one productive instance of the mechanism &mdash; the most thoroughly worked one, with the largest body of evidence and the strongest tooling. The rest of the paper covers the other instances: standalone document types (&sect;2), standalone tools (&sect;3), industry-domain knowledge that compounds across projects (&sect;4), the methodology's reflexive application to its own primary artefact (&sect;5), and worked sketches in disciplines outside software entirely (&sect;6). Sections &sect;7 and &sect;8 then catalogue what the methodology does <em>not</em> yet address and clarify the relationship between the methodology and its current Claude Code implementation.</p>
+
+    <p>The reframe is not a demotion of the pipeline. The pipeline is where the methodology was first proven and is where most practitioners will encounter it first. The reframe is a recognition that the value of the methodology does not stop at the pipeline boundary &mdash; and that the practitioner who has internalised the mechanism can apply it wherever the work calls for grounded, panel-reviewed, calibration-corrected output.</p>
+
+    <h2 id="document-types"><span class="section-num">2.</span> Document Types: <code>/gvm-doc-write</code> and <code>/gvm-doc-review</code> Are Not Pipeline-Bound</h2>
+
+    <p>The most heavily-used demonstration of the mechanism beyond the pipeline is the document-writing pair: <code>/gvm-doc-write</code> for production, <code>/gvm-doc-review</code> for the quality gate. Both skills run as pipeline phases when the project calls for them, and both are equally usable on any prose document a practitioner needs &mdash; strategy memos, governance frameworks, newsletters, presentations, training materials, status reports, blog posts, origin stories, whitepapers (this paper among them).</p>
+
+    <p>More people use the document tooling than use the pipeline. People who have never run <code>/gvm-build</code> still run <code>/gvm-doc-write</code> &mdash; marketing leads, partnership teams, training authors, and practitioners drafting board-level status reports use the same skill that produces a project's README. The catalogue below is what they use it for.</p>
+
+    <h3 id="pipeline-vs-standalone-docs"><span class="section-num">2.1</span> Pipeline Documents vs Standalone Documents</h3>
+
+    <p><code>/gvm-doc-write</code> operates in two modes that share a single skill definition.</p>
+
+    <p>In <strong>pipeline mode</strong>, the skill runs after <code>/gvm-test</code> and produces project documentation grounded in the build artefacts that already exist: a README that describes the system as it was built (not as it was planned), a CHANGELOG written from the user's perspective, a user guide that reflects the implemented behaviour, API documentation generated against the actual surface. The build artefacts &mdash; <code>requirements/</code>, <code>specs/</code>, <code>build/handovers/</code>, the test report &mdash; are the source material. The doc skill reads them; the model never invents what the system does.</p>
+
+    <p>In <strong>standalone mode</strong>, the skill runs at any point in the practitioner's working session and produces any prose document. The source material is whatever the practitioner provides &mdash; a draft, a transcript, a set of bullet points, an existing document to revise, or simply the practitioner's stated topic and audience. The grounding comes from the expert roster: structural experts (Doumont, Minto, McKee) for the argument shape, prose experts (Zinsser, Orwell, Williams) for sentence-level craft, and domain experts loaded according to the document's subject matter (Rumelt for strategy, Mayer for training, Tufte for slides with data, and so on).</p>
+
+    <p>The same quality gate runs in both modes. <code>/gvm-doc-review</code> dispatches its panels in parallel against the produced document and emits findings under the appropriate criterion: pipeline artefacts use the consumer-FAIL gate (would the next pipeline phase break on this?); standalone documents use the six-test Finding Quality Gate.<span class="sidenote">The six tests are Integrity, Misdirection (load-bearing), Reproducibility, Honesty of scope, Audience hospitality, and Cut-damage protection. See <code>~/.claude/skills/gvm-doc-review/SKILL.md</code>, Hard Gate 8.</span> The same calibration file accumulates findings across both modes &mdash; a practitioner's strategy document and their project README contribute to the same per-project calibration record.</p>
+
+    <p>The architectural point: there is no separate "documentation tool" in the methodology. There is one tool, two modes, and the choice between them is largely automatic — the skill detects whether build artefacts are in the room and selects the mode from context.</p>
+
+    <h3 id="document-examples"><span class="section-num">2.2</span> Examples (Not an Exhaustive List)</h3>
+
+    <p>Each entry below names the document type, the experts that ground it, and what the review's six-test gate is most likely to catch. The list is illustrative, not closed: the skill is not limited to these types &mdash; for any other document type, the discovery protocol surfaces and scores the appropriate experts on demand.</p>
+
+    <table>
+      <caption>Table 1 &mdash; Standalone document types shipped with GVM and their grounding experts.</caption>
+      <thead>
+        <tr><th>Document type</th><th>Grounding experts</th><th>What the review tests for</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Strategy documents</td>
+          <td>Rumelt (<em>Good Strategy / Bad Strategy</em>), Christensen (jobs-to-be-done), Porter (competitive forces), Osterwalder (business model)</td>
+          <td>Kernel completeness (diagnosis, guiding policy, coherent action), strategy vs. aspiration, action coherence</td>
+        </tr>
+        <tr>
+          <td>Governance frameworks</td>
+          <td>Anderson (security engineering), Wiegers (requirements governance), Schwaber (agile governance), industry regulators where applicable</td>
+          <td>Decision-authority clarity, escalation paths, gap completeness, regulator-fit</td>
+        </tr>
+        <tr>
+          <td>Newsletters</td>
+          <td>Zinsser (clarity), King (voice), domain experts for the subject</td>
+          <td>Single core message, reader utility, hook quality, scannability</td>
+        </tr>
+        <tr>
+          <td>Presentations</td>
+          <td>Doumont (structure by message), Reynolds (visual restraint), Tufte / Few (data slides), Duarte (sparkline arc)</td>
+          <td>One idea per slide, headlines as sentences, narrative arc, signal-to-noise</td>
+        </tr>
+        <tr>
+          <td>Training materials</td>
+          <td>Mayer (multimedia learning), Bloom (taxonomy), Mager (instructional objectives), Dirksen (design for how people learn)</td>
+          <td>Stated learning objectives, gap-type match (knowledge / skill / motivation / environment), practice activities</td>
+        </tr>
+        <tr>
+          <td>Status reports</td>
+          <td>Minto (pyramid), Doumont (signal/noise), Reinertsen (flow metrics where relevant)</td>
+          <td>Situation-complication-resolution, decisions-needed surfacing, lead-with-the-answer</td>
+        </tr>
+        <tr>
+          <td>Blog posts and origin stories</td>
+          <td>Zinsser, McKee (narrative arc), King (voice)</td>
+          <td>Hook quality, thesis clarity, payoff matching the buildup</td>
+        </tr>
+        <tr>
+          <td>Whitepapers</td>
+          <td>Discipline-specific domain experts plus structural experts (Doumont, Minto, McKee)</td>
+          <td>Argument integrity, factual accuracy, attribution completeness, honesty of scope &mdash; the full six-test gate</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Three observations matter more than the catalogue itself.</p>
+
+    <p><strong>First, the constraint is not the document type. It is whether named published expertise exists for the document's subject.</strong> Where named expertise exists, the methodology applies directly: load the experts, write to their principles, run the review against the same. Where it does not &mdash; a genuinely novel discipline, an emerging regulatory frontier, a proprietary internal practice with no external canon &mdash; the discovery protocol from the main whitepaper is the entry point.<span class="sidenote">Main whitepaper &sect;4.5 documents the discovery protocol: how the methodology surfaces and scores experts in domains its existing roster does not cover.</span> The methodology does not assume the canon is closed.</p>
+
+    <p><strong>Second, the same review machinery handles all of them.</strong> The dual-review mechanism, the parallel panel dispatch, the six-test gate, the Pre-Publication Integrity Pass for whitepapers, the calibration file &mdash; all of it is one body of code applied to all of these document types. A team that adopts <code>/gvm-doc-review</code> for one document class gets the gate for every other class for free. This is part of why the document tooling has the broadest user base in the plugin: the one-time investment in learning the review verdicts (Publish / Publish with caveats / Do not publish) pays out across every kind of writing the team does.</p>
+
+    <p><strong>Third, the same tooling extends to translation work.</strong> <code>/gvm-doc-write</code> in revise mode can translate a document into another language grounded in translation-theory experts (Newmark on translation procedures, Venuti on the translator's visibility, Pym on translation ethics), language-specific experts activated by the target language (lexicographers, style authorities, and register guides for the language pair in question), plus subject-matter experts for the document's domain. <code>/gvm-doc-review</code> can then panel-review the translation against the source document, the translation experts, and the language-specific experts &mdash; checking faithfulness to source, register-and-tone fit for the target audience, and idiom integrity in the target language. Translation is not a separate skill; it is the same write-and-review pair applied to a different operation on the document.</p>
+
+    <p>The main GVM whitepaper is itself a worked example of this section &mdash; produced and reviewed using the same tooling described here, and the case study in &sect;5 documents what that revealed about the methodology.</p>
+
+    <h2 id="standalone-tools"><span class="section-num">3.</span> Standalone Tools: Citation Grounding Outside the Pipeline</h2>
+
+    <p>The document tooling in &sect;2 is the most heavily-used demonstration that the mechanism extends beyond the pipeline. This section covers a less heavily-used but architecturally informative class: tools that use citation grounding without invoking the pipeline at all. <code>/gvm-analysis</code> is the worked example; the rest of the section is a brief survey of the other standalone-capable skills. Both subsections are earlier in their adoption curve than the document tooling &mdash; the architectural argument they support is established, but the case-study evidence is thinner.</p>
+
+    <h3 id="gvm-analysis"><span class="section-num">3.1</span> <code>/gvm-analysis</code> &mdash; Privacy-Preserving Exploratory Data Analysis</h3>
+
+    <p><code>/gvm-analysis</code> performs exploratory data analysis on a user-supplied dataset and returns a findings report &mdash; headline insights, a provenance row for every claim, and a methodology appendix that names the technique used and the expert who defined it. The work is split between two components. A Python engine reads the data, runs the statistical and decomposition routines, and produces a structured intermediate file containing only computed results &mdash; counts, quartiles, forecasts, outlier flags &mdash; never the raw rows. Claude reads the intermediate file and the methodology citations, then assembles the prose report.</p>
+
+    <p>The model never sees the dataset. Raw rows do not enter its context window. What it sees is the engine's output and the citation registry &mdash; entries such as Tukey's interquartile-range fence with the <em>Exploratory Data Analysis</em> chapter reference,<span class="sidenote">See <code>scripts/_shared/outliers.py</code> and <code>methodology.py</code> in the <code>/gvm-analysis</code> skill directory for the citation registry.</span> Cleveland et al.'s STL (Seasonal-Trend decomposition using Loess) for seasonal trend extraction, Hyndman &amp; Athanasopoulos for forecasting technique. The expert names are the retrieval keys; the engine output is the data. The model assembles the report using both.</p>
+
+    <p>This matters for the wider argument because it makes visible two concerns that the pipeline appropriately combines but which are in fact separable. <strong>Grounding is about activating the right reasoning frameworks. Access is about which artefacts the model can read.</strong> The pipeline gives the model both, and rightly so: an expert citation activates the framework, and the spec, the test cases, and the source code give it access to the artefact under construction &mdash; you cannot review or extend code the model cannot see. <code>/gvm-analysis</code> works in a context where the second is neither needed nor wanted. The framework is activated; the artefact is held back. The report is grounded all the same.</p>
+
+    <p>A related architectural property follows from the same split. Statistical methods are determinate &mdash; Tukey's IQR fence is k = 1.5 &times; IQR, STL is a specific algorithm with named parameters, ARIMA forecasts depend on identified orders &mdash; so once a method is chosen, the calculation has a right answer. The Python engine enforces that determinism: the same dataset and the same method produce the same outliers, the same decomposition, the same forecast, run after run. The model does the work where judgement is appropriate (which method fits the data, how to describe the result, what the headline insight is); the engine does the work where determinism is required. <code>/gvm-analysis</code> is unusual in the skillset for having a domain whose core operations are themselves precisely defined; most other GVM artefacts (requirements, specs, prose) lack a deterministic underlying calculation to anchor against, so they do not need this split.</p>
+
+    <p>For practitioners working with regulated data &mdash; clinical records, customer financials, employment data, anything subject to confidentiality or PII constraints &mdash; the separation is the point. Citation grounding does not require that the model see the sensitive material. It requires that the model see the framework that tells it what the engine output means and how to interpret it honestly. The same architectural pattern extends to any workflow where the data is sensitive but the analytical reasoning is shareable: a claims-review report, a procurement audit, an experiment readout in a regulated trial.</p>
+
+    <h3 id="other-tools"><span class="section-num">3.2</span> Pipeline Skills Used Standalone</h3>
+
+    <p>Where &sect;3.1 covered <code>/gvm-analysis</code> as a natively-standalone tool (no pipeline counterpart), this subsection covers a different architectural case: pipeline skills whose contracts are self-contained enough that they remain useful when invoked outside the pipeline. The mechanism extends the same way; the architectural starting point is different.</p>
+
+    <ul>
+      <li><strong><code>/gvm-impact-map</code></strong> &mdash; Adzic's impact-mapping framework as a discovery exercise. Used as the pipeline's first phase when the practitioner is committed to a build, but equally valid as a one-off &mdash; mapping a goal to actors, the behavioural changes those actors would need to make, and the deliverables that would cause those changes &mdash; with no obligation to build anything afterwards.</li>
+      <li><strong><code>/gvm-walking-skeleton</code></strong> &mdash; Cockburn's walking-skeleton pattern. Wires a thin end-to-end thread through every integration boundary the system will need. Pipeline use lays groundwork before feature work; standalone use lets a team prove out an integration topology &mdash; CI, deployment, observability, identity &mdash; before they decide what the application will be.</li>
+      <li><strong><code>/gvm-explore-test</code></strong> &mdash; Bach &amp; Bolton's exploratory-testing protocol with session-based test management. Pipeline use runs against the latest build; standalone use applies it to any codebase, GVM-produced or otherwise, including legacy systems where no pipeline artefacts exist.</li>
+      <li><strong><code>/gvm-experts</code></strong> &mdash; direct management of the expert roster. Used for adding, scoring, or rescoring experts in any reference file. Not pipeline-bound at all; it is the curation tool for the asset that &sect;4 argues compounds across projects.</li>
+      <li><strong><code>/gvm-init</code></strong> &mdash; project bootstrap, with an Application Brief step (Step 0) that produces a short, expert-grounded summary of what the application is, who it serves, and what it does. Used at the start of a new pipeline, but equally valid run against an existing codebase to generate a brief for a system that was never built with GVM &mdash; useful for onboarding documentation, legacy-system orientation, or feeding the brief into <code>/gvm-explore-test</code> on inherited code.</li>
+    </ul>
+
+    <p>The pattern repeats across the catalogue. The pipeline is the most common path through these skills, but each skill has a self-contained contract that makes it useful in isolation. The pipeline composes them; it does not require them.</p>
+
+    <h3 id="operational-patterns"><span class="section-num">3.3</span> Validated Operational Patterns</h3>
+
+    <p>Two patterns of full-pipeline use have been validated in practice and are worth naming alongside the standalone catalogue.</p>
+
+    <p><strong>Multi-iteration on a single project</strong> &mdash; running the full requirements-through-deploy pipeline repeatedly across versions of the same product &mdash; works as the methodology is designed to. Each iteration reads the prior versions' artefacts, the calibration file accumulates, and the build-check promotion process catches recurring defects across iterations rather than within them.</p>
+
+    <p><strong>Brownfield conversion</strong> &mdash; taking a project that was created pre-GVM and adopting the methodology for new rounds of development &mdash; is also straightforward. <code>/gvm-init</code>'s Application Brief step generates the orientation document, the existing codebase becomes the input to <code>/gvm-explore-test</code> and <code>/gvm-code-review</code>, and new feature work runs through the standard pipeline from there. Neither pattern requires a greenfield start.</p>
+
+    <h2 id="cross-project"><span class="section-num">4.</span> Tier 2b Compounds Across Projects</h2>
+
+    <p>The main whitepaper introduces a four-tier expert model: Tier 1 (process experts &mdash; the Wiegers, Beizer, Fowler layer that applies to almost every software project), Tier 2a (software-domain experts &mdash; data presentation, security, documentation), Tier 2b (industry-domain experts &mdash; market risk, clinical guidelines, regulatory frameworks), and Tier 3 (stack experts &mdash; the language- and framework-specific layer).<span class="sidenote">Main whitepaper &sect;4 introduces the tier model. &sect;4.6 introduces the compounding argument that this section develops.</span> Tier 2b is where the methodology's value compounds across projects, and the compounding has implications that go beyond what the main whitepaper develops.</p>
+
+    <p>The mechanism is straightforward. Tier 2b reference files are produced once per industry domain and consumed many times. The first market-risk project requires the practitioner to assemble Hull (derivatives), Jorion (value-at-risk), Alexander (risk modelling) into a reference file with scoring, activation signals, and the principles the experts are cited for. Producing that file is non-trivial &mdash; it is the discovery-protocol work the methodology asks of new domains. The second market-risk project reads the file and is grounded from the first prompt. The third project reads it, refines it (a new edition, a new regulatory framework, a recently-published authority), and contributes the refinement back. Three or four projects in, the practitioner has a curated industry canon that is more useful than the discovery protocol that produced it.</p>
+
+    <p>The same compounding shows up in any stable industry domain. A clinical-decision-support team builds Sackett (evidence-based medicine), Braunwald (cardiology), and the relevant guideline panels into a reference file once; every subsequent clinical project reads the file. A regulatory-compliance team builds the Basel framework authors and named regulator interpretations once; every compliance project benefits. A team working in a single tightly-defined niche builds the canon for that niche &mdash; insurance underwriting, semiconductor manufacturing, marine logistics &mdash; and the canon outlasts any individual project.</p>
+
+    <p>Two implications follow that the per-project framing of the main whitepaper does not surface.</p>
+
+    <p><strong>The methodology becomes more valuable over project sequences than at any single project.</strong> A first-project practitioner pays the discovery cost &mdash; identifying experts, scoring them, codifying their principles &mdash; without the corresponding compounding payout. The cost is real, and an honest assessment of the methodology has to acknowledge it. By the third or fourth project in the same domain, the same practitioner pays no discovery cost and reaps the full benefit of every reference file the prior projects built. The slope is favourable, but only if the practitioner stays in the domain long enough to benefit from it.</p>
+
+    <p><strong>This argues for organisational adoption rather than per-project adoption.</strong> An organisation that works repeatedly in a domain &mdash; a financial-services firm, a clinical research group, a regulatory consultancy, an insurer &mdash; can amortise the discovery cost across teams and across years. A solo practitioner moving between unrelated projects cannot. The methodology is not biased against the solo practitioner &mdash; the Tier 1 and Tier 2a layers carry across any software domain &mdash; but the Tier 2b compounding is where the asymmetric returns live, and they accrue to the organisation that holds the reference files, not to any individual project.</p>
+
+    <p>The plugin's own development is a small worked example. The reference files for documentation expertise, presentation design, data presentation, training design, and writing craft were assembled during early plugin development and have been read by every subsequent skill that produces a document. The case study at &sect;5 reads them; the standalone documents catalogued in &sect;2 are produced against them; the whitepaper you are reading was reviewed against them. The discovery cost was paid once. The reading is free.</p>
+
+    <h2 id="reflexive-case-study"><span class="section-num">5.</span> The Methodology Reviewed by Itself: A Reflexive Case Study</h2>
+
+    <p>The strongest empirical case study this paper has available is the one that produced the main whitepaper itself. Over a single working session, the main GVM whitepaper went through seven rounds of <code>/gvm-doc-review</code>. Every defect, every calibration data point, and every methodology improvement was logged in the project's <code>reviews/calibration.md</code> as it happened. The narrative below is reconstructed directly from those rows.</p>
+
+    <p>The case study is unusually rich for two reasons. First, the artefact under review was the methodology's own primary description &mdash; defects in the paper were defects in the public-facing claim. Second, the practitioner was the methodology's author, which means improvements observed during the run could be folded back into the methodology in flight. By the end of seven rounds, the methodology had three new components that did not exist when the run began.</p>
+
+    <h3 id="case-study-narrative"><span class="section-num">5.1</span> What the Seven Rounds Surfaced</h3>
+
+    <p>Each round of <code>/gvm-doc-review</code> dispatches its panels against the document and emits findings under the appropriate criterion &mdash; integrity, factual accuracy, prose quality, scoring. After the first round, calibration is in effect, and the threshold tightens to "would a consumer fail or take a wrong action."</p>
+
+    <p>The pattern across the seven rounds was not the convergent one the methodology's earlier framing assumed. Each round surfaced findings the previous rounds had structurally not seen. The early rounds caught argument-shape defects (sections answering the wrong question, missing thesis cues, cut-damage from over-trimmed evidence). The middle rounds caught attribution defects (wrong edition, wrong year, paraphrased citation passed off as direct quote). The later rounds caught the integrity defects the prior rounds had not been looking for &mdash; the wrong-title misquote, the chapter mis-attribution &mdash; the kind of defect a panel reading for argument quality is not optimised to find.</p>
+
+    <p>The calibration drift the main whitepaper itself warns about<span class="sidenote">Main whitepaper &sect;5.7 documents calibration drift as a known phenomenon. The case study supplied the empirical confirmation.</span> was observable in real time on its own paper: a roughly one-percentage-point gap between calibrated Panel D scores and blind verification scores reappeared at almost every round, despite the fix-and-verify cycle the methodology prescribes. The methodology had to evolve in flight to converge on its own paper.</p>
+
+    <h3 id="six-test-gate"><span class="section-num">5.2</span> What Changed: The Six-Test Finding Quality Gate</h3>
+
+    <p>The first change came mid-cycle. The methodology had a single finding-quality gate inherited from code review: "Critical or Important only if a consumer would fail or take a wrong action." That gate works for code &mdash; the consumer is concrete (a downstream test, a calling function, a deployed system) and "fail" is observable. For prose review, the gate is wrong-shape. The consumer is the reader, the failure mode is "form a wrong understanding," and the threshold for what counts as "wrong understanding" was unstated &mdash; which meant the panels alternated between flagging every sentence-level imperfection (over-recall) and dismissing genuine integrity defects as polish (under-recall).</p>
+
+    <p>The fix was to codify a six-test gate specifically for standalone documents. A finding is Critical or Important only if it passes at least one of: <strong>Integrity</strong> (the claim is verifiably wrong), <strong>Misdirection on a load-bearing claim</strong> (the reader could come away with a wrong understanding of the thesis), <strong>Reproducibility</strong> (a researcher could not replicate an empirical claim from the document alone), <strong>Honesty of scope</strong> (the document claims more than its evidence supports), <strong>Audience hospitality</strong> (the document assumes knowledge inconsistent with its stated audience), or <strong>Cut-damage protection</strong> (a recommended cut would damage orientation, evidence, or honesty disclaimers).<span class="sidenote">The six-test gate is now Hard Gate 8 in <code>~/.claude/skills/gvm-doc-review/SKILL.md</code>. Findings that pass none of the tests are recorded as Minor <code>[POLISH]</code> and do not block publication.</span> Findings that fail all six are tagged <code>[POLISH]</code> and do not block publication.</p>
+
+    <p>The gate replaced the generic consumer-FAIL criterion for standalone documents from the round after it was codified onward. Pipeline artefacts (requirements, test cases, specs) continue to use the consumer-FAIL gate because their consumers are concrete downstream skills.</p>
+
+    <h3 id="stopping-rule"><span class="section-num">5.3</span> What Changed: A Stopping Rule</h3>
+
+    <p>The second change arose from a different problem. The methodology had no termination criterion for standalone document review. The dual-review mechanism &mdash; calibrated panels plus a blind verification panel &mdash; will keep finding sentence-level items as long as it is run. Without a stopping rule, a sufficiently committed practitioner could continue review indefinitely and the methodology would keep surfacing diminishing-return findings, punishing the user for following it.</p>
+
+    <p>A formal stopping rule was added: per-document score thresholds (the document is publication-ready when scores cross a defined floor on every panel and stay there across a verification round) plus a forcing function (no more than two consecutive verification-only rounds). The forcing function matters: it prevents the practitioner from running indefinite "one more pass to be sure" rounds when the previous round produced no actionable findings.</p>
+
+    <p>The stopping rule lives in the <code>/gvm-doc-review</code> SKILL.md as the "Stopping Rule and Publication-Readiness" section. Its effect on the case study was visible immediately: the forcing function activated in the final review round, the rule itself was refined in flight to handle a recurring blind-panel pattern (concerns the document had explicitly addressed as design decisions kept resurfacing in dual review), and a closure round under the refined rule terminated the cycle.</p>
+
+    <h3 id="integrity-pass"><span class="section-num">5.4</span> What Changed: The Pre-Publication Integrity Pass</h3>
+
+    <p>The third change addressed a defect class the panels were not finding. After five rounds of dual review, two integrity defects had survived roughly thirty-two panel reads &mdash; the kind of defect that requires checking the source against an external authority, and not the kind a panel reading for argument shape and prose quality reliably catches even at strict criterion.</p>
+
+    <p>The fix was a dedicated mechanical pass: the <strong>Pre-Publication Integrity Pass</strong>, run as the last step before any standalone document is declared publication-ready. The pass enumerates every direct quotation, every specific statistic, every cited title, every named edition, and verifies each against an external source. The pass is mechanical &mdash; pattern-match every quoted string, every numeric claim, every italicised title, fetch the source, compare. It catches the defect class panels do not catch because it is doing different work.</p>
+
+    <p>The pass was validated in the same session it was codified. Its first run caught a Salewski et al. title error (the whitepaper said the paper's title was "Strengths and Weaknesses"; the actual NeurIPS 2023 title is "In-Context Impersonation Reveals Large Language Models' Strengths and Biases") and a chapter mis-attribution to <em>Designing Data-Intensive Applications</em> that thirty-two panel reads across five rounds had missed. Both defects passed every prior gate the methodology had &mdash; argument quality, attribution completeness, calibrated panel scoring &mdash; because none of those gates were doing the work of source verification.</p>
+
+    <h3 id="case-study-conclusions"><span class="section-num">5.5</span> What the Case Study Demonstrates</h3>
+
+    <p>Four conclusions follow from the run.</p>
+
+    <p><strong>The methodology's self-improvement mechanism generalises from the project level to the methodology level.</strong> The build-check promotion process at the project level &mdash; observe a defect, codify a check, apply the check from that point onward &mdash; is the same shape as what happened to the methodology itself during this run. Six-test gate, stopping rule, Integrity Pass: all three were observed-defect-then-codified-check, and all three are now part of the methodology going forward.</p>
+
+    <p><strong>Dual review is not a replacement for mechanical verification.</strong> The panels and the Integrity Pass are complementary, not redundant. Panels do judgement: is the argument coherent, is the prose clear, is the scope honest. Mechanical verification does external comparison: does this quoted string match the source, does this title exist in this form. Each catches a defect class the other does not. The methodology's earlier framing assumed dual review covered both kinds; it did not.</p>
+
+    <p><strong>Calibration drift is empirically real, not theoretical.</strong> The main whitepaper had described it as a known limitation. The case study provided the confirming observation: a measurable, repeating gap between calibrated and blind scores at almost every round, even with the fix-and-verify cycle in place. Practitioners who run the methodology repeatedly will observe drift on their own work.</p>
+
+    <p><strong>A stopping rule is necessary because without one the methodology punishes its own users.</strong> A high-recall finding mechanism that runs indefinitely without termination criteria becomes an attrition mechanism. The stopping rule converts the methodology from "keep finding things until the practitioner gives up" into "find the things that pass the gate, then stop."</p>
+
+    <p>The reflexive case study is a stronger validation than a synthetic example because the methodology was applied to the artefact whose claims it was making. The defects were public-facing claims; the improvements emerged from the same loop they describe; the calibration data is real-time observation rather than reconstruction. Whatever else is true of the methodology, this run shows that it can be improved by being applied to itself &mdash; and that the improvements are concrete rather than aspirational.</p>
+
+    <h2 id="beyond-software"><span class="section-num">6.</span> Beyond Software: Where the Mechanism Travels</h2>
+
+    <p>The citation mechanism is agnostic to subject matter. Naming a published expert and a specific work activates that work's framework regardless of whether the framework is about Python, derivatives pricing, federal procedure, or chronic-disease management. The mechanism is, in principle, applicable to any discipline with a body of authoritative published work &mdash; though only the software case has been worked end-to-end, and the sketches that follow are speculative starting points, not validated transfers.</p>
+
+    <p>The five sketches below are speculative. None has been worked in the way the software pipeline has been worked, and the case-study evidence for any of them is thin or absent. They are included to make the transfer concrete, not to claim it has been validated. A practitioner adopting the methodology in any of these disciplines should expect to work through the discovery-protocol cost the main whitepaper describes, and should treat the sketches below as starting points for that work rather than finished maps.</p>
+
+    <h3 id="bs-legal"><span class="section-num">6.1</span> Legal Drafting</h3>
+
+    <p>Legal writing is one of the most citation-dense disciplines that exists. Statutes, regulations, case law, treatises, Restatements, scholarly articles &mdash; every claim that carries weight in a brief, opinion, or contract is expected to be traceable to an authority. The methodology maps directly: process experts ground argument structure (Dworkin on interpretive method, Llewellyn on legal craftsmanship), substantive-doctrine experts ground the lens through which the issue is framed (Posner where economic analysis is the operative lens), domain experts ground specific drafting decisions (the relevant Restatement for the cause of action, Wright &amp; Miller on federal procedure, Williston or Corbin on contracts, Prosser &amp; Keeton on torts), and the work product (motion, opinion, contract, memo) is the artefact under review.</p>
+
+    <p>The Pre-Publication Integrity Pass has an obvious legal analogue: cite-checking. The work the methodology automates &mdash; verifying every quoted string against the source, checking that every cited authority stands for the proposition it is cited for &mdash; is the work a law firm's junior associates and editors already do manually. The gate does not need invention; it needs translation.</p>
+
+    <h3 id="bs-clinical"><span class="section-num">6.2</span> Clinical Decision Support</h3>
+
+    <p>Clinical writing has both an evidence-grading tradition and a guideline tradition. Naming a specific guideline body &mdash; the ACC/AHA (American College of Cardiology / American Heart Association) for cardiology, NICE (National Institute for Health and Care Excellence) for the NHS, the IDSA (Infectious Diseases Society of America) for infectious diseases, UpToDate for synthesised review &mdash; activates that body's evidence-graded recommendations rather than the model's general medical-literature blend. The tier model maps cleanly: process experts (Sackett, Guyatt on evidence-based medicine), domain experts (Braunwald on cardiology, the namesake editors of <em>Mandell, Douglas, and Bennett's Principles and Practice of Infectious Diseases</em> for infectious diseases, Goldman on internal medicine), specialty experts (specific guideline panels).</p>
+
+    <p>The honesty-of-scope test from the six-test gate is particularly consequential in this domain. A clinical-decision-support document that overstates evidence quality, fails to flag a contraindication, or extrapolates beyond the population the underlying trial enrolled is not just imprecise &mdash; it is unsafe. The gate's <strong>honesty of scope</strong> criterion translates directly: does the document claim more than the cited evidence supports.</p>
+
+    <h3 id="bs-financial"><span class="section-num">6.3</span> Financial Risk Documentation</h3>
+
+    <p>This is the most fully-worked of the five sketches, because the main whitepaper already works it as Appendix A.5. Tier 2b grounding for market risk uses Hull (derivatives), Jorion (value-at-risk), Alexander (risk modelling); the same pattern extends to credit risk (Altman, Duffie), operational risk (Chapelle, Girling), liquidity risk, model risk (Rebonato), and regulatory frameworks (the Basel committee's published documents and the named authorities who interpret them). Risk documentation in regulated firms is already cite-bound by supervisor expectation; the methodology formalises a practice the discipline largely has.</p>
+
+    <p>The Tier 2b compounding argument from &sect;4 is most visible here. A bank that produces market-risk documentation builds the Hull/Jorion/Alexander reference file once and consumes it across every market-risk project for as long as the file remains current. The discovery cost is paid by the first project; every subsequent project pays only the reading cost. The methodology becomes more valuable the longer the institution stays in the domain.</p>
+
+    <h3 id="bs-academic"><span class="section-num">6.4</span> Academic Writing</h3>
+
+    <p>Academic writing is the case where the methodology adds the least conceptually but the most operationally. The discipline already has citation-grounded argument, peer review, and source verification &mdash; the practices that distinguish serious academic work from advocacy. None of those is invented by GVM. What GVM does in this domain is automate execution of an existing cite-discipline that has been done by human readers and editors for centuries.</p>
+
+    <p>The mechanical work the methodology automates is what cite-checking already is: verifying every quoted string against the source, checking that every cited authority stands for the proposition it is cited for, confirming editions and dates. The Pre-Publication Integrity Pass from &sect;5 is the worked example. Panel-reviewed argument quality, Integrity-Pass-verified citations, calibration-corrected reviewer scoring, and an explicit stopping rule for when revision is finished translate the manual practice into something tractable when a writer is producing more material than human reviewers can sustainably process. The claim here is automation, not transfer &mdash; academic writing already does this work; GVM lets it scale.</p>
+
+    <h3 id="bs-regulatory"><span class="section-num">6.5</span> Regulatory Compliance</h3>
+
+    <p>Compliance writing &mdash; policies, procedures, control narratives, regulatory submissions &mdash; benefits from the methodology in a domain-specific way. Citing specific regulations and the named authorities who interpret them (the relevant supervisor's published guidance, named legal opinions, industry self-regulatory body interpretations) activates a body of practice rather than a generic compliance vocabulary. Generic compliance prose &mdash; the "we maintain a robust framework" register &mdash; is the failure mode the gate catches: it claims much and supports little, and a heavily-litigated domain punishes that.</p>
+
+    <p>The honesty-of-scope and integrity tests matter most here. A control narrative that overstates what the control does, or cites a regulation for a proposition the regulation does not stand for, is not just imprecise &mdash; it is the kind of defect that creates regulatory exposure. The methodology's mechanical verification is a fit for the kind of audit pressure these documents already face.</p>
+
+    <h3 id="bs-transfers"><span class="section-num">6.6</span> What Transfers, and What Does Not</h3>
+
+    <p>Across the five sketches, the same components are hypothesised to transfer, pending worked validation in any of the five disciplines.</p>
+
+    <ul>
+      <li><strong>The citation-as-retrieval-key mechanism</strong> &mdash; naming a published expert activates a published framework, regardless of discipline.</li>
+      <li><strong>The three-tier expert model</strong> &mdash; process / domain / specialist, with the same compounding argument across project sequences.</li>
+      <li><strong>Dual review</strong> &mdash; calibrated panels plus blind verification, applied to argument and prose quality.</li>
+      <li><strong>The six-test gate</strong> &mdash; integrity, misdirection-on-load-bearing, reproducibility, honesty of scope, audience hospitality, cut-damage protection. All six map directly onto serious writing in any discipline.</li>
+      <li><strong>The stopping rule</strong> &mdash; per-document score thresholds plus a forcing function, preventing the methodology from punishing its users.</li>
+      <li><strong>The Pre-Publication Integrity Pass</strong> &mdash; mechanical verification of every quoted string, every cited title, every numeric claim against the source.</li>
+    </ul>
+
+    <p>What does not transfer is the software-specific apparatus: the pipeline phases (impact map through deploy), the build-handover format, the test-co-location conventions, the release verdict vocabulary, the spec-and-source-and-test triple. These are software-engineering conventions; the methodology rests on them in the software case but does not require them in other disciplines. A legal practice adopting the methodology would not produce <code>build/handovers/</code> directories, and would not need to.</p>
+
+    <p>Plainly: the mechanism transfers; the apparatus does not. The hard work in any new discipline is mapping the discipline's existing artefacts (briefs, opinions, clinical recommendations, control narratives, journal submissions) and existing review practices (cite-checking, peer review, internal audit) onto the methodology's components. That mapping has not yet been worked for any of the five disciplines above, and a practitioner adopting the methodology outside software should treat this section as a starting brief, not a finished design.</p>
+
+    <h2 id="open-questions"><span class="section-num">7.</span> Open Questions the Methodology Raises but Doesn't Yet Answer</h2>
+
+    <p>This section catalogues what the methodology does <em>not</em> address. The list is not exhaustive, and an honest reading of any methodology should expect such a list to grow rather than shrink as adoption widens. Each item below is a place where the methodology's limits are observable and where future work would change the picture.</p>
+
+    <p><strong>Cross-model evaluation.</strong> The controlled experiment in <em>Grounding Produces Measurably Better Output</em> uses same-model evaluation: Claude grounds, and Claude scores. The methodology's defenders and detractors both have a fair question here &mdash; would Gemini or GPT, scoring the same outputs blind, agree with Claude's scoring? The cross-model evaluation is the largest remaining experimental threat to the experimental claims, and it has not been run.</p>
+
+    <p><strong>Post-release operations.</strong> The pipeline ends at <code>/gvm-deploy</code>. Operations, incident response, ongoing maintenance, on-call rotations, post-incident review, and feature evolution after launch are explicitly out of scope. There is no GVM equivalent of the SRE playbook. A team that adopts the methodology for build-side work still has to fall back to existing operational practice for run-side work, and the seam between the two is not designed.</p>
+
+    <p><strong>Attribution and compensation infrastructure.</strong> The main whitepaper &sect;8 argues that citation logging creates the precondition for compensating the experts whose work the methodology activates &mdash; the activation is logged, the expert is named, the work is identified. The methodology builds the precondition but not the compensation framework itself. Building that framework &mdash; who pays whom, on what schedule, on what attribution share, through what intermediary &mdash; is the largest unsolved problem the methodology surfaces, and it sits beyond what any tooling decision can answer.</p>
+
+    <p><strong>Canon thinness limits.</strong> The methodology depends on named published expertise. In rapidly-evolving fields where the canon is genuinely thin &mdash; very new ML subfields, emerging regulatory frameworks, rapidly-shifting tooling categories &mdash; the discovery protocol works less well because there is less to discover. The methodology becomes more dependent on the practitioner's own judgement in these domains, and that dependence is a real limit even if the rest of the apparatus still applies.</p>
+
+    <p><strong>Reflexive blind spots.</strong> The case study in &sect;5 demonstrates that the methodology can be improved by being applied to itself. The improvements emerged because a practitioner noticed a gap &mdash; the consumer-FAIL gate was wrong-shape for prose, the dual-review mechanism would not stop on its own, integrity defects were surviving panel review. The reflexive loop catches what the practitioner asks it to catch, which leaves a structural limit: a guaranteed-complete blind-spot detector is not possible, because any such detector would itself be a method with its own blind spots. This is the unknown-unknowns problem, not an engineering gap the methodology can simply close.</p>
+
+    <p>Partial mitigations exist and are worth naming. <strong>Cross-model evaluation</strong> (the first item in this section) reduces blind spots tied to a single model architecture. <strong>Diverse practitioners</strong> reduce blind spots tied to a single person's reading habits. <strong>Adversarial review</strong> &mdash; someone deliberately trying to break the methodology rather than apply it &mdash; surfaces failure modes a sympathetic reader would not look for.</p>
+
+    <p>The largest unbuilt mitigation is <strong>population-level analysis of the calibration pool</strong>. A tool that reads many projects' <code>reviews/calibration.md</code> files could extract patterns no single practitioner sees: defect classes that recur across many independent projects, drift patterns that show up in many practitioners' scoring, build-check promotions that fire repeatedly across organisations. Recurring defects across many projects are a signal even when no single practitioner suspects there is a gap. This is the same logic as build-check promotion (recurring finding becomes a check) applied at the population level rather than within a single project. The infrastructure does not exist yet, but the calibration files are already the right shape to feed it.</p>
+
+    <p>None of these limits invalidates the methodology's current claims. They are honest scope boundaries. The methodology earns standing partly by being explicit about where it does not yet apply.</p>
+
+    <h2 id="methodology-vs-implementation"><span class="section-num">8.</span> The Methodology Is Tool-Agnostic; the Plugin Is Replaceable</h2>
+
+    <p>The current GVM plugin is a Claude Code implementation. It is one productive instantiation of the methodology, and at present it is the only instantiation. That conjunction makes it easy to confuse the methodology with the plugin &mdash; and that confusion would be a category error. The methodology is the codified practice; the plugin is the tool that currently runs it.</p>
+
+    <p>The distinction matters for two reasons. First, AI tooling moves fast. The plugin's current shape reflects what Claude Code's skill, agent, and hook primitives make easy in 2026; the next generation of AI tooling will offer different primitives, and the plugin will be rewritten or replaced to take advantage of them. A practitioner who has invested in the methodology's reference files, scoring rubrics, and review verdicts should not have to abandon that investment when the underlying tool changes. Second, practitioners on tools other than Claude Code &mdash; Cursor, Aider, GitHub Copilot, custom agent frameworks, or whatever follows them &mdash; should be able to adopt the methodology without first switching tools.</p>
+
+    <p>The essential parts of the methodology are tool-agnostic by design.</p>
+
+    <ul>
+      <li><strong>The expert model</strong> &mdash; tiers, scoring rubrics, activation signals &mdash; is a documented framework, not a code structure.</li>
+      <li><strong>The reference files</strong> are Markdown. They are read by a model in any tool that can read Markdown.</li>
+      <li><strong>The pipeline-phase definitions</strong> &mdash; what each phase produces, what each phase consumes, what each phase's gate is &mdash; are independent of how the orchestration is wired.</li>
+      <li><strong>The panel structure</strong> &mdash; orthogonal defect-class partitioning, parallel dispatch, synthesis &mdash; is a methodological pattern. Any tool that can run more than one inference call can implement it.</li>
+      <li><strong>The six-test gate, the stopping rule, the Pre-Publication Integrity Pass, the build-check format, the verdict vocabulary</strong> are documented protocols. They have specifications; they do not have hard tool dependencies.</li>
+    </ul>
+
+    <p>What does require per-tool adaptation is the orchestration layer: how skills are registered with the host, how subagents are dispatched in parallel, where the calibration file lives, how the conditional-activation logic for tier loading is implemented, and how user prompts and hooks interface with the model. These are real engineering concerns &mdash; a Cursor port would not be free &mdash; but they are the kind of concerns a competent engineer in the target tool can resolve given the methodology spec. They are not where the methodology's value lives. The tool-agnostic framing also predicts that specific concepts &mdash; citation-based expert activation, dual review, the six-test gate, the build-check promotion process &mdash; will likely surface as "enhancements" in other AI development frameworks (Cursor, Aider, BMAD, Claude Code itself, whatever follows them) once this work is public. The methodology welcomes that, with one caveat carried from the main whitepaper's attribution argument: the citation logging that grounds the methodology is also the infrastructure for attribution to the underlying experts, and frameworks that absorb the concepts without that layer get the apparent benefit but lose the property that makes credit to the underlying authors possible.</p>
+
+    <p>The plugin is the methodology's current best-available implementation, and a practitioner adopting the methodology today will do so through the plugin. But the methodology will outlive this plugin. The reference files, the protocols, the verdicts, the gate, and the rule will travel to whatever tool the practitioner is using in five years' time &mdash; ported faithfully in some places, absorbed selectively in others. The plugin is replaceable; the methodology is what is being kept.</p>
+
+    <h2 id="conclusion"><span class="section-num">9.</span> Conclusion: A Methodology That Knows Its Own Limits</h2>
+
+    <p>The methodology's enduring value is not the current pipeline. The pipeline is real and well-evidenced, and the main whitepaper and the Assay case study make that case directly &mdash; but the pipeline will be improved, ported, and eventually replaced. What endures across those changes are the methodology's self-bounding mechanisms.</p>
+
+    <p>The six-test Finding Quality Gate, the stopping rule, the Pre-Publication Integrity Pass, the dual-review mechanism, the build-check promotion process &mdash; these are the parts of the methodology that do not depend on the pipeline shape. They define what the methodology actually <em>is</em>: a codified practice of citation-grounded, panel-reviewed, calibration-corrected, mechanically-verified work, with a stopping rule that prevents the practice from punishing the practitioners who follow it.</p>
+
+    <p>The same mechanisms travel into the standalone document tooling that &sect;2 catalogues, the standalone analysis tooling that &sect;3 describes, the cross-project Tier 2b knowledge asset that &sect;4 argues for, the reflexive case study that &sect;5 documents, and the non-software disciplines that &sect;6 sketches. The pipeline is the most visible expression of the methodology and the place most practitioners will encounter it first; the rest of the paper has been about what becomes visible once the practitioner stops treating the pipeline as the whole methodology.</p>
+
+    <p>To end on: this methodology will be wrong about itself in places that have not surfaced yet. &sect;7 catalogues the limits known today; new ones will be observed as the methodology is applied more widely, by more practitioners, in more disciplines. What the methodology can promise is not freedom from those gaps. What it can promise is a discovery mechanism &mdash; the same reflexive loop that produced the six-test gate, the stopping rule, and the Integrity Pass during the run that produced the main whitepaper. The methodology's strongest claim is that it can be improved by being applied to itself, and that the improvements will be concrete rather than aspirational.</p>
+
+    <p>The pipeline earns its own standing. So does the rest of the methodology that lives beyond it.</p>
+
+    <h2 id="references"><span class="section-num">10.</span> References</h2>
+
+    <p>The full bibliography for the methodology &mdash; covering the experts cited in the main whitepaper, the pipeline structure paper, the experiment paper, the mechanism paper, and the verification paper &mdash; lives in <em>The Grounded Vibe Methodology</em>, References. Most experts named in this paper appear there. The list below covers works this paper introduces or relies on heavily, grouped by the section that uses them. Where edition or year is uncertain, the work is listed without a date rather than with a guessed one.</p>
+
+    <h3 id="ref-s2-s3"><span class="section-num">10.1</span> Standalone Document Types and Tools (&sect;2, &sect;3)</h3>
+
+    <ul>
+      <li>Adzic, Gojko. <em>Impact Mapping: Making a Big Impact with Software Products and Projects.</em> Provoking Thoughts, 2012.</li>
+      <li>Bach, James, and Michael Bolton. <em>Rapid Software Testing</em> (course materials and methodology). Various editions.</li>
+      <li>Cleveland, R. B., W. S. Cleveland, J. E. McRae, and I. Terpenning. "STL: A Seasonal-Trend Decomposition Procedure Based on Loess." <em>Journal of Official Statistics</em> 6:1 (1990): 3&ndash;33.</li>
+      <li>Cockburn, Alistair. <em>Crystal Clear: A Human-Powered Methodology for Small Teams.</em> Addison-Wesley, 2004. (Walking-skeleton pattern.)</li>
+      <li>Hyndman, Rob J., and George Athanasopoulos. <em>Forecasting: Principles and Practice.</em> 3rd ed. OTexts, 2021.</li>
+      <li>Newmark, Peter. <em>A Textbook of Translation.</em> Prentice Hall, 1988.</li>
+      <li>Pym, Anthony. <em>On Translator Ethics: Principles for Mediation Between Cultures.</em> John Benjamins, 2012.</li>
+      <li>Tukey, John W. <em>Exploratory Data Analysis.</em> Addison-Wesley, 1977.</li>
+      <li>Venuti, Lawrence. <em>The Translator's Invisibility: A History of Translation.</em> Routledge, 1995.</li>
+    </ul>
+
+    <h3 id="ref-s5"><span class="section-num">10.2</span> Reflexive Case Study (&sect;5)</h3>
+
+    <ul>
+      <li><code>~/.claude/skills/gvm-doc-review/SKILL.md</code> &mdash; Hard Gate 8 (six-test Finding Quality Gate), the Stopping Rule and Publication-Readiness section, and the Pre-Publication Integrity Pass section. All three sections were committed during the seven-round run that &sect;5 documents, and all three ship with the plugin.</li>
+      <li>Salewski, L., Alaniz, S., Rio-Torto, I., Schulz, E., and Akata, Z. "In-Context Impersonation Reveals Large Language Models' Strengths and Biases." <em>NeurIPS 2023</em> (Spotlight). arXiv:2305.14930. Cited in &sect;5.4 as the title-error example caught by the first Integrity Pass run.</li>
+    </ul>
+
+    <p>The narrative in &sect;5 is reconstructed from the authors' own project calibration record (<code>reviews/calibration.md</code> in the working directory that produced the main GVM whitepaper). That file is project-internal &mdash; it does not ship with the plugin and is not externally verifiable. Readers who want to check the methodology improvements can do so against the SKILL.md sections above, which are public; the round-by-round narrative itself rests on the authors' contemporaneous record.</p>
+
+    <h3 id="ref-s6"><span class="section-num">10.3</span> Beyond Software (&sect;6) &mdash; Sketch Citations</h3>
+
+    <p>The works listed below are starting points for the five sketched disciplines, not a vetted bibliography. Practitioners adopting the methodology in any of these disciplines should treat the list as a brief and verify each work for currency, edition, and applicability to their jurisdiction or sub-specialty.</p>
+
+    <ul>
+      <li><strong>Legal drafting:</strong> Posner, Richard A. <em>Economic Analysis of Law.</em> Various editions, Wolters Kluwer. Dworkin, Ronald. <em>Law's Empire.</em> Harvard University Press, 1986. Llewellyn, Karl N. <em>The Bramble Bush: On Our Law and Its Study.</em> Oceana (1951 edition; original lectures 1930). American Law Institute. <em>Restatements of the Law</em> (various subjects). Wright, Charles Alan, and Arthur R. Miller. <em>Federal Practice and Procedure.</em> Various editions, Thomson Reuters. Williston, Samuel, et al. <em>A Treatise on the Law of Contracts</em> (Williston on Contracts). Various editions, Thomson Reuters. Corbin, Arthur Linton, et al. <em>Corbin on Contracts.</em> Various editions, LexisNexis. Prosser, William L., and W. Page Keeton, et al. <em>Prosser and Keeton on the Law of Torts.</em> 5th ed., West, 1984.</li>
+      <li><strong>Clinical decision support:</strong> Sackett, David L., et al. <em>Evidence-Based Medicine: How to Practice and Teach EBM.</em> Various editions, Churchill Livingstone. Guyatt, Gordon, et al., editors. <em>Users' Guides to the Medical Literature.</em> JAMA Evidence, McGraw-Hill. Braunwald, Eugene, et al., editors. <em>Braunwald's Heart Disease.</em> Various editions, Elsevier. Bennett, John E., Raphael Dolin, and Martin J. Blaser, editors. <em>Mandell, Douglas, and Bennett's Principles and Practice of Infectious Diseases.</em> Various editions, Elsevier. Goldman, Lee, et al., editors. <em>Goldman-Cecil Medicine.</em> Various editions, Elsevier.</li>
+      <li><strong>Financial risk:</strong> Hull, John C. <em>Options, Futures, and Other Derivatives.</em> Various editions, Pearson. Jorion, Philippe. <em>Value at Risk: The New Benchmark for Managing Financial Risk.</em> 3rd ed. McGraw-Hill, 2007. Alexander, Carol. <em>Market Risk Analysis</em> (four-volume series). Wiley, 2008. Altman, Edward I. "Financial Ratios, Discriminant Analysis and the Prediction of Corporate Bankruptcy." <em>Journal of Finance</em> 23:4 (1968): 589&ndash;609. Duffie, Darrell, and Kenneth J. Singleton. <em>Credit Risk: Pricing, Measurement, and Management.</em> Princeton University Press, 2003. Chapelle, Ariane. <em>Operational Risk Management: Best Practices in the Financial Services Industry.</em> Wiley. Girling, Philippa X. <em>Operational Risk Management: A Complete Guide for Banking and Fintech.</em> Wiley. Rebonato, Riccardo. <em>Volatility and Correlation: The Perfect Hedger and the Fox</em> (and related works on model risk). Wiley.</li>
+      <li><strong>Academic writing:</strong> See &sect;5 references; the methodology's own Pre-Publication Integrity Pass is the worked example.</li>
+      <li><strong>Regulatory compliance:</strong> Basel Committee on Banking Supervision, published documents (various). Jurisdiction-specific regulator guidance is the most authoritative source material in this domain and has no canonical author list.</li>
+    </ul>
+
+    <h3 id="ref-cross"><span class="section-num">10.4</span> Cross-Cutting (Writing, Structure, Design)</h3>
+
+    <p>The writing, document-structure, and design experts named throughout this paper (Doumont, Zinsser, King, Williams, Orwell, McKee, Minto, Tufte, Few, Reynolds, Duarte, Mayer, Bloom, Mager, Dirksen, Reinertsen, Rumelt, Christensen, Porter, Osterwalder, Anderson, Wiegers, Schwaber, Brooks, Beck) appear with full citations in <em>The Grounded Vibe Methodology</em> References and in the plugin's reference files under <code>~/.claude/skills/gvm-design-system/references/</code>. They are not duplicated here.</p>
+
+    <p class="gvm-attribution">Developed using the Grounded Vibe Methodology</p>
+
+</main>
+
+<script>
+(function () {
+  const toc = document.getElementById('toc');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+  const links = [];
+  headings.forEach(function (h) {
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.replace(/^\s*\d+(\.\d+)?\.\s*/, '');
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    toc.appendChild(a);
+    links.push({ el: a, target: h });
+  });
+  function onScroll() {
+    let current = links[0];
+    for (let i = 0; i < links.length; i++) {
+      if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+    }
+    links.forEach(function (l) { l.el.classList.remove('active'); });
+    if (current) current.el.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

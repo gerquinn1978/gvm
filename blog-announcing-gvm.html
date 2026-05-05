@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Can Build Fully Engineered Software — You're Just Not Asking It Right</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+      color: #111;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 400;
+      font-style: italic;
+      margin-top: 2.5rem;
+      margin-bottom: 0.8rem;
+      color: #111;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3rem;
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      max-width: 640px;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #555;
+      margin-bottom: 2rem;
+      max-width: 640px;
+    }
+
+    .date {
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: 0.2rem;
+    }
+
+    .author {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    blockquote {
+      border-left: 3px solid #999;
+      padding: 0.4rem 1rem;
+      margin: 1.2rem 0;
+      max-width: 640px;
+      font-style: italic;
+      color: #444;
+    }
+
+    a { color: #a00000; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    ul { padding-left: 1.4rem; margin-bottom: 1.2rem; max-width: 640px; }
+    li { margin-bottom: 0.4rem; line-height: 1.7; }
+
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .callout {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .callout-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .callout.key-finding {
+      background: #fdf0ef;
+      border-left: 3px solid #a00000;
+    }
+
+    .callout.key-finding .callout-label {
+      color: #a00000;
+    }
+
+    .links {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #ccc;
+      max-width: 640px;
+    }
+
+    .links p { margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <p class="date">April 2026</p>
+  <h1>AI Can Build Fully Engineered Software &mdash; You're Just Not Asking It Right</h1>
+  <p class="subtitle">Maybe you've seen the vibe-coded badly-built house meme. GVM &mdash; the Grounded Vibe Methodology &mdash; is the fully engineered build: structure, review, quality gates, at vibe coding speed.</p>
+  <p class="author">Conor Brennan &amp; Gerard Quinn</p>
+
+  <div class="callout">
+    <div class="callout-label">The premise</div>
+    <p>GVM grounds AI in named, published experts at every phase of the software development life cycle &mdash; Tufte for data presentation, Wiegers for requirements, Fowler for refactoring, and so on. Naming the expert in the prompt focuses the model on a specific body of vetted work rather than a broad blend of everything in its training data. The rest of this post backs that premise two ways: we built software with it, and we tested the mechanism that makes it work.</p>
+  </div>
+
+  <p>We back the claim two ways. We <em>built</em> engineered software with AI &mdash; the case study below reports a tool built end-to-end with the methodology, and expert design patterns are visible in the production code, traceable line-by-line to the named experts active during design. We also <em>tested</em> the underlying mechanism &mdash; whether naming experts in the prompt changes what the model produces &mdash; in a controlled experiment, using dashboard generation as a measurable proxy task.</p>
+
+  <p>We ran the experiment across three AI model families &mdash; Claude, GPT, Gemini &mdash; under three grounding conditions per model. 180 dashboards. 1,080 blind reviews. The experiment tests the same mechanism that operates during system design, code review, and document writing and review. We chose the dashboard task because reviewers can score it against named experts' published criteria &mdash; Tufte on data-ink ratio, Few on alert design, Doumont on message structure &mdash; without knowing which grounding condition produced each dashboard. Dashboards are not what GVM builds; they are what we could measure cleanly.</p>
+
+  <p>The expected finding landed: more expert grounding produced measurably better output, with large effect sizes consistent across all three models.</p>
+
+  <p>The unexpected finding is the one worth the post. <strong>AI reviewers without expert grounding rated the better output worse.</strong> Independent inspection confirmed the grounded output was dramatically better. AI reviewers without the expert framework scored it <em>below</em> the baseline. They couldn't see the improvement because they didn't have the framework to recognise it.</p>
+
+  <p>The implication is uncomfortable. Most AI code review today is unguided AI review &mdash; and the experiment shows unguided reviewers cannot reliably distinguish better output from worse. The risk is that current AI code review may be approving work an expert-informed review would reject, and unable to detect that gap from inside its own framework. Three completely different AI systems from three different companies produced the same result; this isn't a quirk of one model.</p>
+
+  <div class="callout key-finding">
+    <div class="callout-label">The key finding</div>
+    <p>You can't see what you don't have a framework to see. Unguided AI review may be approving work that expert-informed review would reject &mdash; and the unguided reviewer cannot detect that gap from inside its own framework.</p>
+  </div>
+
+  <h2>Two problems, not one</h2>
+
+  <p>Most teams in 2026 have some kind of AI development process. The mainstream frameworks &mdash; spec-driven scaffolding, acceptance-test-driven workflows, walking-skeleton patterns &mdash; address pieces of the problem. None yet ships the combination of calibrated review that improves across rounds, build-time wiring audits, per-chunk smoke gates, and a release phase that reads its own verdict data. AI can write fluent, plausible, wrong code at unprecedented speed, and the quality gates have to match.</p>
+
+  <p><strong>Problem one: structure.</strong> Requirements change and nothing tracks it. The AI's context fills up and the next session starts from zero. AI reviews treat every round as independent &mdash; the tenth review discovers the same issues as the first. There's no gate between requirements and architecture to check whether the requirements are even testable.</p>
+
+  <p><strong>Problem two: quality.</strong> Even if you have structure, who defines what "good" looks like? A review that calibrates over time needs something to calibrate <em>against</em>. A test gate needs criteria. Without a quality framework, your process catches failures but converges on mediocrity.</p>
+
+  <p>You need both. Structure without quality standards catches bugs but ships mediocre work. Quality standards without structure produce beautiful code that nobody verified.</p>
+
+  <h2>How GVM solves this</h2>
+
+  <p>GVM &mdash; the Grounded Vibe Methodology &mdash; is a methodology designed specifically for building well-engineered software with AI. It runs from requirements through release. Two ideas define it.</p>
+
+  <p><strong>The first idea: every phase has a verification mechanism.</strong> Requirements must prove they're testable before any architecture exists.</p>
+
+  <p>AI reviews track what they found across rounds and get more precise over time. From round 3, a second AI reviewer runs in parallel with no knowledge of prior rounds &mdash; seeing the project fresh to catch what the first reviewer's familiarity with the project history causes it to overlook. By that point, the first reviewer has seen enough history to develop expectations that create blind spots.</p>
+
+  <p>The release gate reads every review verdict and blocks if anything upstream isn't ready. If the documentation doesn't match the build, the release is blocked.</p>
+
+  <p>Review and release verify what was built; construction gates verify what is being built, catching a class of failure that review cannot reach because the broken artefact never reaches review intact. Tests must mock at the external boundary, not at internal collaborators. Every built module must name its consumer in a wiring matrix the build phase greps mechanically. Each chunk passes an end-to-end smoke check before it is accepted. These catch the wiring failures and the tests-pass-product-broken failures that would otherwise surface at integration time &mdash; or ship undetected.</p>
+
+  <p><strong>The second idea: citation-based expert grounding.</strong> When you tell an AI "write good code," it draws from everything in its training data &mdash; a broad, undifferentiated blend. When you tell it "apply Fowler's refactoring principles from <em>Refactoring</em>, 2nd edition," it shifts to a focused application of a specific body of published work. The citation acts as a retrieval key into knowledge the model already has. No RAG. No fine-tuning. No vector database.</p>
+
+  <p>You might dismiss this as just better prompting. It is prompting &mdash; but the difference between "follow best practices" and "apply Wiegers' elicitation framework from <em>Software Requirements</em>" is the difference between telling a student to "do research" and telling them to read a specific chapter and apply a specific framework. One produces generic output. The other produces output grounded in a vetted methodology. You don't need to know which experts to cite &mdash; GVM selects the right experts for each phase automatically based on your project's domain and technology stack, and presents them for your approval before proceeding.</p>
+
+  <h2>Build the right thing, then build the thing right</h2>
+
+  <p>Software engineering has long been framed around two questions, not one &mdash; the verification/validation split articulated in Boehm's 1981 work and standard in the V&amp;V literature ever since. <em>Are we building the right thing?</em> &mdash; and &mdash; <em>are we building the thing right?</em> The construction-side gates above answer the second. The first is just as easy to get wrong with AI: a fluent codebase that solves the wrong problem still solves the wrong problem.</p>
+
+  <p>GVM's discovery side covers the first question structurally. An optional impact map opens the pipeline, tracing goals to actors to deliverables before any requirements exist. Requirements are written acceptance-criteria-first &mdash; if you cannot say how you would verify it, the requirement is not yet finished. Test cases are generated <em>before</em> architecture, so a requirement that is plausible-but-untestable is caught at the requirements phase, not after the AI has built around it. A walking skeleton wires the real (or sandbox) integration boundaries end-to-end before feature work starts; if the skeleton goes red, feature work is refused. A timeboxed exploratory testing pass against the running product catches what scripted tests miss. Each of these is grounded in named experts: Adzic on impact mapping, Wiegers and Patton on requirements, Cockburn and Freeman &amp; Pryce on the walking skeleton, Bach, Bolton, and Hendrickson on exploratory testing.</p>
+
+  <h2>The artefact trail is free</h2>
+
+  <p>Six months later, an engineer adding a feature asks "why does the auth flow take this path?" In a pipelined project, the answer is in an architecture decision record, not guessed from the code. An auditor reconstructing a trade-off finds the date and the alternatives that were considered. A successor maintainer inherits the project's record of its own thinking, not just its output.</p>
+
+  <p>The pipeline produces all of this as a side effect of producing the software &mdash; requirements with rationales, test cases traced to those requirements, decisions with alternatives, calibrated review reports, per-chunk handovers naming what was built and what deviated. Producing them as a by-product costs less than reconstructing them later.</p>
+
+  <h2>What we got wrong</h2>
+
+  <p>We assumed expert grounding would work everywhere. It doesn't. Expert grounding during <em>review and design</em> is demonstrably effective. During code <em>construction</em>, its effect is undemonstrated. The review phase, grounded in named experts, consistently caught issues that the construction phase failed to prevent. In design, the effect is visible in the output &mdash; architecture patterns in the code trace directly back to the named experts who were active during design. The expert shaped the design; the design shaped the code.</p>
+
+  <div class="callout">
+    <div class="callout-label">Worked example (now stale &mdash; kept because most teams are still in this situation)</div>
+    <p>On a project we built before GVM had the upstream gates that would catch this class of defect, the AI generated code that compiled and passed our tests against a mocked SDK. The function signature it was calling didn't exist on the real SDK &mdash; a hallucination. Tests against mocks couldn't see this; an integration test would have, but we hadn't written one yet. The expert-guided code review caught it before it shipped, by reading the code against the named SDK's published surface rather than against our own mocks. The general lesson: AI reviewers grounded in the right authority (the SDK documentation, an expert who knows the SDK) read code against external truth. Unguided AI reviewers read code against themselves.</p>
+    <p>The example is stale for current GVM. Today the external-boundary test (EBT) contract/collaboration distinction in <code>/gvm-test-cases</code> Phase 4 flags tests that mock external boundaries the wrong way, and the per-chunk integration smoke check in <code>/gvm-build</code> exercises the real boundary before the chunk is accepted &mdash; either gate would catch this defect upstream of code review. We keep the example because most teams doing AI-assisted development today have neither gate in place; the review layer is their only safety net, and it works for that.</p>
+  </div>
+
+  <p>The correction: construction is grounded in framework documentation &mdash; how to use the API correctly. Design and review are grounded in expert principles &mdash; whether the result meets quality standards. We include this because methodologies that aren't tested against real builds can't discover this class of failure. We tested ours. We found a failure. We corrected it. The released version already implements this separation.</p>
+
+  <h2>The proof</h2>
+
+  <p>We used GVM to build Assay, the tool that ran the experiment. Thirty-five hours from first commit to tagged release. 38 requirements, 207 passing tests, 7 rounds of AI code review, ten critical findings caught and fixed across the rounds, zero remaining at ship. The expert patterns are visible in the production code &mdash; Protocol-based abstractions because Ramalho and Fowler were active during the spec, atomic writes because Keeling was active during architecture decisions. You can read the code and trace each pattern to the expert who produced it.</p>
+
+  <p>The tool that was built to test the methodology was itself built by the methodology.</p>
+
+  <h2>The cost only pays off against real downstream risk</h2>
+
+  <p>GVM has a domain of fit. For a throwaway script or a fifty-line spike to test a hypothesis, the pipeline is overkill &mdash; vibe coding ships those faster than the pipeline can write the impact map. The trade is small upfront cost against large unpredictable downstream cost; that trade only pays off when the downstream cost is real. Run the full pipeline on every script and you waste effort. Skip it on a serious system and you take on risk it was designed to reduce. The user judges where the line falls.</p>
+
+  <h2>And you need people</h2>
+
+  <p>GVM doesn't replace roles. It shifts them from production to judgement. Business analysts still drive requirements &mdash; but instead of writing them from scratch, they're refining and approving what the AI drafted. Engineers still own the architecture &mdash; but instead of writing every line, they're making the design decisions and evaluating whether the generated code is right. QA still verifies &mdash; but against test cases the pipeline already traced to requirements. The same roles, operating at the speed of AI, spending their time on the decisions that require judgement while the AI handles the production at a speed they never could.</p>
+
+  <p>GVM is available now. The full argument, experimental results, and limitations are in the whitepapers. We've included what we got wrong alongside what we got right, because a methodology that hasn't been tested against its own failures isn't a methodology &mdash; it's a sales pitch.</p>
+
+  <div class="links">
+    <p>Start with the case study to see what this looks like in practice. Then read the whitepapers for the full argument and experimental evidence.</p>
+    <p><strong>Case study:</strong></p>
+    <ul>
+      <li><em>Building a Production Tool with GVM</em> &mdash; how the methodology built Assay: 38 requirements, 207 tests, 7 review rounds, expert patterns traceable in the production code</li>
+    </ul>
+    <p><strong>Whitepapers:</strong></p>
+    <ul>
+      <li><em>The Grounded Vibe Methodology</em> &mdash; the full methodology, expert model, experiment, and analysis</li>
+      <li><em>Well-Engineered Software Needs an End-to-End Pipeline</em> &mdash; the structural decisions and durable artefacts that distinguish the GVM pipeline</li>
+      <li><em>Grounding Produces Measurably Better Output</em> &mdash; the experiment: 180 dashboards, three models, 1,080 blind reviews, dose-response results</li>
+      <li><em>Why Citation-Based Activation Works</em> &mdash; the transformer-level mechanism: why naming an expert changes what the model produces</li>
+      <li><em>Verifying AI-Generated Code</em> &mdash; testing strategy: property-based testing, mutation testing, security testing, stack-aware tooling</li>
+    </ul>
+  </div>
+
+</body>
+</html>

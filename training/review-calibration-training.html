@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Calibration Training</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: "ET Book", Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      color: #111;
+      background: #fffff8;
+      line-height: 1.6;
+      padding: 2rem 1rem 6rem;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; color: #111; }
+    h2 { font-size: 1.5rem; font-weight: 400; font-style: italic; margin-top: 3rem; margin-bottom: 1rem; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.6rem; color: #333; }
+    p, li { font-size: 1rem; line-height: 1.7; margin-bottom: 0.8rem; max-width: 640px; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    li { margin-bottom: 0.4rem; }
+    .subtitle { font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 2.5rem; max-width: 640px; }
+    .date { font-size: 0.9rem; color: #888; margin-bottom: 0.2rem; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    nav.toc { position: fixed; top: 2rem; left: 2rem; width: 220px; max-height: calc(100vh - 4rem); overflow-y: auto; background: #fffff8; border-right: 2px solid #ddd; padding: 1rem 1rem 1rem 0; font-size: 0.82rem; line-height: 1.6; z-index: 100; }
+    nav.toc .toc-title { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 0.6rem; }
+    nav.toc a { color: #555; text-decoration: none; display: block; padding: 0.15rem 0; transition: color 0.15s; }
+    nav.toc a:hover { color: #111; }
+    nav.toc a.active { color: #111; font-weight: 600; }
+    nav.toc .toc-h3 { padding-left: 0.8rem; font-size: 0.78rem; color: #888; }
+    main { margin-left: 260px; }
+
+    code {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 0.88rem;
+      background: #f0f0e8;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .callout {
+      background: #f7f7f0;
+      border-left: 3px solid #999;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .callout-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .callout.key-finding {
+      background: #fdf0ef;
+      border-left: 3px solid #a00000;
+    }
+
+    .callout.key-finding .callout-label {
+      color: #a00000;
+    }
+
+    .practice {
+      background: #f0f5f0;
+      border-left: 3px solid #27ae60;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .practice-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #27ae60;
+      margin-bottom: 0.3rem;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      width: auto;
+      min-width: 480px;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      padding: 0.5rem 1rem 0.5rem 0;
+      border-bottom: 2px solid #333;
+      color: #111;
+    }
+
+    tbody td {
+      padding: 0.45rem 1rem 0.45rem 0;
+      border-bottom: 1px solid #e8e8e8;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 2px solid #333; }
+    tbody tr:nth-child(even) { background: #f9f9f4; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .verdict-example {
+      border: 2px solid #333;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      max-width: 640px;
+    }
+
+    .verdict-example.ready { border-color: #27ae60; background: #f0faf4; }
+    .verdict-example.caveats { border-color: #e67e22; background: #fef8f0; }
+    .verdict-example.not-ready { border-color: #c0392b; background: #fdf0ef; }
+
+    .verdict-example-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .verdict-example-text {
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin-bottom: 0.3rem;
+    }
+
+    .verdict-example.ready .verdict-example-text { color: #27ae60; }
+    .verdict-example.caveats .verdict-example-text { color: #e67e22; }
+    .verdict-example.not-ready .verdict-example-text { color: #c0392b; }
+
+    .issue-example {
+      border-left: 3px solid;
+      padding: 0.6rem 1rem;
+      margin: 0.6rem 0;
+      max-width: 640px;
+      font-size: 0.92rem;
+    }
+
+    .issue-example.critical { border-left-color: #c0392b; background: #fdf0ef; }
+    .issue-example.important { border-left-color: #e67e22; background: #fef8f0; }
+    .issue-example.minor { border-left-color: #7f8c8d; background: #f7f7f4; }
+
+    .sidenote {
+      float: right;
+      clear: right;
+      width: 220px;
+      margin-right: -260px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #666;
+      padding-left: 1rem;
+      border-left: 2px solid #e0e0e0;
+    }
+
+    @media (max-width: 1200px) {
+      nav.toc { position: static; width: 100%; max-height: none; border-right: none; border-bottom: 1px solid #ddd; padding: 1rem 0; margin-bottom: 2rem; }
+      main { margin-left: 0; }
+      .sidenote { float: none; width: 100%; margin: 0.8rem 0; padding: 0.6rem 0 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toc" id="toc">
+    <div class="toc-title">Contents</div>
+  </nav>
+
+  <main>
+    <p class="date">April 2026</p>
+    <h1>Review Calibration Training</h1>
+    <p class="subtitle">How GVM reviews get more precise over time &mdash; progressive calibration, dual review, build check promotion, and how to read and act on review reports.</p>
+
+    <h2 id="learning-objectives">What you will be able to do</h2>
+
+    <ol>
+      <li>Explain how progressive calibration improves reviews across rounds</li>
+      <li>Read a review report: interpret scores, findings, and verdicts</li>
+      <li>Understand why dual review exists and what it catches</li>
+      <li>Decide when to push back on a finding vs accept it</li>
+      <li>Understand how recurring findings become build checks</li>
+    </ol>
+
+    <h2 id="why-calibration">The problem with one-shot reviews</h2>
+
+    <p>Most AI code review tools treat every review as independent. The tenth review of a codebase discovers the same issues as the first. Nothing remembers what was resolved. Nothing tracks which dimensions are improving. Nothing accumulates project-specific knowledge.</p>
+
+    <p>The result is inconsistent reviews. An AI reviewer that scored your error handling 8/10 yesterday might score the same code 6/10 today &mdash; not because the code changed, but because the reviewer has no memory of yesterday's assessment. Deming called this measurement system variation: the gauge varies, so you can't tell whether changes in the score are real.</p>
+
+    <h2 id="progressive">How progressive calibration works</h2>
+
+    <p>GVM reviews accumulate knowledge in a calibration file (<code>reviews/calibration.md</code>). Each round adds to it. The file tracks:</p>
+
+    <ul>
+      <li><strong>Score history</strong> &mdash; per-dimension scores across rounds, so you can see trends</li>
+      <li><strong>Anchor examples</strong> &mdash; the 2 best and 2 worst concrete examples per dimension from your project. These ground the reviewer in what "good" and "bad" actually look like in your codebase, not in the abstract.</li>
+      <li><strong>Recurring findings</strong> &mdash; issues that appear in 2 or more consecutive rounds</li>
+      <li><strong>Resolved findings</strong> &mdash; issues from prior rounds confirmed fixed</li>
+    </ul>
+
+    <p>On round 1, the reviewer has only expert principles: "McConnell says functions should have 3 or fewer parameters." By round 3, the reviewer has project context: "McConnell says 3 or fewer parameters. In this project, the auth module averages 2.1 (good); the search module averages 4.8 (flagged in rounds 1 and 2, partially fixed in round 2)."</p>
+
+    <div class="callout">
+      <div class="callout-label">The feedback loop</div>
+      <p>Round 1: expert principles only &rarr; review &rarr; scores + anchors &rarr; create calibration.<br>
+      Round 2: expert principles + calibration &rarr; review &rarr; append scores, update anchors &rarr; update calibration.<br>
+      Round N: expert principles + calibration &rarr; review &rarr; append scores, curate anchors &rarr; update calibration.</p>
+    </div>
+
+    <h2 id="reading-reports">Reading a review report</h2>
+
+    <h3 id="score-card">The score card</h3>
+
+    <p>Every review report opens with an overall score and per-dimension scores. The score reflects quality relative to what the loaded experts would expect, on a 0&ndash;10 scale:</p>
+
+    <table>
+      <thead>
+        <tr><th>Score</th><th>Meaning</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num">9&ndash;10</td><td>Publication quality. Could be used as a teaching example.</td></tr>
+        <tr><td class="num">7&ndash;8</td><td>Strong. Minor issues that don't affect usability.</td></tr>
+        <tr><td class="num">5&ndash;6</td><td>Adequate. Some issues that should be addressed.</td></tr>
+        <tr><td class="num">3&ndash;4</td><td>Weak. Significant gaps that will cause problems.</td></tr>
+        <tr><td class="num">1&ndash;2</td><td>Incomplete. Missing critical content.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="verdict">The verdict</h3>
+
+    <p>After the score card, the verdict tells you whether the artefact is ready for its next use. Three tiers:</p>
+
+    <div class="verdict-example ready">
+      <div class="verdict-example-label">Verdict</div>
+      <div class="verdict-example-text">Merge</div>
+      <p style="font-size: 0.88rem; color: #555;">0 critical, 2 minor. All fixable without restructuring.</p>
+    </div>
+
+    <div class="verdict-example caveats">
+      <div class="verdict-example-label">Verdict</div>
+      <div class="verdict-example-text">Merge with caveats</div>
+      <p style="font-size: 0.88rem; color: #555;">0 critical, 5 important. Error handling in the retry module needs attention before production load.</p>
+    </div>
+
+    <div class="verdict-example not-ready">
+      <div class="verdict-example-label">Verdict</div>
+      <div class="verdict-example-text">Do not merge</div>
+      <p style="font-size: 0.88rem; color: #555;">2 critical: budget race condition allows overspend; streaming path uses wrong API call pattern.</p>
+    </div>
+
+    <span class="sidenote">The verdict language changes by artefact type: Merge/Do not merge (code), Publish/Do not publish (documents), Build from this/Do not build (designs), Ship/Do not ship (user docs).</span>
+
+    <h3 id="findings">Findings</h3>
+
+    <p>Findings are categorised into three tiers by severity:</p>
+
+    <div class="issue-example critical">
+      <strong>Critical:</strong> Must fix. Blocks the pipeline. Missing requirements, security vulnerabilities, contradictory specs. Example: "Budget enforcement has a race condition &mdash; concurrent tasks can exceed the limit because <code>record()</code> and <code>check_budget()</code> are separate calls."
+    </div>
+
+    <div class="issue-example important">
+      <strong>Important:</strong> Should fix soon. Weakens quality but doesn't block. Example: "Provider names defined in both <code>factory.py</code> and <code>config.py</code> &mdash; single source of truth violation."
+    </div>
+
+    <div class="issue-example minor">
+      <strong>Minor:</strong> Nice to improve. Polish items. Example: "Test names use mechanism format (<code>test_config_loading</code>) rather than behaviour format (<code>test_invalid_yaml_raises_clear_error</code>)."
+    </div>
+
+    <p>Every finding cites a specific location (file and line) and the expert principle that identified it. This traceability is important: if you disagree with a finding, you can evaluate the expert's principle directly rather than arguing with an opaque judgement.</p>
+
+    <div class="practice">
+      <div class="practice-label">Practice 1: Classify a finding</div>
+      <p>A code review finds: "The <code>AuditLogger</code> class has <code>__enter__</code> and <code>__exit__</code> methods but callers use bare instantiation instead of <code>with</code> statements."</p>
+      <p>Is this critical, important, or minor? Why?</p>
+      <p><strong>Answer:</strong> Important. The resource lifecycle is implemented but not enforced by callers. It won't crash the application (the logger works without <code>with</code>), but it means file handles may not be properly closed on errors &mdash; a real problem under load. Not critical because it doesn't cause data corruption or security issues.</p>
+    </div>
+
+    <h2 id="dual-review">Dual review: catching what calibration misses</h2>
+
+    <p>Progressive calibration makes reviews more precise &mdash; but it also introduces bias. A reviewer that has seen 5 rounds of your codebase develops expectations. It knows what usually scores well and focuses less on those areas. It trusts resolved findings without re-verifying. Areas that scored high in prior rounds receive less scrutiny.</p>
+
+    <p>From round 3 onwards, GVM runs two reviewers in parallel. Why round 3? Round 1 establishes the first scoring anchor; round 2 establishes a pattern of expectations. By round 3, anchoring bias has had enough history to create systematic blind spots &mdash; the point at which rater drift becomes detectable in assessment research.</p>
+
+    <p>The two reviewers:</p>
+
+    <table>
+      <thead>
+        <tr><th>Reviewer</th><th>What it receives</th><th>What it catches</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Calibrated</strong></td><td>Full project history, resolved findings, anchor examples, recurring findings</td><td>Nuanced issues that require project context to see</td></tr>
+        <tr><td><strong>Blind</strong></td><td>Same criteria and expert references, but no calibration data &mdash; sees the project fresh</td><td>Issues that calibration bias causes the calibrated reviewer to overlook</td></tr>
+      </tbody>
+    </table>
+
+    <p>After both reviewers finish, GVM reconciles their findings:</p>
+
+    <ul>
+      <li><strong>New</strong> &mdash; only the blind reviewer found it. A genuine blind spot. Merged into the report.</li>
+      <li><strong>Confirmed</strong> &mdash; both reviewers found it independently. High confidence. Kept.</li>
+      <li><strong>Regression</strong> &mdash; matches a previously resolved finding. The fix didn't stick. Merged.</li>
+      <li><strong>Rediscovered</strong> &mdash; matches a finding already in the calibrated report. Discarded.</li>
+      <li><strong>Noise</strong> &mdash; matches an acknowledged decision. Discarded.</li>
+    </ul>
+
+    <p>You see one merged report, not two. The dual review is invisible except for a "Blind Review Findings" section listing what only the blind reviewer caught.</p>
+
+    <div class="callout key-finding">
+      <div class="callout-label">Real example from the Assay build</div>
+      <p>In round 7, the calibrated panel was ready to ship. The blind reviewer found one critical issue: an <code>await</code> on an async generator that should have been iterated directly. The calibrated panel had seen similar patterns resolve correctly in prior rounds and did not flag it. Without dual review, round 7 would have shipped with a critical bug.</p>
+    </div>
+
+    <div class="practice">
+      <div class="practice-label">Practice 2: Reconcile findings</div>
+      <p>A calibrated reviewer finds 3 issues: missing error handling in retry.py, test name format in test_state.py, and a style inconsistency in config.py.</p>
+      <p>A blind reviewer finds 4 issues: missing error handling in retry.py, a budget race condition in cost.py, test name format in test_state.py, and an unused import in signals.py.</p>
+      <p>Classify each blind finding: new, confirmed, regression, rediscovered, or noise. The resolved findings list shows "budget race condition fixed in round 4."</p>
+      <p><strong>Answer:</strong></p>
+      <ul>
+        <li>Missing error handling in retry.py &mdash; <strong>confirmed</strong> (both found it)</li>
+        <li>Budget race condition in cost.py &mdash; <strong>regression</strong> (was resolved in round 4, now back)</li>
+        <li>Test name format in test_state.py &mdash; <strong>rediscovered</strong> (already in calibrated report)</li>
+        <li>Unused import in signals.py &mdash; <strong>new</strong> (only the blind reviewer caught it)</li>
+      </ul>
+      <p>The merged report includes: the 3 calibrated findings + the budget race (regression) + the unused import (new blind finding). The rediscovered test name finding is not duplicated.</p>
+    </div>
+
+    <h2 id="pushing-back">When to push back on findings</h2>
+
+    <p>Not every finding requires action. The review provides the finding and the expert principle behind it. You evaluate whether the principle applies to your context.</p>
+
+    <p>Reasons to push back:</p>
+
+    <ul>
+      <li><strong>The finding is theoretical.</strong> "If an attacker gains write access to internal config files..." &mdash; if that's outside your threat model, acknowledge it and move on.</li>
+      <li><strong>The expert principle doesn't apply.</strong> A review grounded in Fowler might flag a simple script for lacking design patterns. A 50-line utility doesn't need the Strategy pattern.</li>
+      <li><strong>The fix introduces more risk than it removes.</strong> Refactoring a working module to satisfy a minor style finding can introduce regressions.</li>
+    </ul>
+
+    <p>When you push back, the finding is recorded as "acknowledged" in the calibration file. Future reviews won't raise it again.</p>
+
+    <h3 id="six-test-gate">The six-test gate (standalone documents)</h3>
+
+    <p>Code review and document review are different problems. For code, "would a consumer fail?" is a clean test &mdash; the consumer is a downstream skill or a build pipeline. For prose (whitepapers, strategy, training, blog posts), that test is too vague. <code>/gvm-doc-review</code> applies a six-test gate before emitting a Critical or Important finding on any standalone document. A finding has to pass at least one:</p>
+
+    <ol>
+      <li><strong>Integrity</strong> &mdash; a reader who can verify the claim against a published source would find it wrong (misquote, wrong year, fabricated statistic).</li>
+      <li><strong>Misdirection (load-bearing)</strong> &mdash; a reader could form the wrong understanding of a load-bearing claim. Peripheral misdirection is Minor.</li>
+      <li><strong>Reproducibility</strong> &mdash; a researcher trying to replicate an empirical claim would lack a needed piece of information.</li>
+      <li><strong>Honesty of scope</strong> &mdash; the document claims more than its evidence supports.</li>
+      <li><strong>Audience hospitality</strong> &mdash; the document assumes reader knowledge inconsistent with its stated audience. Reader forms <em>no</em> understanding rather than wrong understanding.</li>
+      <li><strong>Cut-damage protection</strong> &mdash; if a finding recommends a cut, the cut must not damage orientation, evidence, scope-limits, or honesty disclaimers. Guard against over-trimming.</li>
+    </ol>
+
+    <p>Findings that fail all six are still recorded &mdash; as Minor <code>[POLISH]</code>. They don't block publication. The gate exists because dual review will keep finding sentence-level items indefinitely; the gate filters those out at panel-emit time so synthesis isn't drowned in polish.</p>
+
+    <h2 id="build-checks">Build check promotion</h2>
+
+    <p>Some findings keep coming back. Round after round, the review flags the same pattern. Individual fixes address individual instances, but the pattern persists because the root cause is in the process, not the code.</p>
+
+    <p>When a finding recurs in three or more consecutive rounds (or regresses after being resolved), GVM promotes it to a <strong>build check</strong> &mdash; a concrete instruction loaded into the code generation prompt under "Known Patterns to Avoid."</p>
+
+    <h3 id="tiers">Two tiers of build checks</h3>
+
+    <table>
+      <thead>
+        <tr><th>Tier</th><th>What it covers</th><th>Retirement</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Tier 1</strong> (permanent)</td><td>General engineering practice: DRY violations, resource lifecycle, single source of truth. Applies to any project.</td><td>Never retired</td></tr>
+        <tr><td><strong>Tier 2</strong> (project-specific)</td><td>Tied to a specific library, SDK, or domain convention. Example: "Anthropic streaming requires <code>async with</code>, not <code>await</code>."</td><td>Flagged for retirement after 3 quiet rounds &mdash; you decide</td></tr>
+      </tbody>
+    </table>
+
+    <p>The tier is assigned at promotion time. The test: would this check be useful on a completely different project with a different tech stack? If yes, tier 1. If it references a specific package or API, tier 2.</p>
+
+    <div class="practice">
+      <div class="practice-label">Practice 3: Classify build checks</div>
+      <p>Classify each of these as tier 1 or tier 2:</p>
+      <ol>
+        <li>"Provider names must be defined in exactly one place" (flagged 5 consecutive rounds)</li>
+        <li>"Google Gemini adapter must use <code>system_instruction</code> parameter, not concatenate system prompt into messages" (regressed after fix)</li>
+        <li>"Token summation must not be duplicated across phases" (flagged 4 consecutive rounds)</li>
+        <li>"All <code>pd.read_csv()</code> calls must use explicit file paths, not glob patterns" (regressed after fix)</li>
+      </ol>
+      <p><strong>Answers:</strong></p>
+      <ol>
+        <li>Tier 1 &mdash; single source of truth is a general principle (Hunt &amp; Thomas)</li>
+        <li>Tier 2 &mdash; specific to the Google Gemini SDK</li>
+        <li>Tier 1 &mdash; DRY principle, applies to any project with multi-phase computation</li>
+        <li>Tier 2 &mdash; specific to pandas API behaviour</li>
+      </ol>
+    </div>
+
+    <h2 id="integrity-pass">Mechanical verification: the Pre-Publication Integrity Pass</h2>
+
+    <p>Panels do judgement. They read, weigh, and decide whether something passes the gate. Judgement misses things that mechanical verification catches &mdash; and vice versa.</p>
+
+    <p>The <strong>Pre-Publication Integrity Pass</strong> is opt-in for high-stakes documents (public-facing whitepapers, signed-off strategy, anything where a credibility-killer at release would hurt). It is not a panel; it is five mechanical checks:</p>
+
+    <ol>
+      <li><strong>Direct-quotation verification</strong> &mdash; every direct quotation in the document is fetched and compared against the actual cited source. Catches misquotes (wrong wording, dropped word, wrong year).</li>
+      <li><strong>Statistic verification</strong> &mdash; every specific statistic is fetched against its cited source. Numbers that don't match the source, or aren't traceable to a source at all, are surfaced.</li>
+      <li><strong>BC-3 extended audit</strong> &mdash; every body-named author appears in References; every References entry has body citations; no duplicates; companion-papers tracked. Scope includes table cells and pipeline-phase descriptions, not only inline body prose.</li>
+      <li><strong>Title/topic match</strong> &mdash; for every external paper cited, the cited title is compared against what the source paper actually says it is about. Catches the case where the title sounds right but the paper is about something else.</li>
+      <li><strong>Edition/date precision</strong> &mdash; for every cited book, the cited edition is verified to contain the cited content. Catches the case where the quote is from edition X but the citation says edition Y.</li>
+    </ol>
+
+    <p>The pass is the complement to dual review, not a substitute. Dual review's blind panel catches what calibration misses through fresh judgement; the Integrity Pass catches what judgement misses through external verification. The two together bound the residual risk of a credibility-killer surviving to publication.</p>
+
+    <p>Run the pass after the regular round terminates and before any public release. If you make substantive prose edits afterwards, run it again.</p>
+
+    <h2 id="the-cycle">The full cycle</h2>
+
+    <p>Each review round makes the next one more precise:</p>
+
+    <ol>
+      <li><strong>Round 1</strong> &mdash; expert principles only. Finds structural problems, missing content, factual errors. Establishes baseline scores and first anchor examples.</li>
+      <li><strong>Round 2</strong> &mdash; calibrated with round 1 data. Focuses on what round 1 couldn't see because major issues were masking them. Recurring findings begin to emerge.</li>
+      <li><strong>Round 3+</strong> &mdash; dual review activates. Blind reviewer catches what calibration misses. Recurring findings eligible for build check promotion. The review system is now self-correcting.</li>
+    </ol>
+
+    <p>The methodology gets better the longer you use it. Each round feeds the next. Build checks prevent findings from recurring. Calibration narrows the focus to what actually matters in your codebase. The blind reviewer prevents calibration from developing tunnel vision.</p>
+
+    <h2 id="stopping-rule">When to stop: the stopping rule</h2>
+
+    <p>Without a stopping rule, dual review keeps surfacing sentence-level items forever. The methodology punishes its own users by continuing to find diminishing-return findings. The stopping rule converts "should we run another round?" from a feeling into a calculation.</p>
+
+    <p>A round is <strong>terminal</strong> &mdash; the document is publication-ready, further review is opt-in polish &mdash; when all four conditions hold:</p>
+
+    <ol>
+      <li><strong>Zero Critical findings</strong> on the six-test gate.</li>
+      <li><strong>Zero Important findings on the four reader-impact tests</strong> (Integrity, Misdirection-load-bearing, Reproducibility, Honesty-of-scope). Audience-hospitality and cut-damage-protection findings need attention but don't by themselves block publication.</li>
+      <li><strong>Calibrated AND blind Panel D scores both meet the document's threshold.</strong> Defaults: <strong>≥9.3</strong> for a public-facing whitepaper that names the methodology, <strong>≥9.0</strong> for a standard whitepaper or strategy doc, <strong>≥8.0</strong> for a newsletter or status report. The user can override per document.</li>
+      <li><strong>The forcing function</strong>: no more than two consecutive verification-only rounds. After two, the next round must declare publication-ready or send the document for restructure. This prevents indefinite polish loops.</li>
+    </ol>
+
+    <h3 id="design-decision-clause">The design-decision-recurrence clause</h3>
+
+    <p>Dual review by design doesn't show the blind panel prior fixes or the calibration story. Once a deliberate scoping or caveat has been added to the document, the blind panel will keep surfacing the same architectural concern as if new. Without correction, condition 3 above never triggers.</p>
+
+    <p>The clause: condition 3 is satisfied when calibrated meets the threshold AND every blind-only concern below the threshold is <em>confirmed-recurring</em> across two or more rounds AND is <em>explicitly addressed</em> in the document by caveat, scope-disclaimer, or design-decision documentation. The practitioner declares which specific blind concerns are design-decision-documented and where the documentation lives, in the calibration row's stopping-rule notes.</p>
+
+    <p>The clause exists because documents that have done the work of scoping their claims should not be punished by a stopping rule that requires the blind panel to forget them.</p>
+
+    <h2 id="summary">Key takeaways</h2>
+
+    <ul>
+      <li><strong>Reviews improve across rounds</strong> &mdash; calibration accumulates project-specific knowledge</li>
+      <li><strong>Dual review from round 3</strong> &mdash; catches what calibration systematically misses</li>
+      <li><strong>The six-test gate (standalone documents)</strong> &mdash; Integrity, Misdirection-load-bearing, Reproducibility, Honesty-of-scope, Audience-hospitality, Cut-damage-protection. Polish-only findings stay Minor.</li>
+      <li><strong>The Pre-Publication Integrity Pass</strong> &mdash; mechanical verification (quotes, statistics, citations, titles, editions) that complements judgement-based panels for high-stakes documents</li>
+      <li><strong>The stopping rule terminates the cycle</strong> &mdash; zero Critical, zero reader-impact Important, calibrated and blind both at threshold, max two consecutive verification-only rounds. The design-decision-recurrence clause prevents documents that have already absorbed honest scoping from being punished by recurring blind concerns.</li>
+      <li><strong>Verdicts are clear decisions</strong> &mdash; ready, ready with caveats, or not ready; publication-ready when the stopping rule is satisfied</li>
+      <li><strong>Findings cite expert principles</strong> &mdash; you can evaluate the principle, not just the judgement</li>
+      <li><strong>Recurring findings become build checks</strong> &mdash; the process learns from its own history</li>
+      <li><strong>Tier 1 checks are permanent</strong> &mdash; general practice that applies everywhere</li>
+      <li><strong>Tier 2 checks require your approval to retire</strong> &mdash; you decide what stays</li>
+    </ul>
+
+  </main>
+
+  <script>
+  (function () {
+    const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+    const links = [];
+    headings.forEach(function (h) {
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.classList.add('toc-h3');
+      toc.appendChild(a);
+      links.push({ el: a, target: h });
+    });
+    function onScroll() {
+      let current = links[0];
+      for (let i = 0; i < links.length; i++) {
+        if (links[i].target.getBoundingClientRect().top <= 80) current = links[i];
+      }
+      links.forEach(function (l) { l.el.classList.remove('active'); });
+      if (current) {
+        current.el.classList.add('active');
+        const tocEl = document.getElementById('toc');
+        const elTop = current.el.offsetTop - tocEl.offsetTop;
+        const elBot = elTop + current.el.offsetHeight;
+        if (elTop < tocEl.scrollTop || elBot > tocEl.scrollTop + tocEl.clientHeight) {
+          tocEl.scrollTop = elTop - tocEl.clientHeight / 2;
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
+</body>
+</html>
