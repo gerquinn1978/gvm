@@ -526,11 +526,11 @@ code {
     <h2 id="related-work"><span class="section-num">2.</span> Adjacent Approaches Lack Citation-Based Grounding</h2>
     <!-- ============================================================ -->
 
-    <p>GVM draws on and extends several adjacent movements in AI-assisted software development.</p>
+    <p>GVM addresses the same problem space as several adjacent movements in AI-assisted software development. This section maps where it agrees with each one and where it differs.</p>
 
     <h3 id="sdd"><span class="section-num">2.1</span> SDD Structures What to Build, Not How to Reason About It</h3>
 
-    <p>Spec-Driven Development, championed by Thoughtworks (Technology Radar), with related tooling emerging from GitHub (Copilot Workspace) and AWS (Kiro, an AI-assisted IDE that uses spec-driven workflows), focuses on writing structured specifications before code generation. GVM shares SDD&rsquo;s pipeline structure and extends it with a grounding layer. SDD tells the AI <em>what</em> to build; GVM also tells it <em>how to reason</em> about the work.</p>
+    <p>Spec-Driven Development, championed by Thoughtworks (Technology Radar), with related tooling emerging from GitHub (Copilot Workspace) and AWS (Kiro, an AI-assisted IDE that uses spec-driven workflows), focuses on writing structured specifications before code generation. GVM and SDD both have a pipeline structure and differ on what each adds inside it. SDD tells the AI <em>what</em> to build; GVM also tells it <em>how to reason</em> about the work.</p>
 
     <div class="comparison">
       <div class="comparison-side before">
@@ -557,13 +557,13 @@ code {
 
     <h3 id="bmad"><span class="section-num">2.2</span> BMAD Simulates Roles but Does Not Ground Them in Published Frameworks</h3>
 
-    <p>The Breakthrough Method for Agile AI-Driven Development simulates a full agile team through role-based agent orchestration &mdash; Analyst, Architect, Developer, QA. It is the most complete open methodology available, with quality gates, ATDD workflows, a course-correction workflow for mid-sprint changes, and brownfield support for existing codebases. GVM shares the multi-role concept and takes it further: where BMAD assigns roles like &ldquo;Architect,&rdquo; GVM assigns <strong>named experts with cited works</strong> &mdash; Clements + Brown + Fairbanks + Keeling + Brooks, each bringing a distinct, documented framework. The roles become specific people with specific bodies of knowledge.</p>
+    <p>The Breakthrough Method for Agile AI-Driven Development simulates a full agile team through role-based agent orchestration &mdash; Analyst, Architect, Developer, QA. It is the most complete open methodology available, with quality gates, ATDD workflows, a course-correction workflow for mid-sprint changes, and brownfield support for existing codebases. GVM also uses multi-role machinery and differs on what fills each role: where BMAD assigns roles like &ldquo;Architect,&rdquo; GVM assigns <strong>named experts with cited works</strong> &mdash; Clements + Brown + Fairbanks + Keeling + Brooks, each bringing a distinct, documented framework. The roles become specific people with specific bodies of knowledge.</p>
 
     <h3 id="role-prompting"><span class="section-num">2.3</span> Role Prompting Activates One Persona; GVM Assembles Competing Panels</h3>
 
-    <span class="sidenote">Salewski et al. (NeurIPS 2023, &ldquo;In-Context Impersonation Reveals Large Language Models&rsquo; Strengths and Biases&rdquo;) and Kong et al. (2024, &ldquo;Better Zero-Shot Reasoning with Role-Play Prompting&rdquo;) document role prompting&rsquo;s measurable effect on output &mdash; GVM goes further by assembling panels rather than single personas.</span>
+    <span class="sidenote">Salewski et al. (NeurIPS 2023, &ldquo;In-Context Impersonation Reveals Large Language Models&rsquo; Strengths and Biases&rdquo;) and Kong et al. (2024, &ldquo;Better Zero-Shot Reasoning with Role-Play Prompting&rdquo;) document role prompting&rsquo;s measurable effect on output &mdash; GVM uses multi-expert panels rather than single personas.</span>
 
-    <p>The most common technique for improving AI output is role prompting: &ldquo;Act as a senior TypeScript developer&rdquo; or &ldquo;You are Kent Beck.&rdquo; Role prompting activates a single perspective. GVM extends this to dynamically assembled, multi-expert panels with curated reference materials loaded at the phase where they are needed.</p>
+    <p>The most common technique for improving AI output is role prompting: &ldquo;Act as a senior TypeScript developer&rdquo; or &ldquo;You are Kent Beck.&rdquo; Role prompting activates a single perspective. GVM uses dynamically assembled, multi-expert panels with curated reference materials loaded at the phase where they are needed.</p>
 
     <h3 id="rag"><span class="section-num">2.4</span> RAG Retrieves Documents Probabilistically; GVM Activates Frameworks Through Phase-Keyed Rules</h3>
 
@@ -603,79 +603,8 @@ code {
 
     <p>Citations are not just retrieval keys &mdash; they are <strong>extreme compression</strong>. A single sentence like &ldquo;apply Tufte and Few&rsquo;s principles when designing this dashboard&rdquo; encapsulates an entire body of work: data-ink ratio maximisation, chartjunk elimination, small multiples, table design with minimal gridlines, right-aligned numbers, subtle zebra striping, sparklines for inline trends, and dozens of other specific techniques drawn from multiple books spanning decades of research.</p>
 
-    <svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" style="max-width: 960px; margin: 2rem 0 2.5rem; display: block;">
-      <rect width="1200" height="420" fill="#fffff8"/>
-
-      <!-- LEFT: Expert Works (bookshelf) -->
-      <text x="120" y="28" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="15" fill="#888" font-style="italic">Expert Works</text>
-
-      <!-- Books -->
-      <rect x="15" y="44" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
-      <text x="120" y="63" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">Software Testing Techniques</text>
-      <text x="120" y="78" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Beizer &mdash; 550 pages</text>
-
-      <rect x="15" y="90" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
-      <text x="120" y="109" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">Visual Display of Quant. Info</text>
-      <text x="120" y="124" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Tufte &mdash; 197 pages</text>
-
-      <rect x="15" y="136" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
-      <text x="120" y="155" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">Show Me the Numbers</text>
-      <text x="120" y="170" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Few &mdash; 351 pages</text>
-
-      <rect x="15" y="182" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
-      <text x="120" y="201" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">Just Enough Architecture</text>
-      <text x="120" y="216" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Fairbanks &mdash; 376 pages</text>
-
-      <rect x="15" y="228" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
-      <text x="120" y="247" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">Designing Data-Intensive Apps</text>
-      <text x="120" y="262" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Kleppmann &mdash; 614 pages</text>
-
-      <rect x="15" y="274" width="210" height="40" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
-      <text x="120" y="293" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#444">The Mythical Man-Month</text>
-      <text x="120" y="308" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="10" fill="#999">Brooks &mdash; 322 pages</text>
-
-      <!-- Total -->
-      <text x="120" y="345" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="14" fill="#888" font-weight="600">~2,410 pages</text>
-
-      <!-- ARROW: absorbed -->
-      <line x1="240" y1="195" x2="330" y2="195" stroke="#bbb" stroke-width="2" marker-end="url(#arrowGrey)"/>
-      <text x="285" y="180" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="11" fill="#999">absorbed</text>
-      <text x="285" y="193" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="11" fill="#999">during</text>
-      <text x="285" y="206" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="11" fill="#999">training</text>
-
-      <!-- CENTRE: AI Model -->
-      <rect x="345" y="145" width="165" height="100" rx="5" fill="#f0f0e8" stroke="#999" stroke-width="2"/>
-      <text x="428" y="185" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333" font-weight="600">AI Model</text>
-      <text x="428" y="207" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="12" fill="#888">Knowledge encoded</text>
-      <text x="428" y="222" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="12" fill="#888">in parameters</text>
-
-      <!-- ARROW: activated by -->
-      <line x1="525" y1="195" x2="615" y2="195" stroke="#669" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
-      <text x="570" y="183" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="12" fill="#669" font-weight="600">activated by</text>
-
-      <!-- The Citation -->
-      <rect x="630" y="140" width="220" height="110" rx="5" fill="#fff" stroke="#669" stroke-width="2.5"/>
-      <text x="740" y="166" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="12" fill="#669" font-weight="600" letter-spacing="0.05em">ONE SENTENCE</text>
-      <text x="740" y="192" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#333" font-style="italic">&ldquo;Apply Tufte and Few&rsquo;s</text>
-      <text x="740" y="210" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#333" font-style="italic">principles when designing</text>
-      <text x="740" y="228" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#333" font-style="italic">this dashboard.&rdquo;</text>
-
-      <!-- ARROW: produces -->
-      <line x1="865" y1="195" x2="930" y2="195" stroke="#27ae60" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
-      <text x="898" y="183" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="11" fill="#27ae60" font-weight="600">produces</text>
-
-      <!-- Focused Output -->
-      <rect x="945" y="110" width="240" height="175" rx="5" fill="#f0fff0" stroke="#27ae60" stroke-width="2"/>
-      <text x="1065" y="137" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="13" fill="#27ae60" font-weight="600">FOCUSED OUTPUT</text>
-      <text x="965" y="162" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Data-ink ratio maximised</text>
-      <text x="965" y="180" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; No chartjunk</text>
-      <text x="965" y="198" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Small multiples</text>
-      <text x="965" y="216" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Minimal gridlines</text>
-      <text x="965" y="234" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Right-aligned numbers</text>
-      <text x="965" y="252" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Zebra striping</text>
-      <text x="965" y="270" font-family="Palatino, Georgia, serif" font-size="12" fill="#666">&#x2713; Sparklines &bull; + more</text>
-
-      <!-- Arrow markers -->
+    <figure style="margin: 2rem 0 2.5rem; max-width: 1000px;">
+    <svg viewBox="0 0 1100 1140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The compression mechanism: 2,054 pages of Tufte and Few activated by a single sentence" style="width:100%;height:auto;">
       <defs>
         <marker id="arrowGrey" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
           <path d="M0,0 L10,4 L0,8" fill="none" stroke="#bbb" stroke-width="1.5"/>
@@ -688,9 +617,95 @@ code {
         </marker>
       </defs>
 
-      <!-- Caption -->
-      <text x="600" y="400" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="14" fill="#888" font-style="italic">Figure 1 &mdash; The compression mechanism: ~2,410 pages of expert knowledge activated by a single sentence</text>
+      <rect width="1100" height="1140" fill="#fffff8"/>
+
+      <!-- BOOKSHELF: 2 cols (Tufte left, Few right) x 5 rows (last right cell empty) -->
+      <text x="550" y="32" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="22" font-style="italic" fill="#666">Tufte &amp; Few &mdash; published works</text>
+
+      <!-- Column headers -->
+      <text x="280" y="56" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="18" font-style="italic" fill="#888">Edward Tufte</text>
+      <text x="820" y="56" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="18" font-style="italic" fill="#888">Stephen Few</text>
+
+      <!-- Row 1 (y=70-135) -->
+      <rect x="15" y="70" width="530" height="65" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="280" y="98" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">The Visual Display of Quantitative Information</text>
+      <text x="280" y="120" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="16" fill="#888">2nd ed. 2001 &mdash; 199 pages</text>
+
+      <rect x="555" y="70" width="530" height="65" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="820" y="98" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">Show Me the Numbers</text>
+      <text x="820" y="120" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="16" fill="#888">2nd ed. 2012 &mdash; 371 pages</text>
+
+      <!-- Row 2 (y=145-210) -->
+      <rect x="15" y="145" width="530" height="65" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="280" y="173" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">Envisioning Information</text>
+      <text x="280" y="195" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="16" fill="#888">1990 &mdash; 126 pages</text>
+
+      <rect x="555" y="145" width="530" height="65" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="820" y="173" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">Information Dashboard Design</text>
+      <text x="820" y="195" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="16" fill="#888">2nd ed. 2013 &mdash; 260 pages</text>
+
+      <!-- Row 3 (y=220-285) -->
+      <rect x="15" y="220" width="530" height="65" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="280" y="248" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">Visual Explanations</text>
+      <text x="280" y="270" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="16" fill="#888">1997 &mdash; 156 pages</text>
+
+      <rect x="555" y="220" width="530" height="65" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="820" y="248" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">Now You See It</text>
+      <text x="820" y="270" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="16" fill="#888">2009 &mdash; 329 pages</text>
+
+      <!-- Row 4 (y=295-360) -->
+      <rect x="15" y="295" width="530" height="65" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="280" y="323" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">Beautiful Evidence</text>
+      <text x="280" y="345" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="16" fill="#888">2006 &mdash; 213 pages</text>
+
+      <rect x="555" y="295" width="530" height="65" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="820" y="323" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">Signal</text>
+      <text x="820" y="345" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="16" fill="#888">2015 &mdash; 225 pages</text>
+
+      <!-- Row 5 left only (Tufte has 5, Few has 4) -->
+      <rect x="15" y="370" width="530" height="65" rx="3" fill="#f7f7f0" stroke="#ccc" stroke-width="1"/>
+      <text x="280" y="398" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">Seeing with Fresh Eyes</text>
+      <text x="280" y="420" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="16" fill="#888">2020 &mdash; 176 pages</text>
+
+      <!-- Total -->
+      <text x="550" y="465" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="22" fill="#444" font-weight="600">2,054 pages total</text>
+
+      <!-- ARROW 1: absorbed during training -->
+      <line x1="550" y1="490" x2="550" y2="545" stroke="#bbb" stroke-width="2" marker-end="url(#arrowGrey)"/>
+      <text x="570" y="522" font-family="Palatino, Georgia, serif" font-size="17" fill="#888">absorbed during training</text>
+
+      <!-- AI MODEL box -->
+      <rect x="375" y="560" width="350" height="100" rx="5" fill="#f0f0e8" stroke="#999" stroke-width="2"/>
+      <text x="550" y="600" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="24" font-weight="600" fill="#333">AI Model</text>
+      <text x="550" y="635" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="17" fill="#666">Knowledge encoded in parameters</text>
+
+      <!-- ARROW 2: activated by -->
+      <line x1="550" y1="675" x2="550" y2="730" stroke="#669" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+      <text x="570" y="707" font-family="Palatino, Georgia, serif" font-size="17" fill="#669" font-weight="600">activated by</text>
+
+      <!-- ONE SENTENCE box -->
+      <rect x="275" y="745" width="550" height="135" rx="5" fill="#fff" stroke="#669" stroke-width="2.5"/>
+      <text x="550" y="775" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="18" fill="#669" font-weight="600" letter-spacing="0.05em">ONE SENTENCE</text>
+      <text x="550" y="808" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="19" fill="#333" font-style="italic">&ldquo;Apply Tufte and Few&rsquo;s principles</text>
+      <text x="550" y="835" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="19" fill="#333" font-style="italic">when designing this dashboard.&rdquo;</text>
+
+      <!-- ARROW 3: produces -->
+      <line x1="550" y1="895" x2="550" y2="950" stroke="#27ae60" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+      <text x="570" y="927" font-family="Palatino, Georgia, serif" font-size="17" fill="#27ae60" font-weight="600">produces</text>
+
+      <!-- FOCUSED OUTPUT box -->
+      <rect x="200" y="965" width="700" height="160" rx="5" fill="#f0fff0" stroke="#27ae60" stroke-width="2"/>
+      <text x="550" y="997" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="19" fill="#27ae60" font-weight="600">FOCUSED OUTPUT</text>
+      <text x="240" y="1030" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">&#x2713; Data-ink ratio maximised</text>
+      <text x="600" y="1030" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">&#x2713; Tables: right-aligned numbers</text>
+      <text x="240" y="1058" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">&#x2713; Chartjunk eliminated</text>
+      <text x="600" y="1058" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">&#x2713; Subtle gridlines, zebra striping</text>
+      <text x="240" y="1086" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">&#x2713; Small multiples</text>
+      <text x="600" y="1086" font-family="Palatino, Georgia, serif" font-size="17" fill="#333">&#x2713; Sparklines for inline trends</text>
+      <text x="550" y="1115" text-anchor="middle" font-family="Palatino, Georgia, serif" font-size="16" fill="#888" font-style="italic">+ dozens of related techniques</text>
     </svg>
+    <figcaption style="font-size:0.9rem;color:#666;font-style:italic;text-align:center;margin-top:0.6rem;line-height:1.5;">Figure 1 &mdash; The compression mechanism: 2,054 pages of Tufte and Few absorbed during training (grey), activated by a single sentence (blue), produce focused output (green).</figcaption>
+    </figure>
 
     <span class="sidenote">A useful intuition: the cost of writing the book is the expert&rsquo;s; the cost of training on it is the model provider&rsquo;s; the cost of activating it is one sentence on the practitioner&rsquo;s side. The asymmetry is the source of the compensation question raised in &sect;8.</span>
 

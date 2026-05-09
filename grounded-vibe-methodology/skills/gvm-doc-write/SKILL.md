@@ -37,6 +37,8 @@ In standalone mode, `/gvm-doc-write` has no pipeline position — it can be invo
 
 5. **HTML BEFORE APPROVAL.** Write HTML for every major section written incrementally. If the user answered Yes in step 5 (ASK ABOUT MD VERSION), also write the matching MD section immediately after each HTML section. If the user answered No or the question was skipped (presentations), write HTML only. Before presenting any section for approval, the HTML for that section must exist. The user reads the HTML to evaluate the document. Exception: presentations are HTML-only (per Key Rule 8) — this gate applies to HTML completeness only; no MD check is performed for presentations.
 
+6. **LOAD `domain/diagramming.md` BEFORE DRAFTING ANY SVG FIGURE.** This applies to every SVG: quadrant diagrams, small multiples, comparison frames, axis charts, flow diagrams, network diagrams, state machines — anything in `<svg>` tags, not just network/state diagrams. Do not treat ad-hoc figures as freehand drawing governed by general Tufte/Few intuition. Before writing any `<svg>` element, the file `~/.claude/skills/gvm-design-system/references/domain/diagramming.md` MUST be loaded. After drafting each figure, run the 18-rule checklist from that file against the SVG before declaring the figure done. The most common failures are rule 9 (text below the effective-pixel floor at the figure's `max-width`), rule 17 (redundant labels duplicating axis information), and rule 18 (HTML `<table>` with prose-stuffed cells, which is a comparison figure pretending to be a table). When figures are added during Revise mode, this gate fires too — the diagramming reference must be loaded for figure additions even when prose was already drafted.
+
 ## Document Types
 
 | Type | Expert Roster | Output Format |
@@ -132,7 +134,22 @@ If no branding file exists, use the default design system styling. Never ask the
    ├── Audience — who will read/view this? (Minto: the reader's knowledge determines the structure)
    ├── Purpose — what should the reader do or know after? (Doumont: answer "so what?" at every level)
    ├── Scope — how detailed? Key points to cover?
-   ├── For presentations: approximate slide count, delivery context (live, async, print)
+   ├── For presentations:
+   │   ├── **Presentation type** (load `domain/presentation-design.md` "Presentation Types"
+   │   │   section before asking, so the options are expert-grounded). Ask via
+   │   │   AskUserQuestion with the canonical types as options:
+   │   │   ├── "Inform / explain — introducing something new" (Doumont/Atkinson/Duarte)
+   │   │   ├── "Persuade / get approval — asking for a decision" (Duarte/Atkinson/McKee)
+   │   │   ├── "Update / status report — what changed since last time" (Doumont/Few/Tufte)
+   │   │   ├── "Teach / train — knowledge transfer, audience leaves able to do something" (Clark & Mayer/Dirksen)
+   │   │   ├── "Inspire / keynote — motivate around an idea" (McKee/Duarte)
+   │   │   └── "Other / hybrid — describe in one sentence"
+   │   │   The type drives the structural shape, default visual mix, and slide-count
+   │   │   guidance. Do NOT default to "Inform" silently — the wrong type produces
+   │   │   a deck with the right facts in the wrong shape.
+   │   ├── Approximate slide count (also informed by the type — see `domain/presentation-design.md`
+   │   │   Type-specific defaults)
+   │   └── Delivery context (live, async, print)
    └── For strategy: what decision is this informing?
 
 3. LOAD EXPERTS
@@ -142,7 +159,7 @@ If no branding file exists, use the default design system styling. Never ask the
    ├── Read type-specific domain file(s) if a typed document (e.g., domain/presentation-design.md, domain/strategy.md)
    ├── Assess document content/topic for additional expert needs:
    │   ├── Data presentation? → load domain/data-presentation.md
-   │   ├── Diagrams? → load domain/diagramming.md
+   │   ├── Any SVG figure (diagrams, quadrants, small multiples, comparison frames, charts with axes)? → load domain/diagramming.md (per Hard Gate 6)
    │   ├── Security topic? → load domain/security.md
    │   ├── Specific industry domain? → load matching industry file (per shared rule 4)
    │   └── Any domain without expert coverage? → discover experts per shared rule 2
@@ -168,6 +185,55 @@ If no branding file exists, use the default design system styling. Never ask the
        └── No → write HTML only
        Default: No (HTML-only) unless the user explicitly says Yes.
 
+5b. CHECKPOINT GATES (presentations only — applies before and during step 6)
+
+   Presentations are atomic per-slide and visual issues compound. The single
+   structure-approval at step 4 is too coarse for ~30+ slide decks. Add three
+   checkpoints. For non-presentation document types, skip 5b entirely — their
+   sequential prose is easier for the user to scan after the fact.
+
+   ├── 5b.i — SLIDE OUTLINE CONFIRMATION (before any slide content is written)
+   │   ├── Produce a slide-by-slide outline: for each slide, one row with
+   │   │   (slide N, headline-as-sentence, slide type from Decision Guide,
+   │   │   one-line intent). Present as a compact table.
+   │   ├── Ask via AskUserQuestion: "Outline approved? Edit titles, change
+   │   │   slide types, drop, or add slides before content is written."
+   │   ├── Options:
+   │   │   ├── "Approved — start writing"
+   │   │   ├── "Revise outline" → user states changes, redo the outline
+   │   │   └── "Drop or add specific slides" → apply edits, re-confirm
+   │   └── DO NOT write slide content until the outline is approved.
+   │
+   ├── 5b.ii — FIRST DIAGRAM CHECKPOINT (when the outline contains diagrams)
+   │   ├── If the approved outline includes any diagram slides, write the
+   │   │   FIRST diagram slide in full (HTML + SVG) and present it.
+   │   ├── Ask via AskUserQuestion: "First diagram looks right? The other
+   │   │   diagrams will use the same style and sizing approach."
+   │   ├── Options:
+   │   │   ├── "Looks good — continue with the rest"
+   │   │   ├── "Adjust style/sizing" → user states what to change; revise
+   │   │   │   the first diagram; re-present
+   │   │   └── "Switch to a different diagram type for this slide"
+   │   └── This catches sizing/style issues ONCE, not eight times.
+   │
+   └── 5b.iii — SECTION-BATCH CHECKPOINTS (during step 6)
+       ├── Write the deck in narrative-section batches, not all at once. For
+       │   the standard Duarte sparkline arc the batches are:
+       │   (1) Opening + hook  (2) "What is" section  (3) Turning point
+       │   (4) "What could be" section  (5) Evidence  (6) Action / takeaways.
+       ├── After each batch, present the slides written and ask via
+       │   AskUserQuestion: "Section [N] complete. Continue with the next
+       │   section, or revise this one?"
+       ├── Options:
+       │   ├── "Continue"
+       │   ├── "Revise this section" → user states what to change
+       │   └── "Revise a specific slide" → user names slide; revise; re-present
+       └── Each batch is ~5-8 slides — small enough to scan in 30 seconds.
+
+   For decks under ~12 slides, 5b.iii (section batches) MAY be skipped — the
+   whole deck is small enough to review at once. 5b.i (outline) and 5b.ii
+   (first diagram) still apply at any size.
+
 6. WRITE THE DOCUMENT
    ├── Apply type-specific expert principles throughout
    ├── Apply writing reference throughout (Doumont structure, Zinsser economy, Orwell clarity, Williams grace)
@@ -176,9 +242,34 @@ If no branding file exists, use the default design system styling. Never ask the
    ├── For presentations: use the slide template from tufte-slide-template.md
    │   ├── One idea per slide
    │   ├── Headlines are sentences, not topic labels
-   │   ├── Data slides include a clear "so what?" (Tufte/Few for data visualisation)
-   │   ├── Visual restraint — signal-to-noise ratio, no decoration
-   │   └── Full-bleed images as CSS background where appropriate
+   │   ├── **Apply the Slide Type Decision Guide from `domain/presentation-design.md`** —
+   │   │   choose the slide type from what is being communicated, not from what
+   │   │   is easiest to write. Default narrative slides to image-with-minimal-text
+   │   │   (Reynolds), not bullet lists. When content describes a relationship
+   │   │   between things (process, hierarchy, matrix, radial, gestalt, flow),
+   │   │   draw the diagram using one of the six diagrammer-type SVG starters
+   │   │   in `tufte-slide-template.md` — do NOT describe it in prose.
+   │   ├── **For diagram slides:** wrap the slide as `<section class="slide diagram-slide">`
+   │   │   (the `diagram-slide` class widens the content area from 900px to 1280px).
+   │   │   Apply the **Diagram Sizing Rules** in `tufte-slide-template.md` literally —
+   │   │   wide viewBoxes (1200×600 typical, never skinny), text ≥18 in viewBox units
+   │   │   (default 26), node boxes wide enough for their label
+   │   │   (`width ≥ chars × 14 + 40`), 20-unit padding from viewBox edges, 60-unit
+   │   │   horizontal spacing between nodes. Run the self-review checklist on every
+   │   │   diagram before declaring the slide done.
+   │   ├── Data slides include a clear "so what?" (Tufte/Few for data visualisation).
+   │   │   In presentation context, prefer a chart over a table when the *story*
+   │   │   of the data matters more than the *exact values* — Few's
+   │   │   tables-for-precision rule is overridden in live talks where attention
+   │   │   is brief and re-reading is impossible.
+   │   ├── Mark the "what is" → "what could be" pivot with a contrast slide
+   │   │   (dark palette, single sentence) — see `.contrast-slide` in the template.
+   │   ├── Visual restraint — signal-to-noise ratio, no decoration. Restraint
+   │   │   means *no decorative* elements — diagrams that carry meaning are
+   │   │   not decoration and should be used freely.
+   │   └── Full-bleed images for narrative slides; inline SVG / Mermaid for diagrams;
+   │       split-content (.split-slide) for image-plus-text; small-multiples grid
+   │       for comparative SVGs.
    ├── For strategy: kernel structure (diagnosis, guiding policy, coherent actions)
    │   ├── Five cascading choices if operationalising
    │   └── Identify the crux explicitly
@@ -247,7 +338,7 @@ If no branding file exists, use the default design system styling. Never ask the
    │   └── The diagnosing expert defines what "right" looks like, not just what's wrong
    ├── Assess document content for additional expert needs:
    │   ├── Contains data/charts? → load domain/data-presentation.md
-   │   ├── Contains diagrams? → load domain/diagramming.md
+   │   ├── Contains any SVG figure (diagrams, quadrants, small multiples, comparison frames, charts with axes)? → load domain/diagramming.md (per Hard Gate 6)
    │   ├── Covers a specific industry? → load matching industry file (per shared rule 4)
    │   ├── Contains security claims? → load domain/security.md
    │   ├── Contains narrative/argument structure? → load McKee from writing-reference.md

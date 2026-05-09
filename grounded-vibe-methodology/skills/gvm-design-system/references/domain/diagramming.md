@@ -86,9 +86,25 @@
 
 **Labels & Notation (checks 9–12):**
 
-9. **Readable labels** — minimum 12px for connector labels, 13px for entity/state names. Labels at 9-10px are consistently too small when diagrams render at typical screen sizes. Test readability at the diagram's `max-width` render size.
+9. **Readable text at rendered size — applies to ALL diagram text, not just connector/entity labels.** SVG `font-size` is in viewBox units; the rendered pixel size depends on the figure's container width. The formula:
+
+   ```
+   effective_px = svg_font_size × (rendered_width_px / viewBox_width)
+   ```
+
+   Example: a `font-size="14"` label inside `viewBox="0 0 1100 600"` rendered at `max-width: 800px` → effective `14 × (800/1100) ≈ 10px`. Below the floor.
+
+   Floors (test at the figure's `max-width`):
+   - **Body text inside cells / quadrant content / chart labels:** ≥ 14px effective
+   - **Section / quadrant titles:** ≥ 18px effective (match body-text reading scale)
+   - **Axis labels, legends, tick labels:** ≥ 13px effective
+   - **Connector labels, entity/state names:** ≥ 12px effective
+
+   If text falls below floor, the fix is one of: bump `font-size` in the SVG, widen the figure's `max-width`, or cut redundant text to free space (see rule 17). Do not ship a figure where the cell content reads smaller than the surrounding body prose.
 10. **Labels on straight segments, not corners** — position connector labels on the midpoint of a straight segment, never at a bend/corner where they overlap the turn and become ambiguous about which connector they describe.
 11. **No label-label overlaps** — check every label's bounding box against every other label. Two labels must not occupy the same visual space even partially. Common where connectors run close together (e.g., a forward transition label overlapping a nearby resume path label). Fix by repositioning along the connector or shifting perpendicular.
+
+    **Same diagnostic, broader scope: no label-vs-box overlaps either** (Purchase: label readability is load-bearing; labels overlapping background elements degrade comprehension equally to label-vs-label overlaps). Compute every label's bounding box (text width ≈ character count × font-size × 0.55 for Palatino/Georgia at typical weights, height ≈ font-size × 1.2). Verify the bounding box does not intersect any rect, path, or other text element except its own connector line. Connector arrow labels in particular are at risk: a label centred at the connector's midpoint may extend past the connector's start/end and overlap the boxes it connects. Fix by shortening the label, shifting it perpendicular to the connector (above/below for horizontal connectors, left/right for vertical), or widening the gap between boxes.
 12. **Consistent notation with legend** — same line style means the same type of relationship throughout. If the diagram uses more than one line style, colour, or dash pattern, include a legend. Don't rely on the caption alone — the legend should be inside the SVG.
 13. **Caption** — every diagram has a figure number and descriptive caption below it. Reference the design rationale where applicable (e.g., "Purchase: radial layout for hub nodes").
 
@@ -97,3 +113,5 @@
 14. **Colour conveys meaning, not decoration** — if colour is used, it must encode information (e.g., status states, risk levels, domain boundaries). Every colour used must appear in the legend or caption. Don't use colour for visual interest alone.
 15. **Self-contained** — the diagram must be understandable without reading the surrounding text. A colleague who sees only the diagram should understand the structure.
 16. **Size proportional to complexity** — a 3-entity ERD doesn't need 800px width. A 10-entity ERD does. Scale to content. But err on the side of more space — cramped diagrams cause all the other problems (crossings, overlaps, small labels).
+17. **Cut redundant labels** (Doumont — *Trees, Maps, and Theorems*: maximise signal, minimise noise; introduce-once-then-use). If axis labels already convey orientation, do not repeat the orientation inside every cell. If a quadrant diagram has axes labelled "Built well / Built badly" and "Right thing / Wrong thing", do not also italicise "Wrong thing, built well" inside each cell — it's the same information twice in the same eyeful. Cut the redundant labels and use the freed vertical space to enlarge the cell's primary content (per rule 9). The same applies to repeating the figure's title inside every panel of a small-multiples grid, repeating axis units inside every chart label, and any other label that the figure's frame already establishes.
+18. **When the cells contain prose, it is not a table — it is a figure done wrong.** (Few — *Show Me the Numbers*: tables for precise lookup of values; charts and figures for relationships and qualitative comparison.) An HTML `<table>` whose cells contain full sentences with em-dashes, italics, and qualifiers is a comparison figure pretending to be a table. The diagnostic: can a reader use this table to look up a precise value? If no, it is the wrong format. Replace with a small-multiples figure, a paired-comparison diagram, or — most often — cut the table entirely because the surrounding prose already carries the comparison and the table is duplicate ink.
